@@ -543,6 +543,8 @@ public class VertexBufferObject {
           if (tmp != bigArrayVBOBytes) {
             bigArrayVBOBytes = tmp;
             bigArrayVBO = setupBuffer(tmp);
+          }
+          if (bigArray != bigArrayVBO) {
             bigArray = bigArrayVBO;
             setupBuffers();
           }
