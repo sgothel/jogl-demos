@@ -58,10 +58,11 @@ import gleem.linalg.*;
 
   Cubemap courtesy of Paul Debevec<p>
 
-  Ported to Java by Kenneth Russell
+  Ported to Java and ARB_fragment_program by Kenneth Russell
 */
 
 public class VertexProgRefract {
+  private boolean useRegisterCombiners;
   private GLCanvas canvas;
   private Animator animator;
   private volatile boolean quit;
@@ -96,6 +97,7 @@ public class VertexProgRefract {
 
   class Listener implements GLEventListener {
     private int vtxProg;
+    private int fragProg;
     private int cubemap;
     private int bunnydl;
     private int obj;
@@ -227,8 +229,22 @@ public class VertexProgRefract {
 
       try {
         initExtension(gl, "GL_ARB_vertex_program");
-        initExtension(gl, "GL_NV_register_combiners");
         initExtension(gl, "GL_ARB_multitexture");
+        if (!gl.isExtensionAvailable("GL_ARB_fragment_program")) {
+          if (gl.isExtensionAvailable("GL_NV_register_combiners")) {
+            useRegisterCombiners = true;
+          } else {
+            final String message = "This demo requires either the GL_ARB_fragment_program\n" +
+                                   "or GL_NV_register_combiners extension";
+            new Thread(new Runnable() {
+                public void run() {
+                  JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+                  runExit();
+                }
+              }).start();
+            throw new RuntimeException(message);
+          }
+        }
       } catch (RuntimeException e) {
         quit = true;
         throw(e);
@@ -268,7 +284,11 @@ public class VertexProgRefract {
 
       gl.glDisable(GL.GL_CULL_FACE);
 
-      initCombiners(gl);
+      if (useRegisterCombiners) {
+        initCombiners(gl);
+      } else {
+        initFragmentProgram(gl);
+      }
 
       try {
         bunnydl = Bunny.gen3DObjectList(gl);
@@ -361,7 +381,12 @@ public class VertexProgRefract {
       gl.glScalef(1.0f, -1.0f, 1.0f);
       viewer.updateInverseRotation(gl);
 
-      gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
+      if (useRegisterCombiners) {
+        gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
+      } else {
+        gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+        gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+      }
 
       gl.glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -394,7 +419,11 @@ public class VertexProgRefract {
         gl.glColorMask(true, true, true, false);
       }
 
-      gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
+      if (useRegisterCombiners) {
+        gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
+      } else {
+        gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
+      }
       gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
 
       gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -546,6 +575,47 @@ public class VertexProgRefract {
       gl.glFinalCombinerInputNV(GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
       gl.glFinalCombinerInputNV(GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
       gl.glFinalCombinerInputNV(GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+    }
+
+    private void initFragmentProgram(GL gl) {
+      int[] fragProgTmp = new int[1];
+      gl.glGenProgramsARB(1, fragProgTmp);
+      fragProg = fragProgTmp[0];
+      String combineFragProg =
+"!!ARBfp1.0\n" +
+"# compute refraction*(1-fresnel) + reflection*fresnel\n" +
+"TEMP texSamp0, texSamp1;\n" +
+"TEMP invFresnel;\n" +
+"PARAM one = { 1.0, 1.0, 1.0, 1.0 };\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], CUBE;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], CUBE;\n" +
+"SUB invFresnel, one, fragment.color;\n" +
+"MUL texSamp0, texSamp0, invFresnel;\n" +
+"MUL texSamp1, texSamp1, fragment.color;\n" +
+"ADD texSamp0, texSamp0, texSamp1;\n" +
+"MOV result.color, texSamp0;\n" +
+"END";
+
+      gl.glBindProgramARB  (GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+      gl.glProgramStringARB(GL.GL_FRAGMENT_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB,
+                            combineFragProg.length(), combineFragProg);
+      int[] errPos = new int[1];
+      gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+      if (errPos[0] >= 0) {
+        System.out.println("Fragment program failed to load:");
+        String errMsg = gl.glGetString(GL.GL_PROGRAM_ERROR_STRING_ARB);
+        if (errMsg == null) {
+          System.out.println("[No error message available]");
+        } else {
+          System.out.println("Error message: \"" + errMsg + "\"");
+        }
+        System.out.println("Error occurred at position " + errPos[0] + " in program:");
+        int endPos = errPos[0];
+        while (endPos < combineFragProg.length() && combineFragProg.charAt(endPos) != '\n') {
+          ++endPos;
+        }
+        System.out.println(combineFragProg.substring(errPos[0], endPos));
+      }
     }
 
     private void drawSkyBox(GL gl, GLU glu) {
