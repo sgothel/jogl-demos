@@ -538,24 +538,9 @@ public class VertexProgRefract {
           throw new RuntimeException("Unsupported image type " + img.getType());
       }
 
-
-      //      ByteBuffer destScaled = ByteBuffer.allocateDirect(dest.capacity() / 4);
-      ByteBuffer destScaled = ByteBuffer.allocateDirect(dest.capacity());
-      destScaled.order(ByteOrder.nativeOrder());
-      int res = glu.gluScaleImage(GL.GL_RGB,
-                                  img.getWidth(), img.getHeight(), GL.GL_UNSIGNED_BYTE, dest,
-                                  img.getWidth(), img.getHeight(), GL.GL_UNSIGNED_BYTE, destScaled);
-      //      System.out.println("gluScaleImage: result = " + res);
-
-
-
-
       if (mipmapped) {
-        //        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-        //                              GL.GL_UNSIGNED_BYTE, dest);
-
         glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, destScaled);
+                              GL.GL_UNSIGNED_BYTE, dest);
       } else {
         gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
                         GL.GL_RGB, GL.GL_UNSIGNED_BYTE, dest);
