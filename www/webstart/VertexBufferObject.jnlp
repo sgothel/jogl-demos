@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" 
+      codebase="https://jogl-demos.dev.java.net/webstart/"
+      href="VertexBufferObject.jnlp">
+  <information>
+    <title>JOGL Vertex Buffer Object Demo</title>
+    <vendor>Sun Microsystems, Inc.</vendor>
+    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <description>VertexBufferObject Demo</description>
+    <description kind="short">NVidia's vertex_array_range demo ported to Java, JOGL, and ARB_vertex_buffer_object.</description>
+    <offline-allowed/>
+  </information>
+
+    <resources>
+      <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+      <property name="sun.java2d.noddraw" value="true"/>
+      <jar href="jogl-demos.jar" main="true"/>
+      <jar href="jogl-demos-util.jar" />
+      <extension name="jogl" href="https://jogl.dev.java.net/webstart/jogl.jnlp" />
+    </resources>
+
+  <application-desc main-class="demos.vertexBufferObject.VertexBufferObject"/>
+</jnlp>
