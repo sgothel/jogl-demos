@@ -153,6 +153,7 @@ public class InfiniteShadowVolumes {
 
   private boolean enableDepthClampNV;
   private boolean toggleDepthClampNV;
+  private boolean animateContinually;
   private boolean animateForward;
   private boolean animateBackward;
   private boolean hideCurrentModel;
@@ -536,6 +537,11 @@ public class InfiniteShadowVolumes {
         glut.glutWireCube(gl, 2);
         gl.glLineWidth(1);
         gl.glPopMatrix();
+      }
+
+      if (b[' ']) {
+        // Animating continually. Schedule another repaint soon.
+        canvas.repaint();
       }
     }
 
