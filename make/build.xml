@@ -49,7 +49,7 @@
             <pathelement path="${classpath}" />
             <pathelement location="${jogl.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="demos/cg/**" source="1.4">
+        <javac destdir="${classes}" excludes="demos/cg/**" source="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl.classpath" />
         </javac>

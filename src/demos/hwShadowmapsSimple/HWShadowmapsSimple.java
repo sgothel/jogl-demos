@@ -40,6 +40,7 @@ import java.io.*;
 import java.nio.*;
 import java.util.*;
 import javax.imageio.*;
+import javax.swing.*;
 
 import net.java.games.jogl.*;
 import net.java.games.jogl.util.*;
@@ -158,34 +159,36 @@ public class HWShadowmapsSimple {
         }
       });
 
-    while (!quit) {
-      if (viewer != null) {
-        viewer.update();
+    try {
+      while (!quit) {
+        if (viewer != null) {
+          viewer.update();
 
-        // Grab these values once per render to avoid multithreading
-        // issues with their values being changed by manipulation from
-        // the AWT thread during the render
-        CameraParameters params = viewer.getCameraParameters();
+          // Grab these values once per render to avoid multithreading
+          // issues with their values being changed by manipulation from
+          // the AWT thread during the render
+          CameraParameters params = viewer.getCameraParameters();
 
-        cameraPerspective.set(params.getProjectionMatrix());
-        cameraInverseTransform.set(params.getModelviewMatrix());
-        cameraTransform.set(cameraInverseTransform);
-        cameraTransform.invertRigid();
-        spotlightTransform.set(spotlight.getTransform());
-        spotlightInverseTransform.set(spotlightTransform);
-        spotlightInverseTransform.invertRigid();
-        objectTransform.set(object.getTransform());
-      }
-
-      if (displayMode == RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED || !fullyInitialized) {
-        if (pbuffer != null) {
-          pbuffer.display();
+          cameraPerspective.set(params.getProjectionMatrix());
+          cameraInverseTransform.set(params.getModelviewMatrix());
+          cameraTransform.set(cameraInverseTransform);
+          cameraTransform.invertRigid();
+          spotlightTransform.set(spotlight.getTransform());
+          spotlightInverseTransform.set(spotlightTransform);
+          spotlightInverseTransform.invertRigid();
+          objectTransform.set(object.getTransform());
         }
-      }
-      canvas.display();
-    }
 
-    System.exit(0);
+        if (displayMode == RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED || !fullyInitialized) {
+          if (pbuffer != null) {
+            pbuffer.display();
+          }
+        }
+        canvas.display();
+      }
+    } finally {
+      System.exit(0);
+    }
   }
 
   //----------------------------------------------------------------------
@@ -372,7 +375,9 @@ public class HWShadowmapsSimple {
 
     private void checkExtension(GL gl, String extensionName) {
       if (!gl.isExtensionAvailable(extensionName)) {
-	throw new GLException("Unable to initialize " + extensionName + " OpenGL extension");
+        String message = "Unable to initialize " + extensionName + " OpenGL extension";
+        JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+	throw new GLException(message);
       }
     }
 

@@ -41,6 +41,7 @@ import java.nio.*;
 import java.util.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
+import javax.swing.*;
 
 import net.java.games.jogl.*;
 import net.java.games.jogl.util.*;
@@ -229,7 +230,7 @@ public class VertexProgRefract {
         initExtension(gl, "GL_NV_register_combiners");
         initExtension(gl, "GL_ARB_multitexture");
       } catch (RuntimeException e) {
-        runExit();
+        quit = true;
         throw(e);
       }
 
@@ -510,7 +511,14 @@ public class VertexProgRefract {
 
     private void initExtension(GL gl, String glExtensionName) {
       if (!gl.isExtensionAvailable(glExtensionName)) {
-        throw new RuntimeException("OpenGL extension \"" + glExtensionName + "\" not available");
+        final String message = "OpenGL extension \"" + glExtensionName + "\" not available";
+        new Thread(new Runnable() {
+            public void run() {
+              JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+              runExit();
+            }
+          }).start();
+        throw new RuntimeException(message);
       }
     }
 

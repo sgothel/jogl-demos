@@ -35,6 +35,7 @@ package demos.proceduralTexturePhysics;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 import net.java.games.jogl.*;
 import demos.util.*;
@@ -98,37 +99,43 @@ public class ProceduralTexturePhysics {
         }
       });
 
-    water = new Water();
-    water.initialize("demos/data/images/nvfixed.tga", 
-                     "demos/data/images/nvspin.tga", 
-                     "demos/data/images/droplet.tga", 
-                     "demos/data/cubemaps/CloudyHills_{0}.tga",
-                     canvas);
-
-    while (!quit) {
-      if (viewer != null) {
-        try {
-          if (drawing) {
-            canvas.getSize(dim);
-            water.addDroplet(new Water.Droplet( 2 * (mousePosX / (float) dim.width  - 0.5f),
-                                                -2 * (mousePosY / (float) dim.height - 0.5f),
-                                                0.08f));
-          }
-          water.tick();
-          canvas.display();
-        } catch (GLException e) {
-          // Have seen spurious exceptions getting thrown during SwapBuffers.
-          // Not sure why at this time; disabling of repaint() should prevent
-          // AWT thread from getting involved. Continue animating anyway.
-          e.printStackTrace();
-        }
-      } else {
-        // Make the pbuffer get created
-        canvas.display();
-      }
+    try {
+      water = new Water();
+      water.initialize("demos/data/images/nvfixed.tga", 
+                       "demos/data/images/nvspin.tga", 
+                       "demos/data/images/droplet.tga", 
+                       "demos/data/cubemaps/CloudyHills_{0}.tga",
+                       canvas);
+    } catch (GLException e) {
+      JOptionPane.showMessageDialog(null, e.toString(), "Unavailable extension", JOptionPane.ERROR_MESSAGE);
     }
 
-    System.exit(0);
+    try {
+      while (!quit) {
+        if (viewer != null) {
+          try {
+            if (drawing) {
+              canvas.getSize(dim);
+              water.addDroplet(new Water.Droplet( 2 * (mousePosX / (float) dim.width  - 0.5f),
+                                                  -2 * (mousePosY / (float) dim.height - 0.5f),
+                                                  0.08f));
+            }
+            water.tick();
+            canvas.display();
+          } catch (GLException e) {
+            // Have seen spurious exceptions getting thrown during SwapBuffers.
+            // Not sure why at this time; disabling of repaint() should prevent
+            // AWT thread from getting involved. Continue animating anyway.
+            e.printStackTrace();
+          }
+        } else {
+          // Make the pbuffer get created
+          canvas.display();
+        }
+      }
+    } finally {
+      System.exit(0);
+    }
   }
 
   //----------------------------------------------------------------------
@@ -263,7 +270,9 @@ public class ProceduralTexturePhysics {
 
     private void checkExtension(GL gl, String extensionName) {
       if (!gl.isExtensionAvailable(extensionName)) {
-	throw new GLException("Unable to initialize " + extensionName + " OpenGL extension");
+        String message = "Unable to initialize " + extensionName + " OpenGL extension";
+        JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+	throw new GLException(message);
       }
     }
 

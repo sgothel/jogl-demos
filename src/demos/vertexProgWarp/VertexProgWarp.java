@@ -131,7 +131,7 @@ public class VertexProgWarp {
       try {
         initExtension(gl, "GL_ARB_vertex_program");
       } catch (RuntimeException e) {
-        runExit();
+        quit = true;
         throw(e);
       }
 
@@ -268,7 +268,14 @@ public class VertexProgWarp {
     //
     private void initExtension(GL gl, String glExtensionName) {
       if (!gl.isExtensionAvailable(glExtensionName)) {
-        throw new RuntimeException("OpenGL extension \"" + glExtensionName + "\" not available");
+        final String message = "OpenGL extension \"" + glExtensionName + "\" not available";
+        new Thread(new Runnable() {
+            public void run() {
+              JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+              runExit();
+            }
+          }).start();
+        throw new RuntimeException(message);
       }
     }
 

@@ -37,6 +37,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.nio.*;
 import java.util.*;
+import javax.swing.*;
 
 import net.java.games.jogl.*;
 
@@ -257,7 +258,14 @@ public class VertexArrayRange {
 
   private void ensurePresent(String function) {
     if (!canvas.getGL().isFunctionAvailable(function)) {
-      throw new RuntimeException("OpenGL routine \"" + function + "\" not available");
+      final String message = "OpenGL routine \"" + function + "\" not available";
+      new Thread(new Runnable() {
+          public void run() {
+            JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+            runExit();
+          }
+        }).start();
+      throw new RuntimeException(message);
     }
   }
 
@@ -285,7 +293,7 @@ public class VertexArrayRange {
         ensurePresent("glFinishFenceNV");
         ensurePresent("glAllocateMemoryNV");
       } catch (RuntimeException e) {
-        runExit();
+        quit = true;
         throw (e);
       }      
       
@@ -647,22 +655,6 @@ public class VertexArrayRange {
 
     // Unused routines
     public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-
-    private void runExit() {
-      quit = true;
-      // Note: calling System.exit() synchronously inside the draw,
-      // reshape or init callbacks can lead to deadlocks on certain
-      // platforms (in particular, X11) because the JAWT's locking
-      // routines cause a global AWT lock to be grabbed. Run the
-      // exit routine in another thread and cause this one to
-      // terminate by throwing an exception out of it.
-      new Thread(new Runnable() {
-          public void run() {
-            animator.stop();
-            System.exit(0);
-          }
-        }).start();
-    }
   } // end class VARListener
 
   private void allocateBigArray(GL gl, boolean tryAgain) {
@@ -725,5 +717,21 @@ public class VertexArrayRange {
         elements[i][j+1] = (i + 1) * STRIP_SIZE + (j / 2);
       }
     }
+  }
+
+  private void runExit() {
+    quit = true;
+    // Note: calling System.exit() synchronously inside the draw,
+    // reshape or init callbacks can lead to deadlocks on certain
+    // platforms (in particular, X11) because the JAWT's locking
+    // routines cause a global AWT lock to be grabbed. Run the
+    // exit routine in another thread and cause this one to
+    // terminate by throwing an exception out of it.
+    new Thread(new Runnable() {
+        public void run() {
+          animator.stop();
+          System.exit(0);
+        }
+      }).start();
   }
 }
