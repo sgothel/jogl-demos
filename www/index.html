@@ -1,5 +1,691 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
+<head>
+                                             
+  <meta content="text/html; charset=windows-1252"
+ http-equiv="Content-Type">
+                                             
+  <meta content="MSHTML 5.00.2920.0" name="GENERATOR">
+  <title></title>
+</head>
   <body>
-    This is the default project content.
-  </body>
+                       
+<div align="center"><img
+ src="http://games.dev.java.net/images/navbar.gif" width="454"
+ height="43" border="0" alt="" usemap="#navbar_Map">
+           </div>
+            <map name="navbar_Map">
+<area shape="rect" alt="Wiki" coords="340,0,386,43"
+ href="http://wiki.java.net/bin/view/Games">
+<area shape="rect" alt="Weblogs" coords="286,0,339,43"
+ href="http://weblogs.java.net/weblogs/project/games">
+<area shape="rect" alt="Forums" coords="216,0,285,43"
+ href="http://games.dev.java.net/forums">
+<area shape="rect" alt="JavaGames Home" coords="91,0,215,43"
+ href="http://community.java.net/games">
+<area shape="rect" alt="www.java.net" coords="1,1,91,44"
+ href="http://www.java.net" target="_self">
+</map>
+                       
+<div align="center"><font color="#990000" size="+2">Java Bindings for OpenGL 
+    - Demos </font></div>
+                       
+<table border="0" cellpadding="0" cellspacing="1" width="100%">
+              <tbody>
+              <tr>
+                <td valign="top" width="66%">                           
+                                                       
+      <table border="0" cellpadding="5" cellspacing="1" width="100%">
+                    <tbody>
+                    <tr>
+                      <td valign="top">                                 
+                                                                        
+                                                 
+            <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top"
+ width="589">                                                            
+                                                                        
+                                                                        
+                      
+                  <div align="left"><font color="#ffffff"><strong>Overview</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                            <td bgcolor="#ffffff" valign="top">         
+                                                                        
+                                                                        
+                                                                        
+                  <div align="justify">                                 
+                                                                        
+                                                                        
+                                                
+                  <p>The JOGL-Demos project contains Java programming language 
+    demonstrations utilizing OpenGL through the JOGL API. Demonstrations exhibit
+    advanced functionality such as vertex programs, shadow maps and hardware-accelerated
+    offscreen rendering via pbuffers. Most of the demos were ported from
+C  or C++; in which case a link to the original sources is provided.<br>
+                           </p>
+                                                                        
+                                                                        
+                                 
+                  <p>The demos below require <a
+ href="http://java.sun.com/products/javawebstart/">Java Web Start</a>, which 
+    is included in <a href="http://java.sun.com/j2se/1.4.2/">J2SE 1.4.2</a>;
+  click the images to launch the demos. Where there are no hardware or operating 
+  system requirements listed, the demos run on any vendor's graphics card 
+and  on any of Solaris/SPARC, Linux/x86, Windows/x86, and Macintosh OS X 10.3
+Developer Preview 1.<br>
+                       </p>
+                                                                        
+                          
+                  <p>The source code for these demonstrations is available 
+  via <a href="http://jogl-demos.dev.java.net/source/browse/jogl-demos/">CVS</a>.<br>
+                   </p>
+                   
+                  <p><b>NOTE</b>: there is a known problem with the java.net 
+web server which causes the jars to be re-downloaded each time any of these 
+demos is launched. This issue is being worked on. Putting Java Web Start in
+offline mode may work around the problem.<br>
+                          </p>
+                           </div>
+                             </td>
+                           </tr>
+                                                                        
+                                                                        
+                             
+              </tbody>                                                   
+                                                                        
+                  
+            </table>
+                       </td>
+                     </tr>
+                                                                        
+                                                          
+        </tbody>                                                         
+                   
+      </table>
+                                        </td>
+                <td valign="top">                                       
+                                            
+      <table border="0" cellpadding="5" cellspacing="1" width="100%">
+                    <tbody>
+                    <tr>
+                      <td>                                              
+                                                                        
+                                    
+            <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                                                                        
+                  <div align="left"><font color="#ffffff"><strong>Useful 
+                  Links</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+                                                                        
+                                                                        
+                                                     
+                  <ul>
+                                <li><a href="http://jogl.dev.java.net/">JOGL</a>
+    Home</li>
+                    <li><a
+ href="http://jogl-demos.dev.java.net/unbranded-source/browse/*checkout*/jogl-demos/doc/readme.html">Demo
+documentation</a><br>
+                    </li>
+                                                                        
+                                                                        
+                                 
+                  </ul>
+                           </td>
+                         </tr>
+                                                                        
+                                                                      
+              </tbody>                                                   
+                                                                 
+            </table>
+                     </td>
+                   </tr>
+                   <tr>
+                     <td>                                               
+                                                                     
+            <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                       <tbody>
+                         <tr>
+                           <td bgcolor="#990000" valign="top">          
+                                                                        
+                                                                        
+             
+                  <div align="left"><font color="#ffffff"><strong>Downloads</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+                                                                        
+                                                                        
+                                                     
+                  <ul>
+                                <li><a
+ href="http://jogl.dev.java.net/servlets/ProjectDocumentList"
+ target="_blank">Precompiled binaries and documentation</a></li>
+                                                                        
+                                                                        
+                                                                         
+                 
+                  </ul>
+                             </td>
+                           </tr>
+                                                                        
+                                                                        
+                             
+              </tbody>                                                   
+                                                                        
+                  
+            </table>
+                       </td>
+                     </tr>
+                                                                        
+                                              
+        </tbody>                                                         
+                   
+      </table>
+                 </td>
+               </tr>
+                           
+  </tbody>       
+</table>
+             
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Hardware Shadow
+   Mapping</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/HWShadowmapsSimple.jnlp">
+			       <img src="shadowmaps_sm.jpg" width="160" height="160"
+ alt="Launch Hardware Shadow Mapping demo">
+                       </a> 			       </td>
+      			       <td width="45%"> 			       Shadowing demo using projective
+ texture  technique of hardware shadow maps. Original source code supplied
+ in NVidia's                    <a
+ href="http://developer.nvidia.com/view.asp?IO=cg_toolkit">Cg Toolkit</a>.
+  			       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       NVidia GeForce 3 or better; Windows 
+  or 			       Linux operating systems (pbuffer 			       support not yet 
+exposed  in JOGL on Mac 			       OS X) 			       </td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+            
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Infinite Shadow 
+  Volumes</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/InfiniteShadowVolumes.jnlp">
+   			       <img src="shadowvolumes_sm.jpg" width="160" height="161"
+ alt="Launch Infinite Shadow Volumes demo">
+                       </a> 			       </td>
+      			       <td width="45%"> 			       Shadowing demo using geometric 
+technique  of infinite shadow volumes. <a
+ href="http://developer.nvidia.com/view.asp?IO=inf_shadow_volumes">Original 
+ source code</a> by NVidia.</td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       None 			       </td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+          
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Vertex Program
+  Warp</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/VertexProgWarp.jnlp">  			 
+       <img src="warp_sm.jpg" width="160" height="142"
+ alt="Launch Vertex Prog Warp demo">
+                       </a> 			       </td>
+      			       <td width="45%">Geometrical deformations performed on the 
+graphics  card using ARB_vertex_program. <a
+ href="http://developer.nvidia.com/view.asp?IO=vertexprogram_deformation">Original 
+ source code</a> by NVidia.</td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%">Any card with ARB_vertex_program support</td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+        
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Vertex Program
+  Refract</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/VertexProgRefract.jnlp">  			
+      <img src="refract_sm.jpg" width="160" height="161"
+ alt="Launch Vertex Prog Refract demo">
+                       </a> 			       </td>
+      			       <td width="45%">Real-time reflection and refraction with
+chromatic  aberration using ARB_vertex_program and register combiners. <a
+ href="http://developer.nvidia.com/view.asp?IO=vertexprogram_refraction">Original 
+ source code</a> by NVidia.</td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%">NVidia GeForce 2 or better</td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+      
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Procedural Texture
+ Physics</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/ProceduralTexturePhysics.jnlp">
+  			       <img src="water_sm.jpg" width="160" height="160"
+ alt="Launch Procedural Texture Physics demo">
+                       </a> 			       </td>
+      			       <td width="45%">Runs a physics-based water simulation entirely
+ on the graphics card using register combiners, texture shaders and pbuffers.
+                   <a
+ href="http://developer.nvidia.com/view.asp?IO=ogl_dynamic_bumpreflection">Original
+ source code</a> by NVidia.<br>
+                    </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%">NVidia GeForce 3 or better; Windows or Linux
+ operating systems (pbuffer 			       support not yet exposed  in JOGL on
+Mac 			       OS X) </td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+    
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Gears</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/gears.jnlp">  			       <img
+ src="gears_sm.jpg" width="160" height="163" alt="Launch Gears demo">
+                       </a> 			       </td>
+      			       <td width="45%">Classic OpenGL demo. Original source code 
+by Brian Paul; converted to Java by Ron Cemer and Sven Goethel.          
+        </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%">None</td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+    
+<table border="0" cellpadding="5" cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+        		  <td>                                                  
+      <table bgcolor="#990000" border="0" cellpadding="5"
+ cellspacing="1" width="100%">
+                          <tbody>
+                          <tr>
+                            <td bgcolor="#990000" valign="top">         
+                                                                        
+                                                                        
+                  
+            <div align="left"><font color="#ffffff"><strong>Vertex Array Range</strong></font></div>
+                             </td>
+                           </tr>
+                          <tr>
+                             <td valign="top" bgcolor="#ffffff">        
+       		                                                               
+        
+            <table border="0" cellpadding="5" cellspacing="1"
+ width="100%">
+      		           <tbody>
+      			   <tr>
+      			       <td width="25%"> <br>
+                       </td>
+      			       <td width="45%"> 			       <strong>Description</strong> 			 
+       </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%"> 			       <strong>Requirements</strong>
+			         </td>
+      			   </tr>
+      			   <tr>
+      			       <td width="25%"> 			       <a
+ href="http://jogl-demos.dev.java.net/webstart/VertexArrayRange.jnlp">  			 
+      <img src="VertexArrayRange_sm.jpg" width="160" height="164"
+ alt="Launch Vertex Array Range demo">
+                       </a> 			       </td>
+      			       <td width="45%">Demonstrates high-throughput dynamic geometry 
+using NVidia vertex_array_range extension. <a
+ href="http://developer.nvidia.com/view.asp?IO=vardemo">Original source code</a> 
+by NVidia.                   </td>
+      			       <td width="5%"><br>
+                    </td>
+      			       <td width="25%">NVidia GeForce series card; Windows or Linux
+(JOGL's vertex_array_range support not yet ported to Mac OS X)</td>
+       			   </tr>
+                     <tr>
+      			   </tr>
+                                                                        
+      
+              </tbody> 		                                                
+                       
+            </table>
+     			                         </td>
+                         </tr>
+                                                                        
+        </tbody>                                                         
+                                                                        
+  
+      </table>
+                     </td>
+           </tr>
+                               
+  </tbody>        
+</table>
+                  <br>
+           <br>
+          <br>
+         <br>
+        <br>
+       <br>
+      <br>
+     <br>
+    <br>
+   <br>
+  <br>
+ <br>
+</body>
 </html>
