@@ -60,9 +60,9 @@ public class Plane {
       goes through the point <b>point</b>. Normal does not need to be
       unit length but must not be the zero vector. */
   public Plane(Vec3f normal, Vec3f point) {
-    this.normal.set(normal);
+    this.normal = new Vec3f(normal);
     this.normal.normalize();
-    this.point.set(point);
+    this.point = new Vec3f(point);
     recalc();
   }
 
