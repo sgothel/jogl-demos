@@ -49,7 +49,7 @@ import demos.util.*;
  *
  * <P>
  *
- * Ported to Java by Kenneth Russell
+ * Ported to Java and ARB_fragment_program by Kenneth Russell
  */
 
 public class Water {
@@ -96,15 +96,15 @@ public class Water {
   private static final int CA_NUM_DYNAMIC_TEXTURES       = 7;
     
   // List names
-  private static final int CA_REGCOMBINER_EQ_WEIGHT_COMBINE     = 0;
-  private static final int CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_1 = 1;
-  private static final int CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_2 = 2;
-  private static final int CA_REGCOMBINER_APPLY_FORCE           = 3;
-  private static final int CA_REGCOMBINER_APPLY_VELOCITY        = 4;
-  private static final int CA_REGCOMBINER_CREATE_NORMAL_MAP     = 5;
-  private static final int CA_TEXTURE_SHADER_REFLECT            = 6;
-  private static final int CA_DRAW_SCREEN_QUAD                  = 7;
-  private static final int CA_NUM_LISTS                         = 8;
+  private static final int CA_FRAGMENT_PROGRAM_EQ_WEIGHT_COMBINE     = 0;
+  private static final int CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_1 = 1;
+  private static final int CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_2 = 2;
+  private static final int CA_FRAGMENT_PROGRAM_APPLY_FORCE           = 3;
+  private static final int CA_FRAGMENT_PROGRAM_APPLY_VELOCITY        = 4;
+  private static final int CA_FRAGMENT_PROGRAM_CREATE_NORMAL_MAP     = 5;
+  private static final int CA_FRAGMENT_PROGRAM_REFLECT               = 6;
+  private static final int CA_DRAW_SCREEN_QUAD                       = 7;
+  private static final int CA_NUM_LISTS                              = 8;
 
   private int[]  staticTextureIDs = new int[CA_NUM_STATIC_TEXTURES];     
   private int[]  dynamicTextureIDs = new int[CA_NUM_DYNAMIC_TEXTURES];
@@ -118,7 +118,7 @@ public class Water {
 
   private int[]     displayListIDs = new int[CA_NUM_LISTS];
     
-  private int       vertexProgramID;                // one vertex shader is used to choose the texcoord offset
+  private int       vertexProgramID;                // one vertex program is used to choose the texcoord offset
 
   private int       flipState;                      // used to flip target texture configurations.
 
@@ -154,38 +154,33 @@ public class Water {
   private int       renderMode; 
 
   // Constant memory locations
-  private static final int CV_WORLDVIEWPROJ_0  =  0;
-  private static final int CV_WORLDVIEWPROJ_1  =  1;
-  private static final int CV_WORLDVIEWPROJ_2  =  2;
-  private static final int CV_WORLDVIEWPROJ_3  =  3;
+  private static final int CV_UV_OFFSET_TO_USE =  0;
 
-  private static final int CV_UV_OFFSET_TO_USE =  4;
+  private static final int CV_UV_T0_NO_OFFSET  =  1;
+  private static final int CV_UV_T0_TYPE1      =  2;
+  private static final int CV_UV_T0_TYPE2      =  3;
+  private static final int CV_UV_T0_TYPE3      =  4;
+  private static final int CV_UV_T0_TYPE4      =  5;
 
-  private static final int CV_UV_T0_NO_OFFSET  =  8;
-  private static final int CV_UV_T0_TYPE1      =  9;
-  private static final int CV_UV_T0_TYPE2      = 10;
-  private static final int CV_UV_T0_TYPE3      = 11;
-  private static final int CV_UV_T0_TYPE4      = 12;
+  private static final int CV_UV_T1_NO_OFFSET  =  6;
+  private static final int CV_UV_T1_TYPE1      =  7;
+  private static final int CV_UV_T1_TYPE2      =  8;
+  private static final int CV_UV_T1_TYPE3      =  9;
+  private static final int CV_UV_T1_TYPE4      = 10;
 
-  private static final int CV_UV_T1_NO_OFFSET  = 13;
-  private static final int CV_UV_T1_TYPE1      = 14;
-  private static final int CV_UV_T1_TYPE2      = 15;
-  private static final int CV_UV_T1_TYPE3      = 16;
-  private static final int CV_UV_T1_TYPE4      = 17;
+  private static final int CV_UV_T2_NO_OFFSET  = 11;
+  private static final int CV_UV_T2_TYPE1      = 12;
+  private static final int CV_UV_T2_TYPE2      = 13;
+  private static final int CV_UV_T2_TYPE3      = 14;
+  private static final int CV_UV_T2_TYPE4      = 15;
 
-  private static final int CV_UV_T2_NO_OFFSET  = 18;
-  private static final int CV_UV_T2_TYPE1      = 19;
-  private static final int CV_UV_T2_TYPE2      = 20;
-  private static final int CV_UV_T2_TYPE3      = 21;
-  private static final int CV_UV_T2_TYPE4      = 22;
+  private static final int CV_UV_T3_NO_OFFSET  = 16;
+  private static final int CV_UV_T3_TYPE1      = 17;
+  private static final int CV_UV_T3_TYPE2      = 18;
+  private static final int CV_UV_T3_TYPE3      = 19;
+  private static final int CV_UV_T3_TYPE4      = 20;
 
-  private static final int CV_UV_T3_NO_OFFSET  = 23;
-  private static final int CV_UV_T3_TYPE1      = 24;
-  private static final int CV_UV_T3_TYPE2      = 25;
-  private static final int CV_UV_T3_TYPE3      = 26;
-  private static final int CV_UV_T3_TYPE4      = 27;
-
-  private static final int CV_CONSTS_1         = 28;
+  private static final int CV_CONSTS_1         = 21;
 
   public void initialize(String initialMapFilename,
                          String spinFilename,
@@ -244,7 +239,7 @@ public class Water {
           rot.setRotation(cameraOrientation);
           Mat4f matRot = rot.mul(bscale);
 
-          gl.glCallList(displayListIDs[CA_TEXTURE_SHADER_REFLECT]);
+          gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_REFLECT]);
 
           // Draw quad over full display
           gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
@@ -283,8 +278,7 @@ public class Water {
                 
           gl.glEnd();
     
-          gl.glDisable(GL.GL_TEXTURE_SHADER_NV);
-          gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
+          gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
                 
           break;
         }
@@ -498,165 +492,140 @@ public class Water {
       
     createAndWriteUVOffsets(gl, initialMapDimensions[0], initialMapDimensions[1]);
 
-    checkExtension(gl, "GL_NV_register_combiners");
-    checkExtension(gl, "GL_NV_register_combiners2");
-    checkExtension(gl, "GL_NV_texture_shader");
+    checkExtension(gl, "GL_ARB_vertex_program");
+    checkExtension(gl, "GL_ARB_fragment_program");
     checkExtension(gl, "GL_ARB_multitexture");
 
     ///////////////////////////////////////////////////////////////////////////
     // UV Offset Vertex Program
     ///////////////////////////////////////////////////////////////////////////
-    // track the MVP matrix for the vertex program
-    gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 0, GL.GL_MODELVIEW_PROJECTION_NV, GL.GL_IDENTITY_NV);
-    float[] rCVConsts = new float[] { 0, 0.5f, 1.0f, 2.0f };
-    gl.glProgramParameter4fvNV(GL.GL_VERTEX_PROGRAM_NV, CV_CONSTS_1, rCVConsts);
 
     int[] tmpInt = new int[1];
-    gl.glGenProgramsNV(1, tmpInt);
+    gl.glGenProgramsARB(1, tmpInt);
     vertexProgramID = tmpInt[0];
-    gl.glBindProgramNV(GL.GL_VERTEX_PROGRAM_NV, vertexProgramID);
+    gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, vertexProgramID);
 
-    String programBuffer =
-      "!!VP1.0\n" +
-      "# CV_WORLDVIEWPROJ_0  = 0,\n" +
-      "# CV_WORLDVIEWPROJ_1  = 1,\n" +
-      "# CV_WORLDVIEWPROJ_2  = 2,\n" +
-      "# CV_WORLDVIEWPROJ_3  = 3,\n" +
-      "#\n" +
-      "# CV_UV_OFFSET_TO_USE = 4,\n" +
-      "#\n" +
-      "#\n" +
-      "# CV_UV_T0_NO_OFFSET  = 8,\n" +
-      "# CV_UV_T0_TYPE1      = 9,\n" +
-      "# CV_UV_T0_TYPE2      = 10,\n" +
-      "# CV_UV_T0_TYPE3      = 11,\n" +
-      "# CV_UV_T0_TYPE4      = 12,\n" +
-      "#\n" +
-      "# CV_UV_T1_NO_OFFSET  = 13,\n" +
-      "# CV_UV_T1_TYPE1      = 14,\n" +
-      "# CV_UV_T1_TYPE2      = 15,\n" +
-      "# CV_UV_T1_TYPE3      = 16,\n" +
-      "# CV_UV_T1_TYPE4      = 17,\n" +
-      "#\n" +
-      "# CV_UV_T2_NO_OFFSET  = 18,\n" +
-      "# CV_UV_T2_TYPE1      = 19,\n" +
-      "# CV_UV_T2_TYPE2      = 20,\n" +
-      "# CV_UV_T2_TYPE3      = 21,\n" +
-      "# CV_UV_T2_TYPE4      = 22,\n" +
-      "#\n" +
-      "# CV_UV_T3_NO_OFFSET  = 23,\n" +
-      "# CV_UV_T3_TYPE1      = 24,\n" +
-      "# CV_UV_T3_TYPE2      = 25,\n" +
-      "# CV_UV_T3_TYPE3      = 26,\n" +
-      "# CV_UV_T3_TYPE4      = 27,\n" +
-      "#\n" +
-      "# CV_CONSTS_1         = 28\n" +
-      "\n" +
-      "# Transform vertex-position to clip-space\n" +
-      "DP4 o[HPOS].x, v[OPOS], c[0];\n" +
-      "DP4 o[HPOS].y, v[OPOS], c[1];\n" +
-      "DP4 o[HPOS].z, v[OPOS], c[2];\n" +
-      "DP4 o[HPOS].w, v[OPOS], c[3];\n" +
-      "\n" +
-      "# Read which set of offsets to use\n" +
-      "ARL A0.x, c[4].x;\n" +
-      "\n" +
-      "#	c[CV_CONSTS_1] = c[28]\n" +
-      "#	x = 0\n" +
-      "#	y = 0.5\n" +
-      "#	z = 1\n" +
-      "#	w = 2.0f\n" +
-      "\n" +
-      "#  Put a scale factor into r0 so the sample points\n" +
-      "#    can be moved farther from the texel being written\n" +
-      "\n" +
-      "#MOV R0, c[28].z;\n" +
-      "\n" +
-      "# Add the offsets to the input texture\n" +
-      "# coordinate, creating 4 sets of independent\n" +
-      "# texture coordinates.\n" +
-      "\n" +
-      "ADD o[TEX0], c[A0.x + 8],  v[TEX0];\n" +
-      "ADD o[TEX1], c[A0.x + 13], v[TEX0];\n" +
-      "ADD o[TEX2], c[A0.x + 18], v[TEX0];\n" +
-      "ADD o[TEX3], c[A0.x + 23], v[TEX0];\n" +
-      "\n" +
-      "#MAD o[TEX0], R0, c[A0.x + 8],  v[TEX0];\n" +
-      "#MAD o[TEX1], R0, c[A0.x + 13], v[TEX0]; \n" +
-      "#MAD o[TEX2], R0, c[A0.x + 18], v[TEX0]; \n" +
-      "#MAD o[TEX3], R0, c[A0.x + 23], v[TEX0];\n" +
-      "\n" +
-      "END     \n";
+    String programBuffer = 
+"!!ARBvp1.0\n" +
+"# Constant memory location declarations (must match those in Java sources)\n" +
+"# CV_UV_OFFSET_TO_USE = 0\n" +
+"\n" +
+"# CV_UV_T0_NO_OFFSET  = 1\n" +
+"# CV_UV_T0_TYPE1      = 2\n" +
+"# CV_UV_T0_TYPE2      = 3\n" +
+"# CV_UV_T0_TYPE3      = 4\n" +
+"# CV_UV_T0_TYPE4      = 5\n" +
+"\n" +
+"# CV_UV_T1_NO_OFFSET  = 6\n" +
+"# CV_UV_T1_TYPE1      = 7\n" +
+"# CV_UV_T1_TYPE2      = 8\n" +
+"# CV_UV_T1_TYPE3      = 9\n" +
+"# CV_UV_T1_TYPE4      = 10\n" +
+"\n" +
+"# CV_UV_T2_NO_OFFSET  = 11\n" +
+"# CV_UV_T2_TYPE1      = 12\n" +
+"# CV_UV_T2_TYPE2      = 13\n" +
+"# CV_UV_T2_TYPE3      = 14\n" +
+"# CV_UV_T2_TYPE4      = 15\n" +
+"\n" +
+"# CV_UV_T3_NO_OFFSET  = 16\n" +
+"# CV_UV_T3_TYPE1      = 17\n" +
+"# CV_UV_T3_TYPE2      = 18\n" +
+"# CV_UV_T3_TYPE3      = 19\n" +
+"# CV_UV_T3_TYPE4      = 20\n" +
+"\n" +
+"# CV_CONSTS_1         = 21\n" +
+"\n" +
+"# Parameters\n" +
+"PARAM mvp [4]       = { state.matrix.mvp };     # modelview projection matrix\n" +
+"PARAM uvOffsetToUse = program.env[0];\n" +
+"PARAM uvOffsets[20] = { program.env[1..20] };\n" +
+"\n" +
+"# Addresses\n" +
+"ADDRESS addr;\n" +
+"\n" +
+"# Per vertex inputs\n" +
+"ATTRIB iPos         = vertex.position;          #position\n" +
+"\n" +
+"# Outputs\n" +
+"OUTPUT oPos         = result.position;          #position\n" +
+"\n" +
+"# Transform vertex-position to clip-space\n" +
+"DP4 oPos.x, iPos, mvp[0];\n" +
+"DP4 oPos.y, iPos, mvp[1];\n" +
+"DP4 oPos.z, iPos, mvp[2];\n" +
+"DP4 oPos.w, iPos, mvp[3];\n" +
+"\n" +
+"# Read which set of offsets to use\n" +
+"ARL addr.x, uvOffsetToUse.x;\n" +
+"\n" +
+"#    c[CV_CONSTS_1] = c[28]\n" +
+"#    x = 0\n" +
+"#    y = 0.5\n" +
+"#    z = 1\n" +
+"#    w = 2.0f\n" +
+"\n" +
+"#    Put a scale factor into r0 so the sample points\n" +
+"#    can be moved farther from the texel being written\n" +
+"#    MOV R0, c[28].z;\n" +
+"\n" +
+"# Add the offsets to the input texture\n" +
+"# coordinate, creating 4 sets of independent\n" +
+"# texture coordinates.\n" +
+"ADD result.texcoord[0], uvOffsets[addr.x     ], vertex.texcoord[0];\n" +
+"ADD result.texcoord[1], uvOffsets[addr.x + 5 ], vertex.texcoord[0];\n" +
+"ADD result.texcoord[2], uvOffsets[addr.x + 10], vertex.texcoord[0];\n" +
+"ADD result.texcoord[3], uvOffsets[addr.x + 15], vertex.texcoord[0];\n" +
+"\n" +
+"END\n";
 
-    gl.glLoadProgramNV(GL.GL_VERTEX_PROGRAM_NV, vertexProgramID, programBuffer.length(), programBuffer);
-    if (gl.glGetError() != GL.GL_NO_ERROR) {
-      throw new GLException("Error loading vertex program \"Texcoord_4_Offset.vp\"");
-    }
+    // set up constants (not currently used in the vertex program, though)
+    float[] rCVConsts = new float[] { 0, 0.5f, 1.0f, 2.0f };
+    gl.glProgramEnvParameter4fvARB(GL.GL_VERTEX_PROGRAM_ARB, CV_CONSTS_1, rCVConsts);
 
-    ///////////////////////////////////////////////////////////////////////////
-    // register combiner setup for equal weight combination of texels
-    ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_REGCOMBINER_EQ_WEIGHT_COMBINE] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_REGCOMBINER_EQ_WEIGHT_COMBINE], GL.GL_COMPILE);
-    initEqWeightCombine_PostMult(gl);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    loadProgram(gl, GL.GL_VERTEX_PROGRAM_ARB, programBuffer);
 
     ///////////////////////////////////////////////////////////////////////////
-    // register combiners setup for computing force from neighbors (step 1)
+    // fragment program setup for equal weight combination of texels
     ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_1] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_1], GL.GL_COMPILE);
-    initNeighborForceCalcStep1(gl);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    displayListIDs[CA_FRAGMENT_PROGRAM_EQ_WEIGHT_COMBINE] = gl.glGenLists(1);
+    initEqWeightCombine_PostMult(gl, displayListIDs[CA_FRAGMENT_PROGRAM_EQ_WEIGHT_COMBINE]);
 
     ///////////////////////////////////////////////////////////////////////////
-    // register combiners setup for computing force from neighbors (step 2)
+    // fragment program setup for computing force from neighbors (step 1)
     ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_2] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_2], GL.GL_COMPILE);
-    initNeighborForceCalcStep2(gl);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_1] = gl.glGenLists(1);
+    initNeighborForceCalcStep1(gl, displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_1]);
 
     ///////////////////////////////////////////////////////////////////////////
-    // register combiners setup to apply force
+    // fragment program setup for computing force from neighbors (step 2)
     ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_REGCOMBINER_APPLY_FORCE] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_REGCOMBINER_APPLY_FORCE], GL.GL_COMPILE);
-    initApplyForce(gl);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_2] = gl.glGenLists(1);
+    initNeighborForceCalcStep2(gl, displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_2]);
 
     ///////////////////////////////////////////////////////////////////////////
-    // register combiners setup to apply velocity
+    // fragment program setup to apply force
     ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_REGCOMBINER_APPLY_VELOCITY] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_REGCOMBINER_APPLY_VELOCITY], GL.GL_COMPILE);
-    initApplyVelocity(gl);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_FORCE] = gl.glGenLists(1);
+    initApplyForce(gl, displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_FORCE]);
 
     ///////////////////////////////////////////////////////////////////////////
-    // register combiners setup to create a normal map
+    // fragment program setup to apply velocity
     ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_REGCOMBINER_CREATE_NORMAL_MAP] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_REGCOMBINER_CREATE_NORMAL_MAP], GL.GL_COMPILE);
-    initCreateNormalMap(gl);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_VELOCITY] = gl.glGenLists(1);
+    initApplyVelocity(gl, displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_VELOCITY]);
 
     ///////////////////////////////////////////////////////////////////////////
-    // texture shader setup for dot product reflection
+    // fragment program setup to create a normal map
     ///////////////////////////////////////////////////////////////////////////
-    displayListIDs[CA_TEXTURE_SHADER_REFLECT] = gl.glGenLists(1);
-    gl.glNewList(displayListIDs[CA_TEXTURE_SHADER_REFLECT], GL.GL_COMPILE);
-    initDotProductReflect(gl);
-    gl.glDisable(GL.GL_BLEND);
-    gl.glEnable(GL.GL_TEXTURE_SHADER_NV);
-    gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glEndList();
+    displayListIDs[CA_FRAGMENT_PROGRAM_CREATE_NORMAL_MAP] = gl.glGenLists(1);
+    initCreateNormalMap(gl, displayListIDs[CA_FRAGMENT_PROGRAM_CREATE_NORMAL_MAP]);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // fragment program setup for dot product reflection
+    ///////////////////////////////////////////////////////////////////////////
+    displayListIDs[CA_FRAGMENT_PROGRAM_REFLECT] = gl.glGenLists(1);
+    initDotProductReflect(gl, displayListIDs[CA_FRAGMENT_PROGRAM_REFLECT]);
 
     ///////////////////////////////////////////////////////////////////////////
     // display list to render a single screen space quad.
@@ -739,7 +708,7 @@ public class Water {
     //    is same for all stages as we're turning height difference
     //    of nearest neightbor texels into a force value.
 
-    gl.glCallList(displayListIDs[CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_1]);
+    gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_1]);
 
     // set current source texture for stage 0 texture
     for (int i = 0; i < 4; i++)
@@ -757,14 +726,16 @@ public class Water {
     gl.glDisable(GL.GL_BLEND);
 
     // render using offset 1 (type 1 -- center + 3 of 4 nearest neighbors).
-    gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_OFFSET_TO_USE, 1, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 1, 0, 0, 0);
 
     // bind the vertex program to be used for this step and the next one.
-    gl.glBindProgramNV(GL.GL_VERTEX_PROGRAM_NV, vertexProgramID);
-    gl.glEnable(GL.GL_VERTEX_PROGRAM_NV);
+    gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, vertexProgramID);
+    gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
 
     // render a screen quad. with texture coords doing difference of nearby texels for force calc.
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
+
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
@@ -778,7 +749,7 @@ public class Water {
     //  that we didn't have enough texture lookups to do in the 
     //  first pass
 
-    gl.glCallList(displayListIDs[CA_REGCOMBINER_NEIGHBOR_FORCE_CALC_2]);
+    gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_2]);
     
     // Cannot use additive blending as the force contribution might
     //   be negative and would have to subtract from the dest.
@@ -801,10 +772,12 @@ public class Water {
 
     // vertex program already bound.
     // render using offset 2 (type 2 -- final nearest neighbor plus center of previous result).
-    gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_OFFSET_TO_USE, 2, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 2, 0, 0, 0);
 
     // render a screen quad
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
+
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
@@ -817,10 +790,10 @@ public class Water {
     // Apply the force with a scale factor to reduce it's magnitude.
     // Add this to the current texture representing the water height.
     
-    gl.glCallList(displayListIDs[CA_REGCOMBINER_APPLY_FORCE]);
+    gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_FORCE]);
 
     // use offsets of zero
-    gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
 
     // bind the vertex program to be used for this step and the next one.
 
@@ -835,6 +808,8 @@ public class Water {
 
     // Draw the quad to add in force.
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
+
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     ///////////////////////////////////////////////////////////////////
     // With velocity texture selected, render new excitation droplets
@@ -865,8 +840,8 @@ public class Water {
 
     //////////////////////////////////////////////////////////////////////
     // Apply velocity to position
-    gl.glCallList(displayListIDs[CA_REGCOMBINER_APPLY_VELOCITY]);
-    gl.glEnable(GL.GL_VERTEX_PROGRAM_NV);
+    gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_VELOCITY]);
+    gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
 
     gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightInput);
@@ -874,10 +849,12 @@ public class Water {
     gl.glEnable(GL.GL_TEXTURE_2D);
 
     // use offsets of zero
-    gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
 
     // Draw the quad to add in force.
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
+
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the input height texture
     gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
@@ -898,15 +875,16 @@ public class Water {
     }
 
     // use offsets of 3
-    gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_OFFSET_TO_USE, 3, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 3, 0, 0, 0);
 
-    gl.glCallList(displayListIDs[CA_REGCOMBINER_EQ_WEIGHT_COMBINE]);
+    gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_EQ_WEIGHT_COMBINE]);
 
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Draw the logo in the water.
     if (applyInteriorBoundaries) {
-      gl.glDisable(GL.GL_VERTEX_PROGRAM_NV);
+      gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
       drawInteriorBoundaryObjects(gl);
     }
 
@@ -951,20 +929,22 @@ public class Water {
     // Red mask first
     float[] pixMasks = new float[] { normalSTScale, 0.0f, 0.0f, 0.0f };
 
-    gl.glCombinerStageParameterfvNV(GL.GL_COMBINER2_NV, GL.GL_CONSTANT_COLOR0_NV, pixMasks);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 0, pixMasks);
 
     // Now green mask & scale:
     pixMasks[0] = 0.0f;
     pixMasks[1] = normalSTScale;
-    gl.glCombinerStageParameterfvNV(GL.GL_COMBINER2_NV, GL.GL_CONSTANT_COLOR1_NV, pixMasks);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 1, pixMasks);
 
-    gl.glCallList(displayListIDs[CA_REGCOMBINER_CREATE_NORMAL_MAP]);
+    gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_CREATE_NORMAL_MAP]);
 
     // set vp offsets to nearest neighbors
-    gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_OFFSET_TO_USE, 4, 0, 0, 0);
-    gl.glEnable(GL.GL_VERTEX_PROGRAM_NV);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 4, 0, 0, 0);
+    gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
     
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
+
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the normal map
     gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
@@ -1167,10 +1147,10 @@ public class Water {
       float type2Offset[] = { type2OffsetX[i], type2OffsetY[i], 0.0f, 0.0f };
       float type4Offset[] = { type4OffsetX[i], type4OffsetY[i], 0.0f, 0.0f };
 
-      gl.glProgramParameter4fvNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_T0_NO_OFFSET + 5 * i, noOffset);
-      gl.glProgramParameter4fvNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_T0_TYPE1     + 5 * i, type1Offset);
-      gl.glProgramParameter4fvNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_T0_TYPE2     + 5 * i, type2Offset);
-      gl.glProgramParameter4fvNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_T0_TYPE4     + 5 * i, type4Offset);
+      gl.glProgramEnvParameter4fvARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_NO_OFFSET + 5 * i, noOffset);
+      gl.glProgramEnvParameter4fvARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE1     + 5 * i, type1Offset);
+      gl.glProgramEnvParameter4fvARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE2     + 5 * i, type2Offset);
+      gl.glProgramEnvParameter4fvARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE4     + 5 * i, type4Offset);
     }
   }
 
@@ -1190,13 +1170,13 @@ public class Water {
     for (int i = 0; i < 4; ++i) {
       offsets[0] = blurDist * ( type3OffsetX[i]);
       offsets[1] = blurDist * ( type3OffsetY[i]);
-      gl.glProgramParameter4fvNV(GL.GL_VERTEX_PROGRAM_NV, CV_UV_T0_TYPE3 + 5 * i, offsets);
+      gl.glProgramEnvParameter4fvARB(GL.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE3 + 5 * i, offsets);
     }
   }
 
   private synchronized void drawDroplets(GL gl) {
-    gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
-    gl.glDisable(GL.GL_VERTEX_PROGRAM_NV);
+    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
 
     gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
     gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_DROPLET]);
@@ -1233,15 +1213,12 @@ public class Water {
   // Inlined register combiner and texture shader programs
   // (don't want to port nvparse as it's a dead-end; we'll focus on Cg instead)
 
-  private void initEqWeightCombine_PostMult(GL gl) {
-    float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
-    float[] const1 = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR0_NV, const0);
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR1_NV, const1);
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 4);
-  
-    int stage = 0;
+  private void initEqWeightCombine_PostMult(GL gl, int displayListID) {
+    // Take samples of all four texture inputs and average them,
+    // adding on a bias
+    //
+    // Original register combiner program:
+    //
     // Stage 0
     // rgb
     // {
@@ -1250,18 +1227,6 @@ public class Water {
     //   spare0 = sum();
     //   scale_by_one_half();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_HALF_BIAS_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1_ARB, GL.GL_HALF_BIAS_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_SCALE_BY_ONE_HALF_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 1
     // rgb
     // {
@@ -1270,18 +1235,6 @@ public class Water {
     //   spare1 = sum();
     //   scale_by_one_half();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE2_ARB, GL.GL_HALF_BIAS_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE3_ARB, GL.GL_HALF_BIAS_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE1_NV, GL.GL_SCALE_BY_ONE_HALF_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 1
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 2
     // rgb
     // {
@@ -1290,18 +1243,6 @@ public class Water {
     //   spare0 = sum();
     //   scale_by_one_half();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_SCALE_BY_ONE_HALF_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 2
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 3
     // rgb
     // {
@@ -1309,23 +1250,44 @@ public class Water {
     //   discard = spare0;
     //   spare0 = sum();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
 
-    // Stage 3
-    // alpha
-    discardAlpha(gl, stage);
+    float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
 
-    gl.glDisable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
-    doFinal(gl, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV);
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM const0  = program.env[0];\n" +
+"PARAM oneQtr  = { 0.25, 0.25, 0.25, 0.25 };\n" +
+"PARAM two     = { 2.0, 2.0, 2.0, 2.0 };\n" +
+"TEMP texSamp0, texSamp1, texSamp2, texSamp3;\n" +
+"TEMP spare0, spare1;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], 2D;\n" +
+"TEX texSamp2, fragment.texcoord[2], texture[2], 2D;\n" +
+"TEX texSamp3, fragment.texcoord[3], texture[3], 2D;\n" +
+"ADD spare0, texSamp0, texSamp1;\n" +
+"ADD spare1, texSamp2, texSamp3;\n" +
+"ADD spare0, spare0, spare1;\n" +
+"SUB spare0, spare0, two;\n" +
+"MAD result.color, oneQtr, spare0, const0;\n" +
+"\n" +
+"END\n";
+
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
+
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 0, const0);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void initNeighborForceCalcStep1(GL gl) {
+  private void initNeighborForceCalcStep1(GL gl, int displayListID) {
     // Step one in the nearest-neighbor force calculation for height-based water
     // simulation.  NeighborForceCalc2 is the second step.
     //
@@ -1342,12 +1304,8 @@ public class Water {
     //       so force for that axis == t1 - t0 + t2 - t0
     //  tex3 = 3rd neighbor on other axis
 
-    float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
-
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR0_NV, const0);
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 8);
-
-    int stage = 0;
+    // Original register combiner program:
+    //
     // Stage 0
     // rgb
     // {
@@ -1356,18 +1314,6 @@ public class Water {
     //   discard = tex1;
     //   spare0 = sum();  
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 1
     // rgb
     // {
@@ -1376,18 +1322,6 @@ public class Water {
     //   discard = tex2;
     //   spare1 = sum();  
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE2_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE1_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 1
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 2
     // // 'force' for 1st axis
     // rgb 
@@ -1397,18 +1331,6 @@ public class Water {
     //   discard = spare1;
     //   spare0 = sum();  
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 2
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 3
     // // one more point for 2nd axis
     // rgb
@@ -1418,18 +1340,6 @@ public class Water {
     //   discard = tex3;
     //   spare1 = sum();  
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE3_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE1_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 3
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 4
     // rgb
     // {
@@ -1438,18 +1348,6 @@ public class Water {
     //   discard = spare1;
     //   spare0 = sum();  
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 4
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 5
     // // Now add in a force to gently pull the center texel's 
     // //  value to 0.5.  The strength of this is controlled by
@@ -1463,18 +1361,6 @@ public class Water {
     //   discard = const0;
     //   spare1 = sum();  
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE1_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-  
-    // Stage 5
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 6
     // {
     //   rgb
@@ -1484,18 +1370,6 @@ public class Water {
     //     spare0 = sum();
     //   }
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 6
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 7
     // rgb
     // {
@@ -1503,22 +1377,61 @@ public class Water {
     //   discard = const0;
     //   spare0 = sum();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
 
-    // Stage 7
-    // alpha
-    discardAlpha(gl, stage);
+    float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
 
-    gl.glDisable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
-    doFinal(gl, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM const0 = program.env[0];\n" +
+"PARAM three                 = {  3,     3,     3,    1.0 };\n" +
+"TEMP texSamp0, texSamp1, texSamp2, texSamp3;\n" +
+"TEMP spare0, spare1;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], 2D;\n" +
+"TEX texSamp2, fragment.texcoord[2], texture[2], 2D;\n" +
+"TEX texSamp3, fragment.texcoord[3], texture[3], 2D;\n" +
+"ADD spare0, texSamp1, texSamp2;\n" +
+"MAD spare1, const0, const0, const0;\n" +
+"ADD spare0, texSamp3, spare0;\n" +
+"ADD spare0, spare1, spare0;\n" +
+"ADD spare1, three, const0;\n" +
+"MAD result.color, -spare1, texSamp0, spare0;\n" +
+
+// Faster version which hardcodes in value of const0:
+//"ADD spare0, texSamp1, texSamp2;\n" +
+//"ADD spare1, texSamp3, pointSevenFive;\n" +
+//"ADD spare0, spare0, spare1;\n" +
+//"MAD result.color, minusThreePointFive, texSamp0, spare0;\n" +
+
+// Straightforward port:
+//"SUB spare0, texSamp1, texSamp0;\n" +
+//"SUB spare1, texSamp2, texSamp0;\n" +
+//"ADD spare0, spare0, spare1;\n" +
+//"SUB spare1, texSamp3, texSamp0;\n" +
+//"ADD spare0, spare0, spare1;\n" +
+//"SUB spare1, const0, texSamp0;\n" +
+//"MAD spare0, const0, spare1, spare0;\n" +
+//"ADD result.color, spare0, const0;\n" +
+
+"\n" +
+"END\n";
+
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
+
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 0, const0);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void initNeighborForceCalcStep2(GL gl) {
+  private void initNeighborForceCalcStep2(GL gl, int displayListID) {
     // 2nd step of force calc for render-to-texture
     // water simulation.
     //
@@ -1535,12 +1448,8 @@ public class Water {
     // Result from t1 - t0 is added to this t2
     //  partial result & output
 
-    float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
-
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR0_NV, const0);
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 2);
-
-    int stage = 0;
+    // Original register combiner program:
+    //
     // Stage 0
     // last element of neighbor force
     // rgb
@@ -1549,18 +1458,6 @@ public class Water {
     //   discard = tex1;
     //   spare0 = sum();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 1
     // add with previous partial force amount
     // rgb
@@ -1569,22 +1466,35 @@ public class Water {
     //   discard = tex2;
     //   spare0 = sum();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE2_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
 
-    // Stage 1
-    // alpha
-    discardAlpha(gl, stage);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
-    gl.glDisable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
-    doFinal(gl, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV);
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM const0 = program.env[0];\n" +
+"TEMP texSamp0, texSamp1, texSamp2;\n" +
+"TEMP spare0;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], 2D;\n" +
+"TEX texSamp2, fragment.texcoord[2], texture[2], 2D;\n" +
+"SUB spare0, texSamp1, texSamp0;\n" +
+"ADD result.color, spare0, texSamp2;\n" +
+"\n" +
+"END\n";
+
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
+
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void initApplyForce(GL gl) {
+  private void initApplyForce(GL gl, int displayListID) {
     // This shader samples t1, biases its value to a signed number, and applies this
     // value multiplied by a scale factor to the t0 sample.
     //
@@ -1608,14 +1518,8 @@ public class Water {
     //
     // New velocity = force * scale + previous velocity
 
-    float[] const0 = new float[] { 0.25f, 0.25f, 0.25f, 1.0f };
-    float[] const1 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
-
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR0_NV, const0);
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR1_NV, const1);
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 4);
-  
-    int stage = 0;
+    // Original register combiner program:
+    //
     // Stage 0
     // rgb
     // {
@@ -1624,18 +1528,6 @@ public class Water {
     //   spare0 = sum();
     //   scale_by_one_half();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE1_ARB, GL.GL_EXPAND_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE0_ARB, GL.GL_EXPAND_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_SCALE_BY_ONE_HALF_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 1
     // rgb
     // {
@@ -1643,22 +1535,45 @@ public class Water {
     //   discard = const1;
     //   spare0 = sum();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_CONSTANT_COLOR1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
 
-    // Stage 1
-    // alpha
-    discardAlpha(gl, stage);
+    float[] const0 = new float[] { 0.25f, 0.25f, 0.25f, 1.0f };
+    float[] const1 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
 
-    gl.glDisable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
-    doFinal(gl, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_UNSIGNED_IDENTITY_NV);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM const0 = program.env[0];\n" +
+"PARAM const1 = program.env[1];\n" +
+"PARAM one     = { 1.0, 1.0, 1.0, 0.0 };\n" +
+"PARAM oneHalf = { 0.5, 0.5, 0.5, 1.0 };\n" +
+"PARAM two     = { 2.0, 2.0, 2.0, 1.0 };\n" +
+"TEMP texSamp0, texSamp1;\n" +
+"TEMP spare0, spare1;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], 2D;\n" +
+"MAD spare0, two, texSamp1, -one;\n" +
+"MAD spare1, two, texSamp0, -one;\n" +
+"MAD spare0, spare0, const0, spare1;\n" +
+"MAD result.color, oneHalf, spare0, const1;\n" +
+"\n" +
+"END\n";
+
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
+
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 0, const0);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 1, const1);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void initApplyVelocity(GL gl) {
+  private void initApplyVelocity(GL gl, int displayListID) {
     // This shader samples t1, biases its value to a signed number, and applies this
     // value multiplied by a scale factor to the t0 sample.
     //
@@ -1682,12 +1597,8 @@ public class Water {
     //
     // New height = velocity * scale factor + old height
 
-    float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
-
-    gl.glCombinerParameterfvNV(GL.GL_CONSTANT_COLOR0_NV, const0);
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 2);
-  
-    int stage = 0;
+    // Original register combiner program:
+    //
     // Stage 0
     // rgb
     // {
@@ -1696,18 +1607,6 @@ public class Water {
     //   spare0 = sum();
     //   scale_by_one_half();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE1_ARB, GL.GL_EXPAND_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE0_ARB, GL.GL_EXPAND_NORMAL_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_SCALE_BY_ONE_HALF_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 1
     // rgb
     // {
@@ -1716,22 +1615,42 @@ public class Water {
     //   spare0 = sum();
     // }
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
 
-    // Stage 1
-    // alpha
-    discardAlpha(gl, stage);
+    float[] const0 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
 
-    gl.glDisable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
-    doFinal(gl, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_UNSIGNED_IDENTITY_NV);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM const0 = program.env[0];\n" +
+"PARAM one     = { 1.0, 1.0, 1.0, 0.0 };\n" +
+"PARAM oneHalf = { 0.5, 0.5, 0.5, 1.0 };\n" +
+"PARAM two     = { 2.0, 2.0, 2.0, 1.0 };\n" +
+"TEMP texSamp0, texSamp1;\n" +
+"TEMP spare0, spare1;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], 2D;\n" +
+"MAD spare0, two, texSamp1, -one;\n" +
+"MAD spare1, two, texSamp0, -one;\n" +
+"MAD spare0, spare0, const0, spare1;\n" +
+"MAD result.color, oneHalf, spare0, const0;\n" +
+"\n" +
+"END\n";
+
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
+
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glProgramEnvParameter4fvARB(GL.GL_FRAGMENT_PROGRAM_ARB, 0, const0);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void initCreateNormalMap(GL gl) {
+  private void initCreateNormalMap(GL gl, int displayListID) {
     // Neighbor-differencing for RGB normal map creation.  Scale factors for s and t
     // axis components are set in program code.
     // This does a crude 1-s^2-t^2 calculation for the blue component in order to
@@ -1747,9 +1666,8 @@ public class Water {
     // tex2 =  0, +t
     // tex3 =  0, -t
 
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 7);
-  
-    int stage = 0;
+    // Original register combiner program:
+    //
     // Stage 0
     // rgb
     // {
@@ -1759,18 +1677,6 @@ public class Water {
     //   spare0 = sum();
     //   scale_by_four();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE1_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE0_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_SCALE_BY_FOUR_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 1
     // rgb
     // {
@@ -1780,25 +1686,14 @@ public class Water {
     //   spare1 = sum();
     //   scale_by_four();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE2_ARB, GL.GL_SIGNED_NEGATE_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE3_ARB, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE1_NV, GL.GL_SCALE_BY_FOUR_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 1
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 2
     // Define const0 in the third general combiner as RGBA = (scale, 0, 0, 0)
     //  Where scale [0,1] is applied to reduce the magnitude
     //  of the s axis component of the normal.
     // Define const1 in the third combiner similarly to affect the t axis component
     // define these by "ramboing" them in the C++ code that uses this combiner script.
-    //
+    // Note: these variables have been renamed to "redMask" and "greenMask" in
+    // the fragment program below.
     // rgb
     // {
     //   // see comment about consts above!
@@ -1807,64 +1702,20 @@ public class Water {
     //   discard = spare1 * const1;
     //   spare0 = sum();
     // }
-    //
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_CONSTANT_COLOR1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 2
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 3
     // rgb
     // {
     //   tex1 = spare0 * spare0;
     //   scale_by_two();
     // }
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_TEXTURE1_ARB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SCALE_BY_TWO_NV, GL.GL_NONE, false, false, false);
-
-    // Stage 3
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 4
-    //
     // const0 = (1, 1, 0, 0);
     // rgb
     // {
     //   spare1 = unsigned_invert(tex1) . const0;
     //   scale_by_one_half();
     // }
-    //
-    float[] const0 = new float[] { 1.0f, 1.0f, 0.0f, 0.0f };
-
-    gl.glCombinerStageParameterfvNV(GL.GL_COMBINER0_NV + stage, GL.GL_CONSTANT_COLOR0_NV, const0);
-
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE1_ARB, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_SPARE1_NV, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SCALE_BY_ONE_HALF_NV, GL.GL_NONE, true, false, false);
-
-    // Stage 4
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 5
-    //
     // const0 = (0.5, 0.5, 0, 0);
     // rgb
     // {
@@ -1872,26 +1723,7 @@ public class Water {
     //   discard = const0;
     //   spare0 = sum();
     // }
-    //
-    const0 = new float[] { 0.5f, 0.5f, 0.0f, 0.0f };
-
-    gl.glCombinerStageParameterfvNV(GL.GL_COMBINER0_NV + stage, GL.GL_CONSTANT_COLOR0_NV, const0);
-
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-
-    // Stage 5
-    // alpha
-    discardAlpha(gl, stage);
-
-    ++stage;
-
     // Stage 6
-    //
-    //
     // const0 = (0, 0, 1, 1);
     // rgb 
     // {
@@ -1899,157 +1731,157 @@ public class Water {
     //   discard = spare0;
     //   spare0 = sum();
     // }
-    //
-    const0 = new float[] { 0.0f, 0.0f, 1.0f, 1.0f };
 
-    gl.glCombinerStageParameterfvNV(GL.GL_COMBINER0_NV + stage, GL.GL_CONSTANT_COLOR0_NV, const0);
 
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_SPARE1_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_CONSTANT_COLOR0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_SPARE0_NV, GL.GL_SIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
+    float[] const0 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
 
-    // Stage 6
-    // alpha
-    discardAlpha(gl, stage);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
-    ++stage;
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM redMask   = program.env[0];\n" +
+"PARAM greenMask = program.env[1];\n" +
+"PARAM const0    = { 1.0, 1.0, 0.0, 0.0 };\n" +
+"PARAM const1    = { 0.5, 0.5, 0.0, 0.0 };\n" +
+"PARAM const2    = { 0.0, 0.0, 1.0, 1.0 };\n" +
+"PARAM one     = { 1.0, 1.0, 1.0, 0.0 };\n" +
+"PARAM oneHalf = { 0.5, 0.5, 0.5, 1.0 };\n" +
+"PARAM two     = { 2.0, 2.0, 2.0, 1.0 };\n" +
+"PARAM four    = { 4.0, 4.0, 4.0, 1.0 };\n" +
+"TEMP texSamp0, texSamp1, texSamp2, texSamp3;\n" +
+"TEMP spare0, spare1, spare2;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"TEX texSamp1, fragment.texcoord[1], texture[1], 2D;\n" +
+"TEX texSamp2, fragment.texcoord[2], texture[2], 2D;\n" +
+"TEX texSamp3, fragment.texcoord[3], texture[3], 2D;\n" +
+"SUB spare0, texSamp0, texSamp1;\n" +
+"MUL spare0, spare0, four;\n" +
+"SUB spare1, texSamp3, texSamp2;\n" +
+"MUL spare1, spare1, four;\n" +
+"MUL spare0, spare0, redMask;\n" +
+"MAD spare0, greenMask, spare1, spare0;\n" +
+"MUL_SAT spare2, spare0, spare0;\n" +
+"SUB spare2, one, spare2;\n" +
+"DP3 spare1, spare2, const0;\n" +
+"ADD spare0, spare0, const1;\n" +
+"MAD result.color, const2, spare1, spare0;\n" +
+"\n" +
+"END\n";
 
-    gl.glEnable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
-    doFinal(gl, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV);
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
+
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void initDotProductReflect(GL gl) {
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_SHADER_OPERATION_NV, GL.GL_TEXTURE_2D);
+  private void initDotProductReflect(GL gl, int displayListID) {
+    // Pseudocode for this operation, derived from the NVidia
+    // texture_shader.txt documentation at
+    // http://oss.sgi.com/projects/ogl-sample/registry/NV/texture_shader.txt
 
-    // 1 of 3
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_RGBA_UNSIGNED_DOT_PRODUCT_MAPPING_NV, GL.GL_EXPAND_NORMAL_NV);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_SHADER_OPERATION_NV, GL.GL_DOT_PRODUCT_NV);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_PREVIOUS_TEXTURE_INPUT_NV, GL.GL_TEXTURE0_ARB);
+    // TEX texSamp0, fragment.texcoord[0], texture[0], 2D;
+    // MAD texSamp0, two, texSamp0, minusOne;
+    // TEMP dotPP = texSamp0 . texcoord[1];
+    // TEMP dotP  = texSamp0 . texcoord[2];
+    // TEMP dotC  = texSamp0 . texcoord[3];
+    // TEMP R, N, E;
+    // N = [dotPP, dotP, dotC];
+    // ooNLength = N dot N;
+    // RCP ooNLength, ooNLength;
+    // E = [texcoord[1].w, texcoord[2].w, texcoord[3].w];
+    // nDotE = N dot E;
+    // MUL R, nDotE, N;
+    // MUL R, R, two;
+    // MUL R, R, ooNLength;
+    // SUB R, R, E;
+    // TEX result.color, R, texture[3], CUBE;
 
-    // 2 of 3
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_RGBA_UNSIGNED_DOT_PRODUCT_MAPPING_NV, GL.GL_EXPAND_NORMAL_NV);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_SHADER_OPERATION_NV, GL.GL_DOT_PRODUCT_NV);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_PREVIOUS_TEXTURE_INPUT_NV, GL.GL_TEXTURE0_ARB);
+    // This fragment program is pretty length-sensitive; making it too
+    // big causes the frame rate to be cut in half on my machine
+    // (Quadro FX Go700) due to sync-to-vertical-refresh. The program
+    // below is more optimized in its use of temporaries. Some of the
+    // scaling operations on the first component of the normal vector
+    // (before subtracting off the E vector) don't appear to make much
+    // of a visual difference so they are skipped as well.
 
-    // 3 of 3
-    gl.glActiveTextureARB(GL.GL_TEXTURE3_ARB);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_RGBA_UNSIGNED_DOT_PRODUCT_MAPPING_NV, GL.GL_EXPAND_NORMAL_NV);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_SHADER_OPERATION_NV, GL.GL_DOT_PRODUCT_REFLECT_CUBE_MAP_NV);
-    gl.glTexEnvi(GL.GL_TEXTURE_SHADER_NV, GL.GL_PREVIOUS_TEXTURE_INPUT_NV, GL.GL_TEXTURE0_ARB);
+    int[] tmpInt = new int[1];
+    gl.glGenProgramsARB(1, tmpInt);
+    int fragProg = tmpInt[0];
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 1);
-  
-    int stage = 0;
-    // Stage 0
-    // rgb
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doIn(gl, stage, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    doOut(gl, stage, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
+    String program =
+"!!ARBfp1.0\n" +
+"PARAM minusOne = { -1.0, -1.0, -1.0, 0.0 };\n" +
+"PARAM two      = {  2.0,  2.0,  2.0, 0.0 };\n" +
+"TEMP texSamp0, R, N, E;\n" +
+"\n" +
+"TEX texSamp0, fragment.texcoord[0], texture[0], 2D;\n" +
+"MAD texSamp0, two, texSamp0, minusOne;\n" +
+"DP3 N.x,   texSamp0, fragment.texcoord[1];\n" +
+"DP3 N.y,   texSamp0, fragment.texcoord[2];\n" +
+"DP3 N.z,   texSamp0, fragment.texcoord[3];\n" +
+"MOV E.x, fragment.texcoord[1].w;\n" +
+"MOV E.y, fragment.texcoord[2].w;\n" +
+"MOV E.z, fragment.texcoord[3].w;\n" +
+"MUL N, N, two;\n" +
+"SUB R, N, E;\n" +
+"TEX result.color, R, texture[3], CUBE;\n" +
+"\n" +
+"END";
 
-    // Stage 0
-    // alpha
-    discardAlpha(gl, stage);
+    loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, program);
 
-    ++stage;
-
-    gl.glDisable(GL.GL_PER_STAGE_CONSTANTS_NV);
-    gl.glCombinerParameteriNV(GL.GL_COLOR_SUM_CLAMP_NV, GL.GL_FALSE);
-    doFinal(gl, GL.GL_TEXTURE3_ARB, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV);
+    gl.glNewList(displayListID, GL.GL_COMPILE);
+    gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEndList();
   }
 
-  private void discardAlpha(GL gl, int stage) {
-    doIn(gl, stage, GL.GL_ALPHA, GL.GL_VARIABLE_A_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_BLUE);
-    doIn(gl, stage, GL.GL_ALPHA, GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_BLUE);
-    doIn(gl, stage, GL.GL_ALPHA, GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_BLUE);
-    doIn(gl, stage, GL.GL_ALPHA, GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_BLUE);
-    doOut(gl, stage, GL.GL_ALPHA, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-  }
-
-  private void doIn(GL gl,
-                    int stage,
-                    int colorSpace,
-                    int variable,
-                    int reg,
-                    int operation,
-                    int colorSelector) {
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV + stage,
-                         colorSpace,
-                         variable,
-                         reg,
-                         operation,
-                         colorSelector);
-  }
-
-  private void doOut(GL gl,
-                     int stage,
-                     int colorSpace,
-                     int in0,
-                     int in1,
-                     int out0,
-                     int scale,
-                     int bias,
-                     boolean unknown0,
-                     boolean unknown1,
-                     boolean unknown2) {
-    gl.glCombinerOutputNV(GL.GL_COMBINER0_NV + stage,
-                          colorSpace,
-                          in0,
-                          in1,
-                          out0,
-                          scale,
-                          bias,
-                          unknown0,
-                          unknown1,
-                          unknown2);
-  }
-
-  private void doFinal(GL gl,
-                       int variableDInput,
-                       int variableDOperation,
-                       int variableGInput,
-                       int variableGOperation) {
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_A_NV,
-                              GL.GL_ZERO,
-                              GL.GL_UNSIGNED_IDENTITY_NV,
-                              GL.GL_RGB);
-
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_B_NV,
-                              GL.GL_ZERO,
-                              GL.GL_UNSIGNED_IDENTITY_NV,
-                              GL.GL_RGB);
-
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_C_NV,
-                              GL.GL_ZERO,
-                              GL.GL_UNSIGNED_IDENTITY_NV,
-                              GL.GL_RGB);
-
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_D_NV,
-                              variableDInput,
-                              variableDOperation,
-                              GL.GL_RGB);
-
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_E_NV,
-                              GL.GL_ZERO,
-                              GL.GL_UNSIGNED_IDENTITY_NV,
-                              GL.GL_RGB);
-
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_F_NV,
-                              GL.GL_ZERO,
-                              GL.GL_UNSIGNED_IDENTITY_NV,
-                              GL.GL_RGB);
-
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_G_NV,
-                              variableGInput,
-                              variableGOperation,
-                              GL.GL_ALPHA);
+  private void loadProgram(GL gl,
+                           int target,
+                           String programBuffer) {
+    gl.glProgramStringARB(target, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programBuffer.length(), programBuffer);
+    int[] errPos = new int[1];
+    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+    if (errPos[0] >= 0) {
+      String kind = "Program";
+      if (target == GL.GL_VERTEX_PROGRAM_ARB) {
+        kind = "Vertex program";
+      } else if (target == GL.GL_FRAGMENT_PROGRAM_ARB) {
+        kind = "Fragment program";
+      }
+      System.out.println(kind + " failed to load:");
+      String errMsg = gl.glGetString(GL.GL_PROGRAM_ERROR_STRING_ARB);
+      if (errMsg == null) {
+        System.out.println("[No error message available]");
+      } else {
+        System.out.println("Error message: \"" + errMsg + "\"");
+      }
+      System.out.println("Error occurred at position " + errPos[0] + " in program:");
+      int endPos = errPos[0];
+      while (endPos < programBuffer.length() && programBuffer.charAt(endPos) != '\n') {
+        ++endPos;
+      }
+      System.out.println(programBuffer.substring(errPos[0], endPos));
+      throw new GLException("Error loading " + kind);
+    } else {
+      if (target == GL.GL_FRAGMENT_PROGRAM_ARB) {
+        int[] isNative = new int[1];
+        gl.glGetProgramivARB(GL.GL_FRAGMENT_PROGRAM_ARB,
+                             GL.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
+                             isNative);
+        //        if (isNative[1] != 1) {
+        if (isNative[0] != 1) {
+          System.out.println("WARNING: fragment program is over native resource limits");
+          Thread.dumpStack();
+        }
+      }
+    }
   }
 }

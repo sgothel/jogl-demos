@@ -48,11 +48,11 @@ import gleem.linalg.*;
  *
  * <P>
  *
- * Demonstrates pbuffers, vertex programs, register combiners
+ * Demonstrates pbuffers, vertex programs, fragment programs
  *
  * <P>
  *
- * Ported to Java by Kenneth Russell
+ * Ported to Java and ARB_fragment_program by Kenneth Russell
  *
  */
 
@@ -131,9 +131,8 @@ public class ProceduralTexturePhysics {
 
       try {
 	checkExtension(gl, "GL_ARB_multitexture");
-	checkExtension(gl, "GL_NV_vertex_program");
-	checkExtension(gl, "GL_NV_texture_shader");
-	checkExtension(gl, "GL_NV_register_combiners");
+	checkExtension(gl, "GL_ARB_vertex_program");
+	checkExtension(gl, "GL_ARB_fragment_program");
 	checkExtension(gl, "GL_ARB_pbuffer");
 	checkExtension(gl, "GL_ARB_pixel_format");
       } catch (GLException e) {
