@@ -478,7 +478,8 @@ public class HWShadowmapsSimple {
 
   private BufferedImage readPNGImage(String resourceName) {
     try {
-      BufferedImage img = ImageIO.read(getClass().getClassLoader().getResourceAsStream(resourceName));
+      // Note: use of BufferedInputStream works around 4764639/4892246
+      BufferedImage img = ImageIO.read(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(resourceName)));
       if (img == null) {
         throw new RuntimeException("Error reading resource " + resourceName);
       }

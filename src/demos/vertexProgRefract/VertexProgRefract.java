@@ -468,7 +468,8 @@ public class VertexProgRefract {
     private void loadPNGCubemap(GL gl, GLU glu, String baseName, boolean mipmapped) throws IOException {
       for (int i = 0; i < suffixes.length; i++) {
         String resourceName = baseName + "_" + suffixes[i] + ".png";
-	BufferedImage img = ImageIO.read(getClass().getClassLoader().getResourceAsStream(resourceName));
+        // Note: use of BufferedInputStream works around 4764639/4892246
+	BufferedImage img = ImageIO.read(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(resourceName)));
 	if (img == null) {
 	  throw new RuntimeException("Error reading PNG image " + resourceName);
 	}
