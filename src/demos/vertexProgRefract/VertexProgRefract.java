@@ -115,73 +115,106 @@ public class VertexProgRefract {
     private boolean toggleWire = false;
 
     private static final String transformRefract = 
-      "!!VP1.0 # Refraction\n" +
-      "# transform vertex position to eye space\n" +
-      "DP4    R9.x, c[8], v[OPOS] ;\n" +
-      "DP4    R9.y, c[9], v[OPOS] ;\n" +
-      "DP4    R9.z, c[10], v[OPOS] ;\n" +
-      "DP4    R9.w, c[11], v[OPOS] ;\n" +
-      "\n" +
-      "# transform normal to eye space\n" +
-      "DP3    R11.x, c[4], v[NRML] ;\n" +
-      "DP3    R11.y, c[5], v[NRML] ;\n" +
-      "DP3    R11.z, c[6], v[NRML] ;\n" +
-      "\n" +
-      "# vertex->eye vector\n" +
-      "ADD    R0, -R9, c[59];     # c[59] = eye position in eye space, usually (0,0,0,1)\n" +
-      "\n" +
-      "# normalize\n" +
-      "DP3    R8.w, R0, R0;\n" +
-      "RSQ    R8.w, R8.w;\n" +
-      "MUL    R8, R0, R8.w;       # r8 = eye/incident vector\n" +
-      "\n" +
-      "# refraction, Renderman style\n" +
-      "\n" +
-      "# float IdotN = I.N;\n" +
-      "# float k = 1 - eta*eta*(1 - IdotN*IdotN);\n" +
-      "# return k < 0 ? (0,0,0) : eta*I - (eta*IdotN + sqrt(k))*N;\n" +
-      "\n" +
-      "DP3    R0.x, R11, -R8;             # r0 = N.I\n" +
-      "\n" +
-      "MAD    R1.x, -R0.x, R0.x, c[64].y; # r1 = -IdotN*IdotN + 1\n" +
-      "MUL    R1.x, R1.x, c[58].y;        # r1 = -(r1*eta*eta)+1\n" +
-      "ADD    R1.x, c[64].y, -R1.x;\n" +
-      "\n" +
-      "RSQ    R2.x, R1.x;\n" +
-      "RCP    R2.x, R2.x;\n" +
-      "MAD    R2.x, c[58].x, R0.x, R2.x;\n" +
-      "MUL    R2, R11, R2.x;\n" +
-      "MAD    R2, c[58].x, -R8, R2;\n" +
-      "\n" +
-      "# transform refracted ray by cubemap transform\n" +
-      "DP3    o[TEX0].x, c[12], R2;\n" +
-      "DP3    o[TEX0].y, c[13], R2;\n" +
-      "DP3    o[TEX0].z, c[14], R2;\n" +
-      "\n" +
-      "# calculate reflection\n" +
-      "\n" +
-      "MUL    R0, R11, c[64].z;\n" +
-      "DP3    R3.w, R11, R8;\n" +
-      "MAD    R3, R3.w, R0, -R8;\n" +
-      "\n" +
-      "# transform reflected ray by cubemap transform\n" +
-      "DP3    o[TEX1].x, c[12], R3;\n" +
-      "DP3    o[TEX1].y, c[13], R3;\n" +
-      "DP3    o[TEX1].z, c[14], R3;\n" +
-      "\n" +
-      "# cheesy Fresnel approximation = (1-(I.N))^p\n" +
-      "DP3    R0.x, R8, R11;\n" +
-      "ADD    R0.x, c[64].y, -R0.x;\n" +
-      "MUL    R0.x, R0.x, R0.x;\n" +
-      "MUL    o[COL0], R0.x, c[62];\n" +
-      "\n" +
-      "# transform vertex to clip space\n" +
-      "DP4	o[HPOS].x, c[0], v[OPOS] ;\n" +
-      "DP4	o[HPOS].y, c[1], v[OPOS] ;\n" +
-      "DP4	o[HPOS].z, c[2], v[OPOS] ;\n" +
-      "DP4	o[HPOS].w, c[3], v[OPOS] ;\n" +
-      "\n" +
-      "END";
+"!!ARBvp1.0\n" +
+"# Refraction\n" +
+"\n" +
+"# Parameters\n" +
+"PARAM mvp [4]       = { state.matrix.mvp };     # modelview projection matrix\n" +
+"PARAM mvit[4]       = { state.matrix.modelview.invtrans }; # modelview matrix inverse transpose\n" +
+"PARAM mv  [4]       = { state.matrix.modelview }; # modelview matrix\n" +
+"PARAM tex [4]       = { state.matrix.texture }; # texture matrix\n" +
+"PARAM eyePosition   = program.env[0];           # eye position\n" +
+"PARAM fresnel       = program.env[1];           # fresnel multiplier\n" +
+"PARAM texScale      = program.env[2];           # texture scale\n" +
+"PARAM misc          = program.env[3];           # misc. constants\n" +
+"PARAM refraction    = program.env[4];           # refractive index\n" +
+"\n" +
+"# Per vertex inputs\n" +
+"ATTRIB iPos         = vertex.position;          #position\n" +
+"ATTRIB iCol0        = vertex.color;             #color\n" +
+"ATTRIB iNorm        = vertex.normal;            #normal\n" +
+"\n" +
+"# Temporaries\n" +
+"TEMP r0;\n" +
+"TEMP r1;\n" +
+"TEMP r2;\n" +
+"TEMP r3;\n" +
+"TEMP r8;\n" +
+"TEMP r9;\n" +
+"TEMP r11;\n" +
+"\n" +
+"# Outputs\n" +
+"OUTPUT oPos         = result.position;          #position\n" +
+"OUTPUT oCol0        = result.color;             #primary color\n" +
+"OUTPUT oTex0        = result.texcoord[0];       #texture coordinate set 0\n" +
+"OUTPUT oTex1        = result.texcoord[1];       #texture coordinate set 1\n" +
+"\n" +
+"\n" +
+"# transform vertex position to eye space\n" +
+"DP4    r9.x, mv[0], iPos ;\n" +
+"DP4    r9.y, mv[1], iPos ;\n" +
+"DP4    r9.z, mv[2], iPos ;\n" +
+"DP4    r9.w, mv[3], iPos ;\n" +
+"\n" +
+"# transform normal to eye space\n" +
+"DP3    r11.x, mvit[0], iNorm ;\n" +
+"DP3    r11.y, mvit[1], iNorm ;\n" +
+"DP3    r11.z, mvit[2], iNorm ;\n" +
+"\n" +
+"# vertex->eye vector\n" +
+"ADD    r0, -r9, eyePosition;\n" +
+"\n" +
+"# normalize\n" +
+"DP3    r8.w, r0, r0;\n" +
+"RSQ    r8.w, r8.w;\n" +
+"MUL    r8, r0, r8.w;       # r8 = eye/incident vector\n" +
+"\n" +
+"# refraction, Renderman style\n" +
+"\n" +
+"# float IdotN = I.N;\n" +
+"# float k = 1 - eta*eta*(1 - IdotN*IdotN);\n" +
+"# return k < 0 ? (0,0,0) : eta*I - (eta*IdotN + sqrt(k))*N;\n" +
+"\n" +
+"DP3    r0.x, r11, -r8;             # r0 = N.I\n" +
+"\n" +
+"MAD    r1.x, -r0.x, r0.x, misc.y;  # r1 = -IdotN*IdotN + 1\n" +
+"MUL    r1.x, r1.x, refraction.y;   # r1 = -(r1*eta*eta)+1\n" +
+"ADD    r1.x, misc.y, -r1.x;\n" +
+"\n" +
+"RSQ    r2.x, r1.x;\n" +
+"RCP    r2.x, r2.x;\n" +
+"MAD    r2.x, refraction.x, r0.x, r2.x;\n" +
+"MUL    r2, r11, r2.x;\n" +
+"MAD    r2, refraction.x, -r8, r2;\n" +
+"\n" +
+"# transform refracted ray by cubemap transform\n" +
+"DP3    oTex0.x, tex[0], r2;\n" +
+"DP3    oTex0.y, tex[1], r2;\n" +
+"DP3    oTex0.z, tex[2], r2;\n" +
+"\n" +
+"# calculate reflection\n" +
+"MUL    r0, r11, misc.z;\n" +
+"DP3    r3.w, r11, r8;\n" +
+"MAD    r3, r3.w, r0, -r8;\n" +
+"\n" +
+"# transform reflected ray by cubemap transform\n" +
+"DP3    oTex1.x, tex[0], r3;\n" +
+"DP3    oTex1.y, tex[1], r3;\n" +
+"DP3    oTex1.z, tex[2], r3;\n" +
+"\n" +
+"# cheesy Fresnel approximation = (1-(I.N))^p\n" +
+"DP3    r0.x, r8, r11;\n" +
+"ADD    r0.x, misc.y, -r0.x;\n" +
+"MUL    r0.x, r0.x, r0.x;\n" +
+"MUL    oCol0, r0.x, fresnel;\n" +
+"\n" +
+"# transform vertex to clip space\n" +
+"DP4    oPos.x, mvp[0], iPos ;\n" +
+"DP4    oPos.y, mvp[1], iPos ;\n" +
+"DP4    oPos.z, mvp[2], iPos ;\n" +
+"DP4    oPos.w, mvp[3], iPos ;\n" +
+"\n" +
+"END\n";
 
     public void init(GLDrawable drawable) {
       GL gl = drawable.getGL();
@@ -192,9 +225,9 @@ public class VertexProgRefract {
       gl.glEnable(GL.GL_DEPTH_TEST);
 
       try {
-        initExtension(gl, "GL_NV_vertex_program");
+        initExtension(gl, "GL_ARB_vertex_program");
         initExtension(gl, "GL_NV_register_combiners");
-        initExtension(gl, "GL_NV_register_combiners");
+        initExtension(gl, "GL_ARB_multitexture");
       } catch (RuntimeException e) {
         runExit();
         throw(e);
@@ -203,25 +236,17 @@ public class VertexProgRefract {
       b[' '] = true; // animate by default
 
       int[] vtxProgTmp = new int[1];
-      gl.glGenProgramsNV(1, vtxProgTmp);
+      gl.glGenProgramsARB(1, vtxProgTmp);
       vtxProg = vtxProgTmp[0];
-      gl.glBindProgramNV(GL.GL_VERTEX_PROGRAM_NV, vtxProg);
-      gl.glLoadProgramNV(GL.GL_VERTEX_PROGRAM_NV, vtxProg, transformRefract.length(), transformRefract);
+      gl.glBindProgramARB  (GL.GL_VERTEX_PROGRAM_ARB, vtxProg);
+      gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, transformRefract.length(), transformRefract);
 
-      // FIXME: is this necessary? Only for error checking?
-      //      nvparse((const char *)vprog::transform_refract);
-      
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 0,  GL.GL_MODELVIEW_PROJECTION_NV, GL.GL_IDENTITY_NV);
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 4,  GL.GL_MODELVIEW,               GL.GL_INVERSE_TRANSPOSE_NV);
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 8,  GL.GL_MODELVIEW,               GL.GL_IDENTITY_NV);
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 12, GL.GL_TEXTURE,                 GL.GL_IDENTITY_NV);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 0.0f, 1.0f);    // eye position
 
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 59, 0.0f, 0.0f, 0.0f, 1.0f);    // eye position
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 1, fresnel, fresnel, fresnel, 1.0f);    // fresnel multiplier
 
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 62, fresnel, fresnel, fresnel, 1.0f);    // fresnel multiplier
-
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 63, 1.0f, -1.0f, 1.0f, 0.0f);   // texture scale
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 64, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, -1.0f, 1.0f, 0.0f);   // texture scale
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
 
       int[] cubemapTmp = new int[1];
       gl.glGenTextures(1, cubemapTmp);
@@ -313,10 +338,10 @@ public class VertexProgRefract {
       ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
       ManipManager.getManipManager().render(drawable, gl);
 
-      gl.glBindProgramNV(GL.GL_VERTEX_PROGRAM_NV, vtxProg);
+      gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, vtxProg);
 
-      gl.glEnable(GL.GL_VERTEX_PROGRAM_NV);
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 62, fresnel, fresnel, fresnel, 1.0f);
+      gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 62, fresnel, fresnel, fresnel, 1.0f);
 
       // set texture transforms
       gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
@@ -369,7 +394,7 @@ public class VertexProgRefract {
       }
 
       gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
-      gl.glDisable(GL.GL_VERTEX_PROGRAM_NV);
+      gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
 
       gl.glMatrixMode(GL.GL_MODELVIEW);
       gl.glPopMatrix();
@@ -526,6 +551,12 @@ public class VertexProgRefract {
       gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
       gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
 
+      // This is a workaround for a driver bug on Mac OS X where the
+      // normals are not being sent down to the hardware in
+      // GL_NORMAL_MAP_EXT texgen mode. Temporarily enabling lighting
+      // causes the normals to be sent down. Thanks to Ken Dyke.
+      gl.glEnable(GL.GL_LIGHTING);
+
       gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP_EXT);
       gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP_EXT);
       gl.glTexGeni(GL.GL_R, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP_EXT);
@@ -543,6 +574,8 @@ public class VertexProgRefract {
       viewer.updateInverseRotation(gl);
     
       glut.glutSolidSphere(glu, 5.0, 40, 20);
+
+      gl.glDisable(GL.GL_LIGHTING);
 
       gl.glPopMatrix();
       gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -573,7 +606,7 @@ public class VertexProgRefract {
     }
 
     private void setRefraction(GL gl, float index) {
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 58, index, index*index, 0.0f, 0.0f);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 4, index, index*index, 0.0f, 0.0f);
     }
 
     // draw square subdivided into quad strips
