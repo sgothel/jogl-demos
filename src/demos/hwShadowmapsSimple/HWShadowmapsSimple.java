@@ -62,6 +62,7 @@ public class HWShadowmapsSimple {
 
   private GLCanvas canvas;
   private GLPbuffer pbuffer;
+  private Animator animator;
 
   private GLUT glut;
 
@@ -145,6 +146,8 @@ public class HWShadowmapsSimple {
     canvas.addGLEventListener(new Listener());
     canvas.setNoAutoRedrawMode(true);
 
+    animator = new Animator(canvas);
+
     Frame frame = new Frame("ARB_shadow Shadows");
     frame.setLayout(new BorderLayout());
     canvas.setSize(512, 512);
@@ -155,40 +158,11 @@ public class HWShadowmapsSimple {
 
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          quit = true;
+          runExit();
         }
       });
 
-    try {
-      while (!quit) {
-        if (viewer != null) {
-          viewer.update();
-
-          // Grab these values once per render to avoid multithreading
-          // issues with their values being changed by manipulation from
-          // the AWT thread during the render
-          CameraParameters params = viewer.getCameraParameters();
-
-          cameraPerspective.set(params.getProjectionMatrix());
-          cameraInverseTransform.set(params.getModelviewMatrix());
-          cameraTransform.set(cameraInverseTransform);
-          cameraTransform.invertRigid();
-          spotlightTransform.set(spotlight.getTransform());
-          spotlightInverseTransform.set(spotlightTransform);
-          spotlightInverseTransform.invertRigid();
-          objectTransform.set(object.getTransform());
-        }
-
-        if (displayMode == RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED || !fullyInitialized) {
-          if (pbuffer != null) {
-            pbuffer.display();
-          }
-        }
-        canvas.display();
-      }
-    } finally {
-      System.exit(0);
-    }
+    animator.start();
   }
 
   //----------------------------------------------------------------------
@@ -212,7 +186,6 @@ public class HWShadowmapsSimple {
         checkExtension(gl, "GL_ARB_pixel_format");
       } catch (GLException e) {
 	e.printStackTrace();
-        quit = true;
 	throw(e);
       }
       
@@ -319,8 +292,26 @@ public class HWShadowmapsSimple {
     }
 
     public void display(GLDrawable drawable) {
-      if (quit) {
-        return;
+      viewer.update();
+
+      // Grab these values once per render to avoid multithreading
+      // issues with their values being changed by manipulation from
+      // the AWT thread during the render
+      CameraParameters params = viewer.getCameraParameters();
+
+      cameraPerspective.set(params.getProjectionMatrix());
+      cameraInverseTransform.set(params.getModelviewMatrix());
+      cameraTransform.set(cameraInverseTransform);
+      cameraTransform.invertRigid();
+      spotlightTransform.set(spotlight.getTransform());
+      spotlightInverseTransform.set(spotlightTransform);
+      spotlightInverseTransform.invertRigid();
+      objectTransform.set(object.getTransform());
+
+      if (displayMode == RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED || !fullyInitialized) {
+        if (pbuffer != null) {
+          pbuffer.display();
+        }
       }
 
       if (!fullyInitialized) {
@@ -355,8 +346,6 @@ public class HWShadowmapsSimple {
         gl.glLoadIdentity();
       }
 
-      CameraParameters params = viewer.getCameraParameters();
-
       switch (displayMode) {
         case RENDER_SCENE_FROM_CAMERA_VIEW:          render_scene_from_camera_view(gl, glu, drawable, params); break;
         case RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED: render_scene_from_camera_view_shadowed(gl, glu, drawable, params); break;
@@ -382,15 +371,10 @@ public class HWShadowmapsSimple {
     }
 
     private void dispatchKey(char k) {
-      if ((k == (char) 27) || (k == 'q')) {
-        quit = true;
-	return;
-      }
-
       switch (k) {
         case 27:
         case 'q':
-          quit = true;
+          runExit();
           break;
 
         case 'v':
@@ -846,5 +830,19 @@ public class HWShadowmapsSimple {
     m.set(3, 3,  (zFar + zNear) / (2 * zFar * zNear));
 
     return m;
+  }
+
+  private void runExit() {
+    // Note: calling System.exit() synchronously inside the draw,
+    // reshape or init callbacks can lead to deadlocks on certain
+    // platforms (in particular, X11) because the JAWT's locking
+    // routines cause a global AWT lock to be grabbed. Run the
+    // exit routine in another thread.
+    new Thread(new Runnable() {
+        public void run() {
+          animator.stop();
+          System.exit(0);
+        }
+      }).start();
   }
 }

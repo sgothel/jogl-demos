@@ -57,8 +57,6 @@ import gleem.linalg.*;
  */
 
 public class ProceduralTexturePhysics {
-  private static volatile boolean quit;
-
   private volatile boolean drawing;
   private volatile int     mousePosX;
   private volatile int     mousePosY;
@@ -66,6 +64,7 @@ public class ProceduralTexturePhysics {
   private Dimension dim = new Dimension();
   private GLCanvas canvas;
   private Water    water;
+  private Animator animator;
   private volatile ExaminerViewer viewer;
   private boolean[] b = new boolean[256];
   private boolean  doViewAll = true;
@@ -85,6 +84,8 @@ public class ProceduralTexturePhysics {
     canvas.addGLEventListener(new Listener());
     canvas.setNoAutoRedrawMode(true);
 
+    animator = new Animator(canvas);
+
     Frame frame = new Frame("Procedural Texture Waves");
     frame.setLayout(new BorderLayout());
     canvas.setSize(512, 512);
@@ -95,47 +96,17 @@ public class ProceduralTexturePhysics {
 
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          quit = true;
+          runExit();
         }
       });
 
-    try {
-      water = new Water();
-      water.initialize("demos/data/images/nvfixed.tga", 
-                       "demos/data/images/nvspin.tga", 
-                       "demos/data/images/droplet.tga", 
-                       "demos/data/cubemaps/CloudyHills_{0}.tga",
-                       canvas);
-    } catch (GLException e) {
-      JOptionPane.showMessageDialog(null, e.toString(), "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-    }
-
-    try {
-      while (!quit) {
-        if (viewer != null) {
-          try {
-            if (drawing) {
-              canvas.getSize(dim);
-              water.addDroplet(new Water.Droplet( 2 * (mousePosX / (float) dim.width  - 0.5f),
-                                                  -2 * (mousePosY / (float) dim.height - 0.5f),
-                                                  0.08f));
-            }
-            water.tick();
-            canvas.display();
-          } catch (GLException e) {
-            // Have seen spurious exceptions getting thrown during SwapBuffers.
-            // Not sure why at this time; disabling of repaint() should prevent
-            // AWT thread from getting involved. Continue animating anyway.
-            e.printStackTrace();
-          }
-        } else {
-          // Make the pbuffer get created
-          canvas.display();
-        }
-      }
-    } finally {
-      System.exit(0);
-    }
+    water = new Water();
+    water.initialize("demos/data/images/nvfixed.tga", 
+                     "demos/data/images/nvspin.tga", 
+                     "demos/data/images/droplet.tga", 
+                     "demos/data/cubemaps/CloudyHills_{0}.tga",
+                     canvas);
+    animator.start();
   }
 
   //----------------------------------------------------------------------
@@ -167,7 +138,6 @@ public class ProceduralTexturePhysics {
 	checkExtension(gl, "GL_ARB_pixel_format");
       } catch (GLException e) {
 	e.printStackTrace();
-        quit = true;
 	throw(e);
       }
       
@@ -220,14 +190,6 @@ public class ProceduralTexturePhysics {
     }
 
     public void display(GLDrawable drawable) {
-      if (water == null) {
-	return;
-      }
-
-      if (quit) {
-        return;
-      }
-
       if (!firstRender) {
         if (++frameCount == 30) {
           timer.stop();
@@ -255,6 +217,14 @@ public class ProceduralTexturePhysics {
       ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
       ManipManager.getManipManager().render(drawable, gl);
 
+      if (drawing) {
+        canvas.getSize(dim);
+        water.addDroplet(new Water.Droplet( 2 * (mousePosX / (float) dim.width  - 0.5f),
+                                            -2 * (mousePosY / (float) dim.height - 0.5f),
+                                            0.08f));
+      }
+      water.tick();
+
       CameraParameters params = viewer.getCameraParameters();
       water.draw(gl, params.getOrientation().inverse());
     }
@@ -272,22 +242,17 @@ public class ProceduralTexturePhysics {
       if (!gl.isExtensionAvailable(extensionName)) {
         String message = "Unable to initialize " + extensionName + " OpenGL extension";
         JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-	throw new GLException(message);
+        runExit();
       }
     }
 
     private void dispatchKey(char k) {
       setFlag(k, !getFlag(k));
 
-      if ((k == (char) 27) || (k == 'q')) {
-        quit = true;
-	return;
-      }
-
       switch (k) {
         case 27:
         case 'q':
-          quit = true;
+          runExit();
           break;
         case 'w':
           water.enableWireframe(getFlag('w'));
@@ -389,4 +354,18 @@ public class ProceduralTexturePhysics {
       }
     }
   }  
+
+  private void runExit() {
+    // Note: calling System.exit() synchronously inside the draw,
+    // reshape or init callbacks can lead to deadlocks on certain
+    // platforms (in particular, X11) because the JAWT's locking
+    // routines cause a global AWT lock to be grabbed. Run the
+    // exit routine in another thread.
+    new Thread(new Runnable() {
+        public void run() {
+          animator.stop();
+          System.exit(0);
+        }
+      }).start();
+  }
 }

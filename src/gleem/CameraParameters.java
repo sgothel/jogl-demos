@@ -61,6 +61,8 @@ public class CameraParameters {
                           Vec3f forwardDirection,
                           Vec3f upDirection,
                           Rotf  orientation,
+                          Mat4f modelviewMatrix,
+                          Mat4f projectionMatrix,
                           float vertFOV,
                           float imagePlaneAspectRatio,
                           int   xSize,
@@ -69,6 +71,8 @@ public class CameraParameters {
     setForwardDirection(forwardDirection);
     setUpDirection(upDirection);
     setOrientation(orientation);
+    setModelviewMatrix(modelviewMatrix);
+    setProjectionMatrix(projectionMatrix);
     setVertFOV(vertFOV);
     setImagePlaneAspectRatio(imagePlaneAspectRatio);
     setXSize(xSize);
@@ -79,10 +83,23 @@ public class CameraParameters {
     setPosition(params.getPosition());
     setForwardDirection(params.getForwardDirection());
     setUpDirection(params.getUpDirection());
+    setOrientation(params.getOrientation());
+    setModelviewMatrix(params.getModelviewMatrix());
+    setProjectionMatrix(params.getProjectionMatrix());
     setVertFOV(params.getVertFOV());
     setImagePlaneAspectRatio(params.getImagePlaneAspectRatio());
     setXSize(params.getXSize());
     setYSize(params.getYSize());
+  }
+
+  public Object clone() {
+    CameraParameters params = new CameraParameters();
+    params.set(this);
+    return params;
+  }
+
+  public CameraParameters copy() {
+    return (CameraParameters) clone();
   }
 
   /** Sets 3-space origin of camera */
