@@ -74,12 +74,18 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     frame.setSize(512, 512);
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        animator.stop();
-        System.out.println("Exiting");
-        System.exit(0);
-      }
-    });
+        public void windowClosing(WindowEvent e) {
+          // Run this on another thread than the AWT event queue to
+          // make sure the call to Animator.stop() completes before
+          // exiting
+          new Thread(new Runnable() {
+              public void run() {
+                animator.stop();
+                System.exit(0);
+              }
+            }).start();
+        }
+      });
     frame.show();
     animator.start();
 

@@ -231,8 +231,15 @@ public class VertexBufferObject {
 
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          animator.stop();
-          System.exit(0);
+          // Run this on another thread than the AWT event queue to
+          // make sure the call to Animator.stop() completes before
+          // exiting
+          new Thread(new Runnable() {
+              public void run() {
+                animator.stop();
+                System.exit(0);
+              }
+            }).start();
         }
       });
 
