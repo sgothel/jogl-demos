@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0" 
-      codebase="http://jogl-demos.dev.java.net/webstart/"
+      codebase="https://jogl-demos.dev.java.net/webstart/"
       href="VertexArrayRange.jnlp">
   <information>
     <title>JOGL Vertex Array Range Demo</title>
@@ -16,7 +16,7 @@
       <property name="sun.java2d.noddraw" value="true"/>
       <jar href="jogl-demos.jar" main="true"/>
       <jar href="jogl-demos-util.jar" />
-      <extension name="jogl" href="http://jogl.dev.java.net/webstart/jogl.jnlp" />
+      <extension name="jogl" href="https://jogl.dev.java.net/webstart/jogl.jnlp" />
     </resources>
 
   <application-desc main-class="demos.vertexArrayRange.VertexArrayRange"/>

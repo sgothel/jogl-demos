@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0" 
-      codebase="http://jogl-demos.dev.java.net/webstart/"
+      codebase="https://jogl-demos.dev.java.net/webstart/"
       href="ProceduralTexturePhysics.jnlp">
   <information>
     <title>JOGL Procedural Texture Physics Demo</title>
@@ -17,7 +17,7 @@
       <jar href="jogl-demos.jar" main="true"/>
       <jar href="jogl-demos-util.jar" />
       <jar href="jogl-demos-data.jar" />
-      <extension name="jogl" href="http://jogl.dev.java.net/webstart/jogl.jnlp" />
+      <extension name="jogl" href="https://jogl.dev.java.net/webstart/jogl.jnlp" />
     </resources>
 
   <application-desc main-class="demos.proceduralTexturePhysics.ProceduralTexturePhysics"/>
