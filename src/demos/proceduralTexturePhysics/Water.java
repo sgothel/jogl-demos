@@ -143,7 +143,7 @@ public class Water {
 
   private float     dropletFrequency = 0.175f;      // frequency at which droplets are drawn in water...
 
-  private int       slowDelay = 15;                 // amount (milliseconds) to delay when running slow.
+  private int       slowDelay = 1;                  // amount (milliseconds) to delay when running slow.
   private int       skipInterval;                   // frames to skip simulation.
   private int       skipCount;                      // frame count for skipping rendering
 

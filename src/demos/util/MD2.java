@@ -493,7 +493,7 @@ public class MD2 {
         pos += numRead;
       }
       avail = in.available();
-    } while (numRead >= 0);
+    } while (avail > 0 && numRead >= 0);
     ByteBuffer buf = ByteBuffer.allocateDirect(pos);
     buf.put(data, 0, pos);
     buf.rewind();
