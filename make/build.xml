@@ -41,6 +41,7 @@
         <property name="jogl.demos.jar"      value="../build/jogl-demos.jar" />
         <property name="jogl.demos.util.jar" value="../build/jogl-demos-util.jar" />
         <property name="jogl.demos.data.jar" value="../build/jogl-demos-data.jar" />
+        <property name="jogl.demos.src.zip"  value="../build/jogl-demos-src.zip" />
     </target>
 
     <target name="all" depends="init">
@@ -70,6 +71,13 @@
                 <include name="demos/data/**" />
             </fileset>
         </jar>
+	<!-- Build a source archive as well -->
+        <delete file="${jogl.demos.src.zip}" />
+        <zip destfile="${jogl.demos.src.zip}"
+	     basedir="../.."
+	     includes="jogl-demos/doc/**,jogl-demos/make/**,jogl-demos/src/**"
+	     excludes="**/*.class,**/*~"
+	     />
     </target>
 
     <target name="javadoc" depends="init">
