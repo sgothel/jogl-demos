@@ -276,6 +276,7 @@ public class HWShadowmapsSimple {
       drawable.addKeyListener(new KeyAdapter() {
           public void keyPressed(KeyEvent e) {
             dispatchKey(e.getKeyChar());
+            canvas.repaint();
           }
         });
     }

@@ -204,6 +204,7 @@ public class InfiniteShadowVolumes {
       drawable.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             dispatchKey(e.getKeyChar());
+            canvas.repaint();
           }
         });
 
