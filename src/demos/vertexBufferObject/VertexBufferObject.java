@@ -68,9 +68,11 @@ import net.java.games.jogl.util.*;
 public class VertexBufferObject {
   private boolean[] b = new boolean[256];
   private static final int SIZEOF_FLOAT = 4;
-  private static final int STRIP_SIZE  = 48;
-  private int tileSize   = 9 * STRIP_SIZE;
-  private int numBuffers = 4;
+  //  private static final int STRIP_SIZE  = 48;
+  private static final int STRIP_SIZE  = 144;
+  //  private int tileSize   = 9 * STRIP_SIZE;
+  private int tileSize   = 3 * STRIP_SIZE;
+  private int numBuffers = 1;
   private int bufferLength = 1000000;
   private int bufferSize   = bufferLength * SIZEOF_FLOAT;
   private static final int SIN_ARRAY_SIZE = 1024;
@@ -82,6 +84,7 @@ public class VertexBufferObject {
   private FloatBuffer bigArraySystem;
   private FloatBuffer bigArray;
   private int[][]     elements;
+  private int         elementBufferObject;
   private float[]     xyArray;
 
   static class VBOBuffer {
@@ -276,9 +279,6 @@ public class VertexBufferObject {
         System.err.println("wglSwapIntervalEXT not available; cannot disable sync-to-refresh");
       }
 
-      System.err.println("Available extensions:");
-      System.err.println(gl.glGetString(GL.GL_EXTENSIONS));
-
       try {
         initExtension(gl, "GL_ARB_vertex_buffer_object");
       } catch (RuntimeException e) {
@@ -329,7 +329,7 @@ public class VertexBufferObject {
       gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
       gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
 
-      computeElements();
+      computeElements(gl);
 
       drawable.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
@@ -503,7 +503,7 @@ public class VertexBufferObject {
       }
 
       if (recomputeElements) {
-        computeElements();
+        computeElements(gl);
         recomputeElements = false;
       }
 
@@ -621,11 +621,27 @@ public class VertexBufferObject {
           gl.glUnmapBufferARB(GL.GL_ARRAY_BUFFER_ARB);
         }
 
-        for (int i = 0; i < elements.length; i++) {
-          ++numDrawElementsCalls;
-          gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i]);
-          if(getFlag('f')) {
-            gl.glFlush();
+        if (getFlag('m')) {
+          // Elements merged into buffer object (doesn't seem to improve performance)
+
+          int len = tileSize - 1;
+          gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
+          for (int i = 0; i < len; i++) {
+            ++numDrawElementsCalls;
+            gl.glDrawElements(primitive, 2 * STRIP_SIZE, GL.GL_UNSIGNED_INT,
+                              BufferUtils.bufferOffset(i * 2 * STRIP_SIZE * BufferUtils.SIZEOF_INT));
+            if(getFlag('f')) {
+              gl.glFlush();
+            }
+          }
+          gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+        } else {
+          for (int i = 0; i < elements.length; i++) {
+            ++numDrawElementsCalls;
+            gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i]);
+            if(getFlag('f')) {
+              gl.glFlush();
+            }
           }
         }
       }
@@ -667,7 +683,7 @@ public class VertexBufferObject {
     bigBufferObject = tmp[0];
     gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, bigBufferObject);
     // Initialize data store of buffer object
-    gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, bufferSize, null, GL.GL_DYNAMIC_DRAW_ARB);
+    gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, bufferSize, (Buffer) null, GL.GL_DYNAMIC_DRAW_ARB);
     bigArrayVBOBytes = gl.glMapBufferARB(GL.GL_ARRAY_BUFFER_ARB, GL.GL_WRITE_ONLY_ARB);
     bigArrayVBO = setupBuffer(bigArrayVBOBytes);
     gl.glUnmapBufferARB(GL.GL_ARRAY_BUFFER_ARB);
@@ -692,7 +708,7 @@ public class VertexBufferObject {
     return ret;
   }
 
-  private void computeElements() {
+  private void computeElements(GL gl) {
     xyArray = new float[tileSize];
     for (int i = 0; i < tileSize; i++) {
       xyArray[i] = i / (tileSize - 1.0f) - 0.5f;
@@ -706,6 +722,25 @@ public class VertexBufferObject {
         elements[i][j+1] = (i + 1) * STRIP_SIZE + (j / 2);
       }
     }
+
+    // Create element array buffer
+    int[] linearElements = new int[(tileSize - 1) * (2 * STRIP_SIZE)];
+    int idx = 0;
+    for (int i = 0; i < tileSize - 1; i++) {
+      for (int j = 0; j < 2 * STRIP_SIZE; j += 2) {
+        linearElements[idx++]   =  i      * STRIP_SIZE + (j / 2);
+        linearElements[idx++]   = (i + 1) * STRIP_SIZE + (j / 2);
+      }
+    }
+    int[] tmp = new int[1];
+    gl.glGenBuffersARB(1, tmp);
+    elementBufferObject = tmp[0];
+    gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
+    gl.glBufferDataARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB,
+                       linearElements.length * BufferUtils.SIZEOF_INT,
+                       linearElements,
+                       GL.GL_STATIC_DRAW_ARB);
+    gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
   }
 
   private void runExit() {
