@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - Ant build for the JOGL demos. This build has been tested with ANT 1.5.3.
+   -
+   - In order for this build to succeed the resulting jar files from this build
+   - (jogl-demos.jar, jogl-demos-data.jar, jogl-demos-util.jar) must not be on
+   - the CLASSPATH.
+   -
+   - This build requires that the jogl project has been checked out into a sibling
+   - directory to the jogl-demos top-level directory and that the jogl.jar has been
+   - built into its build directory.
+   -->
+<project name="JOGL.demos" default="all">
+    <!-- 
+       - Make sure that jogl-demos.jar is not on the CLASSPATH; this can
+       - cause builds to fail since if this Java process has the jar file
+       - open we can not overwrite it.
+      -->
+    <target name="test.for.jogl.demos.jar">
+        <available property="jogl.demos.jar.on.class.path" classname="demos.gears.Gears" />
+    </target>
+    <target name="java.class.path.validate" depends="test.for.jogl.demos.jar" if="jogl.demos.jar.on.class.path">
+        <fail>
+        
+    ******************************************************************
+    ** Your CLASSPATH environment variable appears to be set (some  **
+    ** JOGL demos' classes are currently visible to the build.)     **
+    ** This can cause the build to fail. Please unset your          **
+    ** CLASSPATH variable and restart the build.                    **
+    ******************************************************************
+        </fail>
+    </target>
+
+    <target name="init" depends="java.class.path.validate">
+        <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
+        <property name="classes"             value="../build/classes" />
+        <property name="src"                 value="../src" />
+        <property name="javadoc"             value="../javadoc" />
+        <property name="javadoc.link"        value="http://java.sun.com/j2se/1.4.2/docs/api/" />
+        <property name="javadoc.link.jogl"   value="../../jogl/javadoc-public/" />
+        <property name="jogl.demos.jar"      value="../build/jogl-demos.jar" />
+        <property name="jogl.demos.util.jar" value="../build/jogl-demos-util.jar" />
+        <property name="jogl.demos.data.jar" value="../build/jogl-demos-data.jar" />
+    </target>
+
+    <target name="all" depends="init">
+        <mkdir dir="${classes}" />
+        <path id="jogl.classpath">
+            <pathelement path="${classpath}" />
+            <pathelement location="${jogl.jar}" />
+        </path>
+        <javac destdir="${classes}" excludes="demos/cg/**" source="1.4">
+            <src path="${src}" />
+            <classpath refid="jogl.classpath" />
+        </javac>
+        <jar destfile="${jogl.demos.jar}">
+            <fileset dir="${classes}">
+                <exclude name="gleem/**" />
+                <exclude name="demos/util/**" />
+            </fileset>
+        </jar>
+        <jar destfile="${jogl.demos.util.jar}">
+            <fileset dir="${classes}">
+                <include name="gleem/**" />
+                <include name="demos/util/**" />
+            </fileset>
+        </jar>
+        <jar destfile="${jogl.demos.data.jar}">
+            <fileset dir="${src}">
+                <include name="demos/data/**" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="javadoc" depends="init">
+        <mkdir dir="${javadoc}" />
+        <javadoc destdir="${javadoc}" windowtitle="JOGL Demos"
+                 source="1.4">
+            <packageset dir="${src}">
+                <exclude name="demos/cg/**" />
+            </packageset>
+            <link href="${javadoc.link}" />
+            <!-- FIXME: this doesn't work -->
+            <link href="${javadoc.link.jogl}" />
+        </javadoc>
+    </target>    
+
+    <target name="clean" depends="init">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="../build" />
+            <fileset dir="../javadoc" />
+        </delete>
+    </target>
+ </project>
