@@ -64,9 +64,9 @@
                                                 
                   <p>The JOGL-Demos project contains Java programming language 
     demonstrations utilizing OpenGL through the JOGL API. Demonstrations exhibit
-    advanced functionality such as vertex programs, shadow maps and hardware-accelerated
+    advanced functionality such as vertex and fragment programs, shadow maps and hardware-accelerated
     offscreen rendering via pbuffers. Most of the demos were ported from
-C  or C++; in which case a link to the original sources is provided.<br>
+C  or C++, in which case a link to the original sources is provided.<br>
                            </p>
                                                                         
                                                                         
@@ -76,8 +76,7 @@ C  or C++; in which case a link to the original sources is provided.<br>
     is included in <a href="http://java.sun.com/j2se/1.4.2/">J2SE 1.4.2</a>;
   click the images to launch the demos. Where there are no hardware or operating 
   system requirements listed, the demos run on any vendor's graphics card 
-and  on any of Solaris/SPARC, Linux/x86, Windows/x86, and Macintosh OS X 10.3
-Developer Preview 1.<br>
+and  on any of Solaris/SPARC, Linux/x86, Windows/x86, and Macintosh OS X 10.3.<br>
                        </p>
                                                                         
                           
@@ -238,15 +237,12 @@ documentation</a><br>
  alt="Launch Hardware Shadow Mapping demo">
                        </a> 			       </td>
       			       <td width="45%"> 			       Shadowing demo using projective
- texture  technique of hardware shadow maps. Original source code supplied
- in NVidia's                    <a
- href="http://developer.nvidia.com/view.asp?IO=cg_toolkit">Cg Toolkit</a>.
+ texture  technique of hardware shadow maps. <a
+ href="http://download.nvidia.com/developer/SDK/Individual_Samples/DEMOS/OpenGL/hw_shadowmaps_simple.zip">Original source code</a> by NVidia.
   			       </td>
       			       <td width="5%"><br>
                     </td>
-      			       <td width="25%"> 			       NVidia GeForce 3 or better; Windows 
-  or 			       Linux operating systems (pbuffer 			       support not yet 
-exposed  in JOGL on Mac 			       OS X) 			       </td>
+      			       <td width="25%"> 			       Pbuffer support, ARB_shadow, ARB_depth_texture</td>
        			   </tr>
                      <tr>
       			   </tr>
@@ -309,7 +305,7 @@ exposed  in JOGL on Mac 			       OS X) 			       </td>
                        </a> 			       </td>
       			       <td width="45%"> 			       Shadowing demo using geometric 
 technique  of infinite shadow volumes. <a
- href="http://developer.nvidia.com/view.asp?IO=inf_shadow_volumes">Original 
+ href="http://developer.nvidia.com/object/inf_shadow_volumes.html">Original 
  source code</a> by NVidia.</td>
       			       <td width="5%"><br>
                     </td>
@@ -375,12 +371,12 @@ technique  of infinite shadow volumes. <a
  alt="Launch Vertex Prog Warp demo">
                        </a> 			       </td>
       			       <td width="45%">Geometrical deformations performed on the 
-graphics  card using ARB_vertex_program. <a
- href="http://developer.nvidia.com/view.asp?IO=vertexprogram_deformation">Original 
- source code</a> by NVidia.</td>
+graphics  card using vertex programs. <a
+ href="vtxprog_warp.zip">Original 
+ source code</a> supplied in NVidia's <a href="http://developer.nvidia.com/object/sdk_home.html">SDK</a>.</td>
       			       <td width="5%"><br>
                     </td>
-      			       <td width="25%">Any card with ARB_vertex_program support</td>
+      			       <td width="25%">ARB_vertex_program</td>
        			   </tr>
                      <tr>
       			   </tr>
@@ -442,12 +438,12 @@ graphics  card using ARB_vertex_program. <a
  alt="Launch Vertex Prog Refract demo">
                        </a> 			       </td>
       			       <td width="45%">Real-time reflection and refraction with
-chromatic  aberration using ARB_vertex_program and register combiners. <a
- href="http://developer.nvidia.com/view.asp?IO=vertexprogram_refraction">Original 
+chromatic  aberration using vertex and fragment programs. <a
+ href="http://download.nvidia.com/developer/SDK/Individual_Samples/DEMOS/OpenGL/dispersion.zip">Original 
  source code</a> by NVidia.</td>
       			       <td width="5%"><br>
                     </td>
-      			       <td width="25%">NVidia GeForce 2 or better</td>
+      			       <td width="25%">ARB_vertex_program and either ARB_fragment_program or NV_register_combiners</td>
        			   </tr>
                      <tr>
       			   </tr>
@@ -509,16 +505,13 @@ chromatic  aberration using ARB_vertex_program and register combiners. <a
  alt="Launch Procedural Texture Physics demo">
                        </a> 			       </td>
       			       <td width="45%">Runs a physics-based water simulation entirely
- on the graphics card using register combiners, texture shaders and pbuffers.
+ on the graphics card using vertex programs, fragment programs and pbuffers.
                    <a
- href="http://developer.nvidia.com/view.asp?IO=ogl_dynamic_bumpreflection">Original
- source code</a> by NVidia.<br>
+ href="Water.zip">Original source code</a> supplied in NVidia's <a href="http://developer.nvidia.com/object/sdk_home.html">SDK</a>.<br>
                     </td>
       			       <td width="5%"><br>
                     </td>
-      			       <td width="25%">NVidia GeForce 3 or better; Windows or Linux
- operating systems (pbuffer 			       support not yet exposed  in JOGL on
-Mac 			       OS X) </td>
+      			       <td width="25%">ARB_vertex_program, ARB_fragment_program</td>
        			   </tr>
                      <tr>
       			   </tr>
@@ -644,11 +637,10 @@ by Brian Paul; converted to Java by Ron Cemer and Sven Goethel.
                        </a> 			       </td>
       			       <td width="45%">Demonstrates high-throughput dynamic geometry 
 using ARB_vertex_buffer_object extension. <a
- href="http://developer.nvidia.com/view.asp?IO=vardemo">Original source code</a> 
-by NVidia; ported both to Java/JOGL and ARB_vertex_buffer_object extension. </td>
+ href="learning_VAR_src.zip">Original source code</a> supplied in NVidia's <a href="http://developer.nvidia.com/object/sdk_home.html">SDK</a>; ported both to Java/JOGL and ARB_vertex_buffer_object extension. </td>
       			       <td width="5%"><br>
                     </td>
-      			       <td width="25%">Any card supporting the ARB_vertex_buffer_object extension</td>
+      			       <td width="25%">ARB_vertex_buffer_object</td>
        			   </tr>
                      <tr>
       			   </tr>
@@ -710,8 +702,7 @@ by NVidia; ported both to Java/JOGL and ARB_vertex_buffer_object extension. </td
                        </a> 			       </td>
       			       <td width="45%">Demonstrates high-throughput dynamic geometry 
 using NVidia vertex_array_range extension. <a
- href="http://developer.nvidia.com/view.asp?IO=vardemo">Original source code</a> 
-by NVidia.                   </td>
+ href="learning_VAR_src.zip">Original source code</a> supplied in NVidia's <a href="http://developer.nvidia.com/object/sdk_home.html">SDK</a>. </td>
       			       <td width="5%"><br>
                     </td>
       			       <td width="25%">NVidia GeForce series card; Windows or Linux

@@ -58,7 +58,7 @@ requirements:
 
 <TR>
  <TD> demos.hwShadowmapsSimple.HWShadowmapsSimple
- <TD> NVidia GeForce 3 or better.
+ <TD> Pbuffer support, ARB_shadow, ARB_depth_texture
 
 <TR>
   <TD> demos.infiniteShadowVolumes.InfiniteShadowVolumes
@@ -66,8 +66,7 @@ requirements:
 
 <TR>
   <TD> demos.proceduralTexturePhysics.ProceduralTexturePhysics
-  <TD> NVidia GeForce 3 or better. 
-  (uses NV_vertex_program, NV_texture_shader and NV_register_combiners)
+  <TD> ARB_vertex_program, ARB_fragment_program
 
 <TR>
   <TD> demos.vertexArrayRange.VertexArrayRange
@@ -75,14 +74,16 @@ requirements:
   vertex_array_range support not yet ported to Mac OS X).
 
 <TR>
+  <TD> demos.vertexBufferObject.VertexBufferObject
+  <TD> ARB_vertex_buffer_object
+
+<TR>
   <TD> demos.vertexProgRefract.VertexProgRefract
-  <TD> NVidia GeForce 2 or better (uses NV_register_combiners). Runs
-  on Windows, Linux, and Mac OS X.
+  <TD> ARB_vertex_program and either ARB_fragment_program or NV_register_combiners
 
 <TR>
   <TD> demos.vertexProgWarp.VertexProgWarp
-  <TD> Any card supporting ARB_vertex_program. Runs on Windows, Linux,
-  and Mac OS X.
+  <TD> ARB_vertex_program
 
 </TABLE>
 
