@@ -129,7 +129,7 @@ public class VertexProgWarp {
       gl.glDisable(GL.GL_CULL_FACE);
 
       try {
-        initExtension(gl, "GL_NV_vertex_program");
+        initExtension(gl, "GL_ARB_vertex_program");
       } catch (RuntimeException e) {
         runExit();
         throw(e);
@@ -143,38 +143,32 @@ public class VertexProgWarp {
 
       for(int i=0; i<NUM_PROGS; i++) {
         int[] vtxProgTmp = new int[1];
-        gl.glGenProgramsNV(1, vtxProgTmp);
+        gl.glGenProgramsARB(1, vtxProgTmp);
         programs[i] = vtxProgTmp[0];
-        gl.glBindProgramNV(GL.GL_VERTEX_PROGRAM_NV, programs[i]);
-        gl.glLoadProgramNV(GL.GL_VERTEX_PROGRAM_NV, programs[i], programTexts[i].length(), programTexts[i]);
+        gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[i]);
+        gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programTexts[i].length(), programTexts[i]);
       }
 
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 0, GL.GL_MODELVIEW_PROJECTION_NV, GL.GL_IDENTITY_NV);
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 4,               GL.GL_MODELVIEW, GL.GL_INVERSE_TRANSPOSE_NV);
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 8,               GL.GL_MODELVIEW, GL.GL_IDENTITY_NV);
-      gl.glTrackMatrixNV(GL.GL_VERTEX_PROGRAM_NV, 12,             GL.GL_PROJECTION, GL.GL_IDENTITY_NV);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
 
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 32, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 35, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 36, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
-
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 64, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
 
       // sin Taylor series constants - 1, 1/3!, 1/5!, 1/7!
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 63, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
 
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 62, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
 
       // sin wave frequency, amplitude
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 61, 1.0f, 0.2f, 0.0f, 0.0f);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, 1.0f, 0.2f, 0.0f, 0.0f);
 
       // phase animation
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 60, 0.0f, 0.0f, 0.0f, 0.0f);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, 0.0f, 0.0f, 0.0f, 0.0f);
 
       // fisheye sphere radius
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 59, 1.0f, 0.0f, 0.0f, 0.0f);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 8, 1.0f, 0.0f, 0.0f, 0.0f);
 
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 58, 0.0f, 0.0f, -2.0f / (zFar - zNear), -(zFar+zNear)/(zFar-zNear) );
       setWindowTitle();
 
       b['p'] = true;
@@ -246,21 +240,21 @@ public class VertexProgWarp {
       ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
       ManipManager.getManipManager().render(drawable, gl);
 
-      gl.glBindProgramNV(GL.GL_VERTEX_PROGRAM_NV, programs[program]);
-      gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 60, anim, 0.0f, 0.0f, 0.0f);
+      gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[program]);
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, anim, 0.0f, 0.0f, 0.0f);
 
       if (program==6)
-        gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 61, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
+        gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
       else
-        gl.glProgramParameter4fNV(GL.GL_VERTEX_PROGRAM_NV, 61, freq, amp, d, d+1);
+        gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, freq, amp, d, d+1);
 
       if (b['p'])
-        gl.glEnable(GL.GL_VERTEX_PROGRAM_NV);
+        gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
 
       gl.glDisable(GL.GL_TEXTURE_2D);
       gl.glCallList(obj+1);
 
-      gl.glDisable(GL.GL_VERTEX_PROGRAM_NV);
+      gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
 
       gl.glPopMatrix();
     }
@@ -595,327 +589,366 @@ public class VertexProgWarp {
     "Twist"
   };
 
+  private static final String programSetup =
+    "PARAM mvp [4]          = { state.matrix.mvp };                # modelview projection matrix\n" +
+    "PARAM mvit[4]          = { state.matrix.modelview.invtrans }; # modelview matrix inverse transpose\n" +
+    "PARAM mv  [4]          = { state.matrix.modelview };          # modelview matrix\n" +
+    "PARAM proj[4]          = { state.matrix.projection };         # projection matrix\n" +
+    "PARAM lightPos         = program.env[0];                      # light position/direction\n" +
+    "PARAM diffuseCol       = program.env[1];                      # diffuse color\n" +
+    "PARAM specularCol      = program.env[2];                      # specular color\n" +
+    "PARAM smoothstep       = program.env[3];                      # smoothstep constants\n" +
+    "PARAM sinTaylorConst1  = program.env[4];                      # sin Taylor series constants 1 of 2\n" +
+    "PARAM sinTaylorConst2  = program.env[5];                      # sin Taylor series constants 2 of 2\n" +
+    "PARAM sinFreqAmplitude = program.env[6];                      # sin wave frequency, amplitude\n" +
+    "PARAM phaseAnim        = program.env[7];                      # phase animation\n" +
+    "PARAM fisheyeRadius    = program.env[8];                      # fisheye sphere radius\n" +
+    "\n" +
+    "# Per vertex inputs\n" +
+    "ATTRIB iPos            = vertex.position;                     # position\n" +
+    "ATTRIB iTex            = vertex.texcoord;                     # tex coord\n" +
+    "ATTRIB iNorm           = vertex.normal;                       # normal\n" +
+    "\n" +
+    "# Outputs\n" +
+    "OUTPUT oPos            = result.position;                     # position\n" +
+    "OUTPUT oCol0           = result.color;                        # color\n" +
+    "OUTPUT oTex0           = result.texcoord;                     # tex coord\n" +
+    "\n" +
+    "# Temporaries\n" +
+    "TEMP r0;\n" +
+    "TEMP r1;\n" +
+    "TEMP r2;\n" +
+    "TEMP r3;\n" +
+    "TEMP r4;\n";
+
   private static final String[] programTexts = new String[] {
     //
     // Transform with diffuse lighting
     //
-    "!!VP1.0\n" +
+    "!!ARBvp1.0\n" +
     "#Simple transform and diffuse lighting\n" +
+    programSetup +
+    "DP4   oPos.x, mvp[0], iPos ;   # object x MVP -> clip\n" +
+    "DP4   oPos.y, mvp[1], iPos ;\n" +
+    "DP4   oPos.z, mvp[2], iPos ;\n" +
+    "DP4   oPos.w, mvp[3], iPos ;\n" +
     "\n" +
-    "DP4   o[HPOS].x, c[0], v[OPOS] ;   # object x MVP -> clip\n" +
-    "DP4   o[HPOS].y, c[1], v[OPOS] ;\n" +
-    "DP4   o[HPOS].z, c[2], v[OPOS] ;\n" +
-    "DP4   o[HPOS].w, c[3], v[OPOS] ;\n" +
+    "DP3   r1.x, mvit[0], iNorm ;        # normal x MV-1T -> lighting normal\n" +
+    "DP3   r1.y, mvit[1], iNorm ;\n" +
+    "DP3   r1.z, mvit[2], iNorm ;\n" +
     "\n" +
-    "DP3   R1.x, c[4], v[NRML] ;        # normal x MV-1T -> lighting normal\n" +
-    "DP3   R1.y, c[5], v[NRML] ;\n" +
-    "DP3   R1.z, c[6], v[NRML] ;\n" +
-    "\n" +
-    "DP3   R0, c[32], R1 ;              # L.N\n" +
-    "MUL   o[COL0].xyz, R0, c[35] ;     # col = L.N * diffuse\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
-    "END",
+    "DP3   r0, lightPos, r1 ;              # L.N\n" +
+    "MUL   oCol0.xyz, r0, diffuseCol ;     # col = L.N * diffuse\n" +
+    "MOV   oTex0, iTex;\n" +
+    "END\n",
 
     //
     // Pulsate
     //
-    "!!VP1.0\n" +
+    "!!ARBvp1.0\n" +
     "#Displace geometry along normal based on sine function of distance from origin\n" +
     "#(in object space)\n" +
-    "#c[61].x = wave frequency\n" +
-    "#c[61].y = wave amplitude\n" +
-    "#c[62]   = PI constants\n" +
-    "#c[63]   = Taylor series constants (see below)\n" +
+    "#sinFreqAmplitude.x = wave frequency\n" +
+    "#sinFreqAmplitude.y = wave amplitude\n" +
+    "#sinTaylorConst2    = PI constants\n" +
+    "#sinTaylorConst1    = Taylor series constants (see below)\n" +
     "\n" +
-    "MOV   R0, v[OPOS]; \n" +
+    programSetup +
+    "MOV   r0, iPos; \n" +
     "\n" +
     "#calculate distance from (0, 0, 0)\n" +
-    "DP3   R3.x, R0, R0;\n" +
-    "RSQ   R3.x, R3.x;\n" +
-    "RCP   R3.x, R3.x;\n" +
+    "DP3   r3.x, r0, r0;\n" +
+    "RSQ   r3.x, r3.x;\n" +
+    "RCP   r3.x, r3.x;\n" +
     "\n" +
-    "MUL   R3.x, R3.x, c[61].x; # wave frequency\n" +
-    "ADD   R3.x, R3.x, c[60].x; # phase animation\n" +
+    "MUL   r3.x, r3.x, sinFreqAmplitude.x; # wave frequency\n" +
+    "ADD   r3.x, r3.x, phaseAnim.x; # phase animation\n" +
     "\n" +
     "#reduce to period of 2*PI\n" +
-    "MUL   R2, R3.x, c[62].x;\n" +
-    "EXP   R4, R2.x;            # R4.y = R2.x - floor(R2.x)\n" +
-    "MUL   R3.x, R4.y, c[62].y;\n" +
+    "MUL   r2, r3.x, sinTaylorConst2.x;\n" +
+    "EXP   r4, r2.x;            # r4.y = r2.x - floor(r2.x)\n" +
+    "MUL   r3.x, r4.y, sinTaylorConst2.y;\n" +
     "\n" +
     "# offset to -PI - PI\n" +
-    "ADD   R3.x, R3.x, -c[62].z;\n" +
+    "ADD   r3.x, r3.x, -sinTaylorConst2.z;\n" +
     "\n" +
     "#Sine approximation using Taylor series (accurate between -PI and PI) :\n" +
     "#sin(x)  = x - (x^3)/3! + (x^5)/5! - (x^7)/7! + ...\n" +
     "#sin(x) ~= x*(1 - (x^2)*(1/3! - (x^2)(1/5! - (x^2)/7! )))\n" +
     "#        = x * (a - y*(b - y*(c - y*d)))\n" +
     "#where\n" +
-    "#a = 1.0    c[63].x\n" +
-    "#b = 1/3!   c[63].y\n" +
-    "#c = 1/5!   c[63].z\n" +
-    "#d = 1/7!   c[63].w\n" +
-    "#y = x^2    R2\n" +
+    "#a = 1.0    sinTaylorConst1.x\n" +
+    "#b = 1/3!   sinTaylorConst1.y\n" +
+    "#c = 1/5!   sinTaylorConst1.z\n" +
+    "#d = 1/7!   sinTaylorConst1.w\n" +
+    "#y = x^2    r2\n" +
     "\n" +
-    "#R1.x = sin(R3.x);\n" +
+    "#r1.x = sin(r3.x);\n" +
     "\n" +
-    "MUL   R2, R3.x, R3.x;\n" +
-    "MAD   R1, -R2, c[63].w, c[63].z;\n" +
-    "MAD   R1, R1, -R2, c[63].y;\n" +
-    "MAD   R1, R1, -R2, c[63].x;\n" +
-    "MUL   R1, R1, R3.x;\n" +
+    "MUL   r2, r3.x, r3.x;\n" +
+    "MAD   r1, -r2, sinTaylorConst1.w, sinTaylorConst1.z;\n" +
+    "MAD   r1, r1, -r2, sinTaylorConst1.y;\n" +
+    "MAD   r1, r1, -r2, sinTaylorConst1.x;\n" +
+    "MUL   r1, r1, r3.x;\n" +
     "\n" +
     "#displace vertex along normal\n" +
-    "MUL   R1.x, R1.x, c[61].y;\n" +
-    "MAX   R1.x, R1.x, c[64].x;     # r1.x = max(r1.x, 0.0);\n" +
-    "MUL   R2.xyz, v[NRML], R1.x;\n" +
-    "ADD   R0.xyz, R0, R2;\n" +
+    "MUL   r1.x, r1.x, sinFreqAmplitude.y;\n" +
+    "MAX   r1.x, r1.x, smoothstep.x;     # r1.x = max(r1.x, 0.0);\n" +
+    "MUL   r2.xyz, iNorm, r1.x;\n" +
+    "ADD   r0.xyz, r0, r2;\n" +
     "\n" +
     "#simple lighting\n" +
-    "DP3   R1.x, c[4], v[NRML] ;    # normal x MV-1T -> lighting normal\n" +
-    "DP3   R1.y, c[5], v[NRML] ;\n" +
-    "DP3   R1.z, c[6], v[NRML] ;\n" +
+    "DP3   r1.x, mvit[0], iNorm ;    # normal x MV-1T -> lighting normal\n" +
+    "DP3   r1.y, mvit[1], iNorm ;\n" +
+    "DP3   r1.z, mvit[2], iNorm ;\n" +
     "\n" +
-    "DP3   R2, c[32], R1 ;          # light position DOT normal\n" +
-    "MUL   o[COL0].xyz, R2, c[35] ; # col = ldotn * diffuse\n" +
+    "DP3   r2, lightPos, r1 ;          # light position DOT normal\n" +
+    "MUL   oCol0.xyz, r2, diffuseCol ; # col = ldotn * diffuse\n" +
     "\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
+    "MOV   oTex0, iTex;\n" +
     "\n" +
-    "DP4   o[HPOS].x, c[0], R0 ;    # object x MVP -> clip\n" +
-    "DP4   o[HPOS].y, c[1], R0 ;\n" +
-    "DP4   o[HPOS].z, c[2], R0 ;\n" +
-    "DP4   o[HPOS].w, c[3], R0 ;\n" +
+    "DP4   oPos.x, mvp[0], r0 ;    # object x MVP -> clip\n" +
+    "DP4   oPos.y, mvp[1], r0 ;\n" +
+    "DP4   oPos.z, mvp[2], r0 ;\n" +
+    "DP4   oPos.w, mvp[3], r0 ;\n" +
     "\n" +
-    "END",
+    "END\n",
 
     //
     // Wave
     //
-    "!!VP1.0\n" +
+    "!!ARBvp1.0\n" +
     "# Perturb vertices in clip space with sine wave\n" +
     "# x += sin((y*freq)+anim) * amp\n" +
-    "DP4   R0.x, c[0], v[OPOS] ;\n" +
-    "DP4   R0.y, c[1], v[OPOS] ;\n" +
-    "DP4   R0.z, c[2], v[OPOS] ;\n" +
-    "DP4   R0.w, c[3], v[OPOS] ;\n" +
+    programSetup +
+    "DP4   r0.x, mvp[0], iPos ;\n" +
+    "DP4   r0.y, mvp[1], iPos ;\n" +
+    "DP4   r0.z, mvp[2], iPos ;\n" +
+    "DP4   r0.w, mvp[3], iPos ;\n" +
     "\n" +
-    "MUL   R3.x, R0.y, c[61].x;    # wave frequency\n" +
-    "ADD   R3.x, R3.x, c[60].x;    # phase animation\n" +
+    "MUL   r3.x, r0.y, sinFreqAmplitude.x;    # wave frequency\n" +
+    "ADD   r3.x, r3.x, phaseAnim.x;    # phase animation\n" +
     "\n" +
     "# reduce to period of 2*PI\n" +
-    "MUL   R2, R3.x, c[62].x;\n" +
-    "EXP   R4, R2.x;               # R4.y = R2.x - floor(R2.x)\n" +
-    "MUL   R3.x, R4.y, c[62].y;\n" +
+    "MUL   r2, r3.x, sinTaylorConst2.x;\n" +
+    "EXP   r4, r2.x;               # r4.y = r2.x - floor(r2.x)\n" +
+    "MUL   r3.x, r4.y, sinTaylorConst2.y;\n" +
     "\n" +
     "# offset to -PI - PI\n" +
-    "ADD   R3.x, R3.x, -c[62].z;\n" +
+    "ADD   r3.x, r3.x, -sinTaylorConst2.z;\n" +
     "\n" +
-    "# R1.x = sin(R3.x);\n" +
-    "MUL   R2,   R3.x, R3.x;\n" +
-    "MAD   R1, -R2, c[63].w, c[63].z;\n" +
-    "MAD   R1, R1, -R2, c[63].y;\n" +
-    "MAD   R1, R1, -R2, c[63].x;\n" +
-    "MUL   R1, R1, R3.x;\n" +
+    "# r1.x = sin(r3.x);\n" +
+    "MUL   r2,   r3.x, r3.x;\n" +
+    "MAD   r1, -r2, sinTaylorConst1.w, sinTaylorConst1.z;\n" +
+    "MAD   r1, r1, -r2, sinTaylorConst1.y;\n" +
+    "MAD   r1, r1, -r2, sinTaylorConst1.x;\n" +
+    "MUL   r1, r1, r3.x;\n" +
     "\n" +
-    "MAD   R0.x, R1.x, c[61].y, R0.x;\n" +
+    "MAD   r0.x, r1.x, sinFreqAmplitude.y, r0.x;\n" +
     "\n" +
     "# simple lighting\n" +
-    "DP3   R1.x, c[4], v[NRML] ;    # normal x MV-1T -> lighting normal\n" +
-    "DP3   R1.y, c[5], v[NRML] ;\n" +
-    "DP3   R1.z, c[6], v[NRML] ;\n" +
-    "DP3   R2, c[32], R1 ;          # light position DOT normal\n" +
-    "MUL   o[COL0].xyz, R2, c[35] ; # col = ldotn * diffuse\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
+    "DP3   r1.x, mvit[0], iNorm ;    # normal x MV-1T -> lighting normal\n" +
+    "DP3   r1.y, mvit[1], iNorm ;\n" +
+    "DP3   r1.z, mvit[2], iNorm ;\n" +
+    "DP3   r2, lightPos, r1 ;          # light position DOT normal\n" +
+    "MUL   oCol0.xyz, r2, diffuseCol ; # col = ldotn * diffuse\n" +
+    "MOV   oTex0, iTex;\n" +
     "\n" +
-    "MOV   o[HPOS], R0;\n" +
+    "MOV   oPos, r0;\n" +
     "\n" +
-    "END",
+    "END\n",
 
     //
     // Fisheye
     //
-    "!!VP1.0\n" +
+    "!!ARBvp1.0\n" +
     "#Fisheye distortion based on function:\n" +
     "#f(x)=(d+1)/(d+(1/x))\n" +
     "#maps the [0,1] interval monotonically onto [0,1]\n" +
     "\n" +
-    "#c[61].z = d\n" +
-    "#c[61].w = d+1\n" +
+    "#sinFreqAmplitude.z = d\n" +
+    "#sinFreqAmplitude.w = d+1\n" +
+    programSetup +
     "\n" +
-    "DP4   R0.x, c[0], v[OPOS] ;\n" +
-    "DP4   R0.y, c[1], v[OPOS] ;\n" +
-    "DP4   R0.z, c[2], v[OPOS] ;\n" +
-    "DP4   R0.w, c[3], v[OPOS] ;\n" +
+    "DP4   r0.x, mvp[0], iPos ;\n" +
+    "DP4   r0.y, mvp[1], iPos ;\n" +
+    "DP4   r0.z, mvp[2], iPos ;\n" +
+    "DP4   r0.w, mvp[3], iPos ;\n" +
     "\n" +
     "# do perspective divide\n" +
-    "RCP   R1, R0.w;\n" +
-    "MUL   R0, R0, R1.w;\n" +
+    "RCP   r1, r0.w;\n" +
+    "MUL   r0, r0, r1.w;\n" +
     "\n" +
-    "MAX   R1, R0, -R0;            # r1 = abs(r0)\n" +
+    "MAX   r1, r0, -r0;            # r1 = abs(r0)\n" +
     "\n" +
-    "SLT   R2, R0, c[64].x;        # r2 = (r0 < 0.0) ? 1.0 : 0.0\n" +
-    "SGE   R3, R0, c[64].x;        # r3 = (r0 >= 0.0) ? 1.0 : 0.0\n" +
+    "SLT   r2, r0, smoothstep.x;        # r2 = (r0 < 0.0) ? 1.0 : 0.0\n" +
+    "SGE   r3, r0, smoothstep.x;        # r3 = (r0 >= 0.0) ? 1.0 : 0.0\n" +
     "\n" +
     "# distort x\n" +
     "# h(x)=(d+1)/(d+(1/x))\n" +
-    "RCP   R1.x, R1.x;             # r1 = 1 / r1\n" +
-    "ADD   R1.x, R1.x, c[61].z;    # r1 += d\n" +
-    "RCP   R1.x, R1.x;             # r1 = 1 / r1\n" +
-    "MUL   R1.x, R1.x, c[61].w;    # r1 *= d + 1\n" +
+    "RCP   r1.x, r1.x;             # r1 = 1 / r1\n" +
+    "ADD   r1.x, r1.x, sinFreqAmplitude.z;    # r1 += d\n" +
+    "RCP   r1.x, r1.x;             # r1 = 1 / r1\n" +
+    "MUL   r1.x, r1.x, sinFreqAmplitude.w;    # r1 *= d + 1\n" +
     "\n" +
     "# distort y\n" +
-    "RCP   R1.y, R1.y;             # r1 = 1 / r1\n" +
-    "ADD   R1.y, R1.y, c[61].z;    # r1 += d\n" +
-    "RCP   R1.y, R1.y;             # r1 = 1 / r1\n" +
-    "MUL   R1.y, R1.y, c[61].w;    # r1 *= d + 1\n" +
+    "RCP   r1.y, r1.y;             # r1 = 1 / r1\n" +
+    "ADD   r1.y, r1.y, sinFreqAmplitude.z;    # r1 += d\n" +
+    "RCP   r1.y, r1.y;             # r1 = 1 / r1\n" +
+    "MUL   r1.y, r1.y, sinFreqAmplitude.w;    # r1 *= d + 1\n" +
     "\n" +
     "# handle negative cases\n" +
-    "MUL   R4.xy, R1, R3;          # r4 = r1 * r3\n" +
-    "MAD   R1.xy, R1, -R2, R4;     # r1 = r1 * -r2 + r4\n" +
+    "MUL   r4.xy, r1, r3;          # r4 = r1 * r3\n" +
+    "MAD   r1.xy, r1, -r2, r4;     # r1 = r1 * -r2 + r4\n" +
     "\n" +
     "# simple lighting\n" +
-    "DP3   R2.x, c[4], v[NRML] ;   # normal x MV-1T -> lighting normal\n" +
-    "DP3   R2.y, c[5], v[NRML] ;\n" +
-    "DP3   R2.z, c[6], v[NRML] ;\n" +
-    "DP3   R3, c[32], R2 ;         # light position DOT normal\n" +
-    "MUL   o[COL0].xyz, R3, c[35] ; # col = ldotn * diffuse\n" +
+    "DP3   r2.x, mvit[0], iNorm ;   # normal x MV-1T -> lighting normal\n" +
+    "DP3   r2.y, mvit[1], iNorm ;\n" +
+    "DP3   r2.z, mvit[2], iNorm ;\n" +
+    "DP3   r3, lightPos, r2 ;         # light position DOT normal\n" +
+    "MUL   oCol0.xyz, r3, diffuseCol ; # col = ldotn * diffuse\n" +
     "\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
+    "MOV   oTex0, iTex;\n" +
     "\n" +
-    "MOV   o[HPOS], R1;\n" +
+    "MOV   oPos, r1;\n" +
     "\n" +
-    "END",
+    "END\n",
 
     //
     // Spherize
     //
-    "!!VP1.0\n" +
+    "!!ARBvp1.0\n" +
     "# Spherical fish-eye distortion\n" +
     "# in clip space\n" +
-    "DP4   R0.x, c[0], v[OPOS];\n" +
-    "DP4   R0.y, c[1], v[OPOS];\n" +
-    "DP4   R0.z, c[2], v[OPOS];\n" +
-    "DP4   R0.w, c[3], v[OPOS];\n" +
+    programSetup +
+    "DP4   r0.x, mvp[0], iPos;\n" +
+    "DP4   r0.y, mvp[1], iPos;\n" +
+    "DP4   r0.z, mvp[2], iPos;\n" +
+    "DP4   r0.w, mvp[3], iPos;\n" +
     "\n" +
     "# do perspective divide\n" +
-    "RCP   R1.x, R0.w;\n" +
-    "MUL   R2, R0, R1.x;\n" +
+    "RCP   r1.x, r0.w;\n" +
+    "MUL   r2, r0, r1.x;\n" +
     "\n" +
     "# calculate distance from centre\n" +
-    "MUL   R1.x, R2.x, R2.x;\n" +
-    "MAD   R1.x, R2.y, R2.y, R1.x;\n" +
-    "RSQ   R1.x, R1.x; # r1.x = 1 / sqrt(x*x+y*y)\n" +
+    "MUL   r1.x, r2.x, r2.x;\n" +
+    "MAD   r1.x, r2.y, r2.y, r1.x;\n" +
+    "RSQ   r1.x, r1.x; # r1.x = 1 / sqrt(x*x+y*y)\n" +
     "\n" +
     "# calculate r3 = normalized direction vector\n" +
-    "MUL   R3.xy, R0, R1.x;\n" +
+    "MUL   r3.xy, r0, r1.x;\n" +
     "\n" +
-    "RCP   R1.x, R1.x;             # r1.x = actual distance\n" +
-    "MIN   R1.x, R1.x, c[64].y;    # r1.x = min(r1.x, 1.0)\n" +
+    "RCP   r1.x, r1.x;             # r1.x = actual distance\n" +
+    "MIN   r1.x, r1.x, smoothstep.y;    # r1.x = min(r1.x, 1.0)\n" +
     "\n" +
     "# remap based on: f(x) = sqrt(1-x^2)\n" +
-    "ADD   R1.x, c[64].y, -R1.x;\n" +
-    "MAD   R1.x, -R1.x, R1.x, c[64].y;\n" +
-    "RSQ   R1.x, R1.x;\n" +
-    "RCP   R1.x, R1.x;\n" +
+    "ADD   r1.x, smoothstep.y, -r1.x;\n" +
+    "MAD   r1.x, -r1.x, r1.x, smoothstep.y;\n" +
+    "RSQ   r1.x, r1.x;\n" +
+    "RCP   r1.x, r1.x;\n" +
     "\n" +
     "# move vertex to new distance from centre\n" +
-    "MUL   R0.xy, R3, R1.x;\n" +
+    "MUL   r0.xy, r3, r1.x;\n" +
     "\n" +
     "# simple lighting\n" +
-    "DP3   R2.x, c[4], v[NRML];    # normal x MV-1T -> lighting normal\n" +
-    "DP3   R2.y, c[5], v[NRML];\n" +
-    "DP3   R2.z, c[6], v[NRML];\n" +
-    "DP3   R3, c[32], R2 ;         # light position DOT normal\n" +
-    "MUL   o[COL0].xyz, R3, c[35] ; # col = ldotn * diffuse\n" +
+    "DP3   r2.x, mvit[0], iNorm;    # normal x MV-1T -> lighting normal\n" +
+    "DP3   r2.y, mvit[1], iNorm;\n" +
+    "DP3   r2.z, mvit[2], iNorm;\n" +
+    "DP3   r3, lightPos, r2 ;         # light position DOT normal\n" +
+    "MUL   oCol0.xyz, r3, diffuseCol ; # col = ldotn * diffuse\n" +
     "\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
+    "MOV   oTex0, iTex;\n" +
     "\n" +
-    "MOV   o[HPOS], R0;\n" +
+    "MOV   oPos, r0;\n" +
     "\n" +
-    "END",
-
+    "END\n",
+    
     //
     // Ripple
     //
-    "!!VP1.0\n" +
+    "!!ARBvp1.0\n" +
     "# Ripple distortion\n" +
-    "DP4   R0.x, c[0], v[OPOS];\n" +
-    "DP4   R0.y, c[1], v[OPOS];\n" +
-    "DP4   R0.z, c[2], v[OPOS];\n" +
-    "DP4   R0.w, c[3], v[OPOS];\n" +
+    programSetup +
+    "DP4   r0.x, mvp[0], iPos;\n" +
+    "DP4   r0.y, mvp[1], iPos;\n" +
+    "DP4   r0.z, mvp[2], iPos;\n" +
+    "DP4   r0.w, mvp[3], iPos;\n" +
     "\n" +
     "# do perspective divide\n" +
-    "RCP   R1.x, R0.w;\n" +
-    "MUL   R4, R0, R1.x;\n" +
+    "RCP   r1.x, r0.w;\n" +
+    "MUL   r4, r0, r1.x;\n" +
     "\n" +
     "# calculate distance from centre\n" +
-    "MUL   R1.x, R4.x, R4.x;\n" +
-    "MAD   R1.x, R4.y, R4.y, R1.x;\n" +
-    "RSQ   R1.x, R1.x; " +
+    "MUL   r1.x, r4.x, r4.x;\n" +
+    "MAD   r1.x, r4.y, r4.y, r1.x;\n" +
+    "RSQ   r1.x, r1.x;\n" +
     "\n" +
-    "RCP   R1.x, R1.x; " +
+    "RCP   r1.x, r1.x;\n" +
     "\n" +
-    "MUL   R1.x, R1.x, c[61].x;    # wave frequency\n" +
-    "ADD   R1.x, R1.x, c[60].x;    # phase animation\n" +
+    "MUL   r1.x, r1.x, sinFreqAmplitude.x;    # wave frequency\n" +
+    "ADD   r1.x, r1.x, phaseAnim.x;    # phase animation\n" +
     "\n" +
     "# reduce to period of 2*PI\n" +
-    "MUL   R2, R1.x, c[62].x;      # R2 = R1 / 2.0 * PI\n" +
-    "EXP   R4, R2.x;               # R4.y = R2.x - floor(R2.x)\n" +
-    "MUL   R1.x, R4.y, c[62].y;\n" +
+    "MUL   r2, r1.x, sinTaylorConst2.x;      # r2 = r1 / 2.0 * PI\n" +
+    "EXP   r4, r2.x;               # r4.y = r2.x - floor(r2.x)\n" +
+    "MUL   r1.x, r4.y, sinTaylorConst2.y;\n" +
     "\n" +
     "# offset to -PI - PI\n" +
-    "ADD   R1.x, R1.x, -c[62].z;\n" +
+    "ADD   r1.x, r1.x, -sinTaylorConst2.z;\n" +
     "\n" +
-    "# R3.x = sin(R1.x)\n" +
-    "MUL   R2, R1.x, R1.x;\n" +
-    "MAD   R3, -R2, c[63].w, c[63].z;\n" +
-    "MAD   R3, R3, -R2, c[63].y;\n" +
-    "MAD   R3, R3, -R2, c[63].x;\n" +
-    "MUL   R3, R3, R1.x;\n" +
+    "# r3.x = sin(r1.x)\n" +
+    "MUL   r2, r1.x, r1.x;\n" +
+    "MAD   r3, -r2, sinTaylorConst1.w, sinTaylorConst1.z;\n" +
+    "MAD   r3, r3, -r2, sinTaylorConst1.y;\n" +
+    "MAD   r3, r3, -r2, sinTaylorConst1.x;\n" +
+    "MUL   r3, r3, r1.x;\n" +
     "\n" +
-    "MUL   R3.x, R3.x, c[61].y;\n" +
+    "MUL   r3.x, r3.x, sinFreqAmplitude.y;\n" +
     "\n" +
     "# move vertex towards centre based on distance\n" +
-    "MAD   R0.xy, R0, -R3.x, R0;\n" +
+    "MAD   r0.xy, r0, -r3.x, r0;\n" +
     "\n" +
     "# lighting\n" +
-    "DP3   R2.x, c[4], v[NRML];     # normal x MV-1T -> lighting normal\n" +
-    "DP3   R2.y, c[5], v[NRML];\n" +
-    "DP3   R2.z, c[6], v[NRML];\n" +
-    "DP3   R3, c[32], R2;           # light position DOT normal\n" +
-    "MUL   o[COL0].xyz, R3, c[35];  # col = ldotn * diffuse\n" +
+    "DP3   r2.x, mvit[0], iNorm;     # normal x MV-1T -> lighting normal\n" +
+    "DP3   r2.y, mvit[1], iNorm;\n" +
+    "DP3   r2.z, mvit[2], iNorm;\n" +
+    "DP3   r3, lightPos, r2;           # light position DOT normal\n" +
+    "MUL   oCol0.xyz, r3, diffuseCol;  # col = ldotn * diffuse\n" +
     "\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
+    "MOV   oTex0, iTex;\n" +
     "\n" +
-    "MOV   o[HPOS], R0;\n" +
+    "MOV   oPos, r0;\n" +
     "\n" +
-    "END",
+    "END\n",
 
     //
     // Twist
     //
-    "!!VP1.0 # Twist\n" +
-    "MOV   R0, v[OPOS];\n" +
+    "!!ARBvp1.0\n" +
+    "# Twist\n" +
+    programSetup +
+    "MOV   r0, iPos;\n" +
     "\n" +
-    "MUL   R1.x, R0.x, c[61].x;        # frequency\n" +
+    "MUL   r1.x, r0.x, sinFreqAmplitude.x;        # frequency\n" +
     "\n" +
     "# calculate sin(angle) and cos(angle)\n" +
-    "ADD   R1.y, R1.x, -c[62].w;       # R1.y = R1.x + PI/2.0\n" +
+    "ADD   r1.y, r1.x, -sinTaylorConst2.w;       # r1.y = r1.x + PI/2.0\n" +
     "\n" +
     "# reduce to period of 2*PI\n" +
-    "MUL   R2, R1, c[62].x;            # R2 = R1 / 2.0 * PI\n" +
-    "EXP   R3.y, R2.x;                 # R2.y = R2.x - floor(R2.x)\n" +
-    "MOV   R3.x, R3.y;\n" +
-    "EXP   R3.y, R2.y;                 # R2.y = R2.x - floor(R2.x)\n" +
-    "MAD   R2, R3, c[62].y, -c[62].z;  # R2 = (R3 * 2.0*PI) - M_PI\n" +
+    "MUL   r2, r1, sinTaylorConst2.x;            # r2 = r1 / 2.0 * PI\n" +
+    "EXP   r3.y, r2.x;                 # r2.y = r2.x - floor(r2.x)\n" +
+    "MOV   r3.x, r3.y;\n" +
+    "EXP   r3.y, r2.y;                 # r2.y = r2.x - floor(r2.x)\n" +
+    "MAD   r2, r3, sinTaylorConst2.y, -sinTaylorConst2.z;  # r2 = (r3 * 2.0*PI) - M_PI\n" +
     "\n" +
-    "# R4.x = sin(R2.x);\n" +
-    "# R4.y = cos(R2.y);\n" +
+    "# r4.x = sin(r2.x);\n" +
+    "# r4.y = cos(r2.y);\n" +
     "# parallel taylor series\n" +
-    "MUL   R3,   R2, R2;\n" +
-    "MAD   R4, -R3, c[63].w, c[63].z;\n" +
-    "MAD   R4, R4, -R3, c[63].y;\n" +
-    "MAD   R4, R4, -R3, c[63].x;\n" +
-    "MUL   R4, R4, R2;\n" +
+    "MUL   r3,   r2, r2;\n" +
+    "MAD   r4, -r3, sinTaylorConst1.w, sinTaylorConst1.z;\n" +
+    "MAD   r4, r4, -r3, sinTaylorConst1.y;\n" +
+    "MAD   r4, r4, -r3, sinTaylorConst1.x;\n" +
+    "MUL   r4, r4, r2;\n" +
     "\n" +
     "# x    y    z    w\n" +
     "# R:\n" +
@@ -928,38 +961,38 @@ public class VertexProgWarp {
     "# s = sin(a)\n" +
     "\n" +
     "# calculate rotation around X\n" +
-    "MOV   R1, R0;\n" +
+    "MOV   r1, r0;\n" +
     "\n" +
-    "MUL   R1.y, R0.y, R4.y;\n" +
-    "MAD   R1.y, R0.z, -R4.x, R1.y;    # ny = y*cos(a) - z*sin(a)\n" +
+    "MUL   r1.y, r0.y, r4.y;\n" +
+    "MAD   r1.y, r0.z, -r4.x, r1.y;    # ny = y*cos(a) - z*sin(a)\n" +
     "\n" +
-    "MUL   R1.z, R0.y, R4.x;\n" +
-    "MAD   R1.z, R0.z, R4.y, R1.z;     # nz = y*sin(a) + z*cos(a)\n" +
+    "MUL   r1.z, r0.y, r4.x;\n" +
+    "MAD   r1.z, r0.z, r4.y, r1.z;     # nz = y*sin(a) + z*cos(a)\n" +
     "\n" +
-    "DP4   o[HPOS].x, c[0], R1;        # object x MVP -> clip\n" +
-    "DP4   o[HPOS].y, c[1], R1;\n" +
-    "DP4   o[HPOS].z, c[2], R1;\n" +
-    "DP4   o[HPOS].w, c[3], R1;\n" +
+    "DP4   oPos.x, mvp[0], r1;        # object x MVP -> clip\n" +
+    "DP4   oPos.y, mvp[1], r1;\n" +
+    "DP4   oPos.z, mvp[2], r1;\n" +
+    "DP4   oPos.w, mvp[3], r1;\n" +
     "\n" +
     "# rotate normal\n" +
-    "MOV   R2, v[NRML];\n" +
-    "MUL   R2.y, v[NRML].y, R4.y;\n" +
-    "MAD   R2.y, v[NRML].z, -R4.x, R2.y;   # ny = y*cos(a) - z*sin(a)\n" +
+    "MOV   r2, iNorm;\n" +
+    "MUL   r2.y, iNorm.y, r4.y;\n" +
+    "MAD   r2.y, iNorm.z, -r4.x, r2.y;   # ny = y*cos(a) - z*sin(a)\n" +
     "\n" +
-    "MUL   R2.z, v[NRML].y, R4.x;\n" +
-    "MAD   R2.z, v[NRML].z, R4.y, R2.z;    # nz = y*sin(a) + z*cos(a)\n" +
+    "MUL   r2.z, iNorm.y, r4.x;\n" +
+    "MAD   r2.z, iNorm.z, r4.y, r2.z;    # nz = y*sin(a) + z*cos(a)\n" +
     "\n" +
     "# diffuse lighting\n" +
-    "DP3   R1.x, c[4], R2;             # normal x MV-1T -> lighting normal\n" +
-    "DP3   R1.y, c[5], R2;\n" +
-    "DP3   R1.z, c[6], R2;\n" +
+    "DP3   r1.x, mvit[0], r2;             # normal x MV-1T -> lighting normal\n" +
+    "DP3   r1.y, mvit[1], r2;\n" +
+    "DP3   r1.z, mvit[2], r2;\n" +
     "\n" +
-    "DP3   R3, c[32], R1;              # light position DOT normal\n" +
-    "MUL   o[COL0].xyz, R3, c[35];     # col = ldotn * diffuse\n" +
+    "DP3   r3, lightPos, r1;              # light position DOT normal\n" +
+    "MUL   oCol0.xyz, r3, diffuseCol;     # col = ldotn * diffuse\n" +
     "\n" +
-    "MOV   o[TEX0], v[TEX0];\n" +
+    "MOV   oTex0, iTex;\n" +
     "\n" +
-    "END"
+    "END\n"
   };
 
   private void runExit() {
