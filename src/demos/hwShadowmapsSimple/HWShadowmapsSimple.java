@@ -62,7 +62,6 @@ public class HWShadowmapsSimple {
 
   private GLCanvas canvas;
   private GLPbuffer pbuffer;
-  private Animator animator;
 
   private GLUT glut;
 
@@ -132,11 +131,6 @@ public class HWShadowmapsSimple {
   private Mat4f spotlightInverseTransform = new Mat4f();
   private Mat4f objectTransform = new Mat4f();
 
-  // Profiling
-  private DurationTimer timer = new DurationTimer();
-  private boolean  firstRender = true;
-  private int      frameCount;
-
   public static void main(String[] args) {
     new HWShadowmapsSimple().run(args);
   }
@@ -144,9 +138,6 @@ public class HWShadowmapsSimple {
   public void run(String[] args) {
     canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     canvas.addGLEventListener(new Listener());
-    canvas.setNoAutoRedrawMode(true);
-
-    animator = new Animator(canvas);
 
     Frame frame = new Frame("ARB_shadow Shadows");
     frame.setLayout(new BorderLayout());
@@ -161,8 +152,6 @@ public class HWShadowmapsSimple {
           runExit();
         }
       });
-
-    animator.start();
   }
 
   //----------------------------------------------------------------------
@@ -318,19 +307,6 @@ public class HWShadowmapsSimple {
         return;
       }
 
-      if (!firstRender) {
-        if (++frameCount == 30) {
-          timer.stop();
-          System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
-          timer.reset();
-          timer.start();
-          frameCount = 0;
-        }
-      } else {
-        firstRender = false;
-        timer.start();
-      }
-
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
 
@@ -344,6 +320,8 @@ public class HWShadowmapsSimple {
         gl.glLoadIdentity();
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadIdentity();
+        // Schedule repaint to clean up first bogus frame
+        canvas.repaint();
       }
 
       switch (displayMode) {
@@ -840,7 +818,6 @@ public class HWShadowmapsSimple {
     // exit routine in another thread.
     new Thread(new Runnable() {
         public void run() {
-          animator.stop();
           System.exit(0);
         }
       }).start();

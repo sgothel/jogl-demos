@@ -67,7 +67,6 @@ import gleem.linalg.*;
 
 public class InfiniteShadowVolumes {
   private GLCanvas canvas;
-  private Animator animator;
   private volatile boolean quit;
 
   public static void main(String[] args) {
@@ -80,8 +79,6 @@ public class InfiniteShadowVolumes {
     canvas = GLDrawableFactory.getFactory().createGLCanvas(caps);
     canvas.addGLEventListener(new Listener());
     
-    animator = new Animator(canvas);
-
     Frame frame = new Frame("Infinite Stenciled Shadow Volumes");
     frame.setLayout(new BorderLayout());
     canvas.setSize(512, 512);
@@ -95,8 +92,6 @@ public class InfiniteShadowVolumes {
           runExit();
         }
       });
-
-    animator.start();
   }
 
   static class Model {
@@ -1294,7 +1289,6 @@ public class InfiniteShadowVolumes {
     // the exit routine in another thread.
     new Thread(new Runnable() {
         public void run() {
-          animator.stop();
           System.exit(0);
         }
       }).start();
