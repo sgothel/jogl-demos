@@ -161,7 +161,12 @@ public class HWShadowmapsSimple {
   class Listener implements GLEventListener {
 
     public void init(GLDrawable drawable) {
-      //      drawable.setGL(new DebugGL(drawable.getGL()));
+      // init() might get called more than once if the GLCanvas is
+      // added and removed, but we only want to install the DebugGL
+      // pipeline once
+      //      if (!(drawable.getGL() instanceof DebugGL)) {
+      //        drawable.setGL(new DebugGL(drawable.getGL()));
+      //      }
 
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
@@ -376,7 +381,12 @@ public class HWShadowmapsSimple {
 
   class PbufferListener implements GLEventListener {
     public void init(GLDrawable drawable) {
-      //      drawable.setGL(new DebugGL(drawable.getGL()));
+      // init() might get called more than once if the GLCanvas is
+      // added and removed, but we only want to install the DebugGL
+      // pipeline once
+      //      if (!(drawable.getGL() instanceof DebugGL)) {
+      //        drawable.setGL(new DebugGL(drawable.getGL()));
+      //      }
 
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
