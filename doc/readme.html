@@ -56,7 +56,7 @@ requirements:
 
 <TR>
  <TD> demos.hwShadowmapsSimple.HWShadowmapsSimple
- <TD> NVidia GeForce 2 or better. Currently only runs on Windows
+ <TD> NVidia GeForce 3 or better. Currently only runs on Windows
  because pbuffer support is not yet implemented in Jogl on X11 or Mac
  OS X.
 
@@ -76,13 +76,15 @@ requirements:
 
 <TR>
   <TD> demos.vertexProgRefract.VertexProgRefract
-  <TD> NVidia GeForce 2 or better. Runs on Windows and Linux (uses
-  GL_NV_vertex_program, not supported on Mac OS X).
+  <TD> NVidia GeForce 2 or better (uses NV_register_combiners). Runs
+  on Windows, Linux, and Mac OS X (pending putback of the Mac OS X
+  GLCanvas implementation).
 
 <TR>
   <TD> demos.vertexProgWarp.VertexProgWarp
-  <TD> NVidia GeForce 2 or better. Runs on Windows and Linux (uses
-  GL_NV_vertex_program, not supported on Mac OS X).
+  <TD> Any card supporting ARB_vertex_program. Runs on Windows, Linux,
+  and Mac OS X (pending putback of the Mac OS X GLCanvas
+  implementation).
 
 </TABLE>
 
