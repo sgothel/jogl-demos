@@ -74,6 +74,7 @@ DEMO_JAVAFILES = \
 	$(SRC_DIR)/demos/infiniteShadowVolumes/InfiniteShadowVolumes.java \
 	$(SRC_DIR)/demos/proceduralTexturePhysics/ProceduralTexturePhysics.java \
 	$(SRC_DIR)/demos/proceduralTexturePhysics/Water.java \
+	$(SRC_DIR)/demos/testContextSharing/TestContextSharing.java \
 	$(SRC_DIR)/demos/vertexArrayRange/VertexArrayRange.java \
 	$(SRC_DIR)/demos/vertexProgRefract/VertexProgRefract.java \
 	$(SRC_DIR)/demos/vertexProgWarp/VertexProgWarp.java
@@ -121,6 +122,7 @@ $(JOGL_DEMOS_JAR) $(JOGL_DEMOS_UTIL_JAR) $(JOGL_DEMOS_DATA_JAR): $(CLASSFILES)
 	  demos/hwShadowmapsSimple \
 	  demos/infiniteShadowVolumes \
 	  demos/proceduralTexturePhysics \
+	  demos/testContextSharing \
 	  demos/vertexArrayRange \
 	  demos/vertexProgRefract \
 	  demos/vertexProgWarp ; \
