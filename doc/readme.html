@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<TITLE>Jogl Demos - Documentation</TITLE>
+</HEAD>
+<BODY>
+
+<H1>Jogl Demos - Documentation</H1>
+
+<P>
+
+This workspace contains the source code to demos for the Jogl
+package. To build the demos:
+
+<UL>
+
+  <LI> Check out and build the Jogl sources from <a href =
+  "http://jogl.dev.java.net/">http://jogl.dev.java.net/</a>
+
+  <LI> Add jogl.jar to your CLASSPATH and put jogl.dll, libjogl.so, or
+  jogl.dylib in your PATH, LD_LIBRARY_PATH or similar
+
+  <LI> cd into the "make" subdirectory of the jogl-demos workspace and
+  type "make" (NOTE: GNU make is required)
+
+</UL>
+
+To run the demos:
+
+<UL>
+  <LI> Add the built jars to your CLASSPATH (jogl-demos.jar,
+  jogl-demos-util.jar, jogl-demos-data.jar)
+
+  <LI> Run one of the demos from the command line: e.g. <CODE>java
+  demos.gears.Gears</CODE> (Note: the current working directory is not
+  important)
+
+</UL>
+
+</P>
+
+<H1>Hardware and Software Requirements</H1>
+
+<P>
+
+The demos currently have the following hardware and software
+requirements:
+
+</P>
+<P>
+
+<TABLE WIDTH="80%" BORDER="3">
+<TR>
+ <TD> demos.gears.Gears
+ <TD> none
+
+<TR>
+ <TD> demos.hwShadowmapsSimple.HWShadowmapsSimple
+ <TD> NVidia GeForce 2 or better. Currently only runs on Windows
+ because pbuffer support is not yet implemented in Jogl on X11 or Mac
+ OS X.
+
+<TR>
+  <TD> demos.infiniteShadowVolumes.InfiniteShadowVolumes
+  <TD> none
+
+<TR>
+  <TD> demos.proceduralTexturePhysics.ProceduralTexturePhysics
+  <TD> NVidia GeForce 3 or better. Requires pbuffer support
+  (i.e. Windows only at the moment).
+
+<TR>
+  <TD> demos.vertexArrayRange.VertexArrayRange
+  <TD> NVidia GeForce family card. Runs on Windows and Linux (Jogl's
+  vertex_array_range support not yet ported to Mac OS X).
+
+<TR>
+  <TD> demos.vertexProgRefract.VertexProgRefract
+  <TD> NVidia GeForce 2 or better. Runs on Windows and Linux (uses
+  GL_NV_vertex_program, not supported on Mac OS X).
+
+<TR>
+  <TD> demos.vertexProgWarp.VertexProgWarp
+  <TD> NVidia GeForce 2 or better. Runs on Windows and Linux (uses
+  GL_NV_vertex_program, not supported on Mac OS X).
+
+</TABLE>
+
+</P>
+
+<H1>Per-demo controls</H1>
+
+<H2> Hardware Shadow Mapping </H2>
+
+<UL>
+<LI> Alt + left click and drag: rotate camera about focal point
+<LI> Alt + right click and drag: translate camera parallel to image plane
+<LI> Alt + left + right click and drag: zoom camera in/out
+<LI> Click and drag on the faces of the manipulators (look for the
+yellow highlight of the faces upon mouse over) to translate the
+manipulator parallel to that face. Use the handles outside the boxes
+to rotate, and the handles at the corners of the boxes to scale.
+<LI> Escape key or 'q' quits.
+<LI> Space bar cycles through view options. Shadowed view; view from
+light source; unshadowed view.
+<LI> 'v' recenters camera on object
+</UL>
+
+<H2> Infinite Shadow Volumes </H2>
+
+<UL>
+<LI> Alt + left click and drag: rotate camera about focal point
+<LI> Alt + right click and drag: translate camera parallel to image plane
+<LI> Alt + left + right click and drag: zoom camera in/out
+<LI> Click and drag on the faces of the manipulators (look for the
+yellow highlight of the faces upon mouse over) to translate the
+manipulator parallel to that face. Use the handles outside the boxes
+to rotate, and the handles at the corners of the boxes to scale.
+<LI> 'w' toggles wireframe view
+<LI> 'c' recenters camera on object
+<LI> Space bar toggles animation of figure
+<LI> 'v' toggles visualization of shadow volume
+</UL>
+
+<H2> Vertex Prog Warp </H2>
+
+<UL>
+<LI> Left click + drag: rotate camera about focal point
+<LI> Right click + drag: translate camera parallel to image plane
+<LI> Left + right click and drag: zoom camera in/out
+<LI> 'w' toggles wireframe mode
+<LI> Escape or 'q' quits
+<LI> 'r' resets the demo (including recentering object)
+<LI> left/right arrow keys cycle through warp effects
+<LI> 'h' produces a help screen
+<LI> '-'/'+' decreases/increases amplitude of deformation
+<LI> '['/']' decreases/increases frequency of deformation
+<LI> '1'..'5' changes model being viewed
+<LI> Space bar toggles animation
+</UL>
+
+<H2> Vertex Prog Refract </H2>
+
+<UL>
+<LI> Left click + drag: rotate camera about focal point
+<LI> Right click + drag: translate camera parallel to image plane
+<LI> Left + right click and drag: zoom camera in/out
+<LI> 'w' toggles wireframe mode
+<LI> Escape or 'q' quits
+<LI> '1' .. '4' changes model being viewed
+<LI> 's' toggles multipass rendering for chromatic aberration effect
+<LI> 'v' recenters the camera on the object
+<LI> Space bar toggles animation
+</UL>
+
+<H2> Procedural Texture Physics </H2>
+
+<UL>
+<LI> Alt + left click and drag: rotate camera about focal point
+<LI> Alt + right click and drag: translate camera parallel to image plane
+<LI> Alt + left + right click and drag: zoom camera in/out
+<LI> Space bar toggles animation
+<LI> 'r' resets the demo
+<LI> 'c'/'v' decrease/increase blur increment
+<LI> '-'/'=' decrease/increase bump scale
+<LI> 'l' (lowercase “L”) toggles effect of spinning and static textures on the water
+<LI> ','/'.' decrease/increase frequency of droplets
+</UL>
+
+</BODY>
+</HTML>
