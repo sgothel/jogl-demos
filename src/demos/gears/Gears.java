@@ -51,12 +51,8 @@ public class Gears {
     private int prevMouseX, prevMouseY;
     private boolean mouseRButtonDown = false;
 
-    private GL gl;
-    private GLDrawable gldrawable;
-
     public void init(GLDrawable drawable) {
-      gl = drawable.getGL();
-      this.gldrawable = drawable;
+      GL gl = drawable.getGL();
       System.err.println("INIT GL IS: " + gl.getClass().getName());
 
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
@@ -74,19 +70,19 @@ public class Gears {
       gear1 = gl.glGenLists(1);
       gl.glNewList(gear1, GL.GL_COMPILE);
       gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
-      gear(1.0f, 4.0f, 1.0f, 20, 0.7f);
+      gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
       gl.glEndList();
             
       gear2 = gl.glGenLists(1);
       gl.glNewList(gear2, GL.GL_COMPILE);
       gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green);
-      gear(0.5f, 2.0f, 2.0f, 10, 0.7f);
+      gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
       gl.glEndList();
             
       gear3 = gl.glGenLists(1);
       gl.glNewList(gear3, GL.GL_COMPILE);
       gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue);
-      gear(1.3f, 2.0f, 0.5f, 10, 0.7f);
+      gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
       gl.glEndList();
             
       gl.glEnable(GL.GL_NORMALIZE);
@@ -96,6 +92,8 @@ public class Gears {
     }
     
     public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+      GL gl = drawable.getGL();
+
       float h = (float)height / (float)width;
             
       gl.glMatrixMode(GL.GL_PROJECTION);
@@ -128,6 +126,7 @@ public class Gears {
     public void display(GLDrawable drawable) {
       angle += 2.0f;
 
+      GL gl = drawable.getGL();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
             
       gl.glPushMatrix();
@@ -158,7 +157,8 @@ public class Gears {
 
     public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-    private void gear(float inner_radius,
+    private void gear(GL gl,
+                      float inner_radius,
                       float outer_radius,
                       float width,
                       int teeth,
