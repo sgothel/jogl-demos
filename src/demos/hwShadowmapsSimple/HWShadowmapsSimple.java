@@ -224,10 +224,7 @@ public class HWShadowmapsSimple {
       geometry = gl.glGenLists(1);
       gl.glNewList(geometry, GL.GL_COMPILE);
       gl.glPushMatrix();
-      //      gl.glTranslatef(0, .4f, 0);
-      // FIXME
-      //      glutSolidTeapot(.5f);
-      glut.glutSolidTorus(gl, 0.25f, 0.5f, 40, 20);
+      glut.glutSolidTeapot(gl, 0.8f);
       gl.glPopMatrix();
       gl.glEndList();
 
