@@ -55,6 +55,8 @@ public class Gears {
       GL gl = drawable.getGL();
       System.err.println("INIT GL IS: " + gl.getClass().getName());
 
+      gl.setSwapInterval(1);
+
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
       float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
       float green[] = { 0.0f, 0.8f, 0.2f, 1.0f };
