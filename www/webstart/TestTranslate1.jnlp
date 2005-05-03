@@ -13,8 +13,7 @@
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
       <property name="sun.java2d.noddraw" value="true"/>
-      <jar href="jogl-demos.jar" main="true"/>
-      <jar href="jogl-demos-util.jar" />
+      <jar href="jogl-demos-util.jar" main="true" />
       <extension name="jogl" href="https://jogl.dev.java.net/webstart/jogl.jnlp" />
     </resources>
 
