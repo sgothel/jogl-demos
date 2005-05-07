@@ -17,11 +17,6 @@ public class JGears {
     Frame frame = new Frame("Gear Demo");
     GLJPanel drawable = GLDrawableFactory.getFactory().createGLJPanel(new GLCapabilities());
 
-    // Use debug pipeline
-    //    drawable.setGL(new DebugGL(drawable.getGL()));
-    System.err.println("DRAWABLE GL IS: " + drawable.getGL().getClass().getName());
-    System.err.println("DRAWABLE GLU IS: " + drawable.getGLU().getClass().getName());
-
     drawable.addGLEventListener(new GearRenderer());
     frame.add(drawable);
     frame.setSize(300, 300);
@@ -53,6 +48,9 @@ public class JGears {
 
 
     public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL gl = drawable.getGL();
       System.err.println("INIT GL IS: " + gl.getClass().getName());
 

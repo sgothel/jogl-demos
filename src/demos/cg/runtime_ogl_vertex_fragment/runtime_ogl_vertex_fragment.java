@@ -67,9 +67,6 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     canvas.addGLEventListener(new runtime_ogl_vertex_fragment());
 
-    // Use debug pipeline
-    canvas.setGL(new DebugGL(canvas.getGL()));
-
     frame.add(canvas);
     frame.setSize(512, 512);
     final Animator animator = new Animator(canvas);
@@ -94,6 +91,9 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
 
   public void init(GLDrawable drawable) 
   {
+    // Use debug pipeline
+    // drawable.setGL(new DebugGL(drawable.getGL()));
+
     GL gl = drawable.getGL();
     
     // Basic Cg setup; register a callback function for any errors

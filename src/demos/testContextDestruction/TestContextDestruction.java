@@ -178,12 +178,7 @@ public class TestContextDestruction {
   class Listener implements GLEventListener {
     public void init(GLDrawable drawable) {
       System.out.println("Listener.init()");
-      // init() might get called more than once if the GLCanvas is
-      // added and removed, but we only want to install the DebugGL
-      // pipeline once
-      if (!(drawable.getGL() instanceof DebugGL)) {
-        drawable.setGL(new DebugGL(drawable.getGL()));
-      }
+      drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
 

@@ -311,6 +311,9 @@ public class JRefract {
 "END\n";
 
     public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
       float cc = 1.0f;
@@ -892,6 +895,9 @@ public class JRefract {
 
 
     public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL gl = drawable.getGL();
       System.err.println("INIT GL IS: " + gl.getClass().getName());
 
