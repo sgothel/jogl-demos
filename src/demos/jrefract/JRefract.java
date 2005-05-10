@@ -835,13 +835,6 @@ public class JRefract {
   }
 
   private void runExit() {
-    quit = true;
-    while (!animatorStopped) {
-      try {
-        Thread.sleep(1);
-      } catch (InterruptedException e) {
-      }
-    }
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking
@@ -849,6 +842,13 @@ public class JRefract {
     // the exit routine in another thread.
     new Thread(new Runnable() {
         public void run() {
+          quit = true;
+          while (!animatorStopped) {
+            try {
+              Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+          }
           System.exit(0);
         }
       }).start();
@@ -878,6 +878,10 @@ public class JRefract {
           for (Iterator iter = canvases.iterator(); iter.hasNext(); ) {
             GLJPanel panel = (GLJPanel) iter.next();
             panel.display();
+          }
+          try {
+            Thread.sleep(1);
+          } catch (InterruptedException e) {
           }
         }
       }
@@ -1174,7 +1178,7 @@ public class JRefract {
             }
 
             try {
-              Thread.sleep(1000);
+              Thread.sleep(2000);
             } catch (InterruptedException e) {
             }
 
@@ -1189,7 +1193,7 @@ public class JRefract {
             }
 
             try {
-              Thread.sleep(1000);
+              Thread.sleep(2000);
             } catch (InterruptedException e) {
             }
           }
