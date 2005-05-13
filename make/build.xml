@@ -50,7 +50,7 @@
             <pathelement path="${classpath}" />
             <pathelement location="${jogl.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="demos/cg/**" source="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" source="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl.classpath" />
         </javac>
@@ -58,6 +58,9 @@
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
                 <exclude name="demos/util/**" />
+            </fileset>
+            <fileset dir="${src}">
+                <include name="demos/cg/**/*.cg" />
             </fileset>
         </jar>
         <jar destfile="${jogl.demos.util.jar}">
