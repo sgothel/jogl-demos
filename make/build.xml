@@ -31,7 +31,15 @@
         </fail>
     </target>
 
-    <target name="init" depends="java.class.path.validate">
+    <target name="setup.cg.excludes" unless="jogl.cg">
+        <property name="jogl.cg.excludes" value="demos/cg/**" />
+    </target>
+
+    <target name="skip.cg.excludes" if="jogl.cg">
+        <property name="jogl.cg.excludes" value="" />
+    </target>
+
+    <target name="init" depends="java.class.path.validate,setup.cg.excludes,skip.cg.excludes">
         <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
         <property name="classes"             value="../build/classes" />
         <property name="src"                 value="../src" />
@@ -50,7 +58,7 @@
             <pathelement path="${classpath}" />
             <pathelement location="${jogl.jar}" />
         </path>
-        <javac destdir="${classes}" source="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes}" source="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl.classpath" />
         </javac>
