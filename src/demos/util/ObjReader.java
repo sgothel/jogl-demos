@@ -68,8 +68,16 @@ public class ObjReader {
     this(new File(filename));
   }
 
+  public ObjReader(InputStream in) throws IOException {
+    this(new InputStreamReader(in));
+  }
+
   public ObjReader(File file) throws IOException {
-    BufferedReader reader = new BufferedReader(new FileReader(file));
+    this (new FileReader(file));
+  }
+
+  public ObjReader(Reader r) throws IOException {
+    BufferedReader reader = new BufferedReader(r);
     String line = null;
     int lineNo = 0;
     float[] floatTmp = new float[3];
