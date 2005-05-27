@@ -176,11 +176,11 @@ public class HDR {
 
     frame = new Frame("HDR test");
     frame.setLayout(new BorderLayout());
-    frame.setResizable(false);
     canvas.setSize(win_w, win_h);
     
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
+    frame.setResizable(false);
     frame.show();
     canvas.requestFocus();
 
