@@ -353,6 +353,9 @@ public class HDR {
       }
       drawQuadRect4(gl, win_w, win_h, pbuffer_w, pbuffer_h);
       gl.glDisable(GL.GL_TEXTURE_RECTANGLE_NV);
+
+      // Try to avoid swamping the CPU on Linux
+      Thread.yield();
     }
 
     public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
