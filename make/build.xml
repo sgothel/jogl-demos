@@ -32,7 +32,7 @@
     </target>
 
     <target name="setup.cg.excludes" unless="jogl.cg">
-        <property name="jogl.cg.excludes" value="demos/cg/**" />
+        <property name="jogl.cg.excludes" value="demos/cg/**,demos/hdr/**" />
     </target>
 
     <target name="skip.cg.excludes" if="jogl.cg">
@@ -69,6 +69,11 @@
             </fileset>
             <fileset dir="${src}">
                 <include name="demos/cg/**/*.cg" />
+            </fileset>
+            <fileset dir="${src}">
+                <include name="demos/hdr/shaders/**/*.cg" />
+                <include name="demos/hdr/shaders/**/*.arbvp1" />
+                <include name="demos/hdr/shaders/**/*.arbfp1" />
             </fileset>
         </jar>
         <jar destfile="${jogl.demos.util.jar}">

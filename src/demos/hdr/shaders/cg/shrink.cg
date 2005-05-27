@@ -1,0 +1,17 @@
+// downsample float image by half
+
+#include "hdr.cg"
+
+half4 main(fragin In,
+	   uniform samplerRECT sceneTex : TEXUNIT0
+           ) : COLOR
+{
+    // should calculate texcoords in vertex shader here:
+    half4 c;
+    c = texRECT(sceneTex, In.tex0.xy);
+    c = c + texRECT(sceneTex, In.tex0.xy + float2(1, 0));
+    c = c + texRECT(sceneTex, In.tex0.xy + float2(0, 1));
+    c = c + texRECT(sceneTex, In.tex0.xy + float2(1, 1));
+    c = c * 0.25;
+    return c;
+}
