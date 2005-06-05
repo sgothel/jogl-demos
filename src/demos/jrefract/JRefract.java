@@ -618,35 +618,34 @@ public class JRefract {
     }
 
     private void makeRGBTexture(GL gl, GLU glu, BufferedImage img, int target, boolean mipmapped) {
-      ByteBuffer dest = null;
       switch (img.getType()) {
         case BufferedImage.TYPE_3BYTE_BGR:
         case BufferedImage.TYPE_CUSTOM: {
           byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-          dest = ByteBuffer.allocateDirect(data.length);
-          dest.order(ByteOrder.nativeOrder());
-          dest.put(data, 0, data.length);
+          if (mipmapped) {
+            glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
+                                  GL.GL_UNSIGNED_BYTE, data);
+          } else {
+            gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+          }
           break;
         }
 
         case BufferedImage.TYPE_INT_RGB: {
           int[] data = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-          dest = ByteBuffer.allocateDirect(data.length * BufferUtils.SIZEOF_INT);
-          dest.order(ByteOrder.nativeOrder());
-          dest.asIntBuffer().put(data, 0, data.length);
+          if (mipmapped) {
+            glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
+                                  GL.GL_UNSIGNED_BYTE, data);
+          } else {
+            gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+          }
           break;
         }
 
         default:
           throw new RuntimeException("Unsupported image type " + img.getType());
-      }
-
-      if (mipmapped) {
-        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, dest);
-      } else {
-        gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, dest);
       }
     }
 
