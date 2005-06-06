@@ -13,7 +13,10 @@ import demos.util.*;
  *
  * This version is equal to Brian Paul's version 1.2 1999/10/21 <P>
  *
- * Illustrates usage of GLJPanel in full-screen mode.
+ * Illustrates usage of GLJPanel in full-screen mode. On Windows this
+ * demo should be run with the system property
+ * -Dsun.java2d.noddraw=true specified to prevent Java2D from using
+ * DirectDraw, which is incompatible with OpenGL at the driver level.
  */
 
 public class JGearsFullscreen {
