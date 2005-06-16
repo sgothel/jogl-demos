@@ -62,7 +62,8 @@ public class ScreenResSelector {
     // Filter everything that is not at least 24-bit
     modes = filterDisplayModes(modes, new DisplayModeFilter() {
         public boolean filter(DisplayMode mode) {
-          return (mode.getBitDepth() >= 24);
+          // Bit depth < 0 means "multi-depth" -- can't reason about it
+          return (mode.getBitDepth() < 0 || mode.getBitDepth() >= 24);
         }
       });
     // Filter everything less than 640x480
@@ -125,7 +126,7 @@ public class ScreenResSelector {
   }
 
   private static String modeToString(DisplayMode mode) {
-    return (mode.getBitDepth() + " bits, " +
+    return (((mode.getBitDepth() > 0) ? (mode.getBitDepth() + " bits, ") : "") +
             mode.getWidth() + "x" + mode.getHeight() + ", " +
             mode.getRefreshRate() + " Hz");
   }
