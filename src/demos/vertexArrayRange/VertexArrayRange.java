@@ -219,6 +219,8 @@ public class VertexArrayRange {
     setFlag('i', true);   // infinite viewer and light
 
     canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    //    canvas.setGL(new TraceGL(canvas.getGL(), System.err));
+    //    canvas.setGL(new DebugGL(canvas.getGL()));
     VARListener listener = new VARListener();
     canvas.addGLEventListener(listener);
 
@@ -278,14 +280,17 @@ public class VertexArrayRange {
     boolean exiting = false;
 
     public void init(GLDrawable drawable) {
-      //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
-      //    drawable.setGL(new DebugGL(drawable.getGL()));
-
       GL  gl  = drawable.getGL();
       GLU glu = drawable.getGLU();
 
       // Try and disable synch-to-retrace for fastest framerate
-      gl.setSwapInterval(0);
+      if (gl.isFunctionAvailable("wglSwapIntervalEXT")) {
+        System.err.println("wglSwapIntervalEXT available; disabling sync-to-refresh for best framerate");
+        gl.wglSwapIntervalEXT(0);       
+      }
+      else {    
+        System.err.println("wglSwapIntervalEXT not available; cannot disable sync-to-refresh");
+      }
 
       try {
         ensurePresent("glVertexArrayRangeNV");

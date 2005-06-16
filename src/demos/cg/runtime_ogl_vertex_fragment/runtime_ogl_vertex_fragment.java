@@ -31,8 +31,6 @@
  *
  */
 
-package demos.cg.runtime_ogl_vertex_fragment;
-
 import net.java.games.cg.*;
 import net.java.games.jogl.*;
 import net.java.games.jogl.util.*;
@@ -69,6 +67,9 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     canvas.addGLEventListener(new runtime_ogl_vertex_fragment());
 
+    // Use debug pipeline
+    canvas.setGL(new DebugGL(canvas.getGL()));
+
     frame.add(canvas);
     frame.setSize(512, 512);
     final Animator animator = new Animator(canvas);
@@ -93,9 +94,6 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
 
   public void init(GLDrawable drawable) 
   {
-    // Use debug pipeline
-    // drawable.setGL(new DebugGL(drawable.getGL()));
-
     GL gl = drawable.getGL();
     
     // Basic Cg setup; register a callback function for any errors
@@ -237,13 +235,8 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
 
     // Load and compile the vertex program from demo_vert.cg; hold on to the
     // handle to it that is returned.
-    try {
-      vertexProgram = CgGL.cgCreateProgramFromStream(context, CgGL.CG_SOURCE,
-                                                     getClass().getClassLoader().getResourceAsStream("demos/cg/runtime_ogl_vertex_fragment/demo_vert.cg"),
-                                                     vertexProfile, null, null);
-    } catch (IOException e) {
-      throw new RuntimeException("Error loading Cg vertex program", e);
-    }
+    vertexProgram = CgGL.cgCreateProgramFromFile(context, CgGL.CG_SOURCE, "demo_vert.cg",
+                                                 vertexProfile, null, null);
     if (!CgGL.cgIsProgramCompiled(vertexProgram))
       CgGL.cgCompileProgram(vertexProgram);
 
@@ -252,13 +245,8 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     CgGL.cgGLLoadProgram(vertexProgram);
 
     // And similarly set things up for the fragment program.
-    try {
-      fragmentProgram = CgGL.cgCreateProgramFromStream(context, CgGL.CG_SOURCE,
-                                                       getClass().getClassLoader().getResourceAsStream("demos/cg/runtime_ogl_vertex_fragment/demo_frag.cg"),
-                                                       fragmentProfile, null, null);
-    } catch (IOException e) {
-      throw new RuntimeException("Error loading Cg fragment program", e);
-    }
+    fragmentProgram = CgGL.cgCreateProgramFromFile(context, CgGL.CG_SOURCE, "demo_frag.cg",
+                                                   fragmentProfile, null, null);
     if (!CgGL.cgIsProgramCompiled(fragmentProgram)) {
       CgGL.cgCompileProgram(fragmentProgram);
     }

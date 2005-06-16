@@ -1,49 +1,97 @@
-package demos.jgears;
+package demos.fullscreen;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import net.java.games.jogl.*;
+import demos.util.*;
 
 /**
- * JGears.java <BR>
+ * GearsFullscreen.java <BR>
  * author: Brian Paul (converted to Java by Ron Cemer and Sven Goethel) <P>
  *
- * This version is equal to Brian Paul's version 1.2 1999/10/21
+ * This version is equal to Brian Paul's version 1.2 1999/10/21 <P>
+ *
+ * Illustrates simple usage of GLCanvas in full-screen mode. On
+ * Windows this demo should be run with the system property
+ * -Dsun.java2d.noddraw=true specified to prevent Java2D from using
+ * DirectDraw, which is incompatible with OpenGL at the driver level.
  */
 
-public class JGears {
+public class GearsFullscreen {
+  private GraphicsDevice dev;
+  private DisplayMode origMode;
+  private boolean fullScreen;
+  private Frame frame;
+  private Animator animator;
+  private int initWidth = 300;
+  private int initHeight = 300;
+
   public static void main(String[] args) {
-    Frame frame = new Frame("Gear Demo");
-    GLJPanel drawable = GLDrawableFactory.getFactory().createGLJPanel(new GLCapabilities());
+    new GearsFullscreen().run(args);
+  }
 
-    // Use debug pipeline
-    //    drawable.setGL(new DebugGL(drawable.getGL()));
-    System.err.println("DRAWABLE GL IS: " + drawable.getGL().getClass().getName());
-    System.err.println("DRAWABLE GLU IS: " + drawable.getGLU().getClass().getName());
+  public void run(String[] args) {
+    dev = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    origMode = dev.getDisplayMode();
+    DisplayMode newMode = null;
 
-    drawable.addGLEventListener(new GearRenderer());
-    frame.add(drawable);
-    frame.setSize(300, 300);
-    final Animator animator = new Animator(drawable);
+    if (dev.isFullScreenSupported()) {
+      newMode = ScreenResSelector.showSelectionDialog();
+      if (newMode != null) {
+        initWidth = newMode.getWidth();
+        initHeight = newMode.getHeight();
+      }
+    } else {
+      System.err.println("NOTE: full-screen mode not supported; running in window instead");
+    }
+
+    frame = new Frame("Gear Demo");
+    if (newMode != null) {
+      frame.setUndecorated(true);
+    }
+    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+
+    canvas.addGLEventListener(new GearRenderer());
+    frame.add(canvas);
+    frame.setSize(initWidth, initHeight);
+    animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          // Run this on another thread than the AWT event queue to
-          // make sure the call to Animator.stop() completes before
-          // exiting
-          new Thread(new Runnable() {
-              public void run() {
-                animator.stop();
-                System.exit(0);
-              }
-            }).start();
+          runExit();
         }
       });
-    frame.show();
+    frame.setVisible(true);
+
+    if (dev.isFullScreenSupported() && (newMode != null)) {
+      dev.setFullScreenWindow(frame);
+      if (dev.isDisplayChangeSupported()) {
+        dev.setDisplayMode(newMode);
+        fullScreen = true;
+      } else {
+        // Not much point in having a full-screen window in this case
+        dev.setFullScreenWindow(null);
+        final Frame f2 = frame;
+        try {
+          EventQueue.invokeAndWait(new Runnable() {
+              public void run() {
+                f2.setVisible(false);
+                f2.setUndecorated(false);
+                f2.setVisible(true);
+                f2.setSize(initWidth, initHeight);
+              }
+            });
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        System.err.println("NOTE: was not able to change display mode; full-screen disabled");
+      }
+    }
+
     animator.start();
   }
 
-  static class GearRenderer implements GLEventListener, MouseListener, MouseMotionListener {
+  class GearRenderer implements GLEventListener, MouseListener, MouseMotionListener {
     private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
     private int gear1, gear2, gear3;
     private float angle = 0.0f;
@@ -51,10 +99,28 @@ public class JGears {
     private int prevMouseX, prevMouseY;
     private boolean mouseRButtonDown = false;
 
-
     public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL gl = drawable.getGL();
+
+      // FIXME: workaround for Windows full-screen bug when
+      // sun.java2d.noddraw=true and similar bug on Mac OS X
+      if (fullScreen) {
+        final GLDrawable tmpDrawable = drawable;
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              frame.setBounds(0, 0, initWidth, initHeight);
+              tmpDrawable.setSize(initWidth, initHeight);
+              frame.toFront();
+            }
+          });
+      }
+
       System.err.println("INIT GL IS: " + gl.getClass().getName());
+
+      gl.setSwapInterval(1);
 
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
       float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
@@ -90,6 +156,12 @@ public class JGears {
                 
       drawable.addMouseListener(this);
       drawable.addMouseMotionListener(this);
+
+      drawable.addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent e) {
+            dispatchKey(e.getKeyCode());
+          }
+        });
     }
     
     public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
@@ -311,6 +383,44 @@ public class JGears {
     }
     
     public void mouseMoved(MouseEvent e) {}
+
+    public void dispatchKey(int keyCode) {
+      switch (keyCode) {
+      case KeyEvent.VK_Q:
+      case KeyEvent.VK_ESCAPE:
+        runExit();
+      }
+    }
+  }
+
+  public void runExit() {
+    // Run this on another thread than the AWT event queue to
+    // make sure the call to Animator.stop() completes before
+    // exiting
+    new Thread(new Runnable() {
+        public void run() {
+          animator.stop();
+          try {
+            EventQueue.invokeAndWait(new Runnable() {
+                public void run() {
+                  if (fullScreen) {
+                    try {
+                      dev.setDisplayMode(origMode);
+                    } catch (Exception e1) {
+                    }
+                    try {
+                      dev.setFullScreenWindow(null);
+                    } catch (Exception e2) {
+                    }
+                    fullScreen = false;
+                  }
+                }
+              });
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          System.exit(0);
+        }
+      }).start();
   }
 }
-

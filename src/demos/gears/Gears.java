@@ -17,6 +17,11 @@ public class Gears {
     Frame frame = new Frame("Gear Demo");
     GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
 
+    // Use debug pipeline
+    //    canvas.setGL(new DebugGL(canvas.getGL()));
+    System.err.println("CANVAS GL IS: " + canvas.getGL().getClass().getName());
+    System.err.println("CANVAS GLU IS: " + canvas.getGLU().getClass().getName());
+
     canvas.addGLEventListener(new GearRenderer());
     frame.add(canvas);
     frame.setSize(300, 300);
@@ -47,11 +52,7 @@ public class Gears {
     private boolean mouseRButtonDown = false;
 
     public void init(GLDrawable drawable) {
-      // Use debug pipeline
-      // drawable.setGL(new DebugGL(drawable.getGL()));
-
       GL gl = drawable.getGL();
-
       System.err.println("INIT GL IS: " + gl.getClass().getName());
 
       gl.setSwapInterval(1);

@@ -31,14 +31,11 @@
  *
  */
 
-package demos.cg.runtime_ogl;
-
 import net.java.games.cg.*;
 import net.java.games.jogl.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 
 /**
  * cgGL_vertex_example: simple demo of Nvidia CgGL API. Based upon C version
@@ -190,14 +187,9 @@ public class cgGL_vertex_example implements GLEventListener
     CheckCgError();
 
     /* Test adding source text to context */
-    try {
-      Program = CgGL.cgCreateProgramFromStream(
-        Context, CgGL.CG_SOURCE,
-        getClass().getClassLoader().getResourceAsStream("demos/cg/runtime_ogl/cgGL_vertex_example.cg"),
-        profile, null, null);
-    } catch (IOException e) {
-      throw new RuntimeException("Error loading Cg vertex program", e);
-    }
+    Program = CgGL.cgCreateProgramFromFile(
+      Context, CgGL.CG_SOURCE, "cgGL_vertex_example.cg",
+      profile, null, null);
     CheckCgError();
 
     System.err.println(
