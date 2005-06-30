@@ -83,13 +83,16 @@ public class JRefract {
     inner.setClosable(true);
     inner.setVisible(true);
 
-    final GLJPanel canvas = GLDrawableFactory.getFactory().createGLJPanel(new GLCapabilities());
+    GLCapabilities caps = new GLCapabilities();
+    if (!bunny) {
+      caps.setAlphaBits(8);
+    }
+    final GLJPanel canvas = GLDrawableFactory.getFactory().createGLJPanel(caps);
     if (bunny) {
       canvas.addGLEventListener(new Listener());
     } else {
       canvas.addGLEventListener(new GearRenderer());
     }
-    canvas.setSize(512, 512);
     canvas.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           canvas.requestFocus();
@@ -106,12 +109,36 @@ public class JRefract {
       });
 
     inner.getContentPane().setLayout(new BorderLayout());
-    inner.getContentPane().add(canvas, BorderLayout.CENTER);
-    inner.getContentPane().add(new JButton("West"), BorderLayout.WEST);
-    inner.getContentPane().add(new JButton("East"), BorderLayout.EAST);
-    inner.getContentPane().add(new JButton("North"), BorderLayout.NORTH);
-    inner.getContentPane().add(new JButton("South"), BorderLayout.SOUTH);
-    inner.setSize(canvas.getSize());
+    if (bunny) {
+      inner.getContentPane().add(canvas, BorderLayout.CENTER);
+      inner.getContentPane().add(new JButton("West"), BorderLayout.WEST);
+      inner.getContentPane().add(new JButton("East"), BorderLayout.EAST);
+      inner.getContentPane().add(new JButton("North"), BorderLayout.NORTH);
+      inner.getContentPane().add(new JButton("South"), BorderLayout.SOUTH);
+    } else {
+      // Provide control over transparency of gears background
+      canvas.setOpaque(false);
+      JPanel gradientPanel = new JPanel() {
+          public void paintComponent(Graphics g) {
+            ((Graphics2D) g).setPaint(new GradientPaint(0, 0, Color.WHITE,
+                                                        getWidth(), getHeight(), Color.DARK_GRAY));
+            g.fillRect(0, 0, getWidth(), getHeight());
+          }
+        };
+      gradientPanel.setLayout(new BorderLayout());
+      inner.getContentPane().add(gradientPanel, BorderLayout.CENTER);
+      gradientPanel.add(canvas, BorderLayout.CENTER);
+
+      final JCheckBox checkBox = new JCheckBox("Transparent", true);
+      checkBox.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            canvas.setOpaque(!checkBox.isSelected());
+          }
+        });
+      inner.getContentPane().add(checkBox, BorderLayout.SOUTH);
+    }
+
+    inner.setSize(512, 512);
     desktop.add(inner);
 
     return inner;
