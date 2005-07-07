@@ -42,6 +42,7 @@ import java.util.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 import net.java.games.jogl.*;
 import net.java.games.jogl.util.*;
@@ -63,42 +64,95 @@ import gleem.linalg.*;
 
 public class JRefract {
   private boolean useRegisterCombiners;
-  private GLJPanel canvas;
-  private Animator animator;
+  private ArrayList canvases;
+
   private volatile boolean quit;
+  private volatile boolean animatorStopped;
+  private JDesktopPane desktop;
 
   public static void main(String[] args) {
     new JRefract().run(args);
   }
 
-  public void run(String[] args) {
-
-    JFrame frame = new JFrame("JOGL and Swing Interoperability");
-    JDesktopPane desktop = new JDesktopPane();
-    desktop.setSize(1024, 768);
-    JInternalFrame inner = new JInternalFrame("Refraction Using Vertex Programs");
+  private JInternalFrame addWindow(boolean bunny) {
+    String str = bunny ?
+      "Refraction Using Vertex Programs" :
+      "Gears Demo";
+    final JInternalFrame inner = new JInternalFrame(str);
     inner.setResizable(true);
+    inner.setClosable(true);
+    inner.setVisible(true);
 
-    canvas = GLDrawableFactory.getFactory().createGLJPanel(new GLCapabilities());
-    canvas.addGLEventListener(new Listener());
-    canvas.setSize(512, 512);
+    GLCapabilities caps = new GLCapabilities();
+    if (!bunny) {
+      caps.setAlphaBits(8);
+    }
+    final GLJPanel canvas = GLDrawableFactory.getFactory().createGLJPanel(caps);
+    if (bunny) {
+      canvas.addGLEventListener(new Listener());
+    } else {
+      canvas.addGLEventListener(new GearRenderer());
+    }
     canvas.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           canvas.requestFocus();
         }
       });
 
+    addJPanel(canvas);
+
+    inner.addInternalFrameListener(new InternalFrameAdapter() {
+        public void internalFrameClosed(InternalFrameEvent e) {
+          removeJPanel(canvas);
+          System.gc();
+        }
+      });
+
     inner.getContentPane().setLayout(new BorderLayout());
-    inner.getContentPane().add(canvas, BorderLayout.CENTER);
-    inner.getContentPane().add(new JButton("West"), BorderLayout.WEST);
-    inner.getContentPane().add(new JButton("East"), BorderLayout.EAST);
-    inner.getContentPane().add(new JButton("North"), BorderLayout.NORTH);
-    inner.getContentPane().add(new JButton("South"), BorderLayout.SOUTH);
-    inner.setSize(canvas.getSize());
+    if (bunny) {
+      inner.getContentPane().add(canvas, BorderLayout.CENTER);
+      inner.getContentPane().add(new JButton("West"), BorderLayout.WEST);
+      inner.getContentPane().add(new JButton("East"), BorderLayout.EAST);
+      inner.getContentPane().add(new JButton("North"), BorderLayout.NORTH);
+      inner.getContentPane().add(new JButton("South"), BorderLayout.SOUTH);
+    } else {
+      // Provide control over transparency of gears background
+      canvas.setOpaque(false);
+      JPanel gradientPanel = new JPanel() {
+          public void paintComponent(Graphics g) {
+            ((Graphics2D) g).setPaint(new GradientPaint(0, 0, Color.WHITE,
+                                                        getWidth(), getHeight(), Color.DARK_GRAY));
+            g.fillRect(0, 0, getWidth(), getHeight());
+          }
+        };
+      gradientPanel.setLayout(new BorderLayout());
+      inner.getContentPane().add(gradientPanel, BorderLayout.CENTER);
+      gradientPanel.add(canvas, BorderLayout.CENTER);
+
+      final JCheckBox checkBox = new JCheckBox("Transparent", true);
+      checkBox.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            canvas.setOpaque(!checkBox.isSelected());
+          }
+        });
+      inner.getContentPane().add(checkBox, BorderLayout.SOUTH);
+    }
+
+    inner.setSize(512, 512);
+    desktop.add(inner);
+
+    return inner;
+  }
+
+  public void run(String[] args) {
+
+    canvases = new ArrayList();
+
+    JFrame frame = new JFrame("JOGL and Swing Interoperability");
+    desktop = new JDesktopPane();
+    desktop.setSize(1024, 768);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(desktop, BorderLayout.CENTER);
-    desktop.add(inner);
-    inner.setVisible(true);
 
     JInternalFrame inner2 = new JInternalFrame("Hello, World");
     JLabel label = new JLabel("Hello, World!");
@@ -109,7 +163,44 @@ public class JRefract {
     desktop.add(inner2);
     inner2.setVisible(true);
 
-    animator = new Animator(canvas);
+    JMenuBar menuBar = new JMenuBar();
+
+    JMenu menu = new JMenu("Actions");
+    JMenuItem item = new JMenuItem("New bunny");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(true);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("New gears");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(false);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Auto mode");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          startAutoMode();
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Exit");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          runExit();
+        }
+      });
+    menu.add(item);
+
+    menuBar.add(menu);
+    frame.setJMenuBar(menuBar);
+
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           runExit();
@@ -117,7 +208,8 @@ public class JRefract {
       });
     frame.setSize(desktop.getSize());
     frame.setVisible(true);
-    animator.start();
+
+    new Thread(new ListAnimator()).start();
   }
 
   class Listener implements GLEventListener {
@@ -246,6 +338,9 @@ public class JRefract {
 "END\n";
 
     public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
       float cc = 1.0f;
@@ -539,7 +634,9 @@ public class JRefract {
       for (int i = 0; i < suffixes.length; i++) {
         String resourceName = baseName + "_" + suffixes[i] + ".png";
         // Note: use of BufferedInputStream works around 4764639/4892246
-	BufferedImage img = ImageIO.read(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(resourceName)));
+        BufferedInputStream bis = new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(resourceName));
+	BufferedImage img = ImageIO.read(bis);
+        bis.close();
 	if (img == null) {
 	  throw new RuntimeException("Error reading PNG image " + resourceName);
 	}
@@ -548,35 +645,34 @@ public class JRefract {
     }
 
     private void makeRGBTexture(GL gl, GLU glu, BufferedImage img, int target, boolean mipmapped) {
-      ByteBuffer dest = null;
       switch (img.getType()) {
         case BufferedImage.TYPE_3BYTE_BGR:
         case BufferedImage.TYPE_CUSTOM: {
           byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-          dest = ByteBuffer.allocateDirect(data.length);
-          dest.order(ByteOrder.nativeOrder());
-          dest.put(data, 0, data.length);
+          if (mipmapped) {
+            glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
+                                  GL.GL_UNSIGNED_BYTE, data);
+          } else {
+            gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+          }
           break;
         }
 
         case BufferedImage.TYPE_INT_RGB: {
           int[] data = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-          dest = ByteBuffer.allocateDirect(data.length * BufferUtils.SIZEOF_INT);
-          dest.order(ByteOrder.nativeOrder());
-          dest.asIntBuffer().put(data, 0, data.length);
+          if (mipmapped) {
+            glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
+                                  GL.GL_UNSIGNED_BYTE, data);
+          } else {
+            gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+          }
           break;
         }
 
         default:
           throw new RuntimeException("Unsupported image type " + img.getType());
-      }
-
-      if (mipmapped) {
-        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, dest);
-      } else {
-        gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, dest);
       }
     }
 
@@ -765,7 +861,6 @@ public class JRefract {
   }
 
   private void runExit() {
-    quit = true;
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking
@@ -773,8 +868,361 @@ public class JRefract {
     // the exit routine in another thread.
     new Thread(new Runnable() {
         public void run() {
-          animator.stop();
+          quit = true;
+          while (!animatorStopped) {
+            try {
+              Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+          }
           System.exit(0);
+        }
+      }).start();
+  }
+
+  private synchronized void addJPanel(GLJPanel panel) {
+    ArrayList newCanvases = (ArrayList) canvases.clone();
+    newCanvases.add(panel);
+    canvases = newCanvases;
+  }
+
+  private synchronized void removeJPanel(GLJPanel panel) {
+    ArrayList newCanvases = (ArrayList) canvases.clone();
+    newCanvases.remove(panel);
+    canvases = newCanvases;
+  }
+
+  class ListAnimator implements Runnable {
+    public void run() {
+      while (!quit) {
+        if (canvases.isEmpty()) {
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+          }
+        } else {
+          for (Iterator iter = canvases.iterator(); iter.hasNext(); ) {
+            GLJPanel panel = (GLJPanel) iter.next();
+            panel.display();
+          }
+          try {
+            Thread.sleep(1);
+          } catch (InterruptedException e) {
+          }
+        }
+      }
+      animatorStopped = true;
+    }
+  }
+
+  static class GearRenderer implements GLEventListener, MouseListener, MouseMotionListener {
+    private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
+    private int gear1, gear2, gear3;
+    private float angle = 0.0f;
+
+    private int prevMouseX, prevMouseY;
+    private boolean mouseRButtonDown = false;
+
+
+    public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
+      GL gl = drawable.getGL();
+      System.err.println("INIT GL IS: " + gl.getClass().getName());
+
+      float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
+      float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
+      float green[] = { 0.0f, 0.8f, 0.2f, 1.0f };
+      float blue[] = { 0.2f, 0.2f, 1.0f, 1.0f };
+
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos);
+      gl.glEnable(GL.GL_CULL_FACE);
+      gl.glEnable(GL.GL_LIGHTING);
+      gl.glEnable(GL.GL_LIGHT0);
+      gl.glEnable(GL.GL_DEPTH_TEST);
+            
+      /* make the gears */
+      gear1 = gl.glGenLists(1);
+      gl.glNewList(gear1, GL.GL_COMPILE);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
+      gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
+      gl.glEndList();
+            
+      gear2 = gl.glGenLists(1);
+      gl.glNewList(gear2, GL.GL_COMPILE);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green);
+      gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
+      gl.glEndList();
+            
+      gear3 = gl.glGenLists(1);
+      gl.glNewList(gear3, GL.GL_COMPILE);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue);
+      gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
+      gl.glEndList();
+            
+      gl.glEnable(GL.GL_NORMALIZE);
+                
+      drawable.addMouseListener(this);
+      drawable.addMouseMotionListener(this);
+    }
+    
+    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+      GL gl = drawable.getGL();
+
+      float h = (float)height / (float)width;
+            
+      gl.glMatrixMode(GL.GL_PROJECTION);
+
+      System.err.println("GL_VENDOR: " + gl.glGetString(GL.GL_VENDOR));
+      System.err.println("GL_RENDERER: " + gl.glGetString(GL.GL_RENDERER));
+      System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
+      System.err.println();
+      System.err.println("glLoadTransposeMatrixfARB() supported: " +
+                         gl.isFunctionAvailable("glLoadTransposeMatrixfARB"));
+      if (!gl.isFunctionAvailable("glLoadTransposeMatrixfARB")) {
+        // --- not using extensions
+        gl.glLoadIdentity();
+      } else {
+        // --- using extensions
+        final float[] identityTranspose = new float[] {
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1
+        };
+        gl.glLoadTransposeMatrixfARB(identityTranspose);
+      }
+      gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
+      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glLoadIdentity();
+      gl.glTranslatef(0.0f, 0.0f, -40.0f);
+    }
+
+    public void display(GLDrawable drawable) {
+      angle += 2.0f;
+
+      GL gl = drawable.getGL();
+      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+            
+      gl.glPushMatrix();
+      gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
+      gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
+      gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
+            
+      gl.glPushMatrix();
+      gl.glTranslatef(-3.0f, -2.0f, 0.0f);
+      gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
+      gl.glCallList(gear1);
+      gl.glPopMatrix();
+            
+      gl.glPushMatrix();
+      gl.glTranslatef(3.1f, -2.0f, 0.0f);
+      gl.glRotatef(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
+      gl.glCallList(gear2);
+      gl.glPopMatrix();
+            
+      gl.glPushMatrix();
+      gl.glTranslatef(-3.1f, 4.2f, 0.0f);
+      gl.glRotatef(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
+      gl.glCallList(gear3);
+      gl.glPopMatrix();
+            
+      gl.glPopMatrix();
+    }
+
+    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+
+    private void gear(GL gl,
+                      float inner_radius,
+                      float outer_radius,
+                      float width,
+                      int teeth,
+                      float tooth_depth)
+    {
+      int i;
+      float r0, r1, r2;
+      float angle, da;
+      float u, v, len;
+
+      r0 = inner_radius;
+      r1 = outer_radius - tooth_depth / 2.0f;
+      r2 = outer_radius + tooth_depth / 2.0f;
+            
+      da = 2.0f * (float) Math.PI / teeth / 4.0f;
+            
+      gl.glShadeModel(GL.GL_FLAT);
+
+      gl.glNormal3f(0.0f, 0.0f, 1.0f);
+
+      /* draw front face */
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for (i = 0; i <= teeth; i++)
+        {
+          angle = i * 2.0f * (float) Math.PI / teeth;
+          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
+          if(i < teeth)
+            {
+              gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
+              gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
+            }
+        }
+      gl.glEnd();
+
+      /* draw front sides of teeth */
+      gl.glBegin(GL.GL_QUADS);
+      for (i = 0; i < teeth; i++)
+        {
+          angle = i * 2.0f * (float) Math.PI / teeth;
+          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), width * 0.5f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + 2.0f * da), r2 * (float)Math.sin(angle + 2.0f * da), width * 0.5f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
+        }
+      gl.glEnd();
+    
+      /* draw back face */
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for (i = 0; i <= teeth; i++)
+        {
+          angle = i * 2.0f * (float) Math.PI / teeth;
+          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
+          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
+          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
+        }
+      gl.glEnd();
+    
+      /* draw back sides of teeth */
+      gl.glBegin(GL.GL_QUADS);
+      for (i = 0; i < teeth; i++)
+        {
+          angle = i * 2.0f * (float) Math.PI / teeth;
+          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), -width * 0.5f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), -width * 0.5f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
+        }
+      gl.glEnd();
+    
+      /* draw outward faces of teeth */
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for (i = 0; i < teeth; i++)
+        {
+          angle = i * 2.0f * (float) Math.PI / teeth;
+          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
+          u = r2 * (float)Math.cos(angle + da) - r1 * (float)Math.cos(angle);
+          v = r2 * (float)Math.sin(angle + da) - r1 * (float)Math.sin(angle);
+          len = (float)Math.sqrt(u * u + v * v);
+          u /= len;
+          v /= len;
+          gl.glNormal3f(v, -u, 0.0f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), width * 0.5f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), -width * 0.5f);
+          gl.glNormal3f((float)Math.cos(angle), (float)Math.sin(angle), 0.0f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), width * 0.5f);
+          gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), -width * 0.5f);
+          u = r1 * (float)Math.cos(angle + 3 * da) - r2 * (float)Math.cos(angle + 2 * da);
+          v = r1 * (float)Math.sin(angle + 3 * da) - r2 * (float)Math.sin(angle + 2 * da);
+          gl.glNormal3f(v, -u, 0.0f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), width * 0.5f);
+          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
+          gl.glNormal3f((float)Math.cos(angle), (float)Math.sin(angle), 0.0f);
+        }
+      gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), width * 0.5f);
+      gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
+      gl.glEnd();
+    
+      gl.glShadeModel(GL.GL_SMOOTH);
+    
+      /* draw inside radius cylinder */
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for (i = 0; i <= teeth; i++)
+        {
+          angle = i * 2.0f * (float) Math.PI / teeth;
+          gl.glNormal3f(-(float)Math.cos(angle), -(float)Math.sin(angle), 0.0f);
+          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
+          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
+        }
+      gl.glEnd();
+    }
+
+    // Methods required for the implementation of MouseListener
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
+    public void mousePressed(MouseEvent e) {
+      prevMouseX = e.getX();
+      prevMouseY = e.getY();
+      if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
+        mouseRButtonDown = true;
+      }
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+      if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
+        mouseRButtonDown = false;
+      }
+    }
+    
+    public void mouseClicked(MouseEvent e) {}
+    
+    // Methods required for the implementation of MouseMotionListener
+    public void mouseDragged(MouseEvent e) {
+      int x = e.getX();
+      int y = e.getY();
+      Dimension size = e.getComponent().getSize();
+
+      float thetaY = 360.0f * ( (float)(x-prevMouseX)/(float)size.width);
+      float thetaX = 360.0f * ( (float)(prevMouseY-y)/(float)size.height);
+    
+      prevMouseX = x;
+      prevMouseY = y;
+
+      view_rotx += thetaX;
+      view_roty += thetaY;
+    }
+    
+    public void mouseMoved(MouseEvent e) {}
+  }
+
+  private JInternalFrame curFrame;
+  private void startAutoMode() {
+    new Thread(new Runnable() {
+        public void run() {
+          while (true) {
+            try {
+              SwingUtilities.invokeAndWait(new Runnable() {
+                  public void run() {
+                    curFrame = addWindow(false);
+                  }
+                });
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+
+            try {
+              Thread.sleep(2000);
+            } catch (InterruptedException e) {
+            }
+
+            try {
+              SwingUtilities.invokeAndWait(new Runnable() {
+                  public void run() {
+                    curFrame.doDefaultCloseAction();
+                  }
+                });
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+
+            try {
+              Thread.sleep(2000);
+            } catch (InterruptedException e) {
+            }
+          }
         }
       }).start();
   }

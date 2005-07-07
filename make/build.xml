@@ -31,7 +31,15 @@
         </fail>
     </target>
 
-    <target name="init" depends="java.class.path.validate">
+    <target name="setup.cg.excludes" unless="jogl.cg">
+        <property name="jogl.cg.excludes" value="demos/cg/**,demos/hdr/**" />
+    </target>
+
+    <target name="skip.cg.excludes" if="jogl.cg">
+        <property name="jogl.cg.excludes" value="" />
+    </target>
+
+    <target name="init" depends="java.class.path.validate,setup.cg.excludes,skip.cg.excludes">
         <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
         <property name="classes"             value="../build/classes" />
         <property name="src"                 value="../src" />
@@ -50,7 +58,7 @@
             <pathelement path="${classpath}" />
             <pathelement location="${jogl.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="demos/cg/**" source="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes}" source="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl.classpath" />
         </javac>
@@ -58,6 +66,14 @@
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
                 <exclude name="demos/util/**" />
+            </fileset>
+            <fileset dir="${src}">
+                <include name="demos/cg/**/*.cg" />
+            </fileset>
+            <fileset dir="${src}">
+                <include name="demos/hdr/shaders/**/*.cg" />
+                <include name="demos/hdr/shaders/**/*.arbvp1" />
+                <include name="demos/hdr/shaders/**/*.arbfp1" />
             </fileset>
         </jar>
         <jar destfile="${jogl.demos.util.jar}">

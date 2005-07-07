@@ -128,6 +128,7 @@ public class ProceduralTexturePhysics {
 
     public void init(GLDrawable drawable) {
       GL gl = drawable.getGL();
+      gl.setSwapInterval(1);
 
       try {
 	checkExtension(gl, "GL_ARB_multitexture");

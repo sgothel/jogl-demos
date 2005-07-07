@@ -214,8 +214,6 @@ public class VertexBufferObject {
     setFlag('i', true);   // infinite viewer and light
 
     canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    //    canvas.setGL(new TraceGL(canvas.getGL(), System.err));
-    //    canvas.setGL(new DebugGL(canvas.getGL()));
     VBOListener listener = new VBOListener();
     canvas.addGLEventListener(listener);
 
@@ -274,6 +272,9 @@ public class VertexBufferObject {
     boolean exiting = false;
 
     public void init(GLDrawable drawable) {
+      //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
+      //    drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL  gl  = drawable.getGL();
       GLU glu = drawable.getGLU();
 

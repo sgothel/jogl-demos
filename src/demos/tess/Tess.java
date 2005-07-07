@@ -101,14 +101,10 @@ public class Tess {
         private int startList;
 
         public void init(GLDrawable drawable) {
+            drawable.setGL(new DebugGL(drawable.getGL()));
+
             gl = drawable.getGL();
             glu = drawable.getGLU();
-            // init() might get called more than once if the GLCanvas is
-            // added and removed, but we only want to install the DebugGL
-            // pipeline once
-            if (!(drawable.getGL() instanceof DebugGL)) {
-              drawable.setGL(new DebugGL(drawable.getGL()));
-            }
 
             double[][] rect = new double[][]{{50.0, 50.0, 0.0},
                                              {200.0, 50.0, 0.0},

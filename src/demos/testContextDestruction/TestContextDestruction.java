@@ -20,7 +20,7 @@
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
  * PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN
- * MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL NOT BE LIABLE FOR
+ * MICROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL NOT BE LIABLE FOR
  * ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR
  * DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR
  * ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR
@@ -178,12 +178,7 @@ public class TestContextDestruction {
   class Listener implements GLEventListener {
     public void init(GLDrawable drawable) {
       System.out.println("Listener.init()");
-      // init() might get called more than once if the GLCanvas is
-      // added and removed, but we only want to install the DebugGL
-      // pipeline once
-      if (!(drawable.getGL() instanceof DebugGL)) {
-        drawable.setGL(new DebugGL(drawable.getGL()));
-      }
+      drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
 

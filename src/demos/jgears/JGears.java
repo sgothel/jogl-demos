@@ -2,6 +2,7 @@ package demos.jgears;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 import net.java.games.jogl.*;
 
@@ -14,16 +15,33 @@ import net.java.games.jogl.*;
 
 public class JGears {
   public static void main(String[] args) {
-    Frame frame = new Frame("Gear Demo");
-    GLJPanel drawable = GLDrawableFactory.getFactory().createGLJPanel(new GLCapabilities());
-
-    // Use debug pipeline
-    //    drawable.setGL(new DebugGL(drawable.getGL()));
-    System.err.println("DRAWABLE GL IS: " + drawable.getGL().getClass().getName());
-    System.err.println("DRAWABLE GLU IS: " + drawable.getGLU().getClass().getName());
-
+    JFrame frame = new JFrame("Gear Demo");
+    frame.getContentPane().setLayout(new BorderLayout());
+    GLCapabilities caps = new GLCapabilities();
+    caps.setAlphaBits(8);
+    final GLJPanel drawable = GLDrawableFactory.getFactory().createGLJPanel(caps);
+    drawable.setOpaque(false);
     drawable.addGLEventListener(new GearRenderer());
-    frame.add(drawable);
+
+    JPanel gradientPanel = new JPanel() {
+        public void paintComponent(Graphics g) {
+          ((Graphics2D) g).setPaint(new GradientPaint(0, 0, Color.WHITE,
+                                                      getWidth(), getHeight(), Color.DARK_GRAY));
+          g.fillRect(0, 0, getWidth(), getHeight());
+        }
+      };
+    gradientPanel.setLayout(new BorderLayout());
+    frame.getContentPane().add(gradientPanel, BorderLayout.CENTER);
+    gradientPanel.add(drawable, BorderLayout.CENTER);
+
+    final JCheckBox checkBox = new JCheckBox("Transparent", true);
+    checkBox.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          drawable.setOpaque(!checkBox.isSelected());
+        }
+      });
+    frame.getContentPane().add(checkBox, BorderLayout.SOUTH);
+
     frame.setSize(300, 300);
     final Animator animator = new Animator(drawable);
     frame.addWindowListener(new WindowAdapter() {
@@ -53,6 +71,9 @@ public class JGears {
 
 
     public void init(GLDrawable drawable) {
+      // Use debug pipeline
+      // drawable.setGL(new DebugGL(drawable.getGL()));
+
       GL gl = drawable.getGL();
       System.err.println("INIT GL IS: " + gl.getClass().getName());
 
