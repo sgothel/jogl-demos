@@ -108,6 +108,6 @@ public class CgPipeline implements Pipeline {
   }
   
   public void setMatrixParameterfc(GL gl, int param, float[] matrix) {
-    CgGL.cgGLSetMatrixParameterfc((CGparameter) parameters.get(param), matrix);
+    CgGL.cgGLSetMatrixParameterfc((CGparameter) parameters.get(param), matrix, 0);
   }
 }

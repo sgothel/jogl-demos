@@ -252,15 +252,15 @@ public class HDR {
       int[] tmp = new int[1];
       pbuffer = drawable.createOffscreenDrawable(caps, pbuffer_w, pbuffer_h);
       pbuffer.addGLEventListener(new PbufferListener());
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       pbuffer_tex = tmp[0];
       blur_pbuffer = drawable.createOffscreenDrawable(caps, blur_w, blur_h);
       blur_pbuffer.addGLEventListener(new BlurPbufferListener());
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       blur_pbuffer_tex = tmp[0];
       blur2_pbuffer = drawable.createOffscreenDrawable(caps, blur_w, blur_h);
       blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       blur2_pbuffer_tex = tmp[0];
       caps.setOffscreenFloatingPointBuffers(false);
       caps.setRedBits(8);
@@ -269,7 +269,7 @@ public class HDR {
       caps.setDepthBits(24);
       tonemap_pbuffer = drawable.createOffscreenDrawable(caps, pbuffer_w, pbuffer_h);
       tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       tonemap_pbuffer_tex = tmp[0];
       
       drawable.addKeyListener(new KeyAdapter() {
@@ -433,7 +433,7 @@ public class HDR {
     // create gamma lookup table texture
     private int createGammaTexture(GL gl, int size, float gamma) {
       int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       int texid = tmp[0];
 
       int target = GL.GL_TEXTURE_1D;
@@ -451,7 +451,7 @@ public class HDR {
         img[i] = (float) Math.pow(x, gamma);
       }
 
-      gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img);
+      gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
 
       return texid;
     }
@@ -460,7 +460,7 @@ public class HDR {
     // based on Debevec's pflare.c
     int createVignetteTexture(GL gl, int xsiz, int ysiz, float r0, float r1) {
       int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       int texid = tmp[0];
       
       gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, texid);
@@ -491,7 +491,7 @@ public class HDR {
         }
       }
 
-      gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img);
+      gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
 
       return texid;
     }
@@ -679,7 +679,7 @@ public class HDR {
           gl.glVertexPointer(3, GL.GL_FLOAT, 0, model.getVertices());
           gl.glNormalPointer(GL.GL_FLOAT, 0, model.getVertexNormals());
           int[] indices = model.getFaceIndices();
-          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, indices);
+          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, indices, 0);
           gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
           gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
           break;
@@ -891,9 +891,9 @@ public class HDR {
     float[] s_plane = { 1.0f, 0.0f, 0.0f, 0.0f };
     float[] t_plane = { 0.0f, 1.0f, 0.0f, 0.0f };
     float[] r_plane = { 0.0f, 0.0f, 1.0f, 0.0f };
-    gl.glTexGenfv(GL.GL_S, GL.GL_OBJECT_PLANE, s_plane);
-    gl.glTexGenfv(GL.GL_T, GL.GL_OBJECT_PLANE, t_plane);
-    gl.glTexGenfv(GL.GL_R, GL.GL_OBJECT_PLANE, r_plane);
+    gl.glTexGenfv(GL.GL_S, GL.GL_OBJECT_PLANE, s_plane, 0);
+    gl.glTexGenfv(GL.GL_T, GL.GL_OBJECT_PLANE, t_plane, 0);
+    gl.glTexGenfv(GL.GL_R, GL.GL_OBJECT_PLANE, r_plane, 0);
     gl.glPopMatrix();
     gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
     gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
@@ -1032,13 +1032,13 @@ public class HDR {
   private int loadProgram(GL gl, int target, String code) {
     int prog_id;
     int[] tmp = new int[1];
-    gl.glGenProgramsARB(1, tmp);
+    gl.glGenProgramsARB(1, tmp, 0);
     prog_id = tmp[0];
     gl.glBindProgramARB(target, prog_id);
     int size = code.length();
     gl.glProgramStringARB(target, GL.GL_PROGRAM_FORMAT_ASCII_ARB, code.length(), code);
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
     if (errPos[0] >= 0) {
       String kind = "Program";
       if (target == GL.GL_VERTEX_PROGRAM_ARB) {
@@ -1065,7 +1065,7 @@ public class HDR {
         int[] isNative = new int[1];
         gl.glGetProgramivARB(GL.GL_FRAGMENT_PROGRAM_ARB,
                              GL.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
-                             isNative);
+                             isNative, 0);
         if (isNative[0] != 1) {
           System.out.println("WARNING: fragment program is over native resource limits");
           Thread.dumpStack();
@@ -1154,7 +1154,7 @@ public class HDR {
   private void applyTransform(GL gl, Mat4f mat) {
     float[] data = new float[16];
     mat.getColumnMajorData(data);
-    gl.glMultMatrixf(data);
+    gl.glMultMatrixf(data, 0);
   }
 
   private void usage() {

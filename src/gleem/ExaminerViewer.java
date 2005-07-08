@@ -581,11 +581,11 @@ public class ExaminerViewer {
     gl.glMatrixMode(GL.GL_MODELVIEW);
     float[] data = new float[16];
     params.getModelviewMatrix().getColumnMajorData(data);
-    gl.glLoadMatrixf(data);
+    gl.glLoadMatrixf(data, 0);
 
     gl.glMatrixMode(GL.GL_PROJECTION);
     params.getProjectionMatrix().getColumnMajorData(data);
-    gl.glLoadMatrixf(data);
+    gl.glLoadMatrixf(data, 0);
   }
 
   private void recalcInverseRotation(GL gl) {

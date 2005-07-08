@@ -168,15 +168,15 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // vertex shader could be modified so that these were uniform for
     // better efficiency, but this gives us flexibility for the future.
     float Kd[] = { .7f, .2f, .2f }, Ks[] = { .9f, .9f, .9f };
-    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "diffuse"), Kd);
-    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "specular"), Ks);
+    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "diffuse"), Kd, 0);
+    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "specular"), Ks, 0);
 
     // Now bind uniform parameters to fragment shader
     float lightPos[] = { 3, 2, -3 };
-    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(fragmentProgram, "Plight"), lightPos);
+    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(fragmentProgram, "Plight"), lightPos, 0);
     float lightColor[] = { 1, 1, 1 };
     CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(fragmentProgram, "lightColor"), 
-                             lightColor);
+                             lightColor, 0);
     CgGL.cgGLSetParameter1f(CgGL.cgGetNamedParameter(fragmentProgram, "shininess"), 40);
 
     // And finally, enable the approprate texture for fragment shader; the
@@ -273,7 +273,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // checkerboard--which is used to modulate the diffuse channel in the
     // fragment shader.
     int[] handle = new int[1];
-    gl.glGenTextures(1, handle);
+    gl.glGenTextures(1, handle, 0);
 
     // Basic OpenGL texture state setup
     gl.glBindTexture(GL.GL_TEXTURE_2D, handle[0]);
@@ -303,7 +303,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
       }
     }
 
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, RES, RES, 0, GL.GL_RGBA, GL.GL_FLOAT, data);
+    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, RES, RES, 0, GL.GL_RGBA, GL.GL_FLOAT, data, 0);
 
     // Tell Cg which texture handle should be associated with the sampler2D
     // parameter to the fragment shader.

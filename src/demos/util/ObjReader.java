@@ -312,8 +312,10 @@ public class ObjReader {
     newIndices.trim();
     vertices = BufferUtils.newFloatBuffer(newVertices.size());
     vertices.put(newVertices.getData());
+    vertices.rewind();
     normals = BufferUtils.newFloatBuffer(newVertexNormals.size());
     normals.put(newVertexNormals.getData());
+    normals.rewind();
     faceIndices = newIndices;
     tmpVertices = null;
     tmpVertexNormals = null;

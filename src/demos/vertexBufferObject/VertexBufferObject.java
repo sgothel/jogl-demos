@@ -301,12 +301,12 @@ public class VertexBufferObject {
       gl.glEnable(GL.GL_LIGHT0);
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_NORMALIZE);
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[]  {.1f, .1f,    0, 1});
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[]  {.6f, .6f,  .1f, 1});
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 1,    1, .75f, 1});
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[]  {.1f, .1f,    0, 1}, 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[]  {.6f, .6f,  .1f, 1}, 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 1,    1, .75f, 1}, 0);
       gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 128.f);
 
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0});
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
       gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
 
       // NOTE: it looks like GLUT (or something else) sets up the
@@ -501,10 +501,10 @@ public class VertexBufferObject {
       if (toggleLightingModel) {
         if(getFlag('i')) {
           // infinite light
-          gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 });
+          gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
           gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
         } else {
-          gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f,1 });
+          gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f,1 }, 0);
           gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
         }
         toggleLightingModel = false;
@@ -525,7 +525,7 @@ public class VertexBufferObject {
           0, 0, 1, 0,
           0, 0, -1, 1
       };
-      gl.glLoadMatrixf(modelViewMatrix);
+      gl.glLoadMatrixf(modelViewMatrix, 0);
 
       // FIXME: add mouse interaction
       // camera.apply_inverse_transform();
@@ -646,7 +646,7 @@ public class VertexBufferObject {
         } else {
           for (int i = 0; i < elements.length; i++) {
             ++numDrawElementsCalls;
-            gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i]);
+            gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i], 0);
             if(getFlag('f')) {
               gl.glFlush();
             }
@@ -687,7 +687,7 @@ public class VertexBufferObject {
     bigArraySystem = setupBuffer(ByteBuffer.allocateDirect(bufferSize));
 
     int[] tmp = new int[1];
-    gl.glGenBuffersARB(1, tmp);
+    gl.glGenBuffersARB(1, tmp, 0);
     bigBufferObject = tmp[0];
     gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, bigBufferObject);
     // Initialize data store of buffer object
@@ -741,12 +741,12 @@ public class VertexBufferObject {
       }
     }
     int[] tmp = new int[1];
-    gl.glGenBuffersARB(1, tmp);
+    gl.glGenBuffersARB(1, tmp, 0);
     elementBufferObject = tmp[0];
     gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
     gl.glBufferDataARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB,
                        linearElements.length * BufferUtils.SIZEOF_INT,
-                       linearElements,
+                       linearElements, 0,
                        GL.GL_STATIC_DRAW_ARB);
     gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
   }

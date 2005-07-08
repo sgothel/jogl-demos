@@ -228,8 +228,8 @@ public class cgGL_vertex_example implements GLEventListener
     InitializeCube(CubeVertices);
 
     /* Enable a single OpenGL light. */
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, LightDiffuse);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, LightPosition);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, LightDiffuse, 0);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, LightPosition, 0);
     gl.glEnable(GL.GL_LIGHT0);
     if (false) { // #if 0
       gl.glEnable(GL.GL_LIGHTING);

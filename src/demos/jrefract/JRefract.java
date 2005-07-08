@@ -374,7 +374,7 @@ public class JRefract {
       b[' '] = true; // animate by default
 
       int[] vtxProgTmp = new int[1];
-      gl.glGenProgramsARB(1, vtxProgTmp);
+      gl.glGenProgramsARB(1, vtxProgTmp, 0);
       vtxProg = vtxProgTmp[0];
       gl.glBindProgramARB  (GL.GL_VERTEX_PROGRAM_ARB, vtxProg);
       gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, transformRefract.length(), transformRefract);
@@ -387,7 +387,7 @@ public class JRefract {
       gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
 
       int[] cubemapTmp = new int[1];
-      gl.glGenTextures(1, cubemapTmp);
+      gl.glGenTextures(1, cubemapTmp, 0);
       cubemap = cubemapTmp[0];
       gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
 
@@ -654,7 +654,7 @@ public class JRefract {
                                   GL.GL_UNSIGNED_BYTE, data);
           } else {
             gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data, 0);
           }
           break;
         }
@@ -666,7 +666,7 @@ public class JRefract {
                                   GL.GL_UNSIGNED_BYTE, data);
           } else {
             gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data, 0);
           }
           break;
         }
@@ -716,7 +716,7 @@ public class JRefract {
 
     private void initFragmentProgram(GL gl) {
       int[] fragProgTmp = new int[1];
-      gl.glGenProgramsARB(1, fragProgTmp);
+      gl.glGenProgramsARB(1, fragProgTmp, 0);
       fragProg = fragProgTmp[0];
       String combineFragProg =
 "!!ARBfp1.0\n" +
@@ -737,7 +737,7 @@ public class JRefract {
       gl.glProgramStringARB(GL.GL_FRAGMENT_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB,
                             combineFragProg.length(), combineFragProg);
       int[] errPos = new int[1];
-      gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+      gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
       if (errPos[0] >= 0) {
         System.out.println("Fragment program failed to load:");
         String errMsg = gl.glGetString(GL.GL_PROGRAM_ERROR_STRING_ARB);
@@ -936,7 +936,7 @@ public class JRefract {
       float green[] = { 0.0f, 0.8f, 0.2f, 1.0f };
       float blue[] = { 0.2f, 0.2f, 1.0f, 1.0f };
 
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
       gl.glEnable(GL.GL_CULL_FACE);
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_LIGHT0);
@@ -945,19 +945,19 @@ public class JRefract {
       /* make the gears */
       gear1 = gl.glGenLists(1);
       gl.glNewList(gear1, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
       gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
       gl.glEndList();
             
       gear2 = gl.glGenLists(1);
       gl.glNewList(gear2, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green, 0);
       gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
       gl.glEndList();
             
       gear3 = gl.glGenLists(1);
       gl.glNewList(gear3, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue, 0);
       gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
       gl.glEndList();
             
@@ -991,7 +991,7 @@ public class JRefract {
           0, 0, 1, 0,
           0, 0, 0, 1
         };
-        gl.glLoadTransposeMatrixfARB(identityTranspose);
+        gl.glLoadTransposeMatrixfARB(identityTranspose, 0);
       }
       gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
       gl.glMatrixMode(GL.GL_MODELVIEW);

@@ -149,7 +149,7 @@ public class GearsFullscreen2 {
       float green[] = { 0.0f, 0.8f, 0.2f, 1.0f };
       float blue[] = { 0.2f, 0.2f, 1.0f, 1.0f };
 
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
       gl.glEnable(GL.GL_CULL_FACE);
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_LIGHT0);
@@ -158,19 +158,19 @@ public class GearsFullscreen2 {
       /* make the gears */
       gear1 = gl.glGenLists(1);
       gl.glNewList(gear1, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
       gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
       gl.glEndList();
             
       gear2 = gl.glGenLists(1);
       gl.glNewList(gear2, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green, 0);
       gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
       gl.glEndList();
             
       gear3 = gl.glGenLists(1);
       gl.glNewList(gear3, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue);
+      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue, 0);
       gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
       gl.glEndList();
             
@@ -210,7 +210,7 @@ public class GearsFullscreen2 {
           0, 0, 1, 0,
           0, 0, 0, 1
         };
-        gl.glLoadTransposeMatrixfARB(identityTranspose);
+        gl.glLoadTransposeMatrixfARB(identityTranspose, 0);
       }
       gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
       gl.glMatrixMode(GL.GL_MODELVIEW);

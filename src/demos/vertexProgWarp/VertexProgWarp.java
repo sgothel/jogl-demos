@@ -150,7 +150,7 @@ public class VertexProgWarp {
 
       for(int i=0; i<NUM_PROGS; i++) {
         int[] vtxProgTmp = new int[1];
-        gl.glGenProgramsARB(1, vtxProgTmp);
+        gl.glGenProgramsARB(1, vtxProgTmp, 0);
         programs[i] = vtxProgTmp[0];
         gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[i]);
         gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programTexts[i].length(), programTexts[i]);

@@ -183,7 +183,7 @@ public class TestContextDestruction {
       GL gl = drawable.getGL();
 
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
       gl.glEnable(GL.GL_CULL_FACE);
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_LIGHT0);
@@ -239,7 +239,7 @@ public class TestContextDestruction {
     gearDisplayList = gl.glGenLists(1);
     gl.glNewList(gearDisplayList, GL.GL_COMPILE);
     float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
+    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
     gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
     gl.glEndList();
   }

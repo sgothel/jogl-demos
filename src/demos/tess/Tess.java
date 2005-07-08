@@ -135,15 +135,15 @@ public class Tess {
             gl.glShadeModel(GL.GL_FLAT);
             glu.gluTessBeginPolygon(tobj, null);
             glu.gluTessBeginContour(tobj);
-            glu.gluTessVertex(tobj, rect[0], rect[0]);
-            glu.gluTessVertex(tobj, rect[1], rect[1]);
-            glu.gluTessVertex(tobj, rect[2], rect[2]);
-            glu.gluTessVertex(tobj, rect[3], rect[3]);
+            glu.gluTessVertex(tobj, rect[0], 0, rect[0]);
+            glu.gluTessVertex(tobj, rect[1], 0, rect[1]);
+            glu.gluTessVertex(tobj, rect[2], 0, rect[2]);
+            glu.gluTessVertex(tobj, rect[3], 0, rect[3]);
             glu.gluTessEndContour(tobj);
             glu.gluTessBeginContour(tobj);
-            glu.gluTessVertex(tobj, tri[0], tri[0]);
-            glu.gluTessVertex(tobj, tri[1], tri[1]);
-            glu.gluTessVertex(tobj, tri[2], tri[2]);
+            glu.gluTessVertex(tobj, tri[0], 0, tri[0]);
+            glu.gluTessVertex(tobj, tri[1], 0, tri[1]);
+            glu.gluTessVertex(tobj, tri[2], 0, tri[2]);
             glu.gluTessEndContour(tobj);
             glu.gluTessEndPolygon(tobj);
             gl.glEndList();
@@ -159,11 +159,11 @@ public class Tess {
             glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_POSITIVE);
             glu.gluTessBeginPolygon(tobj, null);
             glu.gluTessBeginContour(tobj);
-            glu.gluTessVertex(tobj, star[0], star[0]);
-            glu.gluTessVertex(tobj, star[1], star[1]);
-            glu.gluTessVertex(tobj, star[2], star[2]);
-            glu.gluTessVertex(tobj, star[3], star[3]);
-            glu.gluTessVertex(tobj, star[4], star[4]);
+            glu.gluTessVertex(tobj, star[0], 0, star[0]);
+            glu.gluTessVertex(tobj, star[1], 0, star[1]);
+            glu.gluTessVertex(tobj, star[2], 0, star[2]);
+            glu.gluTessVertex(tobj, star[3], 0, star[3]);
+            glu.gluTessVertex(tobj, star[4], 0, star[4]);
             glu.gluTessEndContour(tobj);
             glu.gluTessEndPolygon(tobj);
             gl.glEndList();
@@ -213,13 +213,9 @@ public class Tess {
             if (data instanceof double[]) {
                 double[] d = (double[]) data;
                 if (d.length == 6) {
-                    double[] d2 = {d[0], d[1], d[2]};
-                    gl.glVertex3dv(d2);
-                    d2 = new double[]{d[3], d[4], d[5]};
-                    gl.glColor3dv(d2);
-                } else if (d.length == 3) {
-                    gl.glVertex3dv(d);
+                    gl.glColor3dv(d, 3);
                 }
+                gl.glVertex3dv(d, 0);
             }
         }
 

@@ -171,14 +171,14 @@ public class InfiniteShadowVolumes {
       gl.glEnable(GL.GL_NORMALIZE);
       gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
       float[] ambient = new float[] {0.3f, 0.3f, 0.3f, 1};
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient, 0);
       faceDisplayList = gl.glGenLists(1);
       gl.glNewList(faceDisplayList, GL.GL_COMPILE);
       drawMesh(gl, 20, 40);
       gl.glEndList();
 
       int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp);
+      gl.glGenTextures(1, tmp, 0);
       wallTexObject = tmp[0];
       gl.glBindTexture(GL.GL_TEXTURE_2D, wallTexObject);
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
@@ -193,7 +193,7 @@ public class InfiniteShadowVolumes {
             tex[i+j*32] = .9f;
         }
       }
-      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, 32, 32, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, tex);
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, 32, 32, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, tex, 0);
       
       initModel();
 
@@ -416,12 +416,12 @@ public class InfiniteShadowVolumes {
         double[] neg_y = new double[] { 0, 1, 0, 1};
         double[] pos_z = new double[] { 0, 0,-1, 1};
         double[] neg_z = new double[] { 0, 0, 1, 1};
-        gl.glClipPlane(GL.GL_CLIP_PLANE0, pos_x);
-        gl.glClipPlane(GL.GL_CLIP_PLANE1, neg_x);
-        gl.glClipPlane(GL.GL_CLIP_PLANE2, pos_y);
-        gl.glClipPlane(GL.GL_CLIP_PLANE3, neg_y);
-        gl.glClipPlane(GL.GL_CLIP_PLANE4, pos_z);
-        gl.glClipPlane(GL.GL_CLIP_PLANE5, neg_z);
+        gl.glClipPlane(GL.GL_CLIP_PLANE0, pos_x, 0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE1, neg_x, 0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE2, pos_y, 0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE3, neg_y, 0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE4, pos_z, 0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE5, neg_z, 0);
         gl.glEnable(GL.GL_CLIP_PLANE0);
         gl.glEnable(GL.GL_CLIP_PLANE1);
         gl.glEnable(GL.GL_CLIP_PLANE2);
@@ -435,8 +435,8 @@ public class InfiniteShadowVolumes {
       // FIXME
       //      camera.apply_inverse_transform();
       //      light.apply_transform();
-      gl.glMultMatrixf(getData(lightManipXform));
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, getData(light_position));
+      gl.glMultMatrixf(getData(lightManipXform), 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, getData(light_position), 0);
       gl.glPopMatrix();
       gl.glEnable(GL.GL_LIGHT0);
 
@@ -796,7 +796,7 @@ public class InfiniteShadowVolumes {
       MD2.PositionNormal[] vpn = m[mindex].interp_frame.pn;
 
       gl.glPushMatrix();
-      gl.glMultMatrixf(getData(objectManipXform));
+      gl.glMultMatrixf(getData(objectManipXform), 0);
       gl.glBegin(GL.GL_TRIANGLES);
       for (int i = 0; i < m[mindex].mod.tri.length; i++) {
         if (m[mindex].mod.tri[i].kill)
@@ -830,15 +830,15 @@ public class InfiniteShadowVolumes {
       float[] dim  = new float[] {.2f,.2f,.2f,.2f};
       float[] diffuse = new float[4];
       float[] specular = new float[4];
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, getData(m[mindex].ambient));
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, getData(m[mindex].diffuse));
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, getData(m[mindex].specular));
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, getData(m[mindex].ambient), 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, getData(m[mindex].diffuse), 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, getData(m[mindex].specular), 0);
       gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, m[mindex].shininess);
       if (!do_diffuse) {
-        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, dim);
-        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero);
+        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, dim, 0);
+        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero, 0);
       } else {
         gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
         gl.glEnable(GL.GL_BLEND);
@@ -848,7 +848,7 @@ public class InfiniteShadowVolumes {
         gl.glDepthFunc(GL.GL_EQUAL);
       }
       gl.glPushMatrix();
-      gl.glMultMatrixf(getData(objectManipXform));
+      gl.glMultMatrixf(getData(objectManipXform), 0);
       gl.glEnable(GL.GL_LIGHTING);
 
       gl.glPolygonOffset(0,-2);
@@ -870,12 +870,12 @@ public class InfiniteShadowVolumes {
 
       gl.glDisable(GL.GL_LIGHTING);
       gl.glPopMatrix();
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,  new float[] { 0.8f, 0.8f, 0.8f, 1});
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 0.3f, 0.3f, 0.3f, 1});
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,  new float[] { 0.8f, 0.8f, 0.8f, 1}, 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 0.3f, 0.3f, 0.3f, 1}, 0);
 
       if (!do_diffuse) {
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
       } else {
         gl.glDisable(GL.GL_BLEND);
         //glDisable(GL.GL_STENCIL_TEST);
@@ -951,24 +951,24 @@ public class InfiniteShadowVolumes {
       float[] diffuse  = new float[4];
       float[] specular = new float[4];
 
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, a);
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,  new float[] {0.8f, 0.8f, 0.8f, 1});
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {0.4f, 0.4f, 0.4f, 1});
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, a, 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,  new float[] {0.8f, 0.8f, 0.8f, 1}, 0);
+      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {0.4f, 0.4f, 0.4f, 1}, 0);
       gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 64.0f);
 
       if (!do_diffuse) {
-        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, d1);
-        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero);
+        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, d1, 0);
+        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero, 0);
         gl.glStencilFunc(GL.GL_ALWAYS, 128, ~0);
       } else {
-        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, emission);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, zero);
-        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, zero);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, d2);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, s);
+        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, emission, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, zero, 0);
+        gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, zero, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, d2, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, s, 0);
 
         gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
         gl.glEnable(GL.GL_BLEND);
@@ -990,11 +990,11 @@ public class InfiniteShadowVolumes {
       gl.glPopMatrix();
     
       if (!do_diffuse) {
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
       } else {
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, emission);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, emission, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient, 0);
 
         gl.glDisable(GL.GL_BLEND);
         gl.glDepthFunc(GL.GL_LESS);
@@ -1024,7 +1024,7 @@ public class InfiniteShadowVolumes {
       ml.xformVec(light_position, olight);
 
       gl.glPushMatrix();
-      gl.glMultMatrixf(getData(objectManipXform));
+      gl.glMultMatrixf(getData(objectManipXform), 0);
 
       MD2.Frame f = m[mindex].interp_frame;
 
@@ -1153,7 +1153,7 @@ public class InfiniteShadowVolumes {
     private void drawLight(GL gl, GLU glu) {
       gl.glColor3f(1,1,0);
       gl.glPushMatrix();
-      gl.glMultMatrixf(getData(lightManipXform));
+      gl.glMultMatrixf(getData(lightManipXform), 0);
       gl.glScalef(light_object_scale, light_object_scale, light_object_scale);
       if (b['L']) {
         glut.glutSolidSphere(glu, .01f, 20, 10);
@@ -1168,7 +1168,7 @@ public class InfiniteShadowVolumes {
         m = m.mul(perspectiveInverse(30, 1, 0.001f, 0.04f));
         gl.glRotatef(180, 1, 0, 0);
         gl.glTranslatef(0,0,-0.02f);
-        gl.glMultMatrixf(getData(m));
+        gl.glMultMatrixf(getData(m), 0);
         glut.glutSolidCube(gl, 2);
       }
       gl.glPopMatrix();
@@ -1239,13 +1239,13 @@ public class InfiniteShadowVolumes {
     private void applyInfinitePerspective(GL gl, ExaminerViewer v) {
       CameraParameters parms = v.getCameraParameters();
       float aspect = parms.getImagePlaneAspectRatio();
-      gl.glMultMatrixf(getData(infinitePerspective(parms.getVertFOV(), aspect, v.getZNear())));
+      gl.glMultMatrixf(getData(infinitePerspective(parms.getVertFOV(), aspect, v.getZNear())), 0);
     }
 
     private void applyInfinitePerspectiveInverse(GL gl, ExaminerViewer v) {
       CameraParameters parms = v.getCameraParameters();
       float aspect = parms.getImagePlaneAspectRatio();
-      gl.glMultMatrixf(getData(infinitePerspectiveInverse(parms.getVertFOV(), aspect, v.getZNear())));
+      gl.glMultMatrixf(getData(infinitePerspectiveInverse(parms.getVertFOV(), aspect, v.getZNear())), 0);
     }
 
     private Mat4f perspectiveInverse(float fovy, float aspect, float zNear, float zFar) {

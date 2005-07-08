@@ -225,9 +225,9 @@ public class HWShadowmapsSimple {
       gl.glEndList();
 
       gl.glEnable(GL.GL_LIGHT0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, light_ambient);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, light_intensity);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, light_intensity);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, light_ambient, 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, light_intensity, 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, light_intensity, 0);
 
       gl.glEnable(GL.GL_DEPTH_TEST);
 
@@ -383,7 +383,7 @@ public class HWShadowmapsSimple {
       gl.glEnable(GL.GL_DEPTH_TEST);
 
       int[] depth_bits = new int[1];
-      gl.glGetIntegerv(GL.GL_DEPTH_BITS, depth_bits);
+      gl.glGetIntegerv(GL.GL_DEPTH_BITS, depth_bits, 0);
         
       if (depth_bits[0] == 16)  depth_format = GL.GL_DEPTH_COMPONENT16_ARB;
       else                      depth_format = GL.GL_DEPTH_COMPONENT24_ARB;
@@ -391,7 +391,7 @@ public class HWShadowmapsSimple {
       light_view_depth = genTexture(gl);
       gl.glBindTexture(GL.GL_TEXTURE_2D, light_view_depth);
       gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, depth_format, TEX_SIZE, TEX_SIZE, 0, 
-                      GL.GL_DEPTH_COMPONENT, GL.GL_UNSIGNED_INT, (byte[]) null);
+                      GL.GL_DEPTH_COMPONENT, GL.GL_UNSIGNED_INT, (byte[]) null, 0);
       set_light_view_texture_parameters(gl);
 
       fullyInitialized = true;
@@ -434,7 +434,7 @@ public class HWShadowmapsSimple {
 
   private int genTexture(GL gl) {
     int[] tmp = new int[1];
-    gl.glGenTextures(1, tmp);
+    gl.glGenTextures(1, tmp, 0);
     return tmp[0];
   }
 
@@ -511,7 +511,7 @@ public class HWShadowmapsSimple {
     float[] row = new float[4];
     for(int i = 0; i < 4; i++) {
       getRow(m, i, row);
-      gl.glTexGenfv(coord[i], plane_type, row);
+      gl.glTexGenfv(coord[i], plane_type, row, 0);
     }
   }
 
@@ -606,7 +606,7 @@ public class HWShadowmapsSimple {
     gl.glLoadIdentity();
     applyTransform(gl, cameraInverseTransform);
     applyTransform(gl, spotlightTransform);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_pos);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_pos, 0);
     gl.glPopMatrix();
 
     // spot image
@@ -653,7 +653,7 @@ public class HWShadowmapsSimple {
     gl.glLoadIdentity();
     applyTransform(gl, cameraInverseTransform);
     applyTransform(gl, spotlightTransform);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_pos);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_pos, 0);
     gl.glPopMatrix();
 
     // spot image
@@ -731,7 +731,7 @@ public class HWShadowmapsSimple {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_pos);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_pos, 0);
     gl.glPopMatrix();
 
     // spot image
@@ -779,7 +779,7 @@ public class HWShadowmapsSimple {
   private static void applyTransform(GL gl, Mat4f xform) {
     float[] data = new float[16];
     xform.getColumnMajorData(data);
-    gl.glMultMatrixf(data);
+    gl.glMultMatrixf(data, 0);
   }
 
   private static Mat4f perspectiveInverse(float fovy, float aspect, float zNear, float zFar) {

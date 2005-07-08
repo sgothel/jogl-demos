@@ -260,7 +260,7 @@ public class VertexProgRefract {
       b[' '] = true; // animate by default
 
       int[] vtxProgTmp = new int[1];
-      gl.glGenProgramsARB(1, vtxProgTmp);
+      gl.glGenProgramsARB(1, vtxProgTmp, 0);
       vtxProg = vtxProgTmp[0];
       gl.glBindProgramARB  (GL.GL_VERTEX_PROGRAM_ARB, vtxProg);
       gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, transformRefract.length(), transformRefract);
@@ -273,7 +273,7 @@ public class VertexProgRefract {
       gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
 
       int[] cubemapTmp = new int[1];
-      gl.glGenTextures(1, cubemapTmp);
+      gl.glGenTextures(1, cubemapTmp, 0);
       cubemap = cubemapTmp[0];
       gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
 
@@ -523,7 +523,7 @@ public class VertexProgRefract {
                                   GL.GL_UNSIGNED_BYTE, data);
           } else {
             gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data, 0);
           }
           break;
         }
@@ -535,7 +535,7 @@ public class VertexProgRefract {
                                   GL.GL_UNSIGNED_BYTE, data);
           } else {
             gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data);
+                            GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data, 0);
           }
           break;
         }
@@ -585,7 +585,7 @@ public class VertexProgRefract {
 
     private void initFragmentProgram(GL gl) {
       int[] fragProgTmp = new int[1];
-      gl.glGenProgramsARB(1, fragProgTmp);
+      gl.glGenProgramsARB(1, fragProgTmp, 0);
       fragProg = fragProgTmp[0];
       String combineFragProg =
 "!!ARBfp1.0\n" +
@@ -606,7 +606,7 @@ public class VertexProgRefract {
       gl.glProgramStringARB(GL.GL_FRAGMENT_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB,
                             combineFragProg.length(), combineFragProg);
       int[] errPos = new int[1];
-      gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+      gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
       if (errPos[0] >= 0) {
         System.out.println("Fragment program failed to load:");
         String errMsg = gl.glGetString(GL.GL_PROGRAM_ERROR_STRING_ARB);

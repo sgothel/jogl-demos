@@ -87,9 +87,9 @@ public class TestMultiWin {
       float[] lightPosition = new float[] {1, 1, 1, 0};
       float[] ambient       = new float[] { 0.0f, 0.0f, 0.0f, 1.0f };
       float[] diffuse       = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT,  ambient);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE,  diffuse);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT,  ambient, 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE,  diffuse, 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
 
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_LIGHT0);
