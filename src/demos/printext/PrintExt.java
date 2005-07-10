@@ -20,7 +20,7 @@ public class PrintExt {
   }
 
   static class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       System.out.println("GL vendor: " + gl.glGetString(GL.GL_VENDOR));
       System.out.println("GL version: " + gl.glGetString(GL.GL_VERSION));
@@ -44,13 +44,13 @@ public class PrintExt {
       runExit();
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int w, int h) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
     }
 
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
   }
 

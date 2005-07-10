@@ -170,7 +170,6 @@ public class HDR {
 
     canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     canvas.addGLEventListener(new Listener());
-    canvas.setNoAutoRedrawMode(true);
 
     animator = new Animator(canvas);
 
@@ -207,7 +206,7 @@ public class HDR {
     private boolean wire = false;
     private boolean toggleWire = false;
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for Listener");
 
       GL gl = drawable.getGL();
@@ -293,7 +292,7 @@ public class HDR {
       viewer.setZFar(zFar);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for Listener");
 
       if (initFailed) {
@@ -358,10 +357,10 @@ public class HDR {
       Thread.yield();
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point
@@ -502,7 +501,7 @@ public class HDR {
   //
 
   class PbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -549,7 +548,7 @@ public class HDR {
       pipeline.initFloatingPointTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for PbufferListener");
 
       GL gl = drawable.getGL();
@@ -562,8 +561,8 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point
@@ -693,7 +692,7 @@ public class HDR {
   }
 
   class BlurPbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for BlurPbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -706,7 +705,7 @@ public class HDR {
       pipeline.initFloatingPointTexture(gl, blur_pbuffer_tex, blur_w, blur_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for BlurPbufferListener");
 
       GL gl = drawable.getGL();
@@ -721,12 +720,12 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   class Blur2PbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for Blur2PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -738,7 +737,7 @@ public class HDR {
       pipeline.initFloatingPointTexture(gl, blur2_pbuffer_tex, blur_w, blur_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for Blur2PbufferListener");
 
       GL gl = drawable.getGL();
@@ -769,12 +768,12 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   class TonemapPbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
 
       setOrthoProjection(gl, pbuffer_w, pbuffer_h);
@@ -782,7 +781,7 @@ public class HDR {
       pipeline.initTexture(gl, tonemap_pbuffer_tex, pbuffer_w, pbuffer_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
 
       toneMappingPass(gl);
@@ -791,8 +790,8 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   //----------------------------------------------------------------------

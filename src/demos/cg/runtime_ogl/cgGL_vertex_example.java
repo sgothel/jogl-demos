@@ -154,7 +154,7 @@ public class cgGL_vertex_example implements GLEventListener
     CgGL.cgGLDisableProfile(profile);
   }
 
-  public void display(GLDrawable drawable) 
+  public void display(GLAutoDrawable drawable) 
   {
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -173,12 +173,12 @@ public class cgGL_vertex_example implements GLEventListener
     v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
   }
   
-  public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged)
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged)
   {
     // nothing
   }
 
-  public void init(GLDrawable drawable) 
+  public void init(GLAutoDrawable drawable) 
   {
     // Note: we initialize Cg in this init() method instead of main()
     // because Cg (apparently) requires an active OpenGL context in order to
@@ -259,7 +259,7 @@ public class cgGL_vertex_example implements GLEventListener
   
   }
 
-  public void reshape(GLDrawable drawable, int x, int y, int width, int height)
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height)
   {
     // do nothing
   }

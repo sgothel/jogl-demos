@@ -160,7 +160,7 @@ public class InfiniteShadowVolumes {
   private boolean toggleWireframe;
 
   class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
 
@@ -280,7 +280,7 @@ public class InfiniteShadowVolumes {
       //      glutAddMenuEntry("quit [<esc>]", 27);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       if (quit) {
         return;
       }
@@ -546,8 +546,8 @@ public class InfiniteShadowVolumes {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point

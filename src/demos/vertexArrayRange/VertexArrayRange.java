@@ -277,7 +277,7 @@ public class VertexArrayRange {
   class VARListener implements GLEventListener {
     boolean exiting = false;
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
       //    drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -458,7 +458,7 @@ public class VertexArrayRange {
       }
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       // Don't try to do OpenGL operations if we're tearing things down
       if (quit) {
         return;
@@ -653,10 +653,10 @@ public class VertexArrayRange {
       }
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   } // end class VARListener
 
   private void allocateBigArray(GL gl, boolean tryAgain) {

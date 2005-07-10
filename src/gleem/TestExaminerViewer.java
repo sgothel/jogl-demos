@@ -77,7 +77,7 @@ public class TestExaminerViewer {
     private CameraParameters params = new CameraParameters();
     private ExaminerViewer viewer;
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       gl = drawable.getGL();
       glu = drawable.getGLU();
 
@@ -122,7 +122,7 @@ public class TestExaminerViewer {
       viewer.viewAll(gl);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
       viewer.update(gl);
       ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
@@ -130,8 +130,8 @@ public class TestExaminerViewer {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int w, int h) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   public static void main(String[] args) {

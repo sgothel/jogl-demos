@@ -75,7 +75,7 @@ public class Water {
   private String tmpDropletFilename;
   private String tmpCubeMapFilenamePattern;
 
-  private GLDrawable pbuffer;
+  private GLPbuffer pbuffer;
   private Rotf cameraOrientation = new Rotf();
 
   // Static texture names
@@ -408,14 +408,14 @@ public class Water {
   //
 
   class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
 
       initOpenGL(gl, glu);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       if (mustUpdateBlurOffsets) {
         updateBlurVertOffset(gl);
@@ -448,10 +448,10 @@ public class Water {
       }
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   private TGAImage loadImage(String resourceName) {

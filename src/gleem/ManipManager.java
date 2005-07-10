@@ -79,9 +79,7 @@ public class ManipManager {
     };
   private WindowUpdateListener defaultWindowListener = new WindowUpdateListener() {
       public void update(GLDrawable window) {
-        if (!window.getNoAutoRedrawMode()) {
-          window.display();
-        }
+        window.display();
       }
     };
   private WindowUpdateListener windowListener;

@@ -55,7 +55,7 @@ public class TestTranslate2 {
     private GLU glu;
     private CameraParameters params = new CameraParameters();
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       gl = drawable.getGL();
       glu = drawable.getGLU();
 
@@ -96,13 +96,13 @@ public class TestTranslate2 {
       manager.showManipInWindow(manip, drawable);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
       ManipManager.getManipManager().updateCameraParameters(drawable, params);
       ManipManager.getManipManager().render(drawable, gl);
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int w, int h) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       float aspect, theta;
       aspect = (float) w / (float) h;
       if (w >= h)
@@ -121,7 +121,7 @@ public class TestTranslate2 {
     }
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   public static void main(String[] args) {

@@ -337,7 +337,7 @@ public class JRefract {
 "\n" +
 "END\n";
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       // Use debug pipeline
       // drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -453,7 +453,7 @@ public class JRefract {
       }
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       if (quit) {
         return;
       }
@@ -567,8 +567,8 @@ public class JRefract {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point
@@ -924,7 +924,7 @@ public class JRefract {
     private boolean mouseRButtonDown = false;
 
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       // Use debug pipeline
       // drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -967,7 +967,7 @@ public class JRefract {
       drawable.addMouseMotionListener(this);
     }
     
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
       GL gl = drawable.getGL();
 
       float h = (float)height / (float)width;
@@ -999,7 +999,7 @@ public class JRefract {
       gl.glTranslatef(0.0f, 0.0f, -40.0f);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       angle += 2.0f;
 
       GL gl = drawable.getGL();
@@ -1031,7 +1031,7 @@ public class JRefract {
       gl.glPopMatrix();
     }
 
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     private void gear(GL gl,
                       float inner_radius,

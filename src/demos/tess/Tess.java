@@ -100,7 +100,7 @@ public class Tess {
         private GLU glu;
         private int startList;
 
-        public void init(GLDrawable drawable) {
+        public void init(GLAutoDrawable drawable) {
             drawable.setGL(new DebugGL(drawable.getGL()));
 
             gl = drawable.getGL();
@@ -171,7 +171,7 @@ public class Tess {
         }//end init
 
 
-        public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+        public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
             gl.glMatrixMode(GL.GL_PROJECTION);
             gl.glLoadIdentity();
             gl.glOrtho( 0, 450, 0, 250, -1, 1 );
@@ -179,10 +179,10 @@ public class Tess {
             gl.glLoadIdentity();
         }
 
-        public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+        public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
         }
 
-        public void display(GLDrawable drawable) {
+        public void display(GLAutoDrawable drawable) {
             gl.glClear(GL.GL_COLOR_BUFFER_BIT);
             gl.glColor3d(1.0, 1.0, 1.0);
             gl.glCallList(startList);

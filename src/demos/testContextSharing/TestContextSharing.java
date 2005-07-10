@@ -62,7 +62,7 @@ public class TestContextSharing {
     frame1.setLayout(new BorderLayout());
     frame1.add(canvas1, BorderLayout.CENTER);
 
-    GLCanvas canvas2 = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities(), canvas1);
+    GLCanvas canvas2 = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities(), null, canvas1, null);
     canvas2.addGLEventListener(new Listener());
     canvas2.setSize(256, 256);
     Frame frame2 = new Frame("Canvas 2");
@@ -96,7 +96,7 @@ public class TestContextSharing {
   }
 
   class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
@@ -113,7 +113,7 @@ public class TestContextSharing {
       gl.glEnable(GL.GL_NORMALIZE);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
 
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -122,7 +122,7 @@ public class TestContextSharing {
       gl.glCallList(gearDisplayList);
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
       GL gl = drawable.getGL();
 
       float h = (float)height / (float)width;
@@ -136,7 +136,7 @@ public class TestContextSharing {
     }
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   private synchronized void initializeDisplayList(GL gl) {

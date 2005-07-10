@@ -83,7 +83,7 @@ public class Multisample {
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(4);
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(caps, chooser);
+    canvas = GLDrawableFactory.getFactory().createGLCanvas(caps, chooser, null, null);
     canvas.addGLEventListener(new Listener());
     
     Frame frame = new Frame("Full-scene antialiasing");
@@ -123,7 +123,7 @@ public class Multisample {
   }
 
   class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
 
@@ -138,7 +138,7 @@ public class Multisample {
       gl.glOrtho(-1, 1, -1, 1, -1, 1);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
 
@@ -161,8 +161,8 @@ public class Multisample {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   private void runExit() {

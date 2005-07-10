@@ -160,7 +160,7 @@ public class HWShadowmapsSimple {
 
   class Listener implements GLEventListener {
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       // Use debug pipeline
       // drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -279,7 +279,7 @@ public class HWShadowmapsSimple {
         });
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       viewer.update();
 
       // Grab these values once per render to avoid multithreading
@@ -332,8 +332,8 @@ public class HWShadowmapsSimple {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point
@@ -373,7 +373,7 @@ public class HWShadowmapsSimple {
   }
 
   class PbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       // Use debug pipeline
       // drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -397,7 +397,7 @@ public class HWShadowmapsSimple {
       fullyInitialized = true;
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       GLU glu = drawable.getGLU();
 
@@ -418,8 +418,8 @@ public class HWShadowmapsSimple {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   private void set_light_view_texture_parameters(GL gl) {

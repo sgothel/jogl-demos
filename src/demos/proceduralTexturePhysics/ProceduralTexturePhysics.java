@@ -82,7 +82,12 @@ public class ProceduralTexturePhysics {
   public void run(String[] args) {
     canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     canvas.addGLEventListener(new Listener());
-    canvas.setNoAutoRedrawMode(true);
+    water = new Water();
+    water.initialize("demos/data/images/nvfixed.tga", 
+                     "demos/data/images/nvspin.tga", 
+                     "demos/data/images/droplet.tga", 
+                     "demos/data/cubemaps/CloudyHills_{0}.tga",
+                     canvas);
 
     animator = new Animator(canvas);
 
@@ -100,12 +105,6 @@ public class ProceduralTexturePhysics {
         }
       });
 
-    water = new Water();
-    water.initialize("demos/data/images/nvfixed.tga", 
-                     "demos/data/images/nvspin.tga", 
-                     "demos/data/images/droplet.tga", 
-                     "demos/data/cubemaps/CloudyHills_{0}.tga",
-                     canvas);
     animator.start();
   }
 
@@ -126,7 +125,7 @@ public class ProceduralTexturePhysics {
     private float bumpIncrement         = 0.01f;
     private float frequencyIncrement    = 0.1f;
 
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
       gl.setSwapInterval(1);
 
@@ -189,7 +188,7 @@ public class ProceduralTexturePhysics {
         });
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       if (!firstRender) {
         if (++frameCount == 30) {
           timer.stop();
@@ -229,10 +228,10 @@ public class ProceduralTexturePhysics {
       water.draw(gl, params.getOrientation().inverse());
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point

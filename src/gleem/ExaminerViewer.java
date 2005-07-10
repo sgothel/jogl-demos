@@ -50,7 +50,7 @@ import net.java.games.jogl.*;
     manipulator hierarchy. It is an example of how you might integrate
     gleem with another application which uses the mouse. </P>
 
-    <P> For the given GLDrawable, the ExaminerViewer takes over the
+    <P> For the given GLAutoDrawable, the ExaminerViewer takes over the
     setting of the view position. It passes along mouse events it is
     not interested in to the ManipManager's mouse routines. </P>
 
@@ -71,7 +71,7 @@ import net.java.games.jogl.*;
     button. </P> */
 
 public class ExaminerViewer {
-  private GLDrawable window;
+  private GLAutoDrawable window;
   /** Simple state machine for figuring out whether we are grabbing
       events */
   private boolean interactionUnderway;
@@ -125,12 +125,12 @@ public class ExaminerViewer {
     };
 
   private GLEventListener glListener = new GLEventListener() {
-      public void init(GLDrawable drawable) {}
-      public void display(GLDrawable drawable) {}
-      public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+      public void init(GLAutoDrawable drawable) {}
+      public void display(GLAutoDrawable drawable) {}
+      public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         reshapeMethod(width, height);
       }
-      public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+      public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
     };
 
   /** The constructor takes the number of mouse buttons on this system
@@ -140,17 +140,17 @@ public class ExaminerViewer {
     oldNumMouseButtons = numMouseButtons;
   }
 
-  /** <P> Attaches this ExaminerViewer to the given GLDrawable. This
+  /** <P> Attaches this ExaminerViewer to the given GLAutoDrawable. This
       causes the ManipManager's mouse routines to be removed from the
       window (using ManipManager.removeMouseListeners) and the
-      ExaminerViewer's to be installed. The GLDrawable should be
+      ExaminerViewer's to be installed. The GLAutoDrawable should be
       registered with the ManipManager before the ExaminerViewer is
       attached to it. </P>
 
       <P> In order for the viewer to do anything useful, you need to
       provide a BSphereProvider to it to allow "view all"
       functionality. </P> */
-  public void attach(GLDrawable window, BSphereProvider provider) {
+  public void attach(GLAutoDrawable window, BSphereProvider provider) {
     this.window = window;
     this.provider = provider;
     init();
@@ -158,7 +158,7 @@ public class ExaminerViewer {
   }
 
   /** Detaches from the given window. This causes the ManipManager's
-      mouse listeners to be reinstalled on the GLDrawable and the
+      mouse listeners to be reinstalled on the GLAutoDrawable and the
       ExaminerViewer's to be removed. */
   public void detach() {
     removeListeners();
@@ -355,9 +355,8 @@ public class ExaminerViewer {
     button1Down = false;
     button2Down = false;
 
-    Dimension size = window.getSize();
-    int xSize = size.width;
-    int ySize = size.height;
+    int xSize = window.getWidth();
+    int ySize = window.getHeight();
     params.setOrientation(orientation);
     params.setPosition(computePosition(new Vec3f()));
     params.setForwardDirection(Vec3f.NEG_Z_AXIS);
@@ -411,10 +410,12 @@ public class ExaminerViewer {
 
       }
 
-      // Force redraw if window will not do it automatically
-      if (!window.getNoAutoRedrawMode()) {
-        window.display();
-      }
+      // Force redraw
+      // FIXME: this can cause bad behavior (slowdowns, jittery
+      // rendering) if window is being automatically rendered; should
+      // have flag to disable auto redraw by the examiner viewer,
+      // since that API isn't present in the GLDrawable any more
+      window.display();
     }
   }
 
@@ -471,10 +472,12 @@ public class ExaminerViewer {
         iOwnInteraction = false;
       }
 
-      // Force redraw if window will not do it automatically
-      if (!window.getNoAutoRedrawMode()) {
-        window.display();
-      }
+      // Force redraw
+      // FIXME: this can cause bad behavior (slowdowns, jittery
+      // rendering) if window is being automatically rendered; should
+      // have flag to disable auto redraw by the examiner viewer,
+      // since that API isn't present in the GLDrawable any more
+      window.display();
     }
   }
 

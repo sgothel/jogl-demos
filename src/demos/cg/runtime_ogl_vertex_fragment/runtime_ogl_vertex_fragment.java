@@ -91,7 +91,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // and all the rest happens in the display function...
   }
 
-  public void init(GLDrawable drawable) 
+  public void init(GLAutoDrawable drawable) 
   {
     // Use debug pipeline
     // drawable.setGL(new DebugGL(drawable.getGL()));
@@ -125,7 +125,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   private static int curTime = 0;
   
   // display callback function
-  public void display(GLDrawable drawable) 
+  public void display(GLAutoDrawable drawable) 
   {
 
     GL gl = drawable.getGL();
@@ -417,12 +417,12 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     N.put(offsetN + 2, P.get(offsetP + 2));
   }
 
-  public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged)
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged)
   {
     // nothing
   }
 
-  public void reshape(GLDrawable drawable, int x, int y, int width, int height)
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height)
   {
     // do nothing
   }
