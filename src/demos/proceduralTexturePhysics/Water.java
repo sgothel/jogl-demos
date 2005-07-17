@@ -186,7 +186,7 @@ public class Water {
                          String spinFilename,
                          String dropletFilename,
                          String cubeMapFilenamePattern,
-                         GLDrawable parentWindow) {
+                         GLAutoDrawable parentWindow) {
     loadInitialTexture(initialMapFilename);
     tmpSpinFilename           = spinFilename;
     tmpDropletFilename        = dropletFilename;

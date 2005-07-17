@@ -315,6 +315,7 @@ public class VertexProgRefract {
 
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
       viewer.setNoAltKeyMode(true);
+      viewer.setAutoRedrawMode(false);
       viewer.attach(drawable, new BSphereProvider() {
 	  public BSphere getBoundingSphere() {
 	    return new BSphere(new Vec3f(0, 0, 0), 1.0f);

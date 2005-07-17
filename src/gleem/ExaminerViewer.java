@@ -78,6 +78,7 @@ public class ExaminerViewer {
   private boolean iOwnInteraction;
 
   private boolean noAltKeyMode;
+  private boolean autoRedrawMode;
 
   /** Simple state machine for computing distance dragged */
   private boolean button1Down;
@@ -300,6 +301,20 @@ public class ExaminerViewer {
     return noAltKeyMode;
   }
 
+  /** Enables or disables the automatic redrawing of the
+      GLAutoDrawable to which this ExaminerViewer is attached. If the
+      GLAutoDrawable is already being animated, disabling auto redraw
+      mode may provide better performance. Defaults to on. */
+  public void setAutoRedrawMode(boolean onOrOff) {
+    autoRedrawMode = onOrOff;
+  }
+
+  /** Returns whether this ExaminerViewer automatically redraws the
+      GLAutoDrawable to which it is attached upon updates. */
+  public boolean getAutoRedrawMode() {
+    return autoRedrawMode;
+  }
+
   /** Rotates this ExaminerViewer about the focal point by the
       specified incremental rotation; performs postmultiplication,
       i.e. the incremental rotation is applied after the current
@@ -410,12 +425,10 @@ public class ExaminerViewer {
 
       }
 
-      // Force redraw
-      // FIXME: this can cause bad behavior (slowdowns, jittery
-      // rendering) if window is being automatically rendered; should
-      // have flag to disable auto redraw by the examiner viewer,
-      // since that API isn't present in the GLDrawable any more
-      window.display();
+      if (autoRedrawMode) {
+        // Force redraw
+        window.display();
+      }
     }
   }
 
@@ -472,12 +485,10 @@ public class ExaminerViewer {
         iOwnInteraction = false;
       }
 
-      // Force redraw
-      // FIXME: this can cause bad behavior (slowdowns, jittery
-      // rendering) if window is being automatically rendered; should
-      // have flag to disable auto redraw by the examiner viewer,
-      // since that API isn't present in the GLDrawable any more
-      window.display();
+      if (autoRedrawMode) {
+        // Force redraw
+        window.display();
+      }
     }
   }
 

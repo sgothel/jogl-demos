@@ -282,6 +282,7 @@ public class HDR {
       manager.registerWindow(drawable);
 
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+      viewer.setAutoRedrawMode(false);
       viewer.setNoAltKeyMode(true);
       viewer.attach(drawable, new BSphereProvider() {
 	  public BSphere getBoundingSphere() {
@@ -323,6 +324,12 @@ public class HDR {
       }
 
       pbuffer.display();
+
+      // FIXME: because of changes in lazy pbuffer instantiation
+      // behavior the pbuffer might not have been run just now
+      if (pipeline == null) {
+        return;
+      }
 
       // blur pass
       if (b['g']) {
@@ -502,7 +509,7 @@ public class HDR {
 
   class PbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      //      printThreadName("init for PbufferListener");
+      printThreadName("init for PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -693,7 +700,7 @@ public class HDR {
 
   class BlurPbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      //      printThreadName("init for BlurPbufferListener");
+      printThreadName("init for BlurPbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -726,7 +733,7 @@ public class HDR {
 
   class Blur2PbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      //      printThreadName("init for Blur2PbufferListener");
+      printThreadName("init for Blur2PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 

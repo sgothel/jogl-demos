@@ -303,6 +303,8 @@ public class HWShadowmapsSimple {
       }
 
       if (!fullyInitialized) {
+        // Repaint again later once everything is set up
+        canvas.repaint();
         return;
       }
 
@@ -564,7 +566,7 @@ public class HWShadowmapsSimple {
     gl.glMatrixMode(GL.GL_MODELVIEW);
   }
 
-  private void render_scene(GL gl, Mat4f view, GLDrawable drawable, CameraParameters params) {
+  private void render_scene(GL gl, Mat4f view, GLAutoDrawable drawable, CameraParameters params) {
     gl.glColor3f(1,1,1);
     gl.glPushMatrix();
     Mat4f inverseView = new Mat4f(view);
@@ -585,7 +587,7 @@ public class HWShadowmapsSimple {
     gl.glPopMatrix();
   }
 
-  private void render_manipulators(GL gl, Mat4f view, GLDrawable drawable, CameraParameters params) {
+  private void render_manipulators(GL gl, Mat4f view, GLAutoDrawable drawable, CameraParameters params) {
     gl.glColor3f(1,1,1);
     gl.glPushMatrix();
     Mat4f inverseView = new Mat4f(view);
@@ -600,7 +602,7 @@ public class HWShadowmapsSimple {
     gl.glPopMatrix();
   }
 
-  private void render_scene_from_camera_view(GL gl, GLU glu, GLDrawable drawable, CameraParameters params) {
+  private void render_scene_from_camera_view(GL gl, GLU glu, GLAutoDrawable drawable, CameraParameters params) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -647,7 +649,7 @@ public class HWShadowmapsSimple {
     render_light_frustum(gl);
   }
 
-  private void render_scene_from_camera_view_shadowed(GL gl, GLU glu, GLDrawable drawable, CameraParameters params) {
+  private void render_scene_from_camera_view_shadowed(GL gl, GLU glu, GLAutoDrawable drawable, CameraParameters params) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();

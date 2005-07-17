@@ -83,11 +83,6 @@ public class ProceduralTexturePhysics {
     canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     canvas.addGLEventListener(new Listener());
     water = new Water();
-    water.initialize("demos/data/images/nvfixed.tga", 
-                     "demos/data/images/nvspin.tga", 
-                     "demos/data/images/droplet.tga", 
-                     "demos/data/cubemaps/CloudyHills_{0}.tga",
-                     canvas);
 
     animator = new Animator(canvas);
 
@@ -126,6 +121,12 @@ public class ProceduralTexturePhysics {
     private float frequencyIncrement    = 0.1f;
 
     public void init(GLAutoDrawable drawable) {
+      water.initialize("demos/data/images/nvfixed.tga", 
+                       "demos/data/images/nvspin.tga", 
+                       "demos/data/images/droplet.tga", 
+                       "demos/data/cubemaps/CloudyHills_{0}.tga",
+                       drawable);
+
       GL gl = drawable.getGL();
       gl.setSwapInterval(1);
 
@@ -150,6 +151,7 @@ public class ProceduralTexturePhysics {
       manager.registerWindow(drawable);
 
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+      viewer.setAutoRedrawMode(false);
       viewer.attach(drawable, new BSphereProvider() {
 	  public BSphere getBoundingSphere() {
 	    return new BSphere(new Vec3f(0, 0, 0), 1.2f);
