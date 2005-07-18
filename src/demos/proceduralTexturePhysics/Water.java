@@ -194,14 +194,17 @@ public class Water {
     
     // create the pbuffer.  Will use this as an offscreen rendering buffer.
     // it allows rendering a texture larger than our window.
-    if (!parentWindow.canCreateOffscreenDrawable()) {
-      throw new GLException("Parent window doesn't support creation of pbuffers");
-    }
     GLCapabilities caps = new GLCapabilities();
     caps.setDoubleBuffered(false);
-    pbuffer = parentWindow.createOffscreenDrawable(caps, 
-                                                   initialMapDimensions[0],
-                                                   initialMapDimensions[1]);
+    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps,
+                                                           initialMapDimensions[0],
+                                                           initialMapDimensions[1])) {
+      throw new GLException("Pbuffers not supported with this graphics card");
+    }
+    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps,
+                                                             initialMapDimensions[0],
+                                                             initialMapDimensions[1],
+                                                             parentWindow.getContext());
     pbuffer.addGLEventListener(new Listener());
   }
 

@@ -234,7 +234,11 @@ public class HWShadowmapsSimple {
       // init pbuffer
       GLCapabilities caps = new GLCapabilities();
       caps.setDoubleBuffered(false);
-      pbuffer = drawable.createOffscreenDrawable(caps, TEX_SIZE, TEX_SIZE);
+      
+      if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, TEX_SIZE, TEX_SIZE)) {
+        unavailableExtension("Can not create pbuffer");
+      }
+      pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, TEX_SIZE, TEX_SIZE, drawable.getContext());
       pbuffer.addGLEventListener(new PbufferListener());
 
       // Register the window with the ManipManager
@@ -344,9 +348,13 @@ public class HWShadowmapsSimple {
     private void checkExtension(GL gl, String extensionName) {
       if (!gl.isExtensionAvailable(extensionName)) {
         String message = "Unable to initialize " + extensionName + " OpenGL extension";
-        JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-	throw new GLException(message);
+        unavailableExtension(message);
       }
+    }
+
+    private void unavailableExtension(String message) {
+      JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+      throw new GLException(message);
     }
 
     private void dispatchKey(char k) {

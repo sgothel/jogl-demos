@@ -249,15 +249,19 @@ public class HDR {
       caps.setAlphaBits(floatAlphaBits);
       caps.setDepthBits(floatDepthBits);
       int[] tmp = new int[1];
-      pbuffer = drawable.createOffscreenDrawable(caps, pbuffer_w, pbuffer_h);
+      if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, pbuffer_w, pbuffer_h)) {
+        unavailableExtension("Can not create pbuffer of size (" + pbuffer_w + ", " + pbuffer_h + ")");
+      }
+      GLContext parentContext = drawable.getContext();
+      pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
       pbuffer.addGLEventListener(new PbufferListener());
       gl.glGenTextures(1, tmp, 0);
       pbuffer_tex = tmp[0];
-      blur_pbuffer = drawable.createOffscreenDrawable(caps, blur_w, blur_h);
+      blur_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
       blur_pbuffer.addGLEventListener(new BlurPbufferListener());
       gl.glGenTextures(1, tmp, 0);
       blur_pbuffer_tex = tmp[0];
-      blur2_pbuffer = drawable.createOffscreenDrawable(caps, blur_w, blur_h);
+      blur2_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
       blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
       gl.glGenTextures(1, tmp, 0);
       blur2_pbuffer_tex = tmp[0];
@@ -266,7 +270,7 @@ public class HDR {
       caps.setGreenBits(8);
       caps.setBlueBits(8);
       caps.setDepthBits(24);
-      tonemap_pbuffer = drawable.createOffscreenDrawable(caps, pbuffer_w, pbuffer_h);
+      tonemap_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
       tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
       gl.glGenTextures(1, tmp, 0);
       tonemap_pbuffer_tex = tmp[0];
@@ -509,7 +513,7 @@ public class HDR {
 
   class PbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      printThreadName("init for PbufferListener");
+      //      printThreadName("init for PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -700,7 +704,7 @@ public class HDR {
 
   class BlurPbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      printThreadName("init for BlurPbufferListener");
+      //      printThreadName("init for BlurPbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -733,7 +737,7 @@ public class HDR {
 
   class Blur2PbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      printThreadName("init for Blur2PbufferListener");
+      //      printThreadName("init for Blur2PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
