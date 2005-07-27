@@ -279,13 +279,7 @@ public class VertexBufferObject {
       GLU glu = drawable.getGLU();
 
       // Try and disable synch-to-retrace for fastest framerate
-      if (gl.isFunctionAvailable("wglSwapIntervalEXT")) {
-        System.err.println("wglSwapIntervalEXT available; disabling sync-to-refresh for best framerate");
-        gl.wglSwapIntervalEXT(0);       
-      }
-      else {    
-        System.err.println("wglSwapIntervalEXT not available; cannot disable sync-to-refresh");
-      }
+      gl.setSwapInterval(0);
 
       try {
         initExtension(gl, "GL_ARB_vertex_buffer_object");
