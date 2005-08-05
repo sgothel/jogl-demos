@@ -56,35 +56,18 @@ import gleem.linalg.*;
  *
  */
 
-public class ProceduralTexturePhysics {
-  private volatile boolean drawing;
-  private volatile int     mousePosX;
-  private volatile int     mousePosY;
-
-  private Dimension dim = new Dimension();
-  private GLCanvas canvas;
-  private Water    water;
-  private Animator animator;
-  private volatile ExaminerViewer viewer;
-  private boolean[] b = new boolean[256];
-  private boolean  doViewAll = true;
-  private float    zNear = 0.1f;
-  private float    zFar  = 10.0f;
-
-  private DurationTimer timer = new DurationTimer();
-  private boolean  firstRender = true;
-  private int      frameCount;
-
+public class ProceduralTexturePhysics implements GLEventListener {
   public static void main(String[] args) {
-    new ProceduralTexturePhysics().run(args);
-  }
+    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
+    canvas.addGLEventListener(demo);
 
-  public void run(String[] args) {
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    canvas.addGLEventListener(new Listener());
-    water = new Water();
-
-    animator = new Animator(canvas);
+    final Animator animator = new Animator(canvas);
+    demo.setDemoListener(new DemoListener() {
+        public void shutdownDemo() {
+          runExit(animator);
+        }
+      });
 
     Frame frame = new Frame("Procedural Texture Waves");
     frame.setLayout(new BorderLayout());
@@ -96,55 +79,72 @@ public class ProceduralTexturePhysics {
 
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          runExit();
+          runExit(animator);
         }
       });
 
     animator.start();
   }
 
+  public void setDemoListener(DemoListener listener) {
+    demoListener = listener;
+  }
+
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
-  private void setFlag(char key, boolean val) {
-    b[((int) key) & 0xFF] = val;
-  }
+  private DemoListener demoListener;
+  private volatile boolean drawing;
+  private volatile int     mousePosX;
+  private volatile int     mousePosY;
 
-  private boolean getFlag(char key) {
-    return b[((int) key) & 0xFF];
-  }
+  private Water    water = new Water();
+  private volatile ExaminerViewer viewer;
+  private boolean[] b = new boolean[256];
+  private boolean  doViewAll = true;
+  private float    zNear = 0.1f;
+  private float    zFar  = 10.0f;
 
-  class Listener implements GLEventListener {
-    private float blurIncrement         = 0.01f;
-    private float bumpIncrement         = 0.01f;
-    private float frequencyIncrement    = 0.1f;
+  private DurationTimer timer = new DurationTimer();
+  private boolean  firstRender = true;
+  private int      frameCount;
 
-    public void init(GLAutoDrawable drawable) {
-      water.initialize("demos/data/images/nvfixed.tga", 
-                       "demos/data/images/nvspin.tga", 
-                       "demos/data/images/droplet.tga", 
-                       "demos/data/cubemaps/CloudyHills_{0}.tga",
-                       drawable);
+  private float blurIncrement         = 0.01f;
+  private float bumpIncrement         = 0.01f;
+  private float frequencyIncrement    = 0.1f;
 
-      GL gl = drawable.getGL();
-      gl.setSwapInterval(1);
+  public void init(GLAutoDrawable drawable) {
+    water.destroy();
+    water.initialize("demos/data/images/nvfixed.tga", 
+                     "demos/data/images/nvspin.tga", 
+                     "demos/data/images/droplet.tga", 
+                     "demos/data/cubemaps/CloudyHills_{0}.tga",
+                     drawable);
 
-      try {
-	checkExtension(gl, "GL_ARB_multitexture");
-	checkExtension(gl, "GL_ARB_vertex_program");
-	checkExtension(gl, "GL_ARB_fragment_program");
-	checkExtension(gl, "GL_ARB_pbuffer");
-	checkExtension(gl, "GL_ARB_pixel_format");
-      } catch (GLException e) {
-	e.printStackTrace();
-	throw(e);
-      }
+    GL gl = drawable.getGL();
+    gl.setSwapInterval(1);
+
+    try {
+      checkExtension(gl, "GL_ARB_multitexture");
+      checkExtension(gl, "GL_ARB_vertex_program");
+      checkExtension(gl, "GL_ARB_fragment_program");
+      checkExtension(gl, "GL_ARB_pbuffer");
+      checkExtension(gl, "GL_ARB_pixel_format");
+    } catch (GLException e) {
+      e.printStackTrace();
+      throw(e);
+    }
       
-      gl.glClearColor(0, 0.2f, 0.5f, 0);
-      gl.glDisable(GL.GL_LIGHTING);
-      gl.glDisable(GL.GL_DEPTH_TEST);
-      gl.glDisable(GL.GL_CULL_FACE);
+    gl.glClearColor(0, 0.2f, 0.5f, 0);
+    gl.glDisable(GL.GL_LIGHTING);
+    gl.glDisable(GL.GL_DEPTH_TEST);
+    gl.glDisable(GL.GL_CULL_FACE);
+
+    doViewAll = true;
+
+    if (firstRender) {
+      firstRender = false;
 
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
@@ -153,10 +153,10 @@ public class ProceduralTexturePhysics {
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
       viewer.setAutoRedrawMode(false);
       viewer.attach(drawable, new BSphereProvider() {
-	  public BSphere getBoundingSphere() {
-	    return new BSphere(new Vec3f(0, 0, 0), 1.2f);
-	  }
-	});
+          public BSphere getBoundingSphere() {
+            return new BSphere(new Vec3f(0, 0, 0), 1.2f);
+          }
+        });
       viewer.setVertFOV((float) (15.0f * Math.PI / 32.0f));
       viewer.setZNear(zNear);
       viewer.setZFar(zFar);
@@ -188,175 +188,177 @@ public class ProceduralTexturePhysics {
             mousePosY = e.getY();
           }            
         });
+
+      timer.start();
+    }
+  }
+
+  public void display(GLAutoDrawable drawable) {
+    if (++frameCount == 30) {
+      timer.stop();
+      System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
+      timer.reset();
+      timer.start();
+      frameCount = 0;
     }
 
-    public void display(GLAutoDrawable drawable) {
-      if (!firstRender) {
-        if (++frameCount == 30) {
-          timer.stop();
-          System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
-          timer.reset();
-          timer.start();
-          frameCount = 0;
-        }
-      } else {
-        firstRender = false;
-        timer.start();
-      }
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-      if (doViewAll) {
-	viewer.viewAll(gl);
-	doViewAll = false;
-      }
-
-      viewer.update(gl);
-      ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-      ManipManager.getManipManager().render(drawable, gl);
-
-      if (drawing) {
-        canvas.getSize(dim);
-        water.addDroplet(new Water.Droplet( 2 * (mousePosX / (float) dim.width  - 0.5f),
-                                            -2 * (mousePosY / (float) dim.height - 0.5f),
-                                            0.08f));
-      }
-      water.tick();
-
-      CameraParameters params = viewer.getCameraParameters();
-      water.draw(gl, params.getOrientation().inverse());
+    if (doViewAll) {
+      viewer.viewAll(gl);
+      doViewAll = false;
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    viewer.update(gl);
+    ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
+    ManipManager.getManipManager().render(drawable, gl);
 
-    // Unused routines
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-
-    //----------------------------------------------------------------------
-    // Internals only below this point
-    //
-
-    private void checkExtension(GL gl, String extensionName) {
-      if (!gl.isExtensionAvailable(extensionName)) {
-        String message = "Unable to initialize " + extensionName + " OpenGL extension";
-        JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-        runExit();
-      }
+    if (drawing) {
+      int w = drawable.getWidth();
+      int h = drawable.getHeight();
+      water.addDroplet(new Water.Droplet( 2 * (mousePosX / (float) w  - 0.5f),
+                                          -2 * (mousePosY / (float) h - 0.5f),
+                                          0.08f));
     }
+    water.tick();
 
-    private void dispatchKey(char k) {
-      setFlag(k, !getFlag(k));
+    CameraParameters params = viewer.getCameraParameters();
+    water.draw(gl, params.getOrientation().inverse());
+  }
 
-      switch (k) {
-        case 27:
-        case 'q':
-          runExit();
-          break;
-        case 'w':
-          water.enableWireframe(getFlag('w'));
-          break;
-        case 'd':
-          // FIXME
-          /*
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
-          if (getKey('d')) {
-          glutMouseFunc(glh::glut_mouse_function);
-          glutMotionFunc(glh::glut_motion_function);
-          }
-          else
-          {
-          glutMouseFunc(Mouse);
-          glutMotionFunc(Motion);
-          }
-          */
-          break;
-        case ' ':
-          water.enableAnimation(getFlag(' '));
-          break;
-        case 'b':
-          water.enableBorderWrapping(getFlag('b'));
-          break;
-        case 'n':
-          water.singleStep();
-          break;
-        case 's':
-          water.enableSlowAnimation(getFlag('s'));
-          break;
-        case '1':
-          water.setRenderMode(Water.CA_FULLSCREEN_REFLECT);
-          break;
-        case '2':
-          water.setRenderMode(Water.CA_FULLSCREEN_HEIGHT);
-          break;
-        case '3':
-          water.setRenderMode(Water.CA_FULLSCREEN_FORCE);
-          break;
-        case '4':
-          water.setRenderMode(Water.CA_FULLSCREEN_NORMALMAP);
-          break;
-        case '5':
-          water.setRenderMode(Water.CA_TILED_THREE_WINDOWS);
-          break;
-        case 'r':
-          water.reset();
-          break;    
-        case 'i':
-          // FIXME: make sure this is what this does
-          doViewAll = true;
-          //          gluPerspective(90, 1, .01, 10);
-          break;
-        case 'c': {
-          float dist = water.getBlurDistance();
-          if (dist > blurIncrement)
-            water.setBlurDistance(dist - blurIncrement);
-          break;
-        }
-        case 'v': {
-          float dist = water.getBlurDistance();
-          if (dist < 1)
-            water.setBlurDistance(dist + blurIncrement);
-          break;
-        }
-        case '-': {
-          float scale = water.getBumpScale();
-          if (scale > -1)
-            water.setBumpScale(scale - bumpIncrement);
-          break;
-        }
-        case '=': {
-          float scale = water.getBumpScale();
-          if (scale < 1)
-            water.setBumpScale(scale + bumpIncrement);
-          break;
-        }
-        case 'l':
-          water.enableBoundaryApplication(getFlag('l'));
-          break;
-        case 'o':
-          water.enableSpinningLogo(getFlag('o'));
-          break;
-        case '.': {
-          float frequency = water.getBumpScale();
-          if (frequency < 1)
-            water.setDropFrequency(frequency + frequencyIncrement);
-          break;
-        }
-        case ',': {
-          float frequency = water.getBumpScale();
-          if (frequency > 0)
-            water.setDropFrequency(frequency - frequencyIncrement);
-          break;
-        }
-        default:
-          break;
-      }
+  // Unused routines
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+
+  private void setFlag(char key, boolean val) {
+    b[((int) key) & 0xFF] = val;
+  }
+
+  private boolean getFlag(char key) {
+    return b[((int) key) & 0xFF];
+  }
+
+  private void checkExtension(GL gl, String extensionName) {
+    if (!gl.isExtensionAvailable(extensionName)) {
+      String message = "Unable to initialize " + extensionName + " OpenGL extension";
+      JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+      demoListener.shutdownDemo();
     }
-  }  
+  }
 
-  private void runExit() {
+  private void dispatchKey(char k) {
+    setFlag(k, !getFlag(k));
+
+    switch (k) {
+    case 27:
+    case 'q':
+      demoListener.shutdownDemo();
+      break;
+    case 'w':
+      water.enableWireframe(getFlag('w'));
+      break;
+    case 'd':
+      // FIXME
+      /*
+
+      if (getKey('d')) {
+      glutMouseFunc(glh::glut_mouse_function);
+      glutMotionFunc(glh::glut_motion_function);
+      }
+      else
+      {
+      glutMouseFunc(Mouse);
+      glutMotionFunc(Motion);
+      }
+      */
+      break;
+    case ' ':
+      water.enableAnimation(getFlag(' '));
+      break;
+    case 'b':
+      water.enableBorderWrapping(getFlag('b'));
+      break;
+    case 'n':
+      water.singleStep();
+      break;
+    case 's':
+      water.enableSlowAnimation(getFlag('s'));
+      break;
+    case '1':
+      water.setRenderMode(Water.CA_FULLSCREEN_REFLECT);
+      break;
+    case '2':
+      water.setRenderMode(Water.CA_FULLSCREEN_HEIGHT);
+      break;
+    case '3':
+      water.setRenderMode(Water.CA_FULLSCREEN_FORCE);
+      break;
+    case '4':
+      water.setRenderMode(Water.CA_FULLSCREEN_NORMALMAP);
+      break;
+    case '5':
+      water.setRenderMode(Water.CA_TILED_THREE_WINDOWS);
+      break;
+    case 'r':
+      water.reset();
+      break;    
+    case 'i':
+      // FIXME: make sure this is what this does
+      doViewAll = true;
+      //          gluPerspective(90, 1, .01, 10);
+      break;
+    case 'c': {
+      float dist = water.getBlurDistance();
+      if (dist > blurIncrement)
+        water.setBlurDistance(dist - blurIncrement);
+      break;
+    }
+    case 'v': {
+      float dist = water.getBlurDistance();
+      if (dist < 1)
+        water.setBlurDistance(dist + blurIncrement);
+      break;
+    }
+    case '-': {
+      float scale = water.getBumpScale();
+      if (scale > -1)
+        water.setBumpScale(scale - bumpIncrement);
+      break;
+    }
+    case '=': {
+      float scale = water.getBumpScale();
+      if (scale < 1)
+        water.setBumpScale(scale + bumpIncrement);
+      break;
+    }
+    case 'l':
+      water.enableBoundaryApplication(getFlag('l'));
+      break;
+    case 'o':
+      water.enableSpinningLogo(getFlag('o'));
+      break;
+    case '.': {
+      float frequency = water.getBumpScale();
+      if (frequency < 1)
+        water.setDropFrequency(frequency + frequencyIncrement);
+      break;
+    }
+    case ',': {
+      float frequency = water.getBumpScale();
+      if (frequency > 0)
+        water.setDropFrequency(frequency - frequencyIncrement);
+      break;
+    }
+    default:
+      break;
+    }
+  }
+
+  private static void runExit(final Animator animator) {
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking

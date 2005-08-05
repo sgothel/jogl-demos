@@ -208,6 +208,14 @@ public class Water {
     pbuffer.addGLEventListener(new Listener());
   }
 
+  public void destroy() {
+    if (pbuffer != null) {
+      pbuffer.destroy();
+      pbuffer = null;
+    }
+    reset = true;
+  }
+
   public void tick() { 
     pbuffer.display();
   }
