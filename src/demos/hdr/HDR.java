@@ -116,7 +116,7 @@ public class HDR implements GLEventListener {
       });
     demo.setup(args);
 
-    Frame frame = new Frame("HDR test");
+    Frame frame = new Frame("High Dynamic Range Rendering Demo");
     frame.setLayout(new BorderLayout());
     canvas.setSize(demo.getPreferredWidth(), demo.getPreferredHeight());
     
