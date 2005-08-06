@@ -175,8 +175,12 @@ public class JRefract {
         VertexProgWarp demo = new VertexProgWarp();
         demo.setDemoListener(demoListener);
         demo.setTitleSetter(new VertexProgWarp.TitleSetter() {
-            public void setTitle(String title) {
-              inner.setTitle(title);
+            public void setTitle(final String title) {
+              SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                    inner.setTitle(title);
+                  }
+                });
             }
           });
         canvas.addGLEventListener(demo);
