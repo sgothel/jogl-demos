@@ -19,12 +19,18 @@ import gleem.linalg.*;
     Ported to Java by Kenneth Russell
 */
 
-public class HDR {
+public class HDR implements GLEventListener {
+  private static String[] defaultArgs = {
+    "demos/data/images/stpeters_cross.hdr",
+    "512",
+    "384",
+    "2",
+    "7",
+    "3",
+    "demos/data/models/teapot.obj"
+  };
   private boolean  useCg;
-  private GLCanvas canvas;
-  private Frame    frame;
-  private Animator animator;
-  private boolean  initFailed;
+  private boolean  initComplete;
   private HDRTexture hdr;
   private String modelFilename;
   private ObjReader model;
@@ -97,10 +103,42 @@ public class HDR {
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
   public static void main(String[] args) {
-    new HDR().run(args);
+    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    HDR demo = new HDR();
+    canvas.addGLEventListener(demo);
+
+    final Animator animator = new Animator(canvas);
+    demo.setDemoListener(new DemoListener() {
+        public void shutdownDemo() {
+          runExit(animator);
+        }
+        public void repaint() {}
+      });
+    demo.setup(args);
+
+    Frame frame = new Frame("HDR test");
+    frame.setLayout(new BorderLayout());
+    canvas.setSize(demo.getPreferredWidth(), demo.getPreferredHeight());
+    
+    frame.add(canvas, BorderLayout.CENTER);
+    frame.pack();
+    frame.show();
+    canvas.requestFocus();
+
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          runExit(animator);
+        }
+      });
+
+    animator.start();
   }
 
-  public void run(String[] args) {
+  public void setup(String[] args) {
+    if ((args == null) || (args.length == 0)) {
+      args = defaultArgs;
+    }
+
     if (args.length < 6 || args.length > 8) {
       usage();
     }
@@ -168,343 +206,354 @@ public class HDR {
       System.exit(0);
     }
 
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    canvas.addGLEventListener(new Listener());
+  }
 
-    animator = new Animator(canvas);
+  public int getPreferredWidth() {
+    return win_w;
+  }
 
-    frame = new Frame("HDR test");
-    frame.setLayout(new BorderLayout());
-    canvas.setSize(win_w, win_h);
-    
-    frame.add(canvas, BorderLayout.CENTER);
-    frame.pack();
-    frame.setResizable(false);
-    frame.show();
-    canvas.requestFocus();
+  public int getPreferredHeight() {
+    return win_h;
+  }
 
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          runExit();
-        }
-      });
-
-    animator.start();
+  public void setDemoListener(DemoListener listener) {
+    demoListener = listener;
   }
 
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
+  private DemoListener demoListener;
+
   //----------------------------------------------------------------------
-  // Listeners for main window and pbuffers
+  // Listener for main window
   //
 
-  class Listener implements GLEventListener {
-    private float zNear = 0.1f;
-    private float zFar  = 10.0f;
-    private boolean wire = false;
-    private boolean toggleWire = false;
+  private float zNear = 0.1f;
+  private float zFar  = 10.0f;
+  private boolean wire = false;
+  private boolean toggleWire = false;
 
-    public void init(GLAutoDrawable drawable) {
-      //      printThreadName("init for Listener");
+  public void init(GLAutoDrawable drawable) {
+    initComplete = false;
+    //      printThreadName("init for Listener");
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
 
-      checkExtension(gl, "GL_ARB_multitexture");
-      checkExtension(gl, "GL_ARB_pbuffer");
-      checkExtension(gl, "GL_ARB_vertex_program");
-      checkExtension(gl, "GL_ARB_fragment_program");
-      if (!gl.isExtensionAvailable("GL_NV_texture_rectangle") &&
-          !gl.isExtensionAvailable("GL_EXT_texture_rectangle") &&
-          !gl.isExtensionAvailable("GL_ARB_texture_rectangle")) {
-        // NOTE: it turns out the constants associated with these extensions are all identical
-        unavailableExtension("Texture rectangle extension not available (need one of GL_NV_texture_rectangle, GL_EXT_texture_rectangle or GL_ARB_texture_rectangle");
-      }
-
-      if (!gl.isExtensionAvailable("GL_NV_float_buffer") &&
-          !gl.isExtensionAvailable("GL_ATI_texture_float") &&
-          !gl.isExtensionAvailable("GL_APPLE_float_pixels")) {
-        unavailableExtension("Floating-point textures not available (need one of GL_NV_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
-      }
-
-      setOrthoProjection(gl, win_w, win_h);
-
-      gamma_tex = createGammaTexture(gl, 1024, 1.0f / 2.2f);
-      vignette_tex = createVignetteTexture(gl, pbuffer_w, pbuffer_h, 0.25f*pbuffer_w, 0.7f*pbuffer_w);
-
-      int floatBits = 16;
-      int floatAlphaBits = 0;
-      // int floatDepthBits = 16;
-      // Workaround for apparent bug when not using render-to-texture-rectangle
-      int floatDepthBits = 1;
-
-      GLCapabilities caps = new GLCapabilities();
-      caps.setDoubleBuffered(false);
-      caps.setOffscreenFloatingPointBuffers(true);
-      caps.setRedBits(floatBits);
-      caps.setGreenBits(floatBits);
-      caps.setBlueBits(floatBits);
-      caps.setAlphaBits(floatAlphaBits);
-      caps.setDepthBits(floatDepthBits);
-      int[] tmp = new int[1];
-      if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, pbuffer_w, pbuffer_h)) {
-        unavailableExtension("Can not create pbuffer of size (" + pbuffer_w + ", " + pbuffer_h + ")");
-      }
-      GLContext parentContext = drawable.getContext();
-      pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
-      pbuffer.addGLEventListener(new PbufferListener());
-      gl.glGenTextures(1, tmp, 0);
-      pbuffer_tex = tmp[0];
-      blur_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
-      blur_pbuffer.addGLEventListener(new BlurPbufferListener());
-      gl.glGenTextures(1, tmp, 0);
-      blur_pbuffer_tex = tmp[0];
-      blur2_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
-      blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
-      gl.glGenTextures(1, tmp, 0);
-      blur2_pbuffer_tex = tmp[0];
-      caps.setOffscreenFloatingPointBuffers(false);
-      caps.setRedBits(8);
-      caps.setGreenBits(8);
-      caps.setBlueBits(8);
-      caps.setDepthBits(24);
-      tonemap_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
-      tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
-      gl.glGenTextures(1, tmp, 0);
-      tonemap_pbuffer_tex = tmp[0];
-      
-      drawable.addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            dispatchKey(e.getKeyCode(), e.getKeyChar());
-          }
-        });
-
-      // Register the window with the ManipManager
-      ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
-
-      viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-      viewer.setAutoRedrawMode(false);
-      viewer.setNoAltKeyMode(true);
-      viewer.attach(drawable, new BSphereProvider() {
-	  public BSphere getBoundingSphere() {
-	    return new BSphere(new Vec3f(0, 0, 0), 1.0f);
-	  }
-	});
-      viewer.setZNear(zNear);
-      viewer.setZFar(zFar);
+    checkExtension(gl, "GL_ARB_multitexture");
+    checkExtension(gl, "GL_ARB_pbuffer");
+    checkExtension(gl, "GL_ARB_vertex_program");
+    checkExtension(gl, "GL_ARB_fragment_program");
+    if (!gl.isExtensionAvailable("GL_NV_texture_rectangle") &&
+        !gl.isExtensionAvailable("GL_EXT_texture_rectangle") &&
+        !gl.isExtensionAvailable("GL_ARB_texture_rectangle")) {
+      // NOTE: it turns out the constants associated with these extensions are all identical
+      unavailableExtension("Texture rectangle extension not available (need one of GL_NV_texture_rectangle, GL_EXT_texture_rectangle or GL_ARB_texture_rectangle");
     }
 
-    public void display(GLAutoDrawable drawable) {
-      //      printThreadName("display for Listener");
+    if (!gl.isExtensionAvailable("GL_NV_float_buffer") &&
+        !gl.isExtensionAvailable("GL_ATI_texture_float") &&
+        !gl.isExtensionAvailable("GL_APPLE_float_pixels")) {
+      unavailableExtension("Floating-point textures not available (need one of GL_NV_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
+    }
 
-      if (initFailed) {
-        return;
-      }
+    setOrthoProjection(gl, win_w, win_h);
 
-      if (!firstRender) {
-        if (++frameCount == 30) {
-          timer.stop();
-          System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
-          timer.reset();
-          timer.start();
-          frameCount = 0;
+    gamma_tex = createGammaTexture(gl, 1024, 1.0f / 2.2f);
+    vignette_tex = createVignetteTexture(gl, pbuffer_w, pbuffer_h, 0.25f*pbuffer_w, 0.7f*pbuffer_w);
+
+    int floatBits = 16;
+    int floatAlphaBits = 0;
+    // int floatDepthBits = 16;
+    // Workaround for apparent bug when not using render-to-texture-rectangle
+    int floatDepthBits = 1;
+
+    GLCapabilities caps = new GLCapabilities();
+    caps.setDoubleBuffered(false);
+    caps.setOffscreenFloatingPointBuffers(true);
+    caps.setRedBits(floatBits);
+    caps.setGreenBits(floatBits);
+    caps.setBlueBits(floatBits);
+    caps.setAlphaBits(floatAlphaBits);
+    caps.setDepthBits(floatDepthBits);
+    int[] tmp = new int[1];
+    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, pbuffer_w, pbuffer_h)) {
+      unavailableExtension("Can not create pbuffer of size (" + pbuffer_w + ", " + pbuffer_h + ")");
+    }
+    if (pbuffer != null) {
+      pbuffer.destroy();
+      pbuffer = null;
+    }
+    if (blur_pbuffer != null) {
+      blur_pbuffer.destroy();
+      blur_pbuffer = null;
+    }
+    if (blur2_pbuffer != null) {
+      blur2_pbuffer.destroy();
+      blur2_pbuffer = null;
+    }
+    if (tonemap_pbuffer != null) {
+      tonemap_pbuffer.destroy();
+      tonemap_pbuffer = null;
+    }
+
+    GLContext parentContext = drawable.getContext();
+    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
+    pbuffer.addGLEventListener(new PbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    pbuffer_tex = tmp[0];
+    blur_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
+    blur_pbuffer.addGLEventListener(new BlurPbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    blur_pbuffer_tex = tmp[0];
+    blur2_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
+    blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    blur2_pbuffer_tex = tmp[0];
+    caps.setOffscreenFloatingPointBuffers(false);
+    caps.setRedBits(8);
+    caps.setGreenBits(8);
+    caps.setBlueBits(8);
+    caps.setDepthBits(24);
+    tonemap_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
+    tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    tonemap_pbuffer_tex = tmp[0];
+      
+    drawable.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          dispatchKey(e.getKeyCode(), e.getKeyChar());
         }
-      } else {
-        firstRender = false;
+      });
+
+    doViewAll = true;
+
+    // Register the window with the ManipManager
+    ManipManager manager = ManipManager.getManipManager();
+    manager.registerWindow(drawable);
+
+    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer.setAutoRedrawMode(false);
+    viewer.setNoAltKeyMode(true);
+    viewer.attach(drawable, new BSphereProvider() {
+        public BSphere getBoundingSphere() {
+          return new BSphere(new Vec3f(0, 0, 0), 1.0f);
+        }
+      });
+    viewer.setZNear(zNear);
+    viewer.setZFar(zFar);
+    initComplete = true;
+  }
+
+  public void display(GLAutoDrawable drawable) {
+    //      printThreadName("display for Listener");
+
+    if (!initComplete) {
+      return;
+    }
+
+    if (!firstRender) {
+      if (++frameCount == 30) {
+        timer.stop();
+        System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
+        timer.reset();
         timer.start();
+        frameCount = 0;
       }
+    } else {
+      firstRender = false;
+      timer.start();
+    }
 
-      time.update();
+    time.update();
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
 
-      // OK, ready to go
-      if (b[' ']) {
-        viewer.rotateAboutFocalPoint(new Rotf(Vec3f.Y_AXIS, (float) (time.deltaT() * animRate)));
-      }
+    // OK, ready to go
+    if (b[' ']) {
+      viewer.rotateAboutFocalPoint(new Rotf(Vec3f.Y_AXIS, (float) (time.deltaT() * animRate)));
+    }
 
-      pbuffer.display();
+    pbuffer.display();
 
-      // FIXME: because of changes in lazy pbuffer instantiation
-      // behavior the pbuffer might not have been run just now
-      if (pipeline == null) {
-        return;
-      }
+    // FIXME: because of changes in lazy pbuffer instantiation
+    // behavior the pbuffer might not have been run just now
+    if (pipeline == null) {
+      return;
+    }
 
-      // blur pass
-      if (b['g']) {
-        // shrink image
-        blur2Pass = BLUR2_SHRINK_PASS;
-        blur2_pbuffer.display();
-      }
-
-      // horizontal blur
-      blur_pbuffer.display();
-
-      // vertical blur
-      blur2Pass = BLUR2_VERT_BLUR_PASS;
+    // blur pass
+    if (b['g']) {
+      // shrink image
+      blur2Pass = BLUR2_SHRINK_PASS;
       blur2_pbuffer.display();
-
-      // tone mapping pass
-      tonemap_pbuffer.display();
-
-      // display in window
-      gl.glEnable(GL.GL_TEXTURE_RECTANGLE_NV);
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-      gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, tonemap_pbuffer_tex);
-      if (b['n']) {
-        gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-      } else {
-        gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      }
-      drawQuadRect4(gl, win_w, win_h, pbuffer_w, pbuffer_h);
-      gl.glDisable(GL.GL_TEXTURE_RECTANGLE_NV);
-
-      // Try to avoid swamping the CPU on Linux
-      Thread.yield();
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    // horizontal blur
+    blur_pbuffer.display();
 
-    // Unused routines
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    // vertical blur
+    blur2Pass = BLUR2_VERT_BLUR_PASS;
+    blur2_pbuffer.display();
 
-    //----------------------------------------------------------------------
-    // Internals only below this point
-    //
-    private void checkExtension(GL gl, String glExtensionName) {
-      if (!gl.isExtensionAvailable(glExtensionName)) {
-        unavailableExtension("Unable to initialize " + glExtensionName + " OpenGL extension");
-      }
+    // tone mapping pass
+    tonemap_pbuffer.display();
+
+    // display in window
+    gl.glEnable(GL.GL_TEXTURE_RECTANGLE_NV);
+    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, tonemap_pbuffer_tex);
+    if (b['n']) {
+      gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+    } else {
+      gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
     }
+    drawQuadRect4(gl, win_w, win_h, pbuffer_w, pbuffer_h);
+    gl.glDisable(GL.GL_TEXTURE_RECTANGLE_NV);
 
-    private void unavailableExtension(String message) {
-      JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-      initFailed = true;
-      runExit();
-      throw new GLException(message);
+    // Try to avoid swamping the CPU on Linux
+    Thread.yield();
+  }
+
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    setOrthoProjection(drawable.getGL(), width, height);
+    win_w = width;
+    win_h = height;
+  }
+
+  // Unused routines
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+
+  private void checkExtension(GL gl, String glExtensionName) {
+    if (!gl.isExtensionAvailable(glExtensionName)) {
+      unavailableExtension("Unable to initialize " + glExtensionName + " OpenGL extension");
     }
+  }
 
-    private void dispatchKey(int keyCode, char k) {
-      if (k < 256)
-        b[k] = !b[k];
+  private void unavailableExtension(String message) {
+    JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+    demoListener.shutdownDemo();
+    throw new GLException(message);
+  }
 
-      switch (keyCode) {
-        case KeyEvent.VK_ESCAPE:
-        case KeyEvent.VK_Q:
-          runExit();
-          break;
+  private void dispatchKey(int keyCode, char k) {
+    if (k < 256)
+      b[k] = !b[k];
 
-        case KeyEvent.VK_EQUALS:
-          exposure *= 2;
-          break;
+    switch (keyCode) {
+    case KeyEvent.VK_ESCAPE:
+    case KeyEvent.VK_Q:
+      demoListener.shutdownDemo();
+      break;
 
-        case KeyEvent.VK_MINUS:
-          exposure *= 0.5f;
-          break;
+    case KeyEvent.VK_EQUALS:
+      exposure *= 2;
+      break;
 
-        case KeyEvent.VK_PLUS:
-          exposure += 1.0f;
-          break;
+    case KeyEvent.VK_MINUS:
+      exposure *= 0.5f;
+      break;
 
-        case KeyEvent.VK_UNDERSCORE:
-          exposure -= 1.0f;
-          break;
+    case KeyEvent.VK_PLUS:
+      exposure += 1.0f;
+      break;
 
-        case KeyEvent.VK_PERIOD:
-          blurAmount += 0.1f;
-          break;
+    case KeyEvent.VK_UNDERSCORE:
+      exposure -= 1.0f;
+      break;
 
-        case KeyEvent.VK_COMMA:
-          blurAmount -= 0.1f;
-          break;
+    case KeyEvent.VK_PERIOD:
+      blurAmount += 0.1f;
+      break;
 
-        case KeyEvent.VK_G:
-          if (b['g'])
-            blurAmount = 0.5f;
-          else
-            blurAmount = 0.0f;
-          break;
+    case KeyEvent.VK_COMMA:
+      blurAmount -= 0.1f;
+      break;
 
-        case KeyEvent.VK_O:
-          modelno = (modelno + 1) % numModels;
-          break;
+    case KeyEvent.VK_G:
+      if (b['g'])
+        blurAmount = 0.5f;
+      else
+        blurAmount = 0.0f;
+      break;
+
+    case KeyEvent.VK_O:
+      modelno = (modelno + 1) % numModels;
+      break;
           
-        case KeyEvent.VK_V:
-          doViewAll = true;
-          break;
-      }
+    case KeyEvent.VK_V:
+      doViewAll = true;
+      break;
+    }
+  }
+
+  // create gamma lookup table texture
+  private int createGammaTexture(GL gl, int size, float gamma) {
+    int[] tmp = new int[1];
+    gl.glGenTextures(1, tmp, 0);
+    int texid = tmp[0];
+
+    int target = GL.GL_TEXTURE_1D;
+    gl.glBindTexture(target, texid);
+    gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+
+    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+
+    float[] img = new float [size];
+
+    for(int i=0; i<size; i++) {
+      float x = i / (float) size;
+      img[i] = (float) Math.pow(x, gamma);
     }
 
-    // create gamma lookup table texture
-    private int createGammaTexture(GL gl, int size, float gamma) {
-      int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp, 0);
-      int texid = tmp[0];
+    gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
 
-      int target = GL.GL_TEXTURE_1D;
-      gl.glBindTexture(target, texid);
-      gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    return texid;
+  }
 
-      gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-
-      float[] img = new float [size];
-
-      for(int i=0; i<size; i++) {
-        float x = i / (float) size;
-        img[i] = (float) Math.pow(x, gamma);
-      }
-
-      gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
-
-      return texid;
-    }
-
-    // create vignette texture
-    // based on Debevec's pflare.c
-    int createVignetteTexture(GL gl, int xsiz, int ysiz, float r0, float r1) {
-      int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp, 0);
-      int texid = tmp[0];
+  // create vignette texture
+  // based on Debevec's pflare.c
+  int createVignetteTexture(GL gl, int xsiz, int ysiz, float r0, float r1) {
+    int[] tmp = new int[1];
+    gl.glGenTextures(1, tmp, 0);
+    int texid = tmp[0];
       
-      gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, texid);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, texid);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
-      gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
 
-      float[] img = new float [xsiz*ysiz];
+    float[] img = new float [xsiz*ysiz];
 
-      for (int y = 0; y < ysiz; y++) {
-        for (int x = 0; x < xsiz; x++) {
-          float radius = (float) Math.sqrt((x-xsiz/2)*(x-xsiz/2) + (y-ysiz/2)*(y-ysiz/2));
-          if (radius > r0) {
-	    if (radius < r1) {
-	      float t = 1.0f - (radius-r0)/(r1-r0);
-	      float a = t * 2 - 1;
-	      float reduce = (float) ((0.25 * Math.PI + 0.5 * Math.asin(a) + 0.5 * a * Math.sqrt( 1 - a*a ))/(0.5 * Math.PI));
-	      img[y*xsiz + x] = reduce;
-	    } else {
-	      img[y*xsiz + x] = 0.0f;
-	    }
+    for (int y = 0; y < ysiz; y++) {
+      for (int x = 0; x < xsiz; x++) {
+        float radius = (float) Math.sqrt((x-xsiz/2)*(x-xsiz/2) + (y-ysiz/2)*(y-ysiz/2));
+        if (radius > r0) {
+          if (radius < r1) {
+            float t = 1.0f - (radius-r0)/(r1-r0);
+            float a = t * 2 - 1;
+            float reduce = (float) ((0.25 * Math.PI + 0.5 * Math.asin(a) + 0.5 * a * Math.sqrt( 1 - a*a ))/(0.5 * Math.PI));
+            img[y*xsiz + x] = reduce;
           } else {
-            img[y*xsiz + x] = 1.0f;
+            img[y*xsiz + x] = 0.0f;
           }
+        } else {
+          img[y*xsiz + x] = 1.0f;
         }
       }
-
-      gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
-
-      return texid;
     }
+
+    gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
+
+    return texid;
   }
 
   //----------------------------------------------------------------------
@@ -1169,14 +1218,14 @@ public class HDR {
 
   private void usage() {
     System.err.println("usage: java demos.hdr.HDR [-cg] image.hdr pbuffer_w pbuffer_h window_scale blur_width blur_decimate [obj file]");
-    System.exit(1);
+    demoListener.shutdownDemo();
   }
 
   private void printThreadName(String where) {
     System.err.println("In " + where + ": current thread = " + Thread.currentThread().getName());
   }
 
-  private void runExit() {
+  private static void runExit(final Animator animator) {
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking

@@ -72,6 +72,7 @@ public class VertexProgRefract implements GLEventListener {
         public void shutdownDemo() {
           runExit(animator);
         }
+        public void repaint() {}
       });
 
     Frame frame = new Frame("Refraction Using Vertex Programs");
@@ -92,7 +93,7 @@ public class VertexProgRefract implements GLEventListener {
   }
 
   public void setDemoListener(DemoListener listener) {
-    this.demoListener = listener;
+    demoListener = listener;
   }
 
   private DemoListener demoListener;

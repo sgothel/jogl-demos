@@ -40,6 +40,7 @@ import java.util.*;
 import javax.swing.*;
 
 import net.java.games.jogl.*;
+import demos.util.*;
 
 /** <P> A port of NVidia's [tm] Vertex Array Range demonstration to
     OpenGL[tm] for Java[tm] and the Java programming language. The
@@ -72,7 +73,74 @@ import net.java.games.jogl.*;
     C++ speed with the HotSpot Client and Server compilers,
     respectively. </P> */
 
-public class VertexArrayRange {
+public class VertexArrayRange implements GLEventListener {
+  public static void main(String[] args) {
+    boolean startSlow = false;
+
+    if (args.length > 1) {
+      usage();
+    }
+
+    if (args.length == 1) {
+      if (args[0].equals("-slow")) {
+        startSlow = true;
+      } else {
+        usage();
+      }
+    }
+
+    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    VertexArrayRange demo = new VertexArrayRange();
+    if (startSlow) {
+      demo.setFlag('v', false);   // VAR off
+    }
+    canvas.addGLEventListener(demo);
+
+    final Animator animator = new Animator(canvas);
+    demo.setDemoListener(new DemoListener() {
+        public void shutdownDemo() {
+          runExit(animator);
+        }
+      });
+
+    Frame frame = new Frame("Very Simple NV_vertex_array_range demo");
+    frame.setLayout(new BorderLayout());
+    canvas.setSize(800, 800);
+    frame.add(canvas, BorderLayout.CENTER);
+    frame.pack();
+    frame.show();
+    canvas.requestFocus();
+
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          runExit(animator);
+        }
+      });
+
+    animator.start();
+  }
+
+  private static void usage() {
+    System.out.println("usage: java VertexArrayRange [-slow]");
+    System.out.println("-slow flag starts up using data in the Java heap");
+    System.exit(0);
+  }
+
+  public VertexArrayRange() {
+    setFlag(' ', true);   // animation on
+    setFlag('i', true);   // infinite viewer and light
+    setFlag('v', true);   // VAR on
+  }
+
+  public void setDemoListener(DemoListener listener) {
+    demoListener = listener;
+  }
+
+  //----------------------------------------------------------------------
+  // Internals only below this point
+  //
+
+  private DemoListener demoListener;
   private boolean[] b = new boolean[256];
   private static final int SIZEOF_FLOAT = 4;
   private static final int STRIP_SIZE  = 48;
@@ -122,16 +190,12 @@ public class VertexArrayRange {
   private volatile boolean toggleLighting      = false;
   private volatile boolean toggleLightingModel = false;
   private volatile boolean recomputeElements   = false;
-  private volatile boolean quit                = false;
 
   // Frames-per-second computation
   private boolean firstProfiledFrame;
   private int     profiledFrameCount;
   private int     numDrawElementsCalls;
   private long startTimeMillis;
-
-  private GLCanvas canvas = null;
-  private Animator animator;
 
   static class PeriodicIterator {
     public PeriodicIterator(int arraySize,
@@ -176,82 +240,12 @@ public class VertexArrayRange {
       index = initOffset;
     }
 
-    //----------------------------------------------------------------------
-    // Internals only below this point
-    //
-
     private int arraySizeMask;
     // fraction bits == 16
     private int increment;
     private int initOffset;
     private int index;
   }
-
-  public static void usage(String className) {
-    System.out.println("usage: java " + className + " [-slow]");
-    System.out.println("-slow flag starts up using data in the Java heap");
-    System.exit(0);
-  }
-
-  public static void main(String[] args) {
-    new VertexArrayRange().run(args);
-  }
-
-  public void run(String[] args) {
-    boolean startSlow = false;
-
-    if (args.length > 1) {
-      usage(getClass().getName());
-    }
-
-    if (args.length == 1) {
-      if (args[0].equals("-slow")) {
-        startSlow = true;
-      } else {
-        usage(getClass().getName());
-      }
-    }
-
-    if (!startSlow) {
-      setFlag('v', true);   // VAR on
-    }
-    setFlag(' ', true);   // animation on
-    setFlag('i', true);   // infinite viewer and light
-
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    VARListener listener = new VARListener();
-    canvas.addGLEventListener(listener);
-
-    animator = new Animator(canvas);
-
-    Frame frame = new Frame("Very Simple NV_vertex_array_range demo");
-    frame.setLayout(new BorderLayout());
-    canvas.setSize(800, 800);
-    frame.add(canvas, BorderLayout.CENTER);
-    frame.pack();
-    frame.show();
-    canvas.requestFocus();
-
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          // Run this on another thread than the AWT event queue to
-          // make sure the call to Animator.stop() completes before
-          // exiting
-          new Thread(new Runnable() {
-              public void run() {
-                animator.stop();
-                System.exit(0);
-              }
-            }).start();
-        }
-      });
-
-    animator.start();
-  }
-
-  //----------------------------------------------------------------------
-  // Internals only below this point
-  //
 
   private void setFlag(char key, boolean val) {
     b[((int) key) & 0xFF] = val;
@@ -261,403 +255,395 @@ public class VertexArrayRange {
     return b[((int) key) & 0xFF];
   }
 
-  private void ensurePresent(String function) {
-    if (!canvas.getGL().isFunctionAvailable(function)) {
+  private void ensurePresent(GL gl, String function) {
+    if (!gl.isFunctionAvailable(function)) {
       final String message = "OpenGL routine \"" + function + "\" not available";
       new Thread(new Runnable() {
           public void run() {
             JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-            runExit();
+            demoListener.shutdownDemo();
           }
         }).start();
       throw new RuntimeException(message);
     }
   }
 
-  class VARListener implements GLEventListener {
-    boolean exiting = false;
+  public void init(GLAutoDrawable drawable) {
+    //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
+    //    drawable.setGL(new DebugGL(drawable.getGL()));
 
-    public void init(GLAutoDrawable drawable) {
-      //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
-      //    drawable.setGL(new DebugGL(drawable.getGL()));
+    GL  gl  = drawable.getGL();
+    GLU glu = drawable.getGLU();
 
-      GL  gl  = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    // Try and disable synch-to-retrace for fastest framerate
+    gl.setSwapInterval(0);
 
-      // Try and disable synch-to-retrace for fastest framerate
-      gl.setSwapInterval(0);
-
-      try {
-        ensurePresent("glVertexArrayRangeNV");
-        ensurePresent("glGenFencesNV");
-        ensurePresent("glSetFenceNV");
-        ensurePresent("glTestFenceNV");
-        ensurePresent("glFinishFenceNV");
-        ensurePresent("glAllocateMemoryNV");
-      } catch (RuntimeException e) {
-        quit = true;
-        throw (e);
-      }      
+    try {
+      ensurePresent(gl, "glVertexArrayRangeNV");
+      ensurePresent(gl, "glGenFencesNV");
+      ensurePresent(gl, "glSetFenceNV");
+      ensurePresent(gl, "glTestFenceNV");
+      ensurePresent(gl, "glFinishFenceNV");
+      ensurePresent(gl, "glAllocateMemoryNV");
+    } catch (RuntimeException e) {
+      demoListener.shutdownDemo();
+      throw (e);
+    }      
       
-      gl.glEnable(GL.GL_DEPTH_TEST);
+    gl.glEnable(GL.GL_DEPTH_TEST);
 
-      gl.glClearColor(0, 0, 0, 0);
+    gl.glClearColor(0, 0, 0, 0);
 
-      gl.glEnable(GL.GL_LIGHT0);
-      gl.glEnable(GL.GL_LIGHTING);
-      gl.glEnable(GL.GL_NORMALIZE);
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[]  {.1f, .1f,    0, 1}, 0);
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[]  {.6f, .6f,  .1f, 1}, 0);
-      gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 1,    1, .75f, 1}, 0);
-      gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 128.f);
+    gl.glEnable(GL.GL_LIGHT0);
+    gl.glEnable(GL.GL_LIGHTING);
+    gl.glEnable(GL.GL_NORMALIZE);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[]  {.1f, .1f,    0, 1}, 0);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[]  {.6f, .6f,  .1f, 1}, 0);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 1,    1, .75f, 1}, 0);
+    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 128.f);
 
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
-      gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
+    gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
 
-      // NOTE: it looks like GLUT (or something else) sets up the
-      // projection matrix in the C version of this demo.
-      gl.glMatrixMode(GL.GL_PROJECTION);
-      gl.glLoadIdentity();
-      glu.gluPerspective(60, 1.0, 0.1, 100);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+    // NOTE: it looks like GLUT (or something else) sets up the
+    // projection matrix in the C version of this demo.
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glLoadIdentity();
+    glu.gluPerspective(60, 1.0, 0.1, 100);
+    gl.glMatrixMode(GL.GL_MODELVIEW);
 
-      allocateBigArray(gl, true);
-      allocateBuffersAndFences(gl);
+    allocateBigArray(gl, true);
+    allocateBuffersAndFences(gl);
 
-      sinArray = new float[SIN_ARRAY_SIZE];
-      cosArray = new float[SIN_ARRAY_SIZE];
+    sinArray = new float[SIN_ARRAY_SIZE];
+    cosArray = new float[SIN_ARRAY_SIZE];
 
-      for (int i = 0; i < SIN_ARRAY_SIZE; i++) {
-        double step = i * 2 * Math.PI / SIN_ARRAY_SIZE;
-        sinArray[i] = (float) Math.sin(step);
-        cosArray[i] = (float) Math.cos(step);
+    for (int i = 0; i < SIN_ARRAY_SIZE; i++) {
+      double step = i * 2 * Math.PI / SIN_ARRAY_SIZE;
+      sinArray[i] = (float) Math.sin(step);
+      cosArray[i] = (float) Math.cos(step);
+    }
+
+    if (getFlag('v')) {
+      gl.glEnableClientState(GL.GL_VERTEX_ARRAY_RANGE_NV);
+      gl.glVertexArrayRangeNV(bufferSize, bigArrayVar);
+      bigArray = bigArrayVar;
+    } else {
+      bigArray = bigArraySystem;
+    }
+    setupBuffers();
+    gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+    gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+
+    computeElements();
+
+    drawable.addKeyListener(new KeyAdapter() {
+        public void keyTyped(KeyEvent e) {
+          dispatchKey(e.getKeyChar());
+        }
+      });
+  }
+
+  private void allocateBuffersAndFences(GL gl) {
+    buffers = new VarBuffer[numBuffers];
+    int[] fences = new int[1];
+    for (int i = 0; i < numBuffers; i++) {
+      buffers[i] = new VarBuffer();
+      gl.glGenFencesNV(1, fences, 0);
+      buffers[i].fence = fences[0];
+    }
+  }
+
+  private void setupBuffers() {
+    int sliceSize = bufferLength / numBuffers;
+    for (int i = 0; i < numBuffers; i++) {
+      int startIndex = i * sliceSize;
+      buffers[i].vertices = sliceBuffer(bigArray, startIndex, sliceSize);
+      buffers[i].normals  = sliceBuffer(buffers[i].vertices, 3,
+                                        buffers[i].vertices.limit() - 3);
+    }
+  }
+
+  private void dispatchKey(char k) {
+    setFlag(k, !getFlag(k));
+    // Quit on escape or 'q'
+    if ((k == (char) 27) || (k == 'q')) {
+      demoListener.shutdownDemo();
+      return;
+    }
+
+    if (k == 'r') {
+      if (getFlag(k)) {
+        profiledFrameCount = 0;
+        numDrawElementsCalls = 0;
+        firstProfiledFrame = true;
+      }
+    }
+
+    if (k == 'w') {
+      if (getFlag(k)) {
+        primitive = GL.GL_LINE_STRIP;
+      } else {
+        primitive = GL.GL_QUAD_STRIP;
+      }
+    }
+
+    if (k == 'p') {
+      if (getFlag(k)) {
+        primitive = GL.GL_POINTS;
+      } else {
+        primitive = GL.GL_QUAD_STRIP;
+      }
+    }
+
+    if (k == 'v') {
+      toggleVAR = true;
+    }
+
+    if (k == 'd') {
+      toggleLighting = true;
+    }
+
+    if (k == 'i') {
+      toggleLightingModel = true;
+    }
+
+    if('h'==k)
+      hicoef += .005;
+    if('H'==k)
+      hicoef -= .005;
+    if('l'==k)
+      locoef += .005;
+    if('L'==k)
+      locoef -= .005;
+    if('1'==k)
+      lofreq += .1f;
+    if('2'==k)
+      lofreq -= .1f;
+    if('3'==k)
+      hifreq += .1f;
+    if('4'==k)
+      hifreq -= .1f;
+    if('5'==k)
+      phaseRate += .01f;
+    if('6'==k)
+      phaseRate -= .01f;
+    if('7'==k)
+      phase2Rate += .01f;
+    if('8'==k)
+      phase2Rate -= .01f;
+
+    if('t'==k) {
+      if(tileSize < 864) {
+        tileSize += STRIP_SIZE;
+        recomputeElements = true;
+        System.err.println("tileSize = " + tileSize);
+      }
+    }
+
+    if('T'==k) {
+      if(tileSize > STRIP_SIZE) {
+        tileSize -= STRIP_SIZE;
+        recomputeElements = true;
+        System.err.println("tileSize = " + tileSize);
+      }
+    }
+  }
+
+  public void display(GLAutoDrawable drawable) {
+    GL  gl  = drawable.getGL();
+    GLU glu = drawable.getGLU();
+
+    // Check to see whether to animate
+    if (getFlag(' ')) {
+      phase += phaseRate;
+      phase2 += phase2Rate;
+
+      if (phase > (float) (20 * Math.PI)) {
+        phase = 0;
       }
 
+      if (phase2 < (float) (-20 * Math.PI)) {
+        phase2 = 0;
+      }
+    }
+
+    PeriodicIterator loX =
+      new PeriodicIterator(SIN_ARRAY_SIZE, (float) (2 * Math.PI), phase, (float) ((1.f/tileSize)*lofreq*Math.PI));
+    PeriodicIterator loY = new PeriodicIterator(loX);
+    PeriodicIterator hiX =
+      new PeriodicIterator(SIN_ARRAY_SIZE, (float) (2 * Math.PI), phase2, (float) ((1.f/tileSize)*hifreq*Math.PI));
+    PeriodicIterator hiY = new PeriodicIterator(hiX);
+
+    if (toggleVAR) {
       if (getFlag('v')) {
         gl.glEnableClientState(GL.GL_VERTEX_ARRAY_RANGE_NV);
         gl.glVertexArrayRangeNV(bufferSize, bigArrayVar);
         bigArray = bigArrayVar;
       } else {
+        gl.glDisableClientState(GL.GL_VERTEX_ARRAY_RANGE_NV);
         bigArray = bigArraySystem;
       }
+      toggleVAR = false;
       setupBuffers();
-      gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-      gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+    }
 
+    if (toggleLighting) {
+      if (getFlag('d')) {
+        gl.glDisable(GL.GL_LIGHTING);
+      } else {
+        gl.glEnable(GL.GL_LIGHTING);
+      }
+      toggleLighting = false;
+    }
+
+    if (toggleLightingModel) {
+      if(getFlag('i')) {
+        // infinite light
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
+        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+      } else {
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f, 1 }, 0);
+        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+      }
+      toggleLightingModel = false;
+    }
+
+    if (recomputeElements) {
       computeElements();
-
-      drawable.addKeyListener(new KeyAdapter() {
-          public void keyTyped(KeyEvent e) {
-            dispatchKey(e.getKeyChar());
-          }
-        });
+      recomputeElements = false;
     }
 
-    private void allocateBuffersAndFences(GL gl) {
-      buffers = new VarBuffer[numBuffers];
-      int[] fences = new int[1];
-      for (int i = 0; i < numBuffers; i++) {
-        buffers[i] = new VarBuffer();
-        gl.glGenFencesNV(1, fences, 0);
-        buffers[i].fence = fences[0];
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+    gl.glPushMatrix();
+
+    final float[] modelViewMatrix = new float[] {
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, -1, 1
+    };
+    gl.glLoadMatrixf(modelViewMatrix, 0);
+
+    // FIXME: add mouse interaction
+    // camera.apply_inverse_transform();
+    // object.apply_transform();
+
+    int cur = 0;
+    int numSlabs = tileSize / STRIP_SIZE;
+
+    for(int slab = numSlabs; --slab>=0; ) {
+      cur = slab % numBuffers;
+      if (slab >= numBuffers) {
+        if (!gl.glTestFenceNV(buffers[cur].fence)) {
+          gl.glFinishFenceNV(buffers[cur].fence);
+        }
       }
+
+      FloatBuffer v = buffers[cur].vertices;
+      int vertexIndex = 0;
+
+      gl.glVertexPointer(3, GL.GL_FLOAT, 6 * SIZEOF_FLOAT, v);
+      gl.glNormalPointer(GL.GL_FLOAT, 6 * SIZEOF_FLOAT, buffers[cur].normals);
+
+      for(int jj=STRIP_SIZE; --jj>=0; ) {
+        ysinlo[jj] = sinArray[loY.getIndex()];
+        ycoslo[jj] = cosArray[loY.getIndex()]; loY.incr();
+        ysinhi[jj] = sinArray[hiY.getIndex()];
+        ycoshi[jj] = cosArray[hiY.getIndex()]; hiY.incr();
+      }
+      loY.decr();
+      hiY.decr();
+
+      for(int i = tileSize; --i>=0; ) {
+        float x = xyArray[i];
+        int loXIndex = loX.getIndex();
+        int hiXIndex = hiX.getIndex();
+
+        int jOffset = (STRIP_SIZE-1)*slab;
+        float nx = locoef * -cosArray[loXIndex] + hicoef * -cosArray[hiXIndex];
+
+        // Help the HotSpot Client Compiler by hoisting loop
+        // invariant variables into locals. Note that this may be
+        // good practice for innermost loops anyway since under
+        // the new memory model operations like accidental
+        // synchronization may force any compiler to reload these
+        // fields from memory, destroying their ability to
+        // optimize.
+        float locoef_tmp = locoef;
+        float hicoef_tmp = hicoef;
+        float[] ysinlo_tmp = ysinlo;
+        float[] ysinhi_tmp = ysinhi;
+        float[] ycoslo_tmp = ycoslo;
+        float[] ycoshi_tmp = ycoshi;
+        float[] sinArray_tmp = sinArray;
+        float[] xyArray_tmp = xyArray;
+
+        for(int j = STRIP_SIZE; --j>=0; ) {
+          float y;
+
+          y = xyArray_tmp[j + jOffset];
+
+          float ny;
+
+          v.put(vertexIndex, x);
+          v.put(vertexIndex + 1, y);
+          v.put(vertexIndex + 2, (locoef_tmp * (sinArray_tmp[loXIndex] + ysinlo_tmp[j]) +
+                                  hicoef_tmp * (sinArray_tmp[hiXIndex] + ysinhi_tmp[j])));
+          v.put(vertexIndex + 3, nx);
+          ny = locoef_tmp * -ycoslo_tmp[j] + hicoef_tmp * -ycoshi_tmp[j];
+          v.put(vertexIndex + 4, ny);
+          v.put(vertexIndex + 5, .15f); //.15f * (1.f - sqrt(nx * nx + ny * ny));
+          vertexIndex += 6;
+        }
+        loX.incr();
+        hiX.incr();
+      }
+      loX.reset();
+      hiX.reset();
+
+      for (int i = 0; i < elements.length; i++) {
+        ++numDrawElementsCalls;
+        gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i], 0);
+        if(getFlag('f')) {
+          gl.glFlush();
+        }
+      }
+
+      gl.glSetFenceNV(buffers[cur].fence, GL.GL_ALL_COMPLETED_NV);
     }
 
-    private void setupBuffers() {
-      int sliceSize = bufferLength / numBuffers;
-      for (int i = 0; i < numBuffers; i++) {
-        int startIndex = i * sliceSize;
-        buffers[i].vertices = sliceBuffer(bigArray, startIndex, sliceSize);
-        buffers[i].normals  = sliceBuffer(buffers[i].vertices, 3,
-                                          buffers[i].vertices.limit() - 3);
-      }
-    }
+    gl.glPopMatrix();
 
-    private void dispatchKey(char k) {
-      setFlag(k, !getFlag(k));
-      // Quit on escape or 'q'
-      if ((k == (char) 27) || (k == 'q')) {
-        runExit();
-      }
+    gl.glFinishFenceNV(buffers[cur].fence);
 
-      if (k == 'r') {
-        if (getFlag(k)) {
+    if (getFlag('r')) {
+      if (!firstProfiledFrame) {
+        if (++profiledFrameCount == 30) {
+          long endTimeMillis = System.currentTimeMillis();
+          double secs = (endTimeMillis - startTimeMillis) / 1000.0;
+          double fps  = 30.0 / secs;
+          double ppf  = tileSize * tileSize * 2;
+          double mpps = ppf * fps / 1000000.0;
+          System.err.println("fps: " + fps + " polys/frame: " + ppf + " million polys/sec: " + mpps +
+                             " DrawElements calls/frame: " + (numDrawElementsCalls / 30));
           profiledFrameCount = 0;
           numDrawElementsCalls = 0;
-          firstProfiledFrame = true;
-        }
-      }
-
-      if (k == 'w') {
-        if (getFlag(k)) {
-          primitive = GL.GL_LINE_STRIP;
-        } else {
-          primitive = GL.GL_QUAD_STRIP;
-        }
-      }
-
-      if (k == 'p') {
-        if (getFlag(k)) {
-          primitive = GL.GL_POINTS;
-        } else {
-          primitive = GL.GL_QUAD_STRIP;
-        }
-      }
-
-      if (k == 'v') {
-        toggleVAR = true;
-      }
-
-      if (k == 'd') {
-        toggleLighting = true;
-      }
-
-      if (k == 'i') {
-        toggleLightingModel = true;
-      }
-
-      if('h'==k)
-        hicoef += .005;
-      if('H'==k)
-        hicoef -= .005;
-      if('l'==k)
-        locoef += .005;
-      if('L'==k)
-        locoef -= .005;
-      if('1'==k)
-        lofreq += .1f;
-      if('2'==k)
-        lofreq -= .1f;
-      if('3'==k)
-        hifreq += .1f;
-      if('4'==k)
-        hifreq -= .1f;
-      if('5'==k)
-        phaseRate += .01f;
-      if('6'==k)
-        phaseRate -= .01f;
-      if('7'==k)
-        phase2Rate += .01f;
-      if('8'==k)
-        phase2Rate -= .01f;
-
-      if('t'==k) {
-        if(tileSize < 864) {
-          tileSize += STRIP_SIZE;
-          recomputeElements = true;
-          System.err.println("tileSize = " + tileSize);
-        }
-      }
-
-      if('T'==k) {
-        if(tileSize > STRIP_SIZE) {
-          tileSize -= STRIP_SIZE;
-          recomputeElements = true;
-          System.err.println("tileSize = " + tileSize);
-        }
-      }
-    }
-
-    public void display(GLAutoDrawable drawable) {
-      // Don't try to do OpenGL operations if we're tearing things down
-      if (quit) {
-        return;
-      }
-
-      GL  gl  = drawable.getGL();
-      GLU glu = drawable.getGLU();
-
-      // Check to see whether to animate
-      if (getFlag(' ')) {
-        phase += phaseRate;
-        phase2 += phase2Rate;
-
-        if (phase > (float) (20 * Math.PI)) {
-          phase = 0;
-        }
-
-        if (phase2 < (float) (-20 * Math.PI)) {
-          phase2 = 0;
-        }
-      }
-
-      PeriodicIterator loX =
-        new PeriodicIterator(SIN_ARRAY_SIZE, (float) (2 * Math.PI), phase, (float) ((1.f/tileSize)*lofreq*Math.PI));
-      PeriodicIterator loY = new PeriodicIterator(loX);
-      PeriodicIterator hiX =
-        new PeriodicIterator(SIN_ARRAY_SIZE, (float) (2 * Math.PI), phase2, (float) ((1.f/tileSize)*hifreq*Math.PI));
-      PeriodicIterator hiY = new PeriodicIterator(hiX);
-
-      if (toggleVAR) {
-        if (getFlag('v')) {
-          gl.glEnableClientState(GL.GL_VERTEX_ARRAY_RANGE_NV);
-          gl.glVertexArrayRangeNV(bufferSize, bigArrayVar);
-          bigArray = bigArrayVar;
-        } else {
-          gl.glDisableClientState(GL.GL_VERTEX_ARRAY_RANGE_NV);
-          bigArray = bigArraySystem;
-        }
-        toggleVAR = false;
-        setupBuffers();
-      }
-
-      if (toggleLighting) {
-        if (getFlag('d')) {
-          gl.glDisable(GL.GL_LIGHTING);
-        } else {
-          gl.glEnable(GL.GL_LIGHTING);
-        }
-        toggleLighting = false;
-      }
-
-      if (toggleLightingModel) {
-        if(getFlag('i')) {
-          // infinite light
-          gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
-          gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
-        } else {
-          gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f, 1 }, 0);
-          gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-        }
-        toggleLightingModel = false;
-      }
-
-      if (recomputeElements) {
-        computeElements();
-        recomputeElements = false;
-      }
-
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-      gl.glPushMatrix();
-
-      final float[] modelViewMatrix = new float[] {
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, -1, 1
-      };
-      gl.glLoadMatrixf(modelViewMatrix, 0);
-
-      // FIXME: add mouse interaction
-      // camera.apply_inverse_transform();
-      // object.apply_transform();
-
-      int cur = 0;
-      int numSlabs = tileSize / STRIP_SIZE;
-
-      for(int slab = numSlabs; --slab>=0; ) {
-        cur = slab % numBuffers;
-        if (slab >= numBuffers) {
-          if (!gl.glTestFenceNV(buffers[cur].fence)) {
-            gl.glFinishFenceNV(buffers[cur].fence);
-          }
-        }
-
-        FloatBuffer v = buffers[cur].vertices;
-        int vertexIndex = 0;
-
-        gl.glVertexPointer(3, GL.GL_FLOAT, 6 * SIZEOF_FLOAT, v);
-        gl.glNormalPointer(GL.GL_FLOAT, 6 * SIZEOF_FLOAT, buffers[cur].normals);
-
-        for(int jj=STRIP_SIZE; --jj>=0; ) {
-          ysinlo[jj] = sinArray[loY.getIndex()];
-          ycoslo[jj] = cosArray[loY.getIndex()]; loY.incr();
-          ysinhi[jj] = sinArray[hiY.getIndex()];
-          ycoshi[jj] = cosArray[hiY.getIndex()]; hiY.incr();
-        }
-        loY.decr();
-        hiY.decr();
-
-        for(int i = tileSize; --i>=0; ) {
-          float x = xyArray[i];
-          int loXIndex = loX.getIndex();
-          int hiXIndex = hiX.getIndex();
-
-          int jOffset = (STRIP_SIZE-1)*slab;
-          float nx = locoef * -cosArray[loXIndex] + hicoef * -cosArray[hiXIndex];
-
-          // Help the HotSpot Client Compiler by hoisting loop
-          // invariant variables into locals. Note that this may be
-          // good practice for innermost loops anyway since under
-          // the new memory model operations like accidental
-          // synchronization may force any compiler to reload these
-          // fields from memory, destroying their ability to
-          // optimize.
-          float locoef_tmp = locoef;
-          float hicoef_tmp = hicoef;
-          float[] ysinlo_tmp = ysinlo;
-          float[] ysinhi_tmp = ysinhi;
-          float[] ycoslo_tmp = ycoslo;
-          float[] ycoshi_tmp = ycoshi;
-          float[] sinArray_tmp = sinArray;
-          float[] xyArray_tmp = xyArray;
-
-          for(int j = STRIP_SIZE; --j>=0; ) {
-            float y;
-
-            y = xyArray_tmp[j + jOffset];
-
-            float ny;
-
-            v.put(vertexIndex, x);
-            v.put(vertexIndex + 1, y);
-            v.put(vertexIndex + 2, (locoef_tmp * (sinArray_tmp[loXIndex] + ysinlo_tmp[j]) +
-                                    hicoef_tmp * (sinArray_tmp[hiXIndex] + ysinhi_tmp[j])));
-            v.put(vertexIndex + 3, nx);
-            ny = locoef_tmp * -ycoslo_tmp[j] + hicoef_tmp * -ycoshi_tmp[j];
-            v.put(vertexIndex + 4, ny);
-            v.put(vertexIndex + 5, .15f); //.15f * (1.f - sqrt(nx * nx + ny * ny));
-            vertexIndex += 6;
-          }
-          loX.incr();
-          hiX.incr();
-        }
-        loX.reset();
-        hiX.reset();
-
-        for (int i = 0; i < elements.length; i++) {
-          ++numDrawElementsCalls;
-          gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i], 0);
-          if(getFlag('f')) {
-            gl.glFlush();
-          }
-        }
-
-        gl.glSetFenceNV(buffers[cur].fence, GL.GL_ALL_COMPLETED_NV);
-      }
-
-      gl.glPopMatrix();
-
-      gl.glFinishFenceNV(buffers[cur].fence);
-
-      if (getFlag('r')) {
-        if (!firstProfiledFrame) {
-          if (++profiledFrameCount == 30) {
-            long endTimeMillis = System.currentTimeMillis();
-            double secs = (endTimeMillis - startTimeMillis) / 1000.0;
-            double fps  = 30.0 / secs;
-            double ppf  = tileSize * tileSize * 2;
-            double mpps = ppf * fps / 1000000.0;
-            System.err.println("fps: " + fps + " polys/frame: " + ppf + " million polys/sec: " + mpps +
-                               " DrawElements calls/frame: " + (numDrawElementsCalls / 30));
-            profiledFrameCount = 0;
-            numDrawElementsCalls = 0;
-            startTimeMillis = System.currentTimeMillis();
-          }
-        } else {
           startTimeMillis = System.currentTimeMillis();
-          firstProfiledFrame = false;
-
         }
+      } else {
+        startTimeMillis = System.currentTimeMillis();
+        firstProfiledFrame = false;
+
       }
     }
+  }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
-    // Unused routines
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-  } // end class VARListener
+  // Unused routines
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
   private void allocateBigArray(GL gl, boolean tryAgain) {
     float priority = .5f;
@@ -721,14 +707,12 @@ public class VertexArrayRange {
     }
   }
 
-  private void runExit() {
-    quit = true;
+  private static void runExit(final Animator animator) {
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking
     // routines cause a global AWT lock to be grabbed. Run the
-    // exit routine in another thread and cause this one to
-    // terminate by throwing an exception out of it.
+    // exit routine in another thread.
     new Thread(new Runnable() {
         public void run() {
           animator.stop();

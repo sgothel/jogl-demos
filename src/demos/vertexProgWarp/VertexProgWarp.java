@@ -54,8 +54,7 @@ import gleem.linalg.*;
         Ported to Java by Kenneth Russell
 */
 
-public class VertexProgWarp {
-  private GLCanvas canvas;
+public class VertexProgWarp implements GLEventListener {
   private Frame    frame;
   private Animator animator;
   private volatile boolean quit;
@@ -69,12 +68,23 @@ public class VertexProgWarp {
   }
 
   public void run(String[] args) {
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    canvas.addGLEventListener(new Listener());
+    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    VertexProgWarp demo = new VertexProgWarp();
+    canvas.addGLEventListener(demo);
 
-    animator = new Animator(canvas);
+    final Animator animator = new Animator(canvas);
+    demo.setDemoListener(new DemoListener() {
+        public void shutdownDemo() {
+          runExit(animator);
+        }
+      });
 
-    frame = new Frame();
+    final Frame frame = new Frame();
+    demo.setTitleSetter(new VertexProgWarp.TitleSetter() {
+        public void setTitle(String title) {
+          frame.setTitle(title);
+        }
+      });
     frame.setLayout(new BorderLayout());
     canvas.setSize(512, 512);
     frame.add(canvas, BorderLayout.CENTER);
@@ -84,514 +94,528 @@ public class VertexProgWarp {
 
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          // Run this on another thread than the AWT event queue to
-          // make sure the call to Animator.stop() completes before
-          // exiting
-          new Thread(new Runnable() {
-              public void run() {
-                animator.stop();
-                System.exit(0);
-              }
-            }).start();
+          runExit(animator);
         }
       });
 
     animator.start();
   }
 
-  class Listener implements GLEventListener {
-    // period of 4-term Taylor approximation to sin isn't quite 2*M_PI
-    private static final float    SIN_PERIOD   = 3.079f;
-    private static final int      NUM_OBJS     = 5;
-    private static final int      NUM_PROGS    = 7;
-    private              int[]    programs     = new int[NUM_PROGS];
-    private float zNear = 0.1f;
-    private float zFar  = 10.0f;
-    private int program = 2;
-    private int obj = 2;
-    private boolean[] b = new boolean[256];
-    private boolean wire = false;
-    private boolean toggleWire = false;
-    private boolean animating = true;
-    private boolean doViewAll = true;
+  public static abstract class TitleSetter {
+    public abstract void setTitle(String title);
+  }
 
-    private Time  time = new SystemTime();
-    private float anim = 0.0f;
-    private float animScale = 7.0f;
-    private float amp  = 0.05f;
-    private float freq = 8.0f;
-    private float d    = 4.0f;
+  public void setTitleSetter(TitleSetter setter) {
+    titleSetter = setter;
+  }
 
-    private ExaminerViewer viewer;
+  public void setDemoListener(DemoListener listener) {
+    demoListener = listener;
+  }
 
-    public void init(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+  private DemoListener demoListener;
+  private TitleSetter titleSetter;
+  private boolean initComplete;
+  
+  // period of 4-term Taylor approximation to sin isn't quite 2*M_PI
+  private static final float    SIN_PERIOD   = 3.079f;
+  private static final int      NUM_OBJS     = 5;
+  private static final int      NUM_PROGS    = 7;
+  private              int[]    programs     = new int[NUM_PROGS];
+  private float zNear = 0.1f;
+  private float zFar  = 10.0f;
+  private int program = 2;
+  private int obj = 2;
+  private boolean[] b = new boolean[256];
+  private boolean wire = false;
+  private boolean toggleWire = false;
+  private boolean animating = true;
+  private boolean doViewAll = true;
 
-      float cc = 0.0f;
-      gl.glClearColor(cc, cc, cc, 1);
+  private Time  time = new SystemTime();
+  private float anim = 0.0f;
+  private float animScale = 7.0f;
+  private float amp  = 0.05f;
+  private float freq = 8.0f;
+  private float d    = 4.0f;
 
-      gl.glColor3f(1,1,1);
-      gl.glEnable(GL.GL_DEPTH_TEST);
-      gl.glDisable(GL.GL_CULL_FACE);
+  private ExaminerViewer viewer;
 
-      try {
-        initExtension(gl, "GL_ARB_vertex_program");
-      } catch (RuntimeException e) {
-        quit = true;
-        throw(e);
-      }
+  public void init(GLAutoDrawable drawable) {
+    initComplete = false;
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
 
-      for(int i=0; i<NUM_OBJS; i++) {
-        gl.glNewList(i+1, GL.GL_COMPILE);
-        drawObject(gl, glu, i);
-        gl.glEndList();
-      }    
+    float cc = 0.0f;
+    gl.glClearColor(cc, cc, cc, 1);
 
-      for(int i=0; i<NUM_PROGS; i++) {
-        int[] vtxProgTmp = new int[1];
-        gl.glGenProgramsARB(1, vtxProgTmp, 0);
-        programs[i] = vtxProgTmp[0];
-        gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[i]);
-        gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programTexts[i].length(), programTexts[i]);
-      }
+    gl.glColor3f(1,1,1);
+    gl.glEnable(GL.GL_DEPTH_TEST);
+    gl.glDisable(GL.GL_CULL_FACE);
 
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
+    try {
+      initExtension(gl, "GL_ARB_vertex_program");
+    } catch (RuntimeException e) {
+      demoListener.shutdownDemo();
+      throw(e);
+    }
 
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
+    for(int i=0; i<NUM_OBJS; i++) {
+      gl.glNewList(i+1, GL.GL_COMPILE);
+      drawObject(gl, glu, i);
+      gl.glEndList();
+    }    
 
-      // sin Taylor series constants - 1, 1/3!, 1/5!, 1/7!
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
+    for(int i=0; i<NUM_PROGS; i++) {
+      int[] vtxProgTmp = new int[1];
+      gl.glGenProgramsARB(1, vtxProgTmp, 0);
+      programs[i] = vtxProgTmp[0];
+      gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[i]);
+      gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programTexts[i].length(), programTexts[i]);
+    }
 
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
 
-      // sin wave frequency, amplitude
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, 1.0f, 0.2f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
 
-      // phase animation
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    // sin Taylor series constants - 1, 1/3!, 1/5!, 1/7!
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
 
-      // fisheye sphere radius
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 8, 1.0f, 0.0f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
 
-      setWindowTitle();
+    // sin wave frequency, amplitude
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, 1.0f, 0.2f, 0.0f, 0.0f);
 
-      b['p'] = true;
+    // phase animation
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, 0.0f, 0.0f, 0.0f, 0.0f);
+
+    // fisheye sphere radius
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 8, 1.0f, 0.0f, 0.0f, 0.0f);
+
+    setWindowTitle();
+
+    doViewAll = true;
+
+    b['p'] = true;
       
-      drawable.addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            dispatchKey(e.getKeyCode(), e.getKeyChar());
-          }
-        });
+    drawable.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          dispatchKey(e.getKeyCode(), e.getKeyChar());
+        }
+      });
 
-      // Register the window with the ManipManager
-      ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
+    // Register the window with the ManipManager
+    ManipManager manager = ManipManager.getManipManager();
+    manager.registerWindow(drawable);
 
-      viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-      viewer.setNoAltKeyMode(true);
-      viewer.setAutoRedrawMode(false);
-      viewer.attach(drawable, new BSphereProvider() {
-	  public BSphere getBoundingSphere() {
-	    return new BSphere(new Vec3f(0, 0, 0), 1.0f);
-	  }
-	});
-      viewer.setVertFOV((float) Math.toRadians(60));
-      viewer.setZNear(zNear);
-      viewer.setZFar(zFar);
+    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer.setNoAltKeyMode(true);
+    viewer.setAutoRedrawMode(false);
+    viewer.attach(drawable, new BSphereProvider() {
+        public BSphere getBoundingSphere() {
+          return new BSphere(new Vec3f(0, 0, 0), 1.0f);
+        }
+      });
+    viewer.setVertFOV((float) Math.toRadians(60));
+    viewer.setZNear(zNear);
+    viewer.setZFar(zFar);
+    initComplete = true;
+  }
+
+  public void display(GLAutoDrawable drawable) {
+    if (!initComplete) {
+      return;
     }
 
-    public void display(GLAutoDrawable drawable) {
-      if (!firstRender) {
-        if (++frameCount == 30) {
-          timer.stop();
-          System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
-          timer.reset();
-          timer.start();
-          frameCount = 0;
-        }
-      } else {
-        firstRender = false;
+    if (!firstRender) {
+      if (++frameCount == 30) {
+        timer.stop();
+        System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
+        timer.reset();
         timer.start();
+        frameCount = 0;
       }
+    } else {
+      firstRender = false;
+      timer.start();
+    }
 
-      time.update();
+    time.update();
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
 
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-      if (toggleWire) {
-        wire = !wire;
-        if (wire)
-          gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-        else
-          gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-        toggleWire = false;
-      }
-
-      gl.glPushMatrix();
-
-      if (doViewAll) {
-        viewer.viewAll(gl);
-        doViewAll = false;
-      }
-
-      if (animating) {
-        anim -= (float) (animScale * time.deltaT());
-      }
-
-      viewer.update(gl);
-      ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-      ManipManager.getManipManager().render(drawable, gl);
-
-      gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[program]);
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, anim, 0.0f, 0.0f, 0.0f);
-
-      if (program==6)
-        gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
+    if (toggleWire) {
+      wire = !wire;
+      if (wire)
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
       else
-        gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, freq, amp, d, d+1);
-
-      if (b['p'])
-        gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
-
-      gl.glDisable(GL.GL_TEXTURE_2D);
-      gl.glCallList(obj+1);
-
-      gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
-
-      gl.glPopMatrix();
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+      toggleWire = false;
     }
 
-    // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    gl.glPushMatrix();
 
-    //----------------------------------------------------------------------
-    // Internals only below this point
-    //
-    private void initExtension(GL gl, String glExtensionName) {
-      if (!gl.isExtensionAvailable(glExtensionName)) {
-        final String message = "OpenGL extension \"" + glExtensionName + "\" not available";
-        new Thread(new Runnable() {
-            public void run() {
-              JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-              runExit();
-            }
-          }).start();
-        throw new RuntimeException(message);
-      }
+    if (doViewAll) {
+      viewer.viewAll(gl);
+      doViewAll = false;
     }
 
-    private void dispatchKey(int keyCode, char k) {
-      if (k < 256)
-        b[k] = !b[k];
-
-      switch (keyCode) {
-        case KeyEvent.VK_HOME:
-        case KeyEvent.VK_R:
-          anim = 0.0f;
-          amp = 0.05f;
-          freq = 8.0f;
-          d = 4.0f;
-          doViewAll = true;
-          break;
-
-        case KeyEvent.VK_LEFT:
-        case KeyEvent.VK_KP_LEFT:
-          program--;
-          if (program < 0)
-            program = NUM_PROGS-1;
-          setWindowTitle();
-          break;
-
-        case KeyEvent.VK_RIGHT:
-        case KeyEvent.VK_KP_RIGHT:
-          program = (program + 1) % NUM_PROGS;
-          setWindowTitle();
-          break;
-
-        case KeyEvent.VK_F1:
-        case KeyEvent.VK_H:
-          String endl = System.getProperty("line.separator");
-          endl = endl + endl;
-          String msg = ("F1/h - Help" + endl +
-                        "Home - Reset" + endl +
-                        "Left Button & Mouse - Rotate viewpoint" + endl +
-                        "1..5 - Switch object (Sphere, Torus, Triceratop, Cube, Cylinder)" + endl +
-                        "- / + - Change amplitude" + endl +
-                        "[ / ] - Change frequency" + endl +
-                        ", / . - Change square fisheye size" + endl +
-                        "Left - Next vertex program" + endl +
-                        "Right - Previous vertex program" + endl +
-                        "W - Toggle wireframe" + endl +
-                        "Space - Toggle animation" + endl +
-                        "Esc/q - Exit program" + endl);
-          JOptionPane.showMessageDialog(null, msg, "Help", JOptionPane.INFORMATION_MESSAGE);
-          break;
-
-        case KeyEvent.VK_ESCAPE:
-        case KeyEvent.VK_Q:
-          runExit();
-          return;
-
-        case KeyEvent.VK_W:
-          toggleWire = true;
-          break;
-
-        case KeyEvent.VK_EQUALS:
-        case KeyEvent.VK_PLUS:
-          amp += 0.01;
-          break;
-
-        case KeyEvent.VK_MINUS:
-          amp -= 0.01;
-          break;
-
-        case KeyEvent.VK_CLOSE_BRACKET:
-          freq += 0.5;
-          break;
-
-        case KeyEvent.VK_OPEN_BRACKET:
-          freq -= 0.5;
-          break;
-
-        case KeyEvent.VK_PERIOD:
-          d += 0.1;
-          break;
-
-        case KeyEvent.VK_COMMA:
-          d -= 0.1;
-          break;
-
-        case KeyEvent.VK_SPACE:
-          // Could also start/stop Animator here
-          animating = !animating;
-          break;
-
-        case KeyEvent.VK_1:
-          obj = 0;
-          break;
-
-        case KeyEvent.VK_2:
-          obj = 1;
-          break;
-
-        case KeyEvent.VK_3:
-          obj = 2;
-          break;
-
-        case KeyEvent.VK_4:
-          obj = 3;
-          break;
-
-        case KeyEvent.VK_5:
-          obj = 4;
-          break;
-      }
+    if (animating) {
+      anim -= (float) (animScale * time.deltaT());
     }
 
-    private void setWindowTitle() {
-      frame.setTitle("SpaceWarp - " + programNames[program]);
-    }
+    viewer.update(gl);
+    ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
+    ManipManager.getManipManager().render(drawable, gl);
 
-    private void drawObject(GL gl, GLU glu, int which) {
-      switch(which) {
-	case 0:
-          drawSphere(gl, 0.5f, 100, 100);
-          break;
+    gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[program]);
+    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, anim, 0.0f, 0.0f, 0.0f);
 
-	case 1:
-          drawTorus(gl, 0.25f, 0.5f, 100, 100);
-          break;
+    if (program==6)
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
+    else
+      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, freq, amp, d, d+1);
 
-	case 2:
-          try {
-            Triceratops.drawObject(gl);
-          } catch (IOException e) {
-            runExit();
-            throw new RuntimeException(e);
+    if (b['p'])
+      gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
+
+    gl.glDisable(GL.GL_TEXTURE_2D);
+    gl.glCallList(obj+1);
+
+    gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
+
+    gl.glPopMatrix();
+  }
+
+  // Unused routines
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+
+  //----------------------------------------------------------------------
+  // Internals only below this point
+  //
+  private void initExtension(GL gl, String glExtensionName) {
+    if (!gl.isExtensionAvailable(glExtensionName)) {
+      final String message = "OpenGL extension \"" + glExtensionName + "\" not available";
+      new Thread(new Runnable() {
+          public void run() {
+            JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+            demoListener.shutdownDemo();
           }
-          break;
+        }).start();
+      throw new RuntimeException(message);
+    }
+  }
 
-	case 3:
-          drawCube(gl);
-          break;
+  private void dispatchKey(int keyCode, char k) {
+    if (k < 256)
+      b[k] = !b[k];
 
-	case 4:
-          drawCylinder(gl, glu);
-          break;
+    switch (keyCode) {
+    case KeyEvent.VK_HOME:
+    case KeyEvent.VK_R:
+      anim = 0.0f;
+      amp = 0.05f;
+      freq = 8.0f;
+      d = 4.0f;
+      doViewAll = true;
+      break;
+
+    case KeyEvent.VK_LEFT:
+    case KeyEvent.VK_KP_LEFT:
+      program--;
+      if (program < 0)
+        program = NUM_PROGS-1;
+      setWindowTitle();
+      break;
+
+    case KeyEvent.VK_RIGHT:
+    case KeyEvent.VK_KP_RIGHT:
+      program = (program + 1) % NUM_PROGS;
+      setWindowTitle();
+      break;
+
+    case KeyEvent.VK_F1:
+    case KeyEvent.VK_H:
+      String endl = System.getProperty("line.separator");
+      endl = endl + endl;
+      String msg = ("F1/h - Help" + endl +
+                    "Home - Reset" + endl +
+                    "Left Button & Mouse - Rotate viewpoint" + endl +
+                    "1..5 - Switch object (Sphere, Torus, Triceratop, Cube, Cylinder)" + endl +
+                    "- / + - Change amplitude" + endl +
+                    "[ / ] - Change frequency" + endl +
+                    ", / . - Change square fisheye size" + endl +
+                    "Left - Next vertex program" + endl +
+                    "Right - Previous vertex program" + endl +
+                    "W - Toggle wireframe" + endl +
+                    "Space - Toggle animation" + endl +
+                    "Esc/q - Exit program" + endl);
+      JOptionPane.showMessageDialog(null, msg, "Help", JOptionPane.INFORMATION_MESSAGE);
+      break;
+
+    case KeyEvent.VK_ESCAPE:
+    case KeyEvent.VK_Q:
+      demoListener.shutdownDemo();
+      return;
+
+    case KeyEvent.VK_W:
+      toggleWire = true;
+      break;
+
+    case KeyEvent.VK_EQUALS:
+    case KeyEvent.VK_PLUS:
+      amp += 0.01;
+      break;
+
+    case KeyEvent.VK_MINUS:
+      amp -= 0.01;
+      break;
+
+    case KeyEvent.VK_CLOSE_BRACKET:
+      freq += 0.5;
+      break;
+
+    case KeyEvent.VK_OPEN_BRACKET:
+      freq -= 0.5;
+      break;
+
+    case KeyEvent.VK_PERIOD:
+      d += 0.1;
+      break;
+
+    case KeyEvent.VK_COMMA:
+      d -= 0.1;
+      break;
+
+    case KeyEvent.VK_SPACE:
+      // Could also start/stop Animator here
+      animating = !animating;
+      break;
+
+    case KeyEvent.VK_1:
+      obj = 0;
+      break;
+
+    case KeyEvent.VK_2:
+      obj = 1;
+      break;
+
+    case KeyEvent.VK_3:
+      obj = 2;
+      break;
+
+    case KeyEvent.VK_4:
+      obj = 3;
+      break;
+
+    case KeyEvent.VK_5:
+      obj = 4;
+      break;
+    }
+  }
+
+  private void setWindowTitle() {
+    titleSetter.setTitle("SpaceWarp - " + programNames[program]);
+  }
+
+  private void drawObject(GL gl, GLU glu, int which) {
+    switch(which) {
+    case 0:
+      drawSphere(gl, 0.5f, 100, 100);
+      break;
+
+    case 1:
+      drawTorus(gl, 0.25f, 0.5f, 100, 100);
+      break;
+
+    case 2:
+      try {
+        Triceratops.drawObject(gl);
+      } catch (IOException e) {
+        demoListener.shutdownDemo();
+        throw new RuntimeException(e);
       }
+      break;
+
+    case 3:
+      drawCube(gl);
+      break;
+
+    case 4:
+      drawCylinder(gl, glu);
+      break;
     }
+  }
 
-    private void drawSphere(GL gl, float radius, int slices, int stacks) {
-      int J = stacks;
-      int I = slices;
-      for(int j = 0; j < J; j++) {
-        float v = j/(float) J;
-        float phi = (float) (v * 2 * Math.PI);
-        float v2 = (j+1)/(float) J;
-        float phi2 = (float) (v2 * 2 * Math.PI);
+  private void drawSphere(GL gl, float radius, int slices, int stacks) {
+    int J = stacks;
+    int I = slices;
+    for(int j = 0; j < J; j++) {
+      float v = j/(float) J;
+      float phi = (float) (v * 2 * Math.PI);
+      float v2 = (j+1)/(float) J;
+      float phi2 = (float) (v2 * 2 * Math.PI);
 
-        gl.glBegin(GL.GL_QUAD_STRIP);
-        for(int i = 0; i < I; i++) {	
-          float u = i/(I-1.0f);
-          float theta = (float) (u * Math.PI);
-          float x,y,z,nx,ny,nz;
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for(int i = 0; i < I; i++) {	
+        float u = i/(I-1.0f);
+        float theta = (float) (u * Math.PI);
+        float x,y,z,nx,ny,nz;
 
-          nx = (float) (Math.cos(theta)*Math.cos(phi));
-          ny = (float) (Math.sin(theta)*Math.cos(phi));
-          nz = (float) (Math.sin(phi));
-          x = radius * nx;
-          y = radius * ny;
-          z = radius * nz;
+        nx = (float) (Math.cos(theta)*Math.cos(phi));
+        ny = (float) (Math.sin(theta)*Math.cos(phi));
+        nz = (float) (Math.sin(phi));
+        x = radius * nx;
+        y = radius * ny;
+        z = radius * nz;
 
-          gl.glColor3f ( u,  v, 0.0f);
-          gl.glNormal3f(nx, ny, nz);
-          gl.glVertex3f( x,  y, z);
+        gl.glColor3f ( u,  v, 0.0f);
+        gl.glNormal3f(nx, ny, nz);
+        gl.glVertex3f( x,  y, z);
 
-          nx = (float) (Math.cos(theta)*Math.cos(phi2));
-          ny = (float) (Math.sin(theta)*Math.cos(phi2));
-          nz = (float) (Math.sin(phi2));
-          x = radius * nx;
-          y = radius * ny;
-          z = radius * nz;
+        nx = (float) (Math.cos(theta)*Math.cos(phi2));
+        ny = (float) (Math.sin(theta)*Math.cos(phi2));
+        nz = (float) (Math.sin(phi2));
+        x = radius * nx;
+        y = radius * ny;
+        z = radius * nz;
 
-          gl.glColor3f ( u,  v+(1.0f/(J-1.0f)), 0.0f);
-          gl.glNormal3f(nx,                 ny,   nz);
-          gl.glVertex3f( x,                  y,    z);
-        }
-        gl.glEnd();
+        gl.glColor3f ( u,  v+(1.0f/(J-1.0f)), 0.0f);
+        gl.glNormal3f(nx,                 ny,   nz);
+        gl.glVertex3f( x,                  y,    z);
       }
+      gl.glEnd();
     }
+  }
 
-    private void drawTorus(GL gl, float meridian_radius, float core_radius, 
-                           int meridian_slices, int core_slices) {
-      int J = meridian_slices;
-      int I = core_slices;
-      for(int j = 0; j < J-1; j++) {
-        float v = j/(J-1.0f);
-        float rho = (float) (v * 2.0f * Math.PI);
-        float v2 = (j+1)/(J-1.0f);
-        float rho2 = (float) (v2 * 2.0f * Math.PI);
-        gl.glBegin(GL.GL_QUAD_STRIP);
-        for(int i = 0; i < I; i++) {	
-          float u = i/(I-1.0f);
-          float theta = (float) (u * 2.0f * Math.PI);
-          float x,y,z,nx,ny,nz;
+  private void drawTorus(GL gl, float meridian_radius, float core_radius, 
+                         int meridian_slices, int core_slices) {
+    int J = meridian_slices;
+    int I = core_slices;
+    for(int j = 0; j < J-1; j++) {
+      float v = j/(J-1.0f);
+      float rho = (float) (v * 2.0f * Math.PI);
+      float v2 = (j+1)/(J-1.0f);
+      float rho2 = (float) (v2 * 2.0f * Math.PI);
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for(int i = 0; i < I; i++) {	
+        float u = i/(I-1.0f);
+        float theta = (float) (u * 2.0f * Math.PI);
+        float x,y,z,nx,ny,nz;
 
-          x  = (float) (core_radius*Math.cos(theta) + meridian_radius*Math.cos(theta)*Math.cos(rho));
-          y  = (float) (core_radius*Math.sin(theta) + meridian_radius*Math.sin(theta)*Math.cos(rho));
-          z  = (float) (meridian_radius*Math.sin(rho));
-          nx = (float) (Math.cos(theta)*Math.cos(rho));
-          ny = (float) (Math.sin(theta)*Math.cos(rho));
-          nz = (float) (Math.sin(rho));	
+        x  = (float) (core_radius*Math.cos(theta) + meridian_radius*Math.cos(theta)*Math.cos(rho));
+        y  = (float) (core_radius*Math.sin(theta) + meridian_radius*Math.sin(theta)*Math.cos(rho));
+        z  = (float) (meridian_radius*Math.sin(rho));
+        nx = (float) (Math.cos(theta)*Math.cos(rho));
+        ny = (float) (Math.sin(theta)*Math.cos(rho));
+        nz = (float) (Math.sin(rho));	
 
-          gl.glColor3f ( u,  v, 0.0f);
-          gl.glNormal3f(nx, ny, nz);
-          gl.glVertex3f( x,  y,  z);
+        gl.glColor3f ( u,  v, 0.0f);
+        gl.glNormal3f(nx, ny, nz);
+        gl.glVertex3f( x,  y,  z);
 
-          x  = (float) (core_radius*Math.cos(theta) + meridian_radius*Math.cos(theta)*Math.cos(rho2));
-          y  = (float) (core_radius*Math.sin(theta) + meridian_radius*Math.sin(theta)*Math.cos(rho2));
-          z  = (float) (meridian_radius*Math.sin(rho2));
-          nx = (float) (Math.cos(theta)*Math.cos(rho2));
-          ny = (float) (Math.sin(theta)*Math.cos(rho2));
-          nz = (float) (Math.sin(rho2));	
+        x  = (float) (core_radius*Math.cos(theta) + meridian_radius*Math.cos(theta)*Math.cos(rho2));
+        y  = (float) (core_radius*Math.sin(theta) + meridian_radius*Math.sin(theta)*Math.cos(rho2));
+        z  = (float) (meridian_radius*Math.sin(rho2));
+        nx = (float) (Math.cos(theta)*Math.cos(rho2));
+        ny = (float) (Math.sin(theta)*Math.cos(rho2));
+        nz = (float) (Math.sin(rho2));	
 
-          gl.glColor3f ( u,  v, 0.0f);
-          gl.glNormal3f(nx, ny, nz);
-          gl.glVertex3f( x,  y,  z);
-        }
-        gl.glEnd();
+        gl.glColor3f ( u,  v, 0.0f);
+        gl.glNormal3f(nx, ny, nz);
+        gl.glVertex3f( x,  y,  z);
       }
+      gl.glEnd();
     }
+  }
 
-    private void drawCube(GL gl) {
-      int cr = 40;
-      float scaleFactor = 0.5f;
+  private void drawCube(GL gl) {
+    int cr = 40;
+    float scaleFactor = 0.5f;
 
-      // back
-      gl.glColor3f(1.0f, 0.0f, 0.0f);
-      gl.glNormal3f(0.0f, 0.0f, -1.0f);
-      drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f);
+    // back
+    gl.glColor3f(1.0f, 0.0f, 0.0f);
+    gl.glNormal3f(0.0f, 0.0f, -1.0f);
+    drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f);
 
-      // front
-      gl.glColor3f(1.0f, 0.0f, 0.0f);
-      gl.glNormal3f(0.0f, 0.0f, 1.0f);
-      drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, 1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f);
+    // front
+    gl.glColor3f(1.0f, 0.0f, 0.0f);
+    gl.glNormal3f(0.0f, 0.0f, 1.0f);
+    drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, 1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f);
 
-      // left
-      gl.glColor3f(0.0f, 1.0f, 0.0f);
-      gl.glNormal3f(-1.0f, 0.0f, 0.0f);
-      drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 2.0f, 0.0f, 2.0f, 0.0f);
+    // left
+    gl.glColor3f(0.0f, 1.0f, 0.0f);
+    gl.glNormal3f(-1.0f, 0.0f, 0.0f);
+    drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 2.0f, 0.0f, 2.0f, 0.0f);
 
-      // right
-      gl.glColor3f(0.0f, 0.0f, 1.0f);
-      gl.glNormal3f(1.0f, 0.0f, 0.0f);
-      drawGrid(gl, cr, cr, scaleFactor, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 2.0f, 0.0f, 2.0f, 0.0f);
+    // right
+    gl.glColor3f(0.0f, 0.0f, 1.0f);
+    gl.glNormal3f(1.0f, 0.0f, 0.0f);
+    drawGrid(gl, cr, cr, scaleFactor, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 2.0f, 0.0f, 2.0f, 0.0f);
 
-      // bottom
-      gl.glColor3f(1.0f, 1.0f, 0.0f);
-      gl.glNormal3f(0.0f,-1.0f, 0.0f);
-      drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f);
+    // bottom
+    gl.glColor3f(1.0f, 1.0f, 0.0f);
+    gl.glNormal3f(0.0f,-1.0f, 0.0f);
+    drawGrid(gl, cr, cr, scaleFactor, -1.0f, -1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f);
 
-      // top
-      gl.glColor3f(0.0f, 1.0f, 1.0f);
-      gl.glNormal3f(0.0f, 1.0f, 0.0f);
-      drawGrid(gl, cr, cr, scaleFactor, -1.0f, 1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f);
-    }
+    // top
+    gl.glColor3f(0.0f, 1.0f, 1.0f);
+    gl.glNormal3f(0.0f, 1.0f, 0.0f);
+    drawGrid(gl, cr, cr, scaleFactor, -1.0f, 1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f);
+  }
 
-    private void drawGrid(GL gl, int rows, int cols,
-			  float scaleFactor,
-                          float sx, float sy, float sz,
-                          float ux, float uy, float uz,
-                          float vx, float vy, float vz) {
-      int x, y;
+  private void drawGrid(GL gl, int rows, int cols,
+                        float scaleFactor,
+                        float sx, float sy, float sz,
+                        float ux, float uy, float uz,
+                        float vx, float vy, float vz) {
+    int x, y;
 
-      for(y=0; y<rows; y++) {
-        gl.glBegin(GL.GL_QUAD_STRIP);
-        for(x=0; x<=cols; x++) {
-          float u = x / (float) cols;
-          float v = y / (float) rows;
-          float v2 = v + (1.0f / (float) rows);
+    for(y=0; y<rows; y++) {
+      gl.glBegin(GL.GL_QUAD_STRIP);
+      for(x=0; x<=cols; x++) {
+        float u = x / (float) cols;
+        float v = y / (float) rows;
+        float v2 = v + (1.0f / (float) rows);
 
-          gl.glTexCoord2f(u, v);
-          gl.glVertex3f(scaleFactor * (sx + (u*ux) + (v*vx)),
-			scaleFactor * (sy + (u*uy) + (v*vy)),
-			scaleFactor * (sz + (u*uz) + (v*vz)));
+        gl.glTexCoord2f(u, v);
+        gl.glVertex3f(scaleFactor * (sx + (u*ux) + (v*vx)),
+                      scaleFactor * (sy + (u*uy) + (v*vy)),
+                      scaleFactor * (sz + (u*uz) + (v*vz)));
 
-          gl.glTexCoord2f(u, v2);
-          gl.glVertex3f(scaleFactor * (sx + (u*ux) + (v2*vx)),
-			scaleFactor * (sy + (u*uy) + (v2*vy)),
-			scaleFactor * (sz + (u*uz) + (v2*vz)));
-        }
-        gl.glEnd();
+        gl.glTexCoord2f(u, v2);
+        gl.glVertex3f(scaleFactor * (sx + (u*ux) + (v2*vx)),
+                      scaleFactor * (sy + (u*uy) + (v2*vy)),
+                      scaleFactor * (sz + (u*uz) + (v2*vz)));
       }
+      gl.glEnd();
     }
+  }
 
-    private void drawCylinder(GL gl, GLU glu) {
-      GLUquadric quad;
+  private void drawCylinder(GL gl, GLU glu) {
+    GLUquadric quad;
 
-      quad = glu.gluNewQuadric();
-      glu.gluQuadricDrawStyle  (quad, GLU.GLU_FILL);
-      glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-      glu.gluQuadricNormals    (quad, GLU.GLU_SMOOTH);
-      glu.gluQuadricTexture    (quad, true);
+    quad = glu.gluNewQuadric();
+    glu.gluQuadricDrawStyle  (quad, GLU.GLU_FILL);
+    glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+    glu.gluQuadricNormals    (quad, GLU.GLU_SMOOTH);
+    glu.gluQuadricTexture    (quad, true);
 
-      gl.glMatrixMode(GL.GL_MODELVIEW);
-      gl.glPushMatrix();
-      gl.glTranslatef(-1.0f, 0.0f, 0.0f);
-      gl.glRotatef   (90.0f, 0.0f, 1.0f, 0.0f);
+    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glPushMatrix();
+    gl.glTranslatef(-1.0f, 0.0f, 0.0f);
+    gl.glRotatef   (90.0f, 0.0f, 1.0f, 0.0f);
 
-      glu.gluCylinder(quad, 0.25f, 0.25f, 2.0f, 60, 30);
-      gl.glPopMatrix();
+    glu.gluCylinder(quad, 0.25f, 0.25f, 2.0f, 60, 30);
+    gl.glPopMatrix();
 
-      glu.gluDeleteQuadric(quad);
-    }
+    glu.gluDeleteQuadric(quad);
   }
 
   private static final String[] programNames = new String[] {
@@ -1010,8 +1034,7 @@ public class VertexProgWarp {
     "END\n"
   };
 
-  private void runExit() {
-    quit = true;
+  private static void runExit(final Animator animator) {
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking

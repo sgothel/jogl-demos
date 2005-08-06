@@ -78,7 +78,7 @@ public class ExaminerViewer {
   private boolean iOwnInteraction;
 
   private boolean noAltKeyMode;
-  private boolean autoRedrawMode;
+  private boolean autoRedrawMode = true;
 
   /** Simple state machine for computing distance dragged */
   private boolean button1Down;

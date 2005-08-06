@@ -39,8 +39,12 @@
 
 package demos.util;
 
-/** Defines how demos can request to be shut down. Different harnesses
-    may respond differently to this event. */
+/** Defines certain events demos can send. Different harnesses
+    may respond differently to these events. */
 public interface DemoListener {
+  /** Indicates that the demo wants to be terminated. */
   public void shutdownDemo();
+
+  /** Indicates that a repaint should be scheduled later. */
+  public void repaint();
 }

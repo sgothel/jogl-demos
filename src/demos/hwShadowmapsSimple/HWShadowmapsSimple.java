@@ -1,5 +1,5 @@
 /*
- * Portions Copyright (C) 2003 Sun Microsystems, Inc.
+ * Portions Copyright (C) 2003-2005 Sun Microsystems, Inc.
  * All rights reserved.
  */
 
@@ -57,10 +57,45 @@ import gleem.linalg.*;
     Ported to Java by Kenneth Russell
 */
 
-public class HWShadowmapsSimple {
-  private volatile boolean quit;
+public class HWShadowmapsSimple implements GLEventListener {
+  public static void main(String[] args) {
+    final GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    HWShadowmapsSimple demo = new HWShadowmapsSimple();
+    canvas.addGLEventListener(demo);
 
-  private GLCanvas canvas;
+    demo.setDemoListener(new DemoListener() {
+        public void shutdownDemo() {
+          runExit();
+        }
+        public void repaint() {
+          canvas.repaint();
+        }
+      });
+
+    Frame frame = new Frame("ARB_shadow Shadows");
+    frame.setLayout(new BorderLayout());
+    canvas.setSize(512, 512);
+    frame.add(canvas, BorderLayout.CENTER);
+    frame.pack();
+    frame.show();
+    canvas.requestFocus();
+
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          runExit();
+        }
+      });
+  }
+
+  public void setDemoListener(DemoListener listener) {
+    demoListener = listener;
+  }
+
+  //----------------------------------------------------------------------
+  // Internals only below this point
+  //
+
+  private DemoListener demoListener;
   private GLPbuffer pbuffer;
 
   private GLUT glut;
@@ -131,254 +166,226 @@ public class HWShadowmapsSimple {
   private Mat4f spotlightInverseTransform = new Mat4f();
   private Mat4f objectTransform = new Mat4f();
 
-  public static void main(String[] args) {
-    new HWShadowmapsSimple().run(args);
-  }
+  public void init(GLAutoDrawable drawable) {
+    // Use debug pipeline
+    // drawable.setGL(new DebugGL(drawable.getGL()));
 
-  public void run(String[] args) {
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    canvas.addGLEventListener(new Listener());
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
+    glut = new GLUT();
 
-    Frame frame = new Frame("ARB_shadow Shadows");
-    frame.setLayout(new BorderLayout());
-    canvas.setSize(512, 512);
-    frame.add(canvas, BorderLayout.CENTER);
-    frame.pack();
-    frame.show();
-    canvas.requestFocus();
+    try {
+      checkExtension(gl, "GL_ARB_multitexture");
+      checkExtension(gl, "GL_ARB_depth_texture");
+      checkExtension(gl, "GL_ARB_shadow");
+      checkExtension(gl, "GL_ARB_pbuffer");
+      checkExtension(gl, "GL_ARB_pixel_format");
+    } catch (GLException e) {
+      e.printStackTrace();
+      throw(e);
+    }
+      
+    gl.glClearColor(.5f, .5f, .5f, .5f);
 
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          runExit();
+    decal = genTexture(gl);
+    gl.glBindTexture(GL.GL_TEXTURE_2D, decal);
+    BufferedImage img = readPNGImage("demos/data/images/decal_image.png");
+    makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, true);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+
+    light_image = genTexture(gl);
+    gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
+    img = readPNGImage("demos/data/images/nvlogo_spot.png");
+    makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, true);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+
+    quad = gl.glGenLists(1);
+    gl.glNewList(quad, GL.GL_COMPILE);
+    gl.glPushMatrix();
+    gl.glRotatef(-90, 1, 0, 0);
+    gl.glScalef(4,4,4);
+    gl.glBegin(GL.GL_QUADS);
+    gl.glNormal3f(0, 0, 1);
+    gl.glVertex2f(-1, -1);
+    gl.glVertex2f(-1,  1);
+    gl.glVertex2f( 1,  1);
+    gl.glVertex2f( 1, -1);
+    gl.glEnd();
+    gl.glPopMatrix();
+    gl.glEndList();
+
+    wirecube = gl.glGenLists(1);
+    gl.glNewList(wirecube, GL.GL_COMPILE);
+    glut.glutWireCube(gl, 2);
+    gl.glEndList();
+
+    geometry = gl.glGenLists(1);
+    gl.glNewList(geometry, GL.GL_COMPILE);
+    gl.glPushMatrix();
+    glut.glutSolidTeapot(gl, 0.8f);
+    gl.glPopMatrix();
+    gl.glEndList();
+
+    gl.glEnable(GL.GL_LIGHT0);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, light_ambient, 0);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, light_intensity, 0);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, light_intensity, 0);
+
+    gl.glEnable(GL.GL_DEPTH_TEST);
+
+    // init pbuffer
+    GLCapabilities caps = new GLCapabilities();
+    caps.setDoubleBuffered(false);
+      
+    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, TEX_SIZE, TEX_SIZE)) {
+      unavailableExtension("Can not create pbuffer");
+    }
+    if (pbuffer != null) {
+      pbuffer.destroy();
+      pbuffer = null;
+    }
+    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, TEX_SIZE, TEX_SIZE, drawable.getContext());
+    pbuffer.addGLEventListener(new PbufferListener());
+
+    doViewAll = true;
+
+    // Register the window with the ManipManager
+    ManipManager manager = ManipManager.getManipManager();
+    manager.registerWindow(drawable);
+
+    object = new HandleBoxManip();
+    object.setTranslation(new Vec3f(0, 0.7f, 1.8f));
+    object.setGeometryScale(new Vec3f(0.7f, 0.7f, 0.7f));
+    manager.showManipInWindow(object, drawable);
+
+    spotlight = new HandleBoxManip();
+    spotlight.setScale(new Vec3f(0.5f, 0.5f, 0.5f));
+    spotlight.setTranslation(new Vec3f(-0.25f, 2.35f, 5.0f));
+    spotlight.setRotation(new Rotf(Vec3f.X_AXIS, (float) Math.toRadians(-30.0f)));
+    manager.showManipInWindow(spotlight, drawable);
+
+    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer.attach(drawable, new BSphereProvider() {
+        public BSphere getBoundingSphere() {
+          return new BSphere(object.getTranslation(), 2.0f);
+        }
+      });
+    viewer.setOrientation(new Rotf(Vec3f.Y_AXIS, (float) Math.toRadians(45.0f)).times
+                          (new Rotf(Vec3f.X_AXIS, (float) Math.toRadians(-15.0f))));
+    viewer.setVertFOV((float) Math.toRadians(lightshaper_fovy / 2.0f));
+    viewer.setZNear(zNear);
+    viewer.setZFar(zFar);
+
+    float bias = 1/((float) Math.pow(2.0,16.0)-1);
+
+    tweaks.add(new Tweak("r coordinate scale",    0.5f, bias));
+    tweaks.add(new Tweak("r coordinate bias",     0.5f, bias));
+    tweaks.add(new Tweak("polygon offset scale",  2.5f, 0.5f));
+    tweaks.add(new Tweak("polygon offset bias",  10.0f, 1.0f));
+
+    drawable.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          dispatchKey(e.getKeyChar());
+          demoListener.repaint();
         }
       });
   }
 
-  //----------------------------------------------------------------------
-  // Internals only below this point
-  //
+  public void display(GLAutoDrawable drawable) {
+    viewer.update();
 
-  class Listener implements GLEventListener {
+    // Grab these values once per render to avoid multithreading
+    // issues with their values being changed by manipulation from
+    // the AWT thread during the render
+    CameraParameters params = viewer.getCameraParameters();
 
-    public void init(GLAutoDrawable drawable) {
-      // Use debug pipeline
-      // drawable.setGL(new DebugGL(drawable.getGL()));
+    cameraPerspective.set(params.getProjectionMatrix());
+    cameraInverseTransform.set(params.getModelviewMatrix());
+    cameraTransform.set(cameraInverseTransform);
+    cameraTransform.invertRigid();
+    spotlightTransform.set(spotlight.getTransform());
+    spotlightInverseTransform.set(spotlightTransform);
+    spotlightInverseTransform.invertRigid();
+    objectTransform.set(object.getTransform());
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
-      glut = new GLUT();
-
-      try {
-        checkExtension(gl, "GL_ARB_multitexture");
-        checkExtension(gl, "GL_ARB_depth_texture");
-        checkExtension(gl, "GL_ARB_shadow");
-        checkExtension(gl, "GL_ARB_pbuffer");
-        checkExtension(gl, "GL_ARB_pixel_format");
-      } catch (GLException e) {
-	e.printStackTrace();
-	throw(e);
-      }
-      
-      gl.glClearColor(.5f, .5f, .5f, .5f);
-
-      decal = genTexture(gl);
-      gl.glBindTexture(GL.GL_TEXTURE_2D, decal);
-      BufferedImage img = readPNGImage("demos/data/images/decal_image.png");
-      makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, true);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-
-      light_image = genTexture(gl);
-      gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
-      img = readPNGImage("demos/data/images/nvlogo_spot.png");
-      makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, true);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-
-      quad = gl.glGenLists(1);
-      gl.glNewList(quad, GL.GL_COMPILE);
-      gl.glPushMatrix();
-      gl.glRotatef(-90, 1, 0, 0);
-      gl.glScalef(4,4,4);
-      gl.glBegin(GL.GL_QUADS);
-      gl.glNormal3f(0, 0, 1);
-      gl.glVertex2f(-1, -1);
-      gl.glVertex2f(-1,  1);
-      gl.glVertex2f( 1,  1);
-      gl.glVertex2f( 1, -1);
-      gl.glEnd();
-      gl.glPopMatrix();
-      gl.glEndList();
-
-      wirecube = gl.glGenLists(1);
-      gl.glNewList(wirecube, GL.GL_COMPILE);
-      glut.glutWireCube(gl, 2);
-      gl.glEndList();
-
-      geometry = gl.glGenLists(1);
-      gl.glNewList(geometry, GL.GL_COMPILE);
-      gl.glPushMatrix();
-      glut.glutSolidTeapot(gl, 0.8f);
-      gl.glPopMatrix();
-      gl.glEndList();
-
-      gl.glEnable(GL.GL_LIGHT0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, light_ambient, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, light_intensity, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, light_intensity, 0);
-
-      gl.glEnable(GL.GL_DEPTH_TEST);
-
-      // init pbuffer
-      GLCapabilities caps = new GLCapabilities();
-      caps.setDoubleBuffered(false);
-      
-      if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, TEX_SIZE, TEX_SIZE)) {
-        unavailableExtension("Can not create pbuffer");
-      }
-      pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, TEX_SIZE, TEX_SIZE, drawable.getContext());
-      pbuffer.addGLEventListener(new PbufferListener());
-
-      // Register the window with the ManipManager
-      ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
-
-      object = new HandleBoxManip();
-      object.setTranslation(new Vec3f(0, 0.7f, 1.8f));
-      object.setGeometryScale(new Vec3f(0.7f, 0.7f, 0.7f));
-      manager.showManipInWindow(object, drawable);
-
-      spotlight = new HandleBoxManip();
-      spotlight.setScale(new Vec3f(0.5f, 0.5f, 0.5f));
-      spotlight.setTranslation(new Vec3f(-0.25f, 2.35f, 5.0f));
-      spotlight.setRotation(new Rotf(Vec3f.X_AXIS, (float) Math.toRadians(-30.0f)));
-      manager.showManipInWindow(spotlight, drawable);
-
-      viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-      viewer.attach(drawable, new BSphereProvider() {
-	  public BSphere getBoundingSphere() {
-	    return new BSphere(object.getTranslation(), 2.0f);
-	  }
-	});
-      viewer.setOrientation(new Rotf(Vec3f.Y_AXIS, (float) Math.toRadians(45.0f)).times
-                            (new Rotf(Vec3f.X_AXIS, (float) Math.toRadians(-15.0f))));
-      viewer.setVertFOV((float) Math.toRadians(lightshaper_fovy / 2.0f));
-      viewer.setZNear(zNear);
-      viewer.setZFar(zFar);
-
-      float bias = 1/((float) Math.pow(2.0,16.0)-1);
-
-      tweaks.add(new Tweak("r coordinate scale",    0.5f, bias));
-      tweaks.add(new Tweak("r coordinate bias",     0.5f, bias));
-      tweaks.add(new Tweak("polygon offset scale",  2.5f, 0.5f));
-      tweaks.add(new Tweak("polygon offset bias",  10.0f, 1.0f));
-
-      drawable.addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            dispatchKey(e.getKeyChar());
-            canvas.repaint();
-          }
-        });
-    }
-
-    public void display(GLAutoDrawable drawable) {
-      viewer.update();
-
-      // Grab these values once per render to avoid multithreading
-      // issues with their values being changed by manipulation from
-      // the AWT thread during the render
-      CameraParameters params = viewer.getCameraParameters();
-
-      cameraPerspective.set(params.getProjectionMatrix());
-      cameraInverseTransform.set(params.getModelviewMatrix());
-      cameraTransform.set(cameraInverseTransform);
-      cameraTransform.invertRigid();
-      spotlightTransform.set(spotlight.getTransform());
-      spotlightInverseTransform.set(spotlightTransform);
-      spotlightInverseTransform.invertRigid();
-      objectTransform.set(object.getTransform());
-
-      if (displayMode == RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED || !fullyInitialized) {
-        if (pbuffer != null) {
-          pbuffer.display();
-        }
-      }
-
-      if (!fullyInitialized) {
-        // Repaint again later once everything is set up
-        canvas.repaint();
-        return;
-      }
-
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
-
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-      if (doViewAll) {
-	viewer.viewAll(gl);
-	doViewAll = false;
-        // Immediately zap effects
-        gl.glMatrixMode(GL.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glMatrixMode(GL.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        // Schedule repaint to clean up first bogus frame
-        canvas.repaint();
-      }
-
-      switch (displayMode) {
-        case RENDER_SCENE_FROM_CAMERA_VIEW:          render_scene_from_camera_view(gl, glu, drawable, params); break;
-        case RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED: render_scene_from_camera_view_shadowed(gl, glu, drawable, params); break;
-        case RENDER_SCENE_FROM_LIGHT_VIEW:           render_scene_from_light_view(gl, glu);           break;
-        default: throw new RuntimeException("Illegal display mode " + displayMode);
+    if (displayMode == RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED || !fullyInitialized) {
+      if (pbuffer != null) {
+        pbuffer.display();
       }
     }
 
-    // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-
-    //----------------------------------------------------------------------
-    // Internals only below this point
-    //
-
-    private void checkExtension(GL gl, String extensionName) {
-      if (!gl.isExtensionAvailable(extensionName)) {
-        String message = "Unable to initialize " + extensionName + " OpenGL extension";
-        unavailableExtension(message);
-      }
+    if (!fullyInitialized) {
+      // Repaint again later once everything is set up
+      demoListener.repaint();
+      return;
     }
 
-    private void unavailableExtension(String message) {
-      JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-      throw new GLException(message);
+    GL gl = drawable.getGL();
+    GLU glu = drawable.getGLU();
+
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+    if (doViewAll) {
+      viewer.viewAll(gl);
+      doViewAll = false;
+      // Immediately zap effects
+      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glLoadIdentity();
+      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glLoadIdentity();
+      // Schedule repaint to clean up first bogus frame
+      demoListener.repaint();
     }
 
-    private void dispatchKey(char k) {
-      switch (k) {
-        case 27:
-        case 'q':
-          runExit();
-          break;
+    switch (displayMode) {
+    case RENDER_SCENE_FROM_CAMERA_VIEW:          render_scene_from_camera_view(gl, glu, drawable, params); break;
+    case RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED: render_scene_from_camera_view_shadowed(gl, glu, drawable, params); break;
+    case RENDER_SCENE_FROM_LIGHT_VIEW:           render_scene_from_light_view(gl, glu, drawable); break;
+    default: throw new RuntimeException("Illegal display mode " + displayMode);
+    }
+  }
 
-        case 'v':
-          doViewAll = true;
-          System.err.println("Forcing viewAll()");
-          break;
+  // Unused routines
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-        case ' ':
-          displayMode = (displayMode + 1) % NUM_DISPLAY_MODES;
-          System.err.println("Switching to display mode " + displayMode);
-          break;
+  private void checkExtension(GL gl, String extensionName) {
+    if (!gl.isExtensionAvailable(extensionName)) {
+      String message = "Unable to initialize " + extensionName + " OpenGL extension";
+      unavailableExtension(message);
+    }
+  }
 
-        // FIXME: add more key behaviors from original demo
+  private void unavailableExtension(String message) {
+    JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+    throw new GLException(message);
+  }
 
-        default:
-          break;
-      }
+  private void dispatchKey(char k) {
+    switch (k) {
+    case 27:
+    case 'q':
+      demoListener.shutdownDemo();
+      break;
+
+    case 'v':
+      doViewAll = true;
+      System.err.println("Forcing viewAll()");
+      break;
+
+    case ' ':
+      displayMode = (displayMode + 1) % NUM_DISPLAY_MODES;
+      System.err.println("Switching to display mode " + displayMode);
+      break;
+
+      // FIXME: add more key behaviors from original demo
+
+    default:
+      break;
     }
   }
 
@@ -417,7 +424,7 @@ public class HWShadowmapsSimple {
                          ((Tweak) tweaks.get(POLYGON_OFFSET_BIAS)).val);
       gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 
-      render_scene_from_light_view(gl, glu);
+      render_scene_from_light_view(gl, glu, drawable);
 
       gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
     
@@ -643,7 +650,7 @@ public class HWShadowmapsSimple {
     gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
-    gl.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
+    gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
     applyTransform(gl, cameraPerspective);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
@@ -712,7 +719,7 @@ public class HWShadowmapsSimple {
 
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
-    gl.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
+    gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
     applyTransform(gl, cameraPerspective);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
@@ -728,16 +735,15 @@ public class HWShadowmapsSimple {
     render_light_frustum(gl);
   }
 
-  private void largest_square_power_of_two_viewport(GL gl) {
-    Dimension dim = canvas.getSize();
-    float min = Math.min(dim.width, dim.height);
+  private void largest_square_power_of_two_viewport(GL gl, GLAutoDrawable drawable) {
+    float min = Math.min(drawable.getWidth(), drawable.getHeight());
     float log2min = (float) Math.log(min) / (float) Math.log(2.0);
     float pow2 = (float) Math.floor(log2min);
     int size = 1 << (int) pow2;
     gl.glViewport(0, 0, size, size);
   }
 
-  private void render_scene_from_light_view(GL gl, GLU glu) {
+  private void render_scene_from_light_view(GL gl, GLU glu, GLAutoDrawable drawable) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -771,7 +777,7 @@ public class HWShadowmapsSimple {
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     if (displayMode == RENDER_SCENE_FROM_LIGHT_VIEW)
-      largest_square_power_of_two_viewport(gl);
+      largest_square_power_of_two_viewport(gl, drawable);
     render_scene(gl, spotlightTransform, null, null);
 
     gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
@@ -820,7 +826,7 @@ public class HWShadowmapsSimple {
     return m;
   }
 
-  private void runExit() {
+  private static void runExit() {
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking

@@ -47,9 +47,14 @@ import javax.swing.event.*;
 import net.java.games.jogl.*;
 import net.java.games.jogl.util.*;
 import demos.gears.Gears;
+import demos.hdr.HDR;
+import demos.hwShadowmapsSimple.HWShadowmapsSimple;
+import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
 import demos.proceduralTexturePhysics.ProceduralTexturePhysics;
 import demos.util.*;
+import demos.vertexBufferObject.VertexBufferObject;
 import demos.vertexProgRefract.VertexProgRefract;
+import demos.vertexProgWarp.VertexProgWarp;
 
 /**
   Wavelength-dependent refraction demo<br>
@@ -75,17 +80,25 @@ public class JRefract {
     new JRefract().run(args);
   }
 
-  private static final int GEARS = 1;
-  private static final int BUNNY = 2;
-  private static final int WATER = 3;
+  private static final int GEARS     = 1;
+  private static final int HDR       = 2;
+  private static final int HWSHADOWS = 3;
+  private static final int INFINITE  = 4;
+  private static final int REFRACT   = 5;
+  private static final int VBO       = 6;
+  private static final int WARP      = 7;
+  private static final int WATER     = 8;
 
   private JInternalFrame addWindow(int which) {
-    String str = null;
+    String str = "";
     switch (which) {
-    case GEARS: str = "Gears Demo"; break;
-    case BUNNY: str = "Refraction Using Vertex Programs"; break;
-    case WATER: str = "Procedural Texture Waves"; break;
-    default: throw new IllegalArgumentException("Invalid demo " + which);
+    case GEARS:     str = "Gears Demo"; break;
+    case HDR:       str = "High Dynamic Range Rendering Demo"; break;
+    case HWSHADOWS: str = "ARB_shadow Shadows"; break;
+    case INFINITE:  str = "Infinite Shadow Volumes"; break;
+    case REFRACT:   str = "Refraction Using Vertex Programs"; break;
+    case VBO:       str = "Very Simple vertex_buffer_object demo"; break;
+    case WATER:     str = "Procedural Texture Waves"; break;
     }
     final JInternalFrame inner = new JInternalFrame(str);
     inner.setResizable(true);
@@ -95,6 +108,9 @@ public class JRefract {
     GLCapabilities caps = new GLCapabilities();
     if (which == GEARS) {
       caps.setAlphaBits(8);
+    }
+    if (which == INFINITE) {
+      caps.setStencilBits(16);
     }
     final GLJPanel canvas = GLDrawableFactory.getFactory().createGLJPanel(caps);
     final DemoListener demoListener = new DemoListener() {
@@ -106,6 +122,10 @@ public class JRefract {
               }
             });
         }
+
+        public void repaint() {
+          canvas.repaint();
+        }
       };
 
     switch (which) {
@@ -113,12 +133,56 @@ public class JRefract {
         canvas.addGLEventListener(new Gears());
         break;
       }
-      case BUNNY: {
+
+      case HDR: {
+        HDR demo = new HDR();
+        demo.setDemoListener(demoListener);
+        demo.setup(null);
+        inner.setSize(demo.getPreferredWidth(), demo.getPreferredHeight());
+        canvas.addGLEventListener(demo);
+        break;
+      }
+
+      case HWSHADOWS: {
+        HWShadowmapsSimple demo = new HWShadowmapsSimple();
+        demo.setDemoListener(demoListener);
+        canvas.addGLEventListener(demo);
+        break;
+      }
+
+      case INFINITE: {
+        InfiniteShadowVolumes demo = new InfiniteShadowVolumes();
+        demo.setDemoListener(demoListener);
+        canvas.addGLEventListener(demo);
+        break;
+      }
+
+      case REFRACT: {
         VertexProgRefract demo = new VertexProgRefract();
         demo.setDemoListener(demoListener);
         canvas.addGLEventListener(demo);
         break;
       }
+
+      case VBO: {
+        VertexBufferObject demo = new VertexBufferObject();
+        demo.setDemoListener(demoListener);
+        canvas.addGLEventListener(demo);
+        break;
+      }
+
+      case WARP: {
+        VertexProgWarp demo = new VertexProgWarp();
+        demo.setDemoListener(demoListener);
+        demo.setTitleSetter(new VertexProgWarp.TitleSetter() {
+            public void setTitle(String title) {
+              inner.setTitle(title);
+            }
+          });
+        canvas.addGLEventListener(demo);
+        break;
+      }
+
       case WATER: {
         ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
         demo.setDemoListener(demoListener);
@@ -142,7 +206,7 @@ public class JRefract {
       });
 
     inner.getContentPane().setLayout(new BorderLayout());
-    if (which == BUNNY) {
+    if (which == REFRACT) {
       inner.getContentPane().add(canvas, BorderLayout.CENTER);
       inner.getContentPane().add(new JButton("West"), BorderLayout.WEST);
       inner.getContentPane().add(new JButton("East"), BorderLayout.EAST);
@@ -173,7 +237,9 @@ public class JRefract {
       inner.getContentPane().add(canvas, BorderLayout.CENTER);
     }
 
-    inner.setSize(512, 512);
+    if (which != HDR) {
+      inner.setSize(512, 512);
+    }
     desktop.add(inner);
 
     return inner;
@@ -201,15 +267,9 @@ public class JRefract {
     JMenuBar menuBar = new JMenuBar();
 
     JMenu menu = new JMenu("Actions");
-    JMenuItem item = new JMenuItem("New bunny");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          addWindow(BUNNY);
-        }
-      });
-    menu.add(item);
+    JMenuItem item;
 
-    item = new JMenuItem("New gears");
+    item = new JMenuItem("Gears");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           addWindow(GEARS);
@@ -217,7 +277,55 @@ public class JRefract {
       });
     menu.add(item);
 
-    item = new JMenuItem("New water");
+    item = new JMenuItem("High Dynamic Range");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(HDR);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Hardware Shadow Maps");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(HWSHADOWS);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Infinite Shadow Volumes");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(INFINITE);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Refraction");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(REFRACT);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Vertex Buffer Object");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(VBO);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Warp");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(WARP);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Water");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           addWindow(WATER);
@@ -225,7 +333,7 @@ public class JRefract {
       });
     menu.add(item);
 
-    item = new JMenuItem("Auto mode");
+    item = new JMenuItem("Loop Gears Demo");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           startAutoMode();
@@ -233,12 +341,13 @@ public class JRefract {
       });
     menu.add(item);
 
-    item = new JMenuItem("Exit");
+    item = new JMenuItem("Quit");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           runExit();
         }
       });
+    item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
     menu.add(item);
 
     menuBar.add(menu);
