@@ -77,6 +77,7 @@ public class VertexProgWarp implements GLEventListener {
         public void shutdownDemo() {
           runExit(animator);
         }
+        public void repaint() {}
       });
 
     final Frame frame = new Frame();

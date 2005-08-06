@@ -67,6 +67,7 @@ public class ProceduralTexturePhysics implements GLEventListener {
         public void shutdownDemo() {
           runExit(animator);
         }
+        public void repaint() {}
       });
 
     Frame frame = new Frame("Procedural Texture Waves");

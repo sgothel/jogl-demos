@@ -92,6 +92,7 @@ public class VertexBufferObject implements GLEventListener {
         public void shutdownDemo() {
           runExit(animator);
         }
+        public void repaint() {}
       });
 
     Frame frame = new Frame("Very Simple vertex_buffer_object demo");

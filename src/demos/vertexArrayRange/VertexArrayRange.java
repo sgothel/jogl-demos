@@ -101,6 +101,7 @@ public class VertexArrayRange implements GLEventListener {
         public void shutdownDemo() {
           runExit(animator);
         }
+        public void repaint() {}
       });
 
     Frame frame = new Frame("Very Simple NV_vertex_array_range demo");
