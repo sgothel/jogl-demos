@@ -79,7 +79,7 @@ public class ManipManager {
     };
   private WindowUpdateListener defaultWindowListener = new WindowUpdateListener() {
       public void update(GLAutoDrawable window) {
-        window.display();
+        window.repaint();
       }
     };
   private WindowUpdateListener windowListener;

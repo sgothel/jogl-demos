@@ -427,7 +427,7 @@ public class ExaminerViewer {
 
       if (autoRedrawMode) {
         // Force redraw
-        window.display();
+        window.repaint();
       }
     }
   }
@@ -487,7 +487,7 @@ public class ExaminerViewer {
 
       if (autoRedrawMode) {
         // Force redraw
-        window.display();
+        window.repaint();
       }
     }
   }
