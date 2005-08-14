@@ -70,10 +70,8 @@ import demos.vertexProgWarp.VertexProgWarp;
 
 public class JRefract {
   private boolean useRegisterCombiners;
-  private ArrayList canvases;
 
-  private volatile boolean quit;
-  private volatile boolean animatorStopped;
+  private Animator animator;
   private JDesktopPane desktop;
 
   public static void main(String[] args) {
@@ -251,8 +249,6 @@ public class JRefract {
 
   public void run(String[] args) {
 
-    canvases = new ArrayList();
-
     JFrame frame = new JFrame("JOGL and Swing Interoperability");
     desktop = new JDesktopPane();
     desktop.setSize(1024, 768);
@@ -365,7 +361,8 @@ public class JRefract {
     frame.setSize(desktop.getSize());
     frame.setVisible(true);
 
-    new Thread(new ListAnimator()).start();
+    animator = new Animator();
+    animator.start();
   }
 
   private void runExit() {
@@ -376,51 +373,18 @@ public class JRefract {
     // the exit routine in another thread.
     new Thread(new Runnable() {
         public void run() {
-          quit = true;
-          while (!animatorStopped) {
-            try {
-              Thread.sleep(1);
-            } catch (InterruptedException e) {
-            }
-          }
+          animator.stop();
           System.exit(0);
         }
       }).start();
   }
 
   private synchronized void addJPanel(GLJPanel panel) {
-    ArrayList newCanvases = (ArrayList) canvases.clone();
-    newCanvases.add(panel);
-    canvases = newCanvases;
+    animator.add(panel);
   }
 
   private synchronized void removeJPanel(GLJPanel panel) {
-    ArrayList newCanvases = (ArrayList) canvases.clone();
-    newCanvases.remove(panel);
-    canvases = newCanvases;
-  }
-
-  class ListAnimator implements Runnable {
-    public void run() {
-      while (!quit) {
-        if (canvases.isEmpty()) {
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-          }
-        } else {
-          for (Iterator iter = canvases.iterator(); iter.hasNext(); ) {
-            GLJPanel panel = (GLJPanel) iter.next();
-            panel.display();
-          }
-          try {
-            Thread.sleep(1);
-          } catch (InterruptedException e) {
-          }
-        }
-      }
-      animatorStopped = true;
-    }
+    animator.remove(panel);
   }
 
   private JInternalFrame curFrame;
