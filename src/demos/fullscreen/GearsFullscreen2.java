@@ -55,6 +55,7 @@ public class GearsFullscreen2 {
     GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
 
     canvas.addGLEventListener(new Gears());
+    canvas.addGLEventListener(new FullscreenWorkaround(initWidth, initHeight));
     frame.getContentPane().setLayout(new BorderLayout());
 
     ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);

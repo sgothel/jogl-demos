@@ -46,10 +46,10 @@ import javax.swing.event.*;
 
 import net.java.games.jogl.*;
 import net.java.games.jogl.util.*;
-import demos.gears.Gears;
 import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
+import demos.jgears.JGears;
 import demos.proceduralTexturePhysics.ProceduralTexturePhysics;
 import demos.util.*;
 import demos.vertexBufferObject.VertexBufferObject;
@@ -104,13 +104,13 @@ public class JRefract {
     inner.setVisible(true);
 
     GLCapabilities caps = new GLCapabilities();
-    if (which == GEARS) {
-      caps.setAlphaBits(8);
-    }
     if (which == INFINITE) {
       caps.setStencilBits(16);
     }
-    final GLJPanel canvas = GLDrawableFactory.getFactory().createGLJPanel(caps);
+    final GLJPanel canvas =
+      (which == GEARS) ?
+      new JGears() :
+      GLDrawableFactory.getFactory().createGLJPanel(caps);
     final DemoListener demoListener = new DemoListener() {
         public void shutdownDemo() {
           removeJPanel(canvas);
@@ -128,7 +128,7 @@ public class JRefract {
 
     switch (which) {
       case GEARS: {
-        canvas.addGLEventListener(new Gears());
+        // GLEventListener already added
         break;
       }
 
@@ -217,14 +217,7 @@ public class JRefract {
     } else if (which == GEARS) {
       // Provide control over transparency of gears background
       canvas.setOpaque(false);
-      JPanel gradientPanel = new JPanel() {
-          public void paintComponent(Graphics g) {
-            ((Graphics2D) g).setPaint(new GradientPaint(0, 0, Color.WHITE,
-                                                        getWidth(), getHeight(), Color.DARK_GRAY));
-            g.fillRect(0, 0, getWidth(), getHeight());
-          }
-        };
-      gradientPanel.setLayout(new BorderLayout());
+      JPanel gradientPanel = JGears.createGradientPanel();
       inner.getContentPane().add(gradientPanel, BorderLayout.CENTER);
       gradientPanel.add(canvas, BorderLayout.CENTER);
 

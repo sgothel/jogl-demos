@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import net.java.games.jogl.*;
-import demos.gears.Gears;
+import demos.jgears.JGears;
 import demos.util.*;
 
 /**
@@ -52,8 +52,8 @@ public class JGearsFullscreen {
     if (newMode != null) {
       frame.setUndecorated(true);
     }
-    GLJPanel drawable = GLDrawableFactory.getFactory().createGLJPanel(new GLCapabilities());
-    drawable.addGLEventListener(new Gears());
+    GLJPanel drawable = new JGears();
+    drawable.addGLEventListener(new FullscreenWorkaround(initWidth, initHeight));
 
     frame.getContentPane().setLayout(new BorderLayout());
 
