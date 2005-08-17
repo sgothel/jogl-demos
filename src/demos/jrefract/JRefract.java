@@ -35,12 +35,7 @@ package demos.jrefract;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
-import java.nio.*;
 import java.util.*;
-import javax.imageio.*;
-import javax.imageio.stream.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
