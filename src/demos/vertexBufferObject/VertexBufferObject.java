@@ -88,6 +88,7 @@ public class VertexBufferObject implements GLEventListener {
     canvas.addGLEventListener(demo);
 
     final Animator animator = new Animator(canvas);
+    animator.setRunAsFastAsPossible(true);
     demo.setDemoListener(new DemoListener() {
         public void shutdownDemo() {
           runExit(animator);
@@ -96,26 +97,17 @@ public class VertexBufferObject implements GLEventListener {
       });
 
     Frame frame = new Frame("Very Simple vertex_buffer_object demo");
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          runExit(animator);
+        }
+      });
     frame.setLayout(new BorderLayout());
     canvas.setSize(800, 800);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
     frame.show();
     canvas.requestFocus();
-
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          // Run this on another thread than the AWT event queue to
-          // make sure the call to Animator.stop() completes before
-          // exiting
-          new Thread(new Runnable() {
-              public void run() {
-                animator.stop();
-                System.exit(0);
-              }
-            }).start();
-        }
-      });
 
     animator.start();
   }
@@ -158,7 +150,7 @@ public class VertexBufferObject implements GLEventListener {
   private FloatBuffer bigArrayVBO;
   private FloatBuffer bigArraySystem;
   private FloatBuffer bigArray;
-  private int[][]     elements;
+  private IntBuffer[] elements;
   private int         elementBufferObject;
   private float[]     xyArray;
 
@@ -650,7 +642,7 @@ public class VertexBufferObject implements GLEventListener {
       } else {
         for (int i = 0; i < elements.length; i++) {
           ++numDrawElementsCalls;
-          gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i], 0);
+          gl.glDrawElements(primitive, elements[i].remaining(), GL.GL_UNSIGNED_INT, elements[i]);
           if(getFlag('f')) {
             gl.glFlush();
           }
@@ -725,22 +717,22 @@ public class VertexBufferObject implements GLEventListener {
       xyArray[i] = i / (tileSize - 1.0f) - 0.5f;
     }
 
-    elements = new int[tileSize - 1][];
+    elements = new IntBuffer[tileSize - 1];
     for (int i = 0; i < tileSize - 1; i++) {
-      elements[i] = new int[2 * STRIP_SIZE];
+      elements[i] = IntBuffer.allocate(2 * STRIP_SIZE);
       for (int j = 0; j < 2 * STRIP_SIZE; j += 2) {
-        elements[i][j]   =  i      * STRIP_SIZE + (j / 2);
-        elements[i][j+1] = (i + 1) * STRIP_SIZE + (j / 2);
+        elements[i].put(j,    i      * STRIP_SIZE + (j / 2));
+        elements[i].put(j+1, (i + 1) * STRIP_SIZE + (j / 2));
       }
     }
 
     // Create element array buffer
-    int[] linearElements = new int[(tileSize - 1) * (2 * STRIP_SIZE)];
+    IntBuffer linearElements = IntBuffer.allocate((tileSize - 1) * (2 * STRIP_SIZE));
     int idx = 0;
     for (int i = 0; i < tileSize - 1; i++) {
       for (int j = 0; j < 2 * STRIP_SIZE; j += 2) {
-        linearElements[idx++]   =  i      * STRIP_SIZE + (j / 2);
-        linearElements[idx++]   = (i + 1) * STRIP_SIZE + (j / 2);
+        linearElements.put(idx++,  i      * STRIP_SIZE + (j / 2));
+        linearElements.put(idx++, (i + 1) * STRIP_SIZE + (j / 2));
       }
     }
     int[] tmp = new int[1];
@@ -748,8 +740,8 @@ public class VertexBufferObject implements GLEventListener {
     elementBufferObject = tmp[0];
     gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
     gl.glBufferDataARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB,
-                       linearElements.length * BufferUtils.SIZEOF_INT,
-                       linearElements, 0,
+                       linearElements.remaining() * BufferUtils.SIZEOF_INT,
+                       linearElements,
                        GL.GL_STATIC_DRAW_ARB);
     gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
   }

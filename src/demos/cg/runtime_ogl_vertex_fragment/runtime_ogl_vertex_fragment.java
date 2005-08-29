@@ -303,7 +303,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
       }
     }
 
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, RES, RES, 0, GL.GL_RGBA, GL.GL_FLOAT, data, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, RES, RES, 0, GL.GL_RGBA, GL.GL_FLOAT, FloatBuffer.wrap(data));
 
     // Tell Cg which texture handle should be associated with the sampler2D
     // parameter to the fragment shader.

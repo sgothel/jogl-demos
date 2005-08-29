@@ -1,6 +1,7 @@
 package demos.hdr;
 
 import java.io.*;
+import java.nio.*;
 
 import net.java.games.jogl.*;
 
@@ -106,7 +107,7 @@ public class HDRTexture {
 
     gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
     gl.glTexParameteri(m_target, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
-    gl.glTexImage2D(m_target, 0, GL.GL_RGBA, m_width, m_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, m_data, 0);
+    gl.glTexImage2D(m_target, 0, GL.GL_RGBA, m_width, m_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(m_data));
 
     return texid;
   }
@@ -143,7 +144,7 @@ public class HDRTexture {
       }
     }
 
-    gl.glTexImage2D(m_target, 0, GL.GL_HILO16_NV, m_width, m_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, img, 0);
+    gl.glTexImage2D(m_target, 0, GL.GL_HILO16_NV, m_width, m_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -184,7 +185,7 @@ public class HDRTexture {
         face[ptr++] = m_data[src++];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(face));
   
     // positive X
     ptr = 0;
@@ -197,7 +198,7 @@ public class HDRTexture {
         face[ptr++] = m_data[src++];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(face));
 
     // negative Z
     ptr = 0;
@@ -210,7 +211,7 @@ public class HDRTexture {
         face[ptr++] = m_data[src++];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(face));
 
     // negative X
     ptr = 0;
@@ -223,7 +224,7 @@ public class HDRTexture {
         face[ptr++] = m_data[src++];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(face));
 
     // negative Y
     ptr = 0;
@@ -236,7 +237,7 @@ public class HDRTexture {
         face[ptr++] = m_data[src++];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(face));
 
     // positive Z
     ptr = 0;
@@ -249,7 +250,7 @@ public class HDRTexture {
         face[ptr++] = m_data[src++];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB, 0, GL.GL_RGBA, face_width, face_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(face));
 
     return texid;
   }
@@ -290,7 +291,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
   
     // positive X
     ptr = 0;
@@ -306,7 +307,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative Z
     ptr = 0;
@@ -322,7 +323,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative X
     ptr = 0;
@@ -338,7 +339,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative Y
     ptr = 0;
@@ -354,7 +355,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // positive Z
     ptr = 0;
@@ -370,7 +371,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     return texid;
   }
@@ -407,7 +408,7 @@ public class HDRTexture {
         face[ptr++] = m_floatdata[src + 2];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, FloatBuffer.wrap(face));
   
     // positive X
     ptr = 0;
@@ -419,7 +420,7 @@ public class HDRTexture {
         face[ptr++] = m_floatdata[src + 2];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative Z
     ptr = 0;
@@ -431,7 +432,7 @@ public class HDRTexture {
         face[ptr++] = m_floatdata[src + 2];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative X
     ptr = 0;
@@ -443,7 +444,7 @@ public class HDRTexture {
         face[ptr++] = m_floatdata[src + 2];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative Y
     ptr = 0;
@@ -455,7 +456,7 @@ public class HDRTexture {
         face[ptr++] = m_floatdata[src + 2];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // positive Z
     ptr = 0;
@@ -467,7 +468,7 @@ public class HDRTexture {
         face[ptr++] = m_floatdata[src + 2];
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, face, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB, 0, format, face_width, face_height, 0, GL.GL_RGB, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     return texid;
   }

@@ -40,6 +40,7 @@ import java.util.*;
 import javax.swing.*;
 
 import net.java.games.jogl.*;
+import net.java.games.jogl.util.*;
 import demos.util.*;
 
 /** <P> A port of NVidia's [tm] Vertex Array Range demonstration to
@@ -97,6 +98,7 @@ public class VertexArrayRange implements GLEventListener {
     canvas.addGLEventListener(demo);
 
     final Animator animator = new Animator(canvas);
+    animator.setRunAsFastAsPossible(true);
     demo.setDemoListener(new DemoListener() {
         public void shutdownDemo() {
           runExit(animator);
@@ -105,18 +107,17 @@ public class VertexArrayRange implements GLEventListener {
       });
 
     Frame frame = new Frame("Very Simple NV_vertex_array_range demo");
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          runExit(animator);
+        }
+      });
     frame.setLayout(new BorderLayout());
     canvas.setSize(800, 800);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
     frame.show();
     canvas.requestFocus();
-
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          runExit(animator);
-        }
-      });
 
     animator.start();
   }
@@ -154,7 +155,7 @@ public class VertexArrayRange implements GLEventListener {
   private FloatBuffer bigArrayVar;
   private FloatBuffer bigArraySystem;
   private FloatBuffer bigArray;
-  private int[][]    elements;
+  private IntBuffer[] elements;
   private float[]    xyArray;
 
   static class VarBuffer {
@@ -606,7 +607,7 @@ public class VertexArrayRange implements GLEventListener {
 
       for (int i = 0; i < elements.length; i++) {
         ++numDrawElementsCalls;
-        gl.glDrawElements(primitive, elements[i].length, GL.GL_UNSIGNED_INT, elements[i], 0);
+        gl.glDrawElements(primitive, elements[i].capacity(), GL.GL_UNSIGNED_INT, elements[i]);
         if(getFlag('f')) {
           gl.glFlush();
         }
@@ -698,12 +699,12 @@ public class VertexArrayRange implements GLEventListener {
       xyArray[i] = i / (tileSize - 1.0f) - 0.5f;
     }
 
-    elements = new int[tileSize - 1][];
+    elements = new IntBuffer[tileSize - 1];
     for (int i = 0; i < tileSize - 1; i++) {
-      elements[i] = new int[2 * STRIP_SIZE];
+      elements[i] = IntBuffer.allocate(2 * STRIP_SIZE);
       for (int j = 0; j < 2 * STRIP_SIZE; j += 2) {
-        elements[i][j]   =  i      * STRIP_SIZE + (j / 2);
-        elements[i][j+1] = (i + 1) * STRIP_SIZE + (j / 2);
+        elements[i].put(j,    i      * STRIP_SIZE + (j / 2));
+        elements[i].put(j+1, (i + 1) * STRIP_SIZE + (j / 2));
       }
     }
   }

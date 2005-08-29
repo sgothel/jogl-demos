@@ -533,7 +533,7 @@ public class VertexProgRefract implements GLEventListener {
                               GL.GL_UNSIGNED_BYTE, data);
       } else {
         gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data, 0);
+                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
       }
       break;
     }
@@ -545,7 +545,7 @@ public class VertexProgRefract implements GLEventListener {
                               GL.GL_UNSIGNED_BYTE, data);
       } else {
         gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, data, 0);
+                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
       }
       break;
     }

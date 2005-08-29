@@ -511,7 +511,7 @@ public class HDR implements GLEventListener {
       img[i] = (float) Math.pow(x, gamma);
     }
 
-    gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
+    gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -551,7 +551,7 @@ public class HDR implements GLEventListener {
       }
     }
 
-    gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -738,7 +738,7 @@ public class HDR implements GLEventListener {
           gl.glVertexPointer(3, GL.GL_FLOAT, 0, model.getVertices());
           gl.glNormalPointer(GL.GL_FLOAT, 0, model.getVertexNormals());
           int[] indices = model.getFaceIndices();
-          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, indices, 0);
+          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, IntBuffer.wrap(indices));
           gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
           gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
           break;

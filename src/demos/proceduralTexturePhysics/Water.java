@@ -36,6 +36,7 @@ package demos.proceduralTexturePhysics;
 import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
+import java.nio.*;
 import java.text.*;
 import java.util.*;
 
@@ -1013,8 +1014,7 @@ public class Water {
                      0,
                      image.getGLFormat(),
                      GL.GL_UNSIGNED_BYTE,
-                     image.getData(),
-                     0);
+                     ByteBuffer.wrap(image.getData()));
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
@@ -1057,8 +1057,7 @@ public class Water {
                       0,
                       image.getGLFormat(),
                       GL.GL_UNSIGNED_BYTE,
-                      image.getData(),
-                      0);
+                      ByteBuffer.wrap(image.getData()));
     }
   }
 

@@ -408,7 +408,7 @@ public class HWShadowmapsSimple implements GLEventListener {
       light_view_depth = genTexture(gl);
       gl.glBindTexture(GL.GL_TEXTURE_2D, light_view_depth);
       gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, depth_format, TEX_SIZE, TEX_SIZE, 0, 
-                      GL.GL_DEPTH_COMPONENT, GL.GL_UNSIGNED_INT, (byte[]) null, 0);
+                      GL.GL_DEPTH_COMPONENT, GL.GL_UNSIGNED_INT, null);
       set_light_view_texture_parameters(gl);
 
       fullyInitialized = true;

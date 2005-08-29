@@ -196,6 +196,7 @@ public class InfiniteShadowVolumes implements GLEventListener {
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+
     float[] tex = new float[32*32];
     for(int i=0; i < 32; i++) {
       for(int j=0; j < 32; j++) {
@@ -205,10 +206,10 @@ public class InfiniteShadowVolumes implements GLEventListener {
           tex[i+j*32] = .9f;
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, 32, 32, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, tex, 0);
+    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, 32, 32, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(tex));
       
     initModel();
-
+    
     b['S'] = true; // no silhouette outlines
     b['v'] = true; // no volume drawing
     b['I'] = true; // use infinite far plane
