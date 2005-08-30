@@ -42,7 +42,8 @@ package demos.testContextSharing;
 import java.awt.*;
 import java.util.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** A simple demonstration of sharing of display lists between drawables. */
 

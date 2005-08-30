@@ -4,7 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 import demos.jgears.JGears;
 import demos.util.*;
 

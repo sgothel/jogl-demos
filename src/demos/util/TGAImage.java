@@ -40,7 +40,8 @@
 package demos.util;
 
 import java.io.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /**
  * Targa image reader adapted from sources of the <a href =

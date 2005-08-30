@@ -43,7 +43,7 @@ import java.io.*;
 import java.nio.*;
 import java.util.*;
 
-import net.java.games.jogl.util.*;
+import com.sun.opengl.utils.*;
 
 /** Simple parser for Wavefront .OBJ files. Does not support all file
     options -- currently requires vertices and normals (only) to be

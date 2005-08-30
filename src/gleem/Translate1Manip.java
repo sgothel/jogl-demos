@@ -42,7 +42,8 @@ package gleem;
 import java.util.*;
 
 import gleem.linalg.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** A Translate1Manip is a Manip which translates in only one
     dimension and whose default representation is a two-way arrow. */

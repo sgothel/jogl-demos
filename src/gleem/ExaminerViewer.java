@@ -44,7 +44,8 @@ import java.awt.event.*;
 import java.util.*;
 
 import gleem.linalg.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** <P> This is an application-level class, not part of the
     manipulator hierarchy. It is an example of how you might integrate

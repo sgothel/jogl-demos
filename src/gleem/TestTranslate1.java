@@ -41,7 +41,8 @@ package gleem;
 
 import java.awt.*;
 import java.awt.event.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 import gleem.linalg.*;
 
 /** Tests the Translate1 Manip. */

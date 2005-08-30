@@ -41,7 +41,8 @@ package demos.multisample;
 
 import java.awt.*;
 import java.awt.event.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 public class Multisample {
   private GLCanvas canvas;

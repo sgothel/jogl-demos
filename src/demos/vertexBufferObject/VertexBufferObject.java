@@ -39,8 +39,9 @@ import java.nio.*;
 import java.util.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
-import net.java.games.jogl.util.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
+import com.sun.opengl.utils.*;
 import demos.util.*;
 
 /** <P> A port of NVidia's [tm] Vertex Array Range demonstration to

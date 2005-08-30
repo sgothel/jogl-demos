@@ -42,8 +42,9 @@ import java.util.*;
 import javax.imageio.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
-import net.java.games.jogl.util.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
+import com.sun.opengl.utils.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;

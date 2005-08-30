@@ -3,7 +3,8 @@ package demos.fullscreen;
 import java.awt.*;
 import java.awt.event.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 import demos.gears.Gears;
 import demos.util.*;
 

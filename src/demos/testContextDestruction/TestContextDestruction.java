@@ -44,7 +44,8 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** A simple demonstration exercising context creation and destruction
     as a GLCanvas is added to and removed from its parent container. */

@@ -5,7 +5,8 @@
 package demos.util;
 
 import java.io.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 // Test harness
 import java.awt.image.*;

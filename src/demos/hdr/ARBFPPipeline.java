@@ -3,7 +3,8 @@ package demos.hdr;
 import java.io.*;
 import java.util.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 import demos.util.*;
 
 public class ARBFPPipeline implements Pipeline {

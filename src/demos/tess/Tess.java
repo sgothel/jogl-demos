@@ -58,7 +58,8 @@ package demos.tess;
  * @author Ported by Nathan Parker Burg, July 2003
  */
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -193,7 +194,7 @@ public class Tess {
     }//end TessRenderer
 
 
-    public static class TessCallback extends net.java.games.jogl.GLUtesselatorCallbackAdapter {
+    public static class TessCallback extends javax.media.opengl.GLUtesselatorCallbackAdapter {
         GL gl;
         GLU glu;
 

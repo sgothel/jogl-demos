@@ -33,8 +33,9 @@
 
 package demos.cg.runtime_ogl;
 
-import net.java.games.cg.*;
-import net.java.games.jogl.*;
+import com.sun.opengl.cg.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;

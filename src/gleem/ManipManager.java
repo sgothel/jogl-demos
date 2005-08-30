@@ -44,7 +44,8 @@ import java.util.*;
 
 import gleem.linalg.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** The ManipManager handles making manipulators visible in a
     window. */

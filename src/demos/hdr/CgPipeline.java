@@ -3,8 +3,9 @@ package demos.hdr;
 import java.io.*;
 import java.util.*;
 
-import net.java.games.jogl.*;
-import net.java.games.cg.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
+import com.sun.opengl.cg.*;
 import demos.util.*;
 
 public class CgPipeline implements Pipeline {

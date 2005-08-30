@@ -39,8 +39,9 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import net.java.games.jogl.*;
-import net.java.games.jogl.util.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
+import com.sun.opengl.utils.*;
 import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
