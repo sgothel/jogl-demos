@@ -128,7 +128,7 @@ public class ProceduralTexturePhysics implements GLEventListener {
     gl.setSwapInterval(1);
 
     try {
-      checkExtension(gl, "GL_ARB_multitexture");
+      checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
       checkExtension(gl, "GL_ARB_vertex_program");
       checkExtension(gl, "GL_ARB_fragment_program");
       checkExtension(gl, "GL_ARB_pbuffer");

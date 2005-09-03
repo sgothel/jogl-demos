@@ -102,22 +102,7 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     System.err.println("GL_VENDOR: " + gl.glGetString(GL.GL_VENDOR));
     System.err.println("GL_RENDERER: " + gl.glGetString(GL.GL_RENDERER));
     System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
-    System.err.println();
-    System.err.println("glLoadTransposeMatrixfARB() supported: " +
-                       gl.isFunctionAvailable("glLoadTransposeMatrixfARB"));
-    if (!gl.isFunctionAvailable("glLoadTransposeMatrixfARB")) {
-      // --- not using extensions
-      gl.glLoadIdentity();
-    } else {
-      // --- using extensions
-      final float[] identityTranspose = new float[] {
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-      };
-      gl.glLoadTransposeMatrixfARB(identityTranspose, 0);
-    }
+    gl.glLoadIdentity();
     gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();

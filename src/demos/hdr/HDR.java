@@ -243,7 +243,7 @@ public class HDR implements GLEventListener {
     GL gl = drawable.getGL();
     GLU glu = drawable.getGLU();
 
-    checkExtension(gl, "GL_ARB_multitexture");
+    checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
     checkExtension(gl, "GL_ARB_pbuffer");
     checkExtension(gl, "GL_ARB_vertex_program");
     checkExtension(gl, "GL_ARB_fragment_program");
@@ -405,7 +405,7 @@ public class HDR implements GLEventListener {
 
     // display in window
     gl.glEnable(GL.GL_TEXTURE_RECTANGLE_NV);
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, tonemap_pbuffer_tex);
     if (b['n']) {
       gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
@@ -643,10 +643,10 @@ public class HDR implements GLEventListener {
         gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
       if (b['m']) {
-        gl.glEnable(GL.GL_MULTISAMPLE_ARB);
+        gl.glEnable(GL.GL_MULTISAMPLE);
         gl.glHint(GL.GL_MULTISAMPLE_FILTER_HINT_NV, GL.GL_NICEST);
       } else {
-        gl.glDisable(GL.GL_MULTISAMPLE_ARB);
+        gl.glDisable(GL.GL_MULTISAMPLE);
       }
   
       if (!b['e']) {
@@ -685,32 +685,32 @@ public class HDR implements GLEventListener {
       view.xformPt(eyePos_eye, eyePos_model);
       pipeline.setVertexProgramParameter3f(gl, eyePos_param, eyePos_model.x(), eyePos_model.y(), eyePos_model.z());
 
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex);
-      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE0);
+      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex);
+      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
       boolean linear = b['l'];
       if (linear) {
-        gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+        gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
       } else {
-        //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
+        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
       }
 
       if (hilo) {
-        gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-        gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex2);
-        gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+        gl.glActiveTexture(GL.GL_TEXTURE1);
+        gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex2);
+        gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
         if (linear) {
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
         } else {
-          //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+          //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
         }
       }
 
@@ -773,7 +773,7 @@ public class HDR implements GLEventListener {
 
       // horizontal blur
       gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, blurh_fprog);
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE0);
       pipeline.bindTexture(gl, blur2_pbuffer_tex);
       glowPass(gl);
 
@@ -808,7 +808,7 @@ public class HDR implements GLEventListener {
 
         pipeline.enableFragmentProgram(gl, shrink_fprog);
         setOrthoProjection(gl, blur_w, blur_h);
-        gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
         drawQuadRect2(gl, blur_w, blur_h, pbuffer_w, pbuffer_h);
         pipeline.disableFragmentProgram(gl);
@@ -817,7 +817,7 @@ public class HDR implements GLEventListener {
 
         // vertical blur
         gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, blurv_fprog);
-        gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
         pipeline.bindTexture(gl, blur_pbuffer_tex);
         glowPass(gl);
         
@@ -893,10 +893,10 @@ public class HDR implements GLEventListener {
 
   private void drawQuadRect(GL gl, int w, int h) {
     gl.glBegin(GL.GL_QUADS);
-    gl.glTexCoord2f(0, h); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
-    gl.glTexCoord2f(w, h); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
-    gl.glTexCoord2f(w, 0); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, w / blur_scale, 0); gl.glVertex3f(w, 0, 0);
-    gl.glTexCoord2f(0, 0); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, 0, 0); gl.glVertex3f(0, 0, 0);
+    gl.glTexCoord2f(0, h); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
+    gl.glTexCoord2f(w, h); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
+    gl.glTexCoord2f(w, 0); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, w / blur_scale, 0); gl.glVertex3f(w, 0, 0);
+    gl.glTexCoord2f(0, 0); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, 0, 0); gl.glVertex3f(0, 0, 0);
     gl.glEnd();
   }
 
@@ -933,18 +933,18 @@ public class HDR implements GLEventListener {
 
   // draw cubemap background
   private void drawSkyBox(GL gl) {
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex);
+    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
     if (hilo) {
-      gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex2);
-      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE1);
+      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex2);
+      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
     }
 
     // initialize object linear texgen
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -974,7 +974,7 @@ public class HDR implements GLEventListener {
     glut.glutSolidCube(gl, 1.0f);
     gl.glPopMatrix();
 
-    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
 
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glPopMatrix();
@@ -987,18 +987,18 @@ public class HDR implements GLEventListener {
   private void toneMappingPass(GL gl) {
     gl.glFinish();
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     if (blur2_pbuffer != null) {
       gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, blur2_pbuffer_tex);
     }
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glBindTexture(GL.GL_TEXTURE_1D, gamma_tex);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE3_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE3);
     pipeline.bindTexture(gl, vignette_tex);
 
     pipeline.enableFragmentProgram(gl, tonemap_fprog);

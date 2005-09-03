@@ -236,7 +236,7 @@ public class Water {
       } else {
         gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
             			
-        gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glEnable(GL.GL_TEXTURE_2D);
       }
 
@@ -255,38 +255,38 @@ public class Water {
           gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_REFLECT]);
 
           // Draw quad over full display
-          gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+          gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
           gl.glDisable(GL.GL_TEXTURE_2D);
-          gl.glActiveTextureARB(GL.GL_TEXTURE3_ARB);
-          gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, staticTextureIDs[CA_TEXTURE_CUBEMAP]);
+          gl.glActiveTexture(GL.GL_TEXTURE3);
+          gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, staticTextureIDs[CA_TEXTURE_CUBEMAP]);
           gl.glEnable(GL.GL_TEXTURE_2D);
 
           gl.glColor4f(1, 1, 1, 1);
           gl.glBegin(GL.GL_QUADS);
                 
-          gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, 0,0);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE1_ARB, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2),  1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE2_ARB, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2),  1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE3_ARB, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
+          gl.glMultiTexCoord2f(GL.GL_TEXTURE0, 0,0);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2),  1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2),  1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f(-1,-1);
                 
-          gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, 1,0);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE1_ARB, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2), -1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE2_ARB, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2),  1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE3_ARB, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
+          gl.glMultiTexCoord2f(GL.GL_TEXTURE0, 1,0);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2), -1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2),  1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f( 1,-1);
                 
-          gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, 1,1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE1_ARB, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2), -1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE2_ARB, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2), -1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE3_ARB, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
+          gl.glMultiTexCoord2f(GL.GL_TEXTURE0, 1,1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2), -1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2), -1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f( 1, 1);
                 
-          gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, 0,1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE1_ARB, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2),  1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE2_ARB, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2), -1);
-          gl.glMultiTexCoord4fARB(GL.GL_TEXTURE3_ARB, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
+          gl.glMultiTexCoord2f(GL.GL_TEXTURE0, 0,1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2),  1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2), -1);
+          gl.glMultiTexCoord4f(GL.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f(-1, 1);
                 
           gl.glEnd();
@@ -298,7 +298,7 @@ public class Water {
 
         case CA_FULLSCREEN_NORMALMAP: {
           // Draw quad over full display
-          gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+          gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
                 
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
@@ -307,7 +307,7 @@ public class Water {
 
         case CA_FULLSCREEN_HEIGHT: {
           // Draw quad over full display
-          gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+          gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightOutput);
                 
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
@@ -316,7 +316,7 @@ public class Water {
 
         case CA_FULLSCREEN_FORCE: {
           // Draw quad over full display
-          gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+          gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
 			                 
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
@@ -326,7 +326,7 @@ public class Water {
         case CA_TILED_THREE_WINDOWS: {
           // Draw quad over full display
           // lower left
-          gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+          gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
           gl.glMatrixMode(GL.GL_MODELVIEW);
           gl.glPushMatrix();
@@ -681,7 +681,7 @@ public class Water {
       gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
       // Now we need to copy the resulting pixels into the intermediate force field texture
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE0);
       gl.glBindTexture(GL.GL_TEXTURE_2D, texVelocityInput);
 
       // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -726,7 +726,7 @@ public class Water {
     // set current source texture for stage 0 texture
     for (int i = 0; i < 4; i++)
       {
-        gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB + i);
+        gl.glActiveTexture(GL.GL_TEXTURE0 + i);
         gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightInput);
         gl.glEnable(GL.GL_TEXTURE_2D);
       }
@@ -751,7 +751,7 @@ public class Water {
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_INTERMEDIATE]);
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -780,7 +780,7 @@ public class Water {
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, wrapMode);
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, wrapMode);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE3_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE3);
     gl.glDisable(GL.GL_TEXTURE_2D);
 
     // vertex program already bound.
@@ -793,7 +793,7 @@ public class Water {
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -810,13 +810,13 @@ public class Water {
 
     // bind the vertex program to be used for this step and the next one.
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texVelocityInput);
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glDisable(GL.GL_TEXTURE_2D);
-    gl.glActiveTextureARB(GL.GL_TEXTURE3_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE3);
     gl.glDisable(GL.GL_TEXTURE_2D);
 
     // Draw the quad to add in force.
@@ -845,7 +845,7 @@ public class Water {
     }
 
     // Now we need to copy the resulting pixels into the velocity texture
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texVelocityOutput);
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -856,9 +856,9 @@ public class Water {
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_VELOCITY]);
     gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightInput);
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB); // velocity output already bound
+    gl.glActiveTexture(GL.GL_TEXTURE1); // velocity output already bound
     gl.glEnable(GL.GL_TEXTURE_2D);
 
     // use offsets of zero
@@ -870,7 +870,7 @@ public class Water {
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the input height texture
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightInput);
     
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -882,7 +882,7 @@ public class Water {
     //   offsets with bilinear on
     
     for (int i = 1; i < 4; i++) {
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB + i);
+      gl.glActiveTexture(GL.GL_TEXTURE0 + i);
       gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightInput);
       gl.glEnable(GL.GL_TEXTURE_2D);
     }
@@ -902,7 +902,7 @@ public class Water {
     }
 
     // Now we need to copy the resulting pixels into the velocity texture
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightOutput);
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -933,7 +933,7 @@ public class Water {
   private void createNormalMap(GL gl) {
     // use the height output on all four texture stages
     for (int i = 0; i < 4; i++) {
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB + i);
+      gl.glActiveTexture(GL.GL_TEXTURE0 + i);
       gl.glBindTexture(GL.GL_TEXTURE_2D, texHeightOutput);
       gl.glEnable(GL.GL_TEXTURE_2D);
     }
@@ -960,7 +960,7 @@ public class Water {
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the normal map
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
     
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
@@ -970,7 +970,7 @@ public class Water {
   private void drawInteriorBoundaryObjects(GL gl) {
     gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
     
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_INITIAL_MAP]);
     gl.glEnable(GL.GL_TEXTURE_2D);
 
@@ -978,7 +978,7 @@ public class Water {
 
     // disable other texture units.
     for (int i = 1; i < 4; i++) {
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB + i);
+      gl.glActiveTexture(GL.GL_TEXTURE0 + i);
       gl.glDisable(GL.GL_TEXTURE_2D);
     }
     
@@ -988,7 +988,7 @@ public class Water {
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
     if (spinLogo) {
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE0);
       gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_SPIN]);
       gl.glMatrixMode(GL.GL_MODELVIEW);
       gl.glPushMatrix();
@@ -1023,27 +1023,27 @@ public class Water {
   }
 
   private void loadCubeMap(GL gl, int id, String filenamePattern, boolean mipmap) {
-    int[] faces = new int[] { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,
-                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB,
-                              GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB,
-                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB,
-                              GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB,
-                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB };
+    int[] faces = new int[] { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                              GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                              GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
     String[] faceNames = new String[] { "posx", "negx", "posy", "negy", "posz", "negz" };
 
     // create and bind a cubemap texture object
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, id);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, id);
 
     // enable automipmap generation if needed.
-    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_GENERATE_MIPMAP_SGIS, (mipmap ? 1 : 0));
+    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_GENERATE_MIPMAP_SGIS, (mipmap ? 1 : 0));
     
     if (mipmap)
-      gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+      gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
     else
-      gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
     // load 6 faces.
     MessageFormat fmt = new MessageFormat(filenamePattern);
@@ -1191,11 +1191,11 @@ public class Water {
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
     gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_DROPLET]);
     gl.glEnable(GL.GL_TEXTURE_2D);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glDisable(GL.GL_TEXTURE_2D);
 
     gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);

@@ -559,8 +559,8 @@ public class VertexBufferObject implements GLEventListener {
       int vertexIndex = 0;
 
       if (vboEnabled) {
-        gl.glVertexPointer(3, GL.GL_FLOAT, 6 * SIZEOF_FLOAT, BufferUtils.bufferOffset(buffers[cur].vertexOffset));
-        gl.glNormalPointer(   GL.GL_FLOAT, 6 * SIZEOF_FLOAT, BufferUtils.bufferOffset(buffers[cur].normalOffset));
+        gl.glVertexPointer(3, GL.GL_FLOAT, 6 * SIZEOF_FLOAT, buffers[cur].vertexOffset);
+        gl.glNormalPointer(   GL.GL_FLOAT, 6 * SIZEOF_FLOAT, buffers[cur].normalOffset);
       } else {
         gl.glVertexPointer(3, GL.GL_FLOAT, 6 * SIZEOF_FLOAT, v);
         gl.glNormalPointer(   GL.GL_FLOAT, 6 * SIZEOF_FLOAT, buffers[cur].normals);
@@ -634,7 +634,7 @@ public class VertexBufferObject implements GLEventListener {
         for (int i = 0; i < len; i++) {
           ++numDrawElementsCalls;
           gl.glDrawElements(primitive, 2 * STRIP_SIZE, GL.GL_UNSIGNED_INT,
-                            BufferUtils.bufferOffset(i * 2 * STRIP_SIZE * BufferUtils.SIZEOF_INT));
+                            i * 2 * STRIP_SIZE * BufferUtils.SIZEOF_INT);
           if(getFlag('f')) {
             gl.glFlush();
           }

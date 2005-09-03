@@ -272,10 +272,10 @@ public class TGAImage {
     data = new byte[rawWidth * header.height()];
 
     if (header.pixelDepth() == 24) {
-      format = GL.GL_BGR_EXT;
+      format = GL.GL_BGR;
     } else {
       assert header.pixelDepth() == 32;
-      format = GL.GL_BGRA_EXT;
+      format = GL.GL_BGRA;
     }
 
     for (i = 0; i < header.height(); ++i) {
@@ -296,7 +296,7 @@ public class TGAImage {
   /** Returns the height of the image. */
   public int getHeight()   { return header.height(); }
 
-  /** Returns the OpenGL format for this texture; e.g. GL.GL_BGR_EXT or GL.GL_BGRA_EXT. */
+  /** Returns the OpenGL format for this texture; e.g. GL.GL_BGR or GL.GL_BGRA. */
   public int getGLFormat() { return format; }
 
   /** Returns the raw data for this texture in the correct

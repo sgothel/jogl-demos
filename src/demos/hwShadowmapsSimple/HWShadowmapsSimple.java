@@ -176,7 +176,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     glut = new GLUT();
 
     try {
-      checkExtension(gl, "GL_ARB_multitexture");
+      checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
       checkExtension(gl, "GL_ARB_depth_texture");
       checkExtension(gl, "GL_ARB_shadow");
       checkExtension(gl, "GL_ARB_pbuffer");
@@ -561,7 +561,7 @@ public class HWShadowmapsSimple implements GLEventListener {
   }
 
   private void render_quad(GL gl) {
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     obj_linear_texgen(gl);
     texgen(gl, true);
     gl.glMatrixMode(GL.GL_TEXTURE);
@@ -628,7 +628,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glPopMatrix();
 
     // spot image
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
 
     gl.glPushMatrix();
     applyTransform(gl, cameraInverseTransform);
@@ -648,7 +648,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glEnable(GL.GL_TEXTURE_2D);
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
     gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
@@ -656,9 +656,9 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glMatrixMode(GL.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glDisable(GL.GL_TEXTURE_2D);
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
 
     render_manipulators(gl, cameraTransform, drawable, params);
 
@@ -675,7 +675,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glPopMatrix();
 
     // spot image
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
 
     gl.glPushMatrix();
     applyTransform(gl, cameraInverseTransform);
@@ -696,7 +696,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
     // depth compare
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE2);
 
     gl.glPushMatrix();
     applyTransform(gl, cameraInverseTransform);
@@ -716,7 +716,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glEnable(GL.GL_TEXTURE_2D);
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
     
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
 
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -725,11 +725,11 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glMatrixMode(GL.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glDisable(GL.GL_TEXTURE_2D);
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glDisable(GL.GL_TEXTURE_2D);
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
 
     render_manipulators(gl, cameraTransform, drawable, params);
 
@@ -752,7 +752,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glPopMatrix();
 
     // spot image
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
 
     gl.glPushMatrix();
     eye_linear_texgen(gl);    
@@ -770,7 +770,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     gl.glEnable(GL.GL_TEXTURE_2D);
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
 
     gl.glViewport(0, 0, TEX_SIZE, TEX_SIZE);
     gl.glMatrixMode(GL.GL_PROJECTION);
@@ -781,9 +781,9 @@ public class HWShadowmapsSimple implements GLEventListener {
       largest_square_power_of_two_viewport(gl, drawable);
     render_scene(gl, spotlightTransform, null, null);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glDisable(GL.GL_TEXTURE_2D);
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
   }
 
   private static void getRow(Mat4f m, int row, float[] out) {

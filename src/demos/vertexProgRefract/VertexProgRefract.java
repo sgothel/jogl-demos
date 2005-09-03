@@ -235,7 +235,7 @@ public class VertexProgRefract implements GLEventListener {
 
     try {
       initExtension(gl, "GL_ARB_vertex_program");
-      initExtension(gl, "GL_ARB_multitexture");
+      initExtension(gl, "GL_VERSION_1_3"); // For multitexturing support
       if (!gl.isExtensionAvailable("GL_ARB_fragment_program")) {
         if (gl.isExtensionAvailable("GL_NV_register_combiners")) {
           useRegisterCombiners = true;
@@ -274,10 +274,10 @@ public class VertexProgRefract implements GLEventListener {
     int[] cubemapTmp = new int[1];
     gl.glGenTextures(1, cubemapTmp, 0);
     cubemap = cubemapTmp[0];
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
 
-    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
 
     try {
       loadPNGCubemap(gl, glu, "demos/data/cubemaps/uffizi", true);
@@ -382,17 +382,17 @@ public class VertexProgRefract implements GLEventListener {
     gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 62, fresnel, fresnel, fresnel, 1.0f);
 
     // set texture transforms
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
+    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     gl.glScalef(1.0f, -1.0f, 1.0f);
     viewer.updateInverseRotation(gl);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
+    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     gl.glScalef(1.0f, -1.0f, 1.0f);
@@ -506,12 +506,12 @@ public class VertexProgRefract implements GLEventListener {
   // Not sure why this is the case. Vertical flip in the image read? Possible, but doesn't
   // appear to be the case (have tried this and produced wrong results at the time).
   String[] suffixes = { "posx", "negx", "negy", "posy", "posz", "negz" };
-  int[] targets = { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,
-                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB,
-                    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB,
-                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB,
-                    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB,
-                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB };
+  int[] targets = { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
   private void loadPNGCubemap(GL gl, GLU glu, String baseName, boolean mipmapped) throws IOException {
     for (int i = 0; i < suffixes.length; i++) {
       String resourceName = baseName + "_" + suffixes[i] + ".png";
@@ -576,9 +576,9 @@ public class VertexProgRefract implements GLEventListener {
       
     // combiner 0
     // a*b+c*d
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0_ARB, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
     gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_PRIMARY_COLOR_NV, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1_ARB, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
     gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_PRIMARY_COLOR_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
 
     // output:
@@ -640,22 +640,22 @@ public class VertexProgRefract implements GLEventListener {
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
+    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
   
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, cubemap);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
+    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
     // This is a workaround for a driver bug on Mac OS X where the
     // normals are not being sent down to the hardware in
-    // GL_NORMAL_MAP_EXT texgen mode. Temporarily enabling lighting
+    // GL_NORMAL_MAP texgen mode. Temporarily enabling lighting
     // causes the normals to be sent down. Thanks to Ken Dyke.
     gl.glEnable(GL.GL_LIGHTING);
 
-    gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP_EXT);
-    gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP_EXT);
-    gl.glTexGeni(GL.GL_R, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP_EXT);
+    gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP);
+    gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP);
+    gl.glTexGeni(GL.GL_R, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP);
 
     gl.glEnable(GL.GL_TEXTURE_GEN_S);
     gl.glEnable(GL.GL_TEXTURE_GEN_T);
