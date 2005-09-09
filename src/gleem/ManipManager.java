@@ -122,8 +122,9 @@ public class ManipManager {
     }
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info != null) {
-      for (Iterator iter = info.manips.iterator(); iter.hasNext(); ) {
-        removeManipFromWindow((Manip) iter.next(), window);
+      Object[] manips = info.manips.toArray();
+      for (int i = 0; i < manips.length; i++) {
+        removeManipFromWindow((Manip) manips[i], window);
       }
       windowToInfoMap.remove(window);
       removeMouseListeners(window);
