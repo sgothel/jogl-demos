@@ -39,6 +39,7 @@ import javax.swing.*;
 
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -57,7 +58,7 @@ import gleem.linalg.*;
  *
  */
 
-public class ProceduralTexturePhysics implements GLEventListener {
+public class ProceduralTexturePhysics extends Demo {
   public static void main(String[] args) {
     GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
@@ -88,19 +89,20 @@ public class ProceduralTexturePhysics implements GLEventListener {
     animator.start();
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
-  private DemoListener demoListener;
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    super.shutdownDemo();
+  }
+
   private volatile boolean drawing;
   private volatile int     mousePosX;
   private volatile int     mousePosY;
 
+  private GLAutoDrawable drawable;
   private Water    water = new Water();
   private volatile ExaminerViewer viewer;
   private boolean[] b = new boolean[256];
@@ -151,6 +153,7 @@ public class ProceduralTexturePhysics implements GLEventListener {
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
       manager.registerWindow(drawable);
+      this.drawable = drawable;
 
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
       viewer.setAutoRedrawMode(false);
@@ -248,7 +251,7 @@ public class ProceduralTexturePhysics implements GLEventListener {
     if (!gl.isExtensionAvailable(extensionName)) {
       String message = "Unable to initialize " + extensionName + " OpenGL extension";
       JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-      demoListener.shutdownDemo();
+      shutdownDemo();
     }
   }
 
@@ -258,7 +261,7 @@ public class ProceduralTexturePhysics implements GLEventListener {
     switch (k) {
     case 27:
     case 'q':
-      demoListener.shutdownDemo();
+      shutdownDemo();
       break;
     case 'w':
       water.enableWireframe(getFlag('w'));

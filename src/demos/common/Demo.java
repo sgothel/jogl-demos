@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright (c) 2003 Sun Microsystems, Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,14 +37,25 @@
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
-package demos.util;
+package demos.common;
 
-/** Defines certain events demos can send. Different harnesses
-    may respond differently to these events. */
-public interface DemoListener {
-  /** Indicates that the demo wants to be terminated. */
-  public void shutdownDemo();
+import javax.media.opengl.*;
 
-  /** Indicates that a repaint should be scheduled later. */
-  public void repaint();
+public abstract class Demo implements GLEventListener {
+  protected DemoListener demoListener;
+  private boolean doShutdown = true;
+
+  public void setDemoListener(DemoListener listener) {
+    this.demoListener = listener;
+  }
+
+  // Override this with any other cleanup actions
+  public void shutdownDemo() {
+    // Execute only once
+    boolean shouldDoShutdown = doShutdown;
+    doShutdown = false;
+    if (shouldDoShutdown) {
+      demoListener.shutdownDemo();
+    }
+  }
 }

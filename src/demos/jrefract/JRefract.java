@@ -42,6 +42,7 @@ import javax.swing.event.*;
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
@@ -84,6 +85,17 @@ public class JRefract {
   private static final int WATER     = 8;
 
   private JInternalFrame addWindow(int which) {
+    // FIXME: workaround for problem in 1.6 where ALL Components,
+    // including Swing components, are Finalizable, requiring two full
+    // GC cycles (and running of finalizers) to reclaim
+    System.gc();
+    // Try to get finalizers run
+    try {
+      Thread.sleep(1);
+    } catch (InterruptedException e) {
+    }
+    System.gc();
+
     String str = "";
     switch (which) {
     case GEARS:     str = "Gears Demo"; break;
@@ -122,6 +134,7 @@ public class JRefract {
         }
       };
 
+    Demo demo = null;
     switch (which) {
       case GEARS: {
         // GLEventListener already added
@@ -129,46 +142,35 @@ public class JRefract {
       }
 
       case HDR: {
-        HDR demo = new HDR();
-        demo.setDemoListener(demoListener);
-        demo.setup(null);
-        inner.setSize(demo.getPreferredWidth(), demo.getPreferredHeight());
-        canvas.addGLEventListener(demo);
+        demo = new HDR();
+        ((HDR) demo).setup(null);
+        inner.setSize(((HDR) demo).getPreferredWidth(), ((HDR) demo).getPreferredHeight());
         break;
       }
 
       case HWSHADOWS: {
-        HWShadowmapsSimple demo = new HWShadowmapsSimple();
-        demo.setDemoListener(demoListener);
-        canvas.addGLEventListener(demo);
+        demo = new HWShadowmapsSimple();
         break;
       }
 
       case INFINITE: {
-        InfiniteShadowVolumes demo = new InfiniteShadowVolumes();
-        demo.setDemoListener(demoListener);
-        canvas.addGLEventListener(demo);
+        demo = new InfiniteShadowVolumes();
         break;
       }
 
       case REFRACT: {
-        VertexProgRefract demo = new VertexProgRefract();
-        demo.setDemoListener(demoListener);
-        canvas.addGLEventListener(demo);
+        demo = new VertexProgRefract();
         break;
       }
 
       case VBO: {
-        VertexBufferObject demo = new VertexBufferObject();
-        demo.setDemoListener(demoListener);
-        canvas.addGLEventListener(demo);
+        demo = new VertexBufferObject();
         break;
       }
 
       case WARP: {
-        VertexProgWarp demo = new VertexProgWarp();
-        demo.setDemoListener(demoListener);
-        demo.setTitleSetter(new VertexProgWarp.TitleSetter() {
+        demo = new VertexProgWarp();
+        ((VertexProgWarp) demo).setTitleSetter(new VertexProgWarp.TitleSetter() {
             public void setTitle(final String title) {
               SwingUtilities.invokeLater(new Runnable() {
                   public void run() {
@@ -177,16 +179,17 @@ public class JRefract {
                 });
             }
           });
-        canvas.addGLEventListener(demo);
         break;
       }
 
       case WATER: {
-        ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
-        demo.setDemoListener(demoListener);
-        canvas.addGLEventListener(demo);
+        demo = new ProceduralTexturePhysics();
         break;
       }
+    }
+    if (which != GEARS) {
+      demo.setDemoListener(demoListener);
+      canvas.addGLEventListener(demo);
     }
     canvas.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
@@ -196,20 +199,23 @@ public class JRefract {
 
     addJPanel(canvas);
 
+    final Demo fDemo = demo;
+
     inner.addInternalFrameListener(new InternalFrameAdapter() {
         public void internalFrameClosed(InternalFrameEvent e) {
-          removeJPanel(canvas);
-          System.gc();
+          if (fDemo != null) {
+            fDemo.shutdownDemo();
+          }
         }
       });
 
     inner.getContentPane().setLayout(new BorderLayout());
     if (which == REFRACT) {
-      inner.getContentPane().add(canvas, BorderLayout.CENTER);
-      inner.getContentPane().add(new JButton("West"), BorderLayout.WEST);
-      inner.getContentPane().add(new JButton("East"), BorderLayout.EAST);
-      inner.getContentPane().add(new JButton("North"), BorderLayout.NORTH);
-      inner.getContentPane().add(new JButton("South"), BorderLayout.SOUTH);
+      // Testing scrolling
+      canvas.setSize(512, 512);
+      canvas.setPreferredSize(new Dimension(512, 512));
+      JScrollPane scroller = new JScrollPane(canvas);
+      inner.getContentPane().add(scroller);
     } else if (which == GEARS) {
       // Provide control over transparency of gears background
       canvas.setOpaque(false);
@@ -237,7 +243,6 @@ public class JRefract {
   }
 
   public void run(String[] args) {
-
     JFrame frame = new JFrame("JOGL and Swing Interoperability");
     desktop = new JDesktopPane();
     desktop.setSize(1024, 768);
@@ -350,7 +355,7 @@ public class JRefract {
     frame.setSize(desktop.getSize());
     frame.setVisible(true);
 
-    animator = new Animator();
+    animator = new FPSAnimator(60);
     animator.start();
   }
 

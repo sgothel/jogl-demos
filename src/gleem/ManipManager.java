@@ -117,12 +117,17 @@ public class ManipManager {
   /** Remove all references to a given window, including removing all
       manipulators from it. */
   public synchronized void unregisterWindow(GLAutoDrawable window) {
-    WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
-    for (Iterator iter = info.manips.iterator(); iter.hasNext(); ) {
-      removeManipFromWindow((Manip) iter.next(), window);
+    if (window == null) {
+      return;
     }
-    windowToInfoMap.remove(window);
-    removeMouseListeners(window);
+    WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
+    if (info != null) {
+      for (Iterator iter = info.manips.iterator(); iter.hasNext(); ) {
+        removeManipFromWindow((Manip) iter.next(), window);
+      }
+      windowToInfoMap.remove(window);
+      removeMouseListeners(window);
+    }
   }
 
   /** Make a given manipulator visible and active in a given

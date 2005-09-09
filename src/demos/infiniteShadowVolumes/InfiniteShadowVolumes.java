@@ -45,6 +45,7 @@ import javax.imageio.stream.*;
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -66,7 +67,7 @@ import gleem.linalg.*;
   Ported to Java by Kenneth Russell
 */
 
-public class InfiniteShadowVolumes implements GLEventListener {
+public class InfiniteShadowVolumes extends Demo {
   public static void main(String[] args) {
     GLCapabilities caps = new GLCapabilities();
     caps.setStencilBits(16);
@@ -98,15 +99,14 @@ public class InfiniteShadowVolumes implements GLEventListener {
       });
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
-  private DemoListener demoListener;
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    super.shutdownDemo();
+  }
 
   static class Model {
     Model() {
@@ -148,6 +148,7 @@ public class InfiniteShadowVolumes implements GLEventListener {
 
   private GLUT glut = new GLUT();
 
+  private GLAutoDrawable drawable;
   private ExaminerViewer viewer;
   private HandleBoxManip objectManip;
   private HandleBoxManip lightManip;
@@ -228,6 +229,7 @@ public class InfiniteShadowVolumes implements GLEventListener {
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
     manager.registerWindow(drawable);
+    this.drawable = drawable;
 
     objectManip = new HandleBoxManip();
     manager.showManipInWindow(objectManip, drawable);
@@ -564,7 +566,7 @@ public class InfiniteShadowVolumes implements GLEventListener {
   private void dispatchKey(char k) {
     b[k] = ! b[k];
     if (k==27 || k=='q') {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       return;
     }
 

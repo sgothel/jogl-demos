@@ -46,6 +46,7 @@ import javax.swing.*;
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -62,7 +63,7 @@ import gleem.linalg.*;
   Ported to Java and ARB_fragment_program by Kenneth Russell
 */
 
-public class VertexProgRefract implements GLEventListener {
+public class VertexProgRefract extends Demo {
   public static void main(String[] args) {
     GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     VertexProgRefract demo = new VertexProgRefract();
@@ -93,11 +94,6 @@ public class VertexProgRefract implements GLEventListener {
     animator.start();
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
-  private DemoListener demoListener;
   private boolean useRegisterCombiners;
   private boolean initComplete;
   private boolean firstRender = true;
@@ -109,6 +105,7 @@ public class VertexProgRefract implements GLEventListener {
 
   private GLUT glut = new GLUT();
 
+  private GLAutoDrawable drawable;
   private ExaminerViewer viewer;
   private boolean doViewAll = true;
 
@@ -245,14 +242,14 @@ public class VertexProgRefract implements GLEventListener {
           new Thread(new Runnable() {
               public void run() {
                 JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-                demoListener.shutdownDemo();
+                shutdownDemo();
               }
             }).start();
           throw new RuntimeException(message);
         }
       }
     } catch (RuntimeException e) {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       throw(e);
     }
 
@@ -282,7 +279,7 @@ public class VertexProgRefract implements GLEventListener {
     try {
       loadPNGCubemap(gl, glu, "demos/data/cubemaps/uffizi", true);
     } catch (IOException e) {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       throw new RuntimeException(e);
     }
 
@@ -318,6 +315,7 @@ public class VertexProgRefract implements GLEventListener {
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
       manager.registerWindow(drawable);
+      this.drawable = drawable;
 
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
       viewer.setNoAltKeyMode(true);
@@ -454,13 +452,18 @@ public class VertexProgRefract implements GLEventListener {
   //----------------------------------------------------------------------
   // Internals only below this point
   //
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    super.shutdownDemo();
+  }
+
   private boolean[] b = new boolean[256];
   private void dispatchKey(char k) {
     setFlag(k, !getFlag(k));
 
     // Quit on escape or 'q'
     if ((k == (char) 27) || (k == 'q')) {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       return;
     }
 
@@ -562,7 +565,7 @@ public class VertexProgRefract implements GLEventListener {
       new Thread(new Runnable() {
           public void run() {
             JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-            demoListener.shutdownDemo();
+            shutdownDemo();
           }
         }).start();
       throw new RuntimeException(message);

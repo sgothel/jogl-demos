@@ -45,6 +45,7 @@ import javax.swing.*;
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -58,7 +59,7 @@ import gleem.linalg.*;
     Ported to Java by Kenneth Russell
 */
 
-public class HWShadowmapsSimple implements GLEventListener {
+public class HWShadowmapsSimple extends Demo {
   public static void main(String[] args) {
     final GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
     HWShadowmapsSimple demo = new HWShadowmapsSimple();
@@ -88,15 +89,15 @@ public class HWShadowmapsSimple implements GLEventListener {
       });
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
-  private DemoListener demoListener;
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    super.shutdownDemo();
+  }
+
   private GLPbuffer pbuffer;
 
   private GLUT glut;
@@ -152,6 +153,7 @@ public class HWShadowmapsSimple implements GLEventListener {
   private float lightshaper_zFar  = 5.0f;
 
   // Manipulators
+  private GLAutoDrawable drawable;
   private ExaminerViewer viewer;
   private boolean  doViewAll = true;
   //  private float    zNear = 0.5f;
@@ -257,6 +259,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
     manager.registerWindow(drawable);
+    this.drawable = drawable;
 
     object = new HandleBoxManip();
     object.setTranslation(new Vec3f(0, 0.7f, 1.8f));
@@ -370,7 +373,7 @@ public class HWShadowmapsSimple implements GLEventListener {
     switch (k) {
     case 27:
     case 'q':
-      demoListener.shutdownDemo();
+      shutdownDemo();
       break;
 
     case 'v':

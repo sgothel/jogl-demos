@@ -42,6 +42,7 @@ import javax.swing.*;
 
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -55,11 +56,12 @@ import gleem.linalg.*;
         Ported to Java by Kenneth Russell
 */
 
-public class VertexProgWarp implements GLEventListener {
+public class VertexProgWarp extends Demo {
   private Frame    frame;
   private Animator animator;
   private volatile boolean quit;
 
+  private GLAutoDrawable drawable;
   private DurationTimer timer = new DurationTimer();
   private boolean  firstRender = true;
   private int      frameCount;
@@ -111,11 +113,6 @@ public class VertexProgWarp implements GLEventListener {
     titleSetter = setter;
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
-  private DemoListener demoListener;
   private TitleSetter titleSetter;
   private boolean initComplete;
   
@@ -158,7 +155,7 @@ public class VertexProgWarp implements GLEventListener {
     try {
       initExtension(gl, "GL_ARB_vertex_program");
     } catch (RuntimeException e) {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       throw(e);
     }
 
@@ -211,6 +208,7 @@ public class VertexProgWarp implements GLEventListener {
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
     manager.registerWindow(drawable);
+    this.drawable = drawable;
 
     viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
     viewer.setNoAltKeyMode(true);
@@ -301,13 +299,18 @@ public class VertexProgWarp implements GLEventListener {
   //----------------------------------------------------------------------
   // Internals only below this point
   //
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    super.shutdownDemo();
+  }
+
   private void initExtension(GL gl, String glExtensionName) {
     if (!gl.isExtensionAvailable(glExtensionName)) {
       final String message = "OpenGL extension \"" + glExtensionName + "\" not available";
       new Thread(new Runnable() {
           public void run() {
             JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-            demoListener.shutdownDemo();
+            shutdownDemo();
           }
         }).start();
       throw new RuntimeException(message);
@@ -363,7 +366,7 @@ public class VertexProgWarp implements GLEventListener {
 
     case KeyEvent.VK_ESCAPE:
     case KeyEvent.VK_Q:
-      demoListener.shutdownDemo();
+      shutdownDemo();
       return;
 
     case KeyEvent.VK_W:
@@ -440,7 +443,7 @@ public class VertexProgWarp implements GLEventListener {
       try {
         Triceratops.drawObject(gl);
       } catch (IOException e) {
-        demoListener.shutdownDemo();
+        shutdownDemo();
         throw new RuntimeException(e);
       }
       break;

@@ -11,6 +11,7 @@ import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.cg.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -20,7 +21,7 @@ import gleem.linalg.*;
     Ported to Java by Kenneth Russell
 */
 
-public class HDR implements GLEventListener {
+public class HDR extends Demo {
   private static String[] defaultArgs = {
     "demos/data/images/stpeters_cross.hdr",
     "512",
@@ -30,6 +31,7 @@ public class HDR implements GLEventListener {
     "3",
     "demos/data/models/teapot.obj"
   };
+  private GLAutoDrawable drawable;
   private boolean  useCg;
   private boolean  initComplete;
   private HDRTexture hdr;
@@ -217,15 +219,14 @@ public class HDR implements GLEventListener {
     return win_h;
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
-  private DemoListener demoListener;
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    super.shutdownDemo();
+  }
 
   //----------------------------------------------------------------------
   // Listener for main window
@@ -334,6 +335,7 @@ public class HDR implements GLEventListener {
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
     manager.registerWindow(drawable);
+    this.drawable = drawable;
 
     viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
     viewer.setAutoRedrawMode(false);
@@ -436,7 +438,7 @@ public class HDR implements GLEventListener {
 
   private void unavailableExtension(String message) {
     JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-    demoListener.shutdownDemo();
+    shutdownDemo();
     throw new GLException(message);
   }
 
@@ -447,7 +449,7 @@ public class HDR implements GLEventListener {
     switch (keyCode) {
     case KeyEvent.VK_ESCAPE:
     case KeyEvent.VK_Q:
-      demoListener.shutdownDemo();
+      shutdownDemo();
       break;
 
     case KeyEvent.VK_EQUALS:
@@ -1219,7 +1221,7 @@ public class HDR implements GLEventListener {
 
   private void usage() {
     System.err.println("usage: java demos.hdr.HDR [-cg] image.hdr pbuffer_w pbuffer_h window_scale blur_width blur_decimate [obj file]");
-    demoListener.shutdownDemo();
+    shutdownDemo();
   }
 
   private void printThreadName(String where) {

@@ -42,6 +42,7 @@ import javax.swing.*;
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 
 /** <P> A port of NVidia's [tm] Vertex Array Range demonstration to
@@ -75,7 +76,7 @@ import demos.util.*;
     C++ speed with the HotSpot Client and Server compilers,
     respectively. </P> */
 
-public class VertexArrayRange implements GLEventListener {
+public class VertexArrayRange extends Demo {
   public static void main(String[] args) {
     boolean startSlow = false;
 
@@ -135,15 +136,10 @@ public class VertexArrayRange implements GLEventListener {
     setFlag('v', true);   // VAR on
   }
 
-  public void setDemoListener(DemoListener listener) {
-    demoListener = listener;
-  }
-
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
-  private DemoListener demoListener;
   private boolean[] b = new boolean[256];
   private static final int SIZEOF_FLOAT = 4;
   private static final int STRIP_SIZE  = 48;
@@ -264,7 +260,7 @@ public class VertexArrayRange implements GLEventListener {
       new Thread(new Runnable() {
           public void run() {
             JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-            demoListener.shutdownDemo();
+            shutdownDemo();
           }
         }).start();
       throw new RuntimeException(message);
@@ -289,7 +285,7 @@ public class VertexArrayRange implements GLEventListener {
       ensurePresent(gl, "glFinishFenceNV");
       ensurePresent(gl, "glAllocateMemoryNV");
     } catch (RuntimeException e) {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       throw (e);
     }      
       
@@ -371,7 +367,7 @@ public class VertexArrayRange implements GLEventListener {
     setFlag(k, !getFlag(k));
     // Quit on escape or 'q'
     if ((k == (char) 27) || (k == 'q')) {
-      demoListener.shutdownDemo();
+      shutdownDemo();
       return;
     }
 
