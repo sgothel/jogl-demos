@@ -9,7 +9,6 @@ import javax.swing.*;
 
 import javax.media.opengl.*;
 import com.sun.opengl.utils.*;
-import com.sun.opengl.cg.*;
 import com.sun.opengl.utils.*;
 import demos.common.*;
 import demos.util.*;
@@ -1020,7 +1019,14 @@ public class HDR extends Demo {
 
   private String shaderRoot = "demos/hdr/shaders/";
   private void initCg(GL gl) {
-    pipeline = new CgPipeline();
+    // NOTE: need to instantiate CgPipeline reflectively to avoid
+    // compile-time dependence (since Cg support might not be present)
+    try {
+      Class cgPipelineClass = Class.forName("demos.hdr.CgPipeline");
+      pipeline = (Pipeline) cgPipelineClass.newInstance();
+    } catch (Exception e) {
+      throw new GLException(e);
+    }
     pipeline.init();
 
     try {
