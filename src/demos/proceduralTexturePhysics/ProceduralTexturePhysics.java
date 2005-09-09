@@ -95,6 +95,7 @@ public class ProceduralTexturePhysics extends Demo {
 
   public void shutdownDemo() {
     ManipManager.getManipManager().unregisterWindow(drawable);
+    drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
 

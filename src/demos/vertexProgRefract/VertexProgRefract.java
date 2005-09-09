@@ -454,6 +454,7 @@ public class VertexProgRefract extends Demo {
   //
   public void shutdownDemo() {
     ManipManager.getManipManager().unregisterWindow(drawable);
+    drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
 

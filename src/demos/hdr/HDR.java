@@ -224,6 +224,7 @@ public class HDR extends Demo {
 
   public void shutdownDemo() {
     ManipManager.getManipManager().unregisterWindow(drawable);
+    drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
 
@@ -260,7 +261,7 @@ public class HDR extends Demo {
       unavailableExtension("Floating-point textures not available (need one of GL_NV_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
     }
 
-    setOrthoProjection(gl, win_w, win_h);
+    setOrthoProjection(gl, 0, 0, win_w, win_h);
 
     gamma_tex = createGammaTexture(gl, 1024, 1.0f / 2.2f);
     vignette_tex = createVignetteTexture(gl, pbuffer_w, pbuffer_h, 0.25f*pbuffer_w, 0.7f*pbuffer_w);
@@ -421,7 +422,7 @@ public class HDR extends Demo {
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    setOrthoProjection(drawable.getGL(), width, height);
+    setOrthoProjection(drawable.getGL(), x, y, width, height);
     win_w = width;
     win_h = height;
   }
@@ -762,7 +763,7 @@ public class HDR extends Demo {
       GL gl = drawable.getGL();
 
       // FIXME: what about the ExaminerViewer?
-      setOrthoProjection(gl, blur_w, blur_h);
+      setOrthoProjection(gl, 0, 0, blur_w, blur_h);
 
       pipeline.initFloatingPointTexture(gl, blur_pbuffer_tex, blur_w, blur_h);
     }
@@ -794,7 +795,7 @@ public class HDR extends Demo {
 
       GL gl = drawable.getGL();
       // FIXME: what about the ExaminerViewer?
-      setOrthoProjection(gl, blur_w, blur_h);
+      setOrthoProjection(gl, 0, 0, blur_w, blur_h);
 
       pipeline.initFloatingPointTexture(gl, blur2_pbuffer_tex, blur_w, blur_h);
     }
@@ -808,7 +809,7 @@ public class HDR extends Demo {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
         pipeline.enableFragmentProgram(gl, shrink_fprog);
-        setOrthoProjection(gl, blur_w, blur_h);
+        setOrthoProjection(gl, 0, 0, blur_w, blur_h);
         gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
         drawQuadRect2(gl, blur_w, blur_h, pbuffer_w, pbuffer_h);
@@ -838,7 +839,7 @@ public class HDR extends Demo {
     public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
 
-      setOrthoProjection(gl, pbuffer_w, pbuffer_h);
+      setOrthoProjection(gl, 0, 0, pbuffer_w, pbuffer_h);
 
       pipeline.initTexture(gl, tonemap_pbuffer_tex, pbuffer_w, pbuffer_h);
     }
@@ -860,7 +861,7 @@ public class HDR extends Demo {
   // Rendering routines
   //
 
-  private void setOrthoProjection(GL gl, int w, int h) {
+  private void setOrthoProjection(GL gl, int x, int y, int w, int h) {
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
     gl.glOrtho(0, w, 0, h, -1.0, 1.0);
@@ -868,7 +869,7 @@ public class HDR extends Demo {
     gl.glLoadIdentity();
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
-    gl.glViewport(0, 0, w, h);
+    gl.glViewport(x, y, w, h);
   }
     
   private void setPerspectiveProjection(GL gl, GLU glu, int w, int h) {
@@ -886,7 +887,7 @@ public class HDR extends Demo {
     gl.glDisable(GL.GL_DEPTH_TEST);
     gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
-    setOrthoProjection(gl, blur_w, blur_h);
+    setOrthoProjection(gl, 0, 0, blur_w, blur_h);
     drawQuadRect(gl, blur_w, blur_h);
 
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);

@@ -301,6 +301,7 @@ public class VertexProgWarp extends Demo {
   //
   public void shutdownDemo() {
     ManipManager.getManipManager().unregisterWindow(drawable);
+    drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
 

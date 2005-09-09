@@ -113,7 +113,13 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     angle += 2.0f;
 
     GL gl = drawable.getGL();
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    if ((drawable instanceof GLJPanel) &&
+        ((GLJPanel) drawable).isOGLPipelineEnabled() &&
+        !((GLJPanel) drawable).isOpaque()) {
+      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+    } else {
+      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    }
             
     gl.glPushMatrix();
     gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);

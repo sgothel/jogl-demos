@@ -95,6 +95,7 @@ public class HWShadowmapsSimple extends Demo {
 
   public void shutdownDemo() {
     ManipManager.getManipManager().unregisterWindow(drawable);
+    drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
 
@@ -168,6 +169,8 @@ public class HWShadowmapsSimple extends Demo {
   private Mat4f spotlightTransform = new Mat4f();
   private Mat4f spotlightInverseTransform = new Mat4f();
   private Mat4f objectTransform = new Mat4f();
+  private int viewportX;
+  private int viewportY;
 
   public void init(GLAutoDrawable drawable) {
     // Use debug pipeline
@@ -348,13 +351,16 @@ public class HWShadowmapsSimple extends Demo {
     switch (displayMode) {
     case RENDER_SCENE_FROM_CAMERA_VIEW:          render_scene_from_camera_view(gl, glu, drawable, params); break;
     case RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED: render_scene_from_camera_view_shadowed(gl, glu, drawable, params); break;
-    case RENDER_SCENE_FROM_LIGHT_VIEW:           render_scene_from_light_view(gl, glu, drawable); break;
+    case RENDER_SCENE_FROM_LIGHT_VIEW:           render_scene_from_light_view(gl, glu, drawable, viewportX, viewportY); break;
     default: throw new RuntimeException("Illegal display mode " + displayMode);
     }
   }
 
   // Unused routines
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    viewportX = x;
+    viewportY = y;
+  }
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
   private void checkExtension(GL gl, String extensionName) {
@@ -428,7 +434,7 @@ public class HWShadowmapsSimple extends Demo {
                          ((Tweak) tweaks.get(POLYGON_OFFSET_BIAS)).val);
       gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 
-      render_scene_from_light_view(gl, glu, drawable);
+      render_scene_from_light_view(gl, glu, drawable, 0, 0);
 
       gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
     
@@ -654,7 +660,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
-    gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+    gl.glViewport(viewportX, viewportY, drawable.getWidth(), drawable.getHeight());
     applyTransform(gl, cameraPerspective);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
@@ -723,7 +729,7 @@ public class HWShadowmapsSimple extends Demo {
 
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
-    gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+    gl.glViewport(viewportX, viewportY, drawable.getWidth(), drawable.getHeight());
     applyTransform(gl, cameraPerspective);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
@@ -739,15 +745,15 @@ public class HWShadowmapsSimple extends Demo {
     render_light_frustum(gl);
   }
 
-  private void largest_square_power_of_two_viewport(GL gl, GLAutoDrawable drawable) {
+  private void largest_square_power_of_two_viewport(GL gl, GLAutoDrawable drawable, int viewportX, int viewportY) {
     float min = Math.min(drawable.getWidth(), drawable.getHeight());
     float log2min = (float) Math.log(min) / (float) Math.log(2.0);
     float pow2 = (float) Math.floor(log2min);
     int size = 1 << (int) pow2;
-    gl.glViewport(0, 0, size, size);
+    gl.glViewport(viewportX, viewportY, size, size);
   }
 
-  private void render_scene_from_light_view(GL gl, GLU glu, GLAutoDrawable drawable) {
+  private void render_scene_from_light_view(GL gl, GLU glu, GLAutoDrawable drawable, int viewportX, int viewportY) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -781,7 +787,7 @@ public class HWShadowmapsSimple extends Demo {
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     if (displayMode == RENDER_SCENE_FROM_LIGHT_VIEW)
-      largest_square_power_of_two_viewport(gl, drawable);
+      largest_square_power_of_two_viewport(gl, drawable, viewportX, viewportY);
     render_scene(gl, spotlightTransform, null, null);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
