@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp codebase="https://jogl-demos.dev.java.net/webstart/"
-      href="JRefractOGL.jnlp">
+      href="JRefract231OGL.jnlp">
   <information>
     <title>JOGL JRefract Demo - JOGL/Java2D Integration</title>
     <vendor>Sun Microsystems, Inc.</vendor>
