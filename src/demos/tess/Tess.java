@@ -123,7 +123,7 @@ public class Tess {
             gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
             startList = gl.glGenLists(2);
-            GLUtesselator tobj = glu.gluNewTess();
+            GLUtessellator tobj = glu.gluNewTess();
 
             TessCallback tessCallback = new TessCallback(gl, glu);
 
@@ -194,7 +194,7 @@ public class Tess {
     }//end TessRenderer
 
 
-    public static class TessCallback extends javax.media.opengl.GLUtesselatorCallbackAdapter {
+    public static class TessCallback extends javax.media.opengl.GLUtessellatorCallbackAdapter {
         GL gl;
         GLU glu;
 
