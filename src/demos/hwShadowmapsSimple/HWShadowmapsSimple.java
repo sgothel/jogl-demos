@@ -43,7 +43,7 @@ import javax.imageio.*;
 import javax.swing.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 import demos.common.*;
 import demos.util.*;

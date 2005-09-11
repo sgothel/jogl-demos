@@ -35,6 +35,7 @@ package demos.cg.runtime_ogl;
 
 import com.sun.opengl.cg.*;
 import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 
 import java.awt.*;

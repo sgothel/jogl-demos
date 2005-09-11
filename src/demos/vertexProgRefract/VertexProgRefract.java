@@ -44,6 +44,7 @@ import javax.imageio.stream.*;
 import javax.swing.*;
 
 import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 import com.sun.opengl.utils.*;
 import demos.common.*;

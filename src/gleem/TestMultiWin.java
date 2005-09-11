@@ -42,6 +42,7 @@ package gleem;
 import java.awt.*;
 import java.awt.event.*;
 import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 import gleem.linalg.*;
 

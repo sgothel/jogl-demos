@@ -59,6 +59,7 @@ package demos.tess;
  */
 
 import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 
 import java.awt.*;
@@ -194,7 +195,7 @@ public class Tess {
     }//end TessRenderer
 
 
-    public static class TessCallback extends javax.media.opengl.GLUtessellatorCallbackAdapter {
+    public static class TessCallback extends javax.media.opengl.glu.GLUtessellatorCallbackAdapter {
         GL gl;
         GLU glu;
 

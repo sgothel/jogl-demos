@@ -44,7 +44,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 
 /** This demo illustrates the use of the GLDrawable and GLContext APIs
