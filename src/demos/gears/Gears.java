@@ -114,8 +114,8 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
 
     GL gl = drawable.getGL();
     if ((drawable instanceof GLJPanel) &&
-        ((GLJPanel) drawable).isOGLPipelineEnabled() &&
-        !((GLJPanel) drawable).isOpaque()) {
+        !((GLJPanel) drawable).isOpaque() &&
+        ((GLJPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
     } else {
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
