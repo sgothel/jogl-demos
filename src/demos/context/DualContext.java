@@ -61,12 +61,8 @@ public class DualContext extends Canvas {
   private int        repaintNum;
 
   public DualContext(GLCapabilities capabilities) {
-    super(GLDrawableFactory.getFactory().chooseGraphicsConfiguration(capabilities,
-                                                                     new DefaultGLCapabilitiesChooser(),
-                                                                     GraphicsEnvironment.
-                                                                       getLocalGraphicsEnvironment().
-                                                                       getDefaultScreenDevice()));
-    drawable = GLDrawableFactory.getFactory().getGLDrawable(this, capabilities, new DefaultGLCapabilitiesChooser());
+    super(GLDrawableFactory.getFactory().chooseGraphicsConfiguration(capabilities, null, null));
+    drawable = GLDrawableFactory.getFactory().getGLDrawable(this, capabilities, null);
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
     glut = new GLUT();

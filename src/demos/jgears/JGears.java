@@ -36,7 +36,7 @@ public class JGears extends GLJPanel {
   }
   
   public JGears() {
-    super(caps, new DefaultGLCapabilitiesChooser(), null);
+    super(caps, null, null);
     addGLEventListener(new Gears());
     try {
       InputStream in = JGears.class.getClassLoader().getResourceAsStream("demos/data/images/java_logo.png");
