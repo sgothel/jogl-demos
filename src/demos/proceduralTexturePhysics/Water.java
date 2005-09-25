@@ -201,9 +201,7 @@ public class Water {
     // it allows rendering a texture larger than our window.
     GLCapabilities caps = new GLCapabilities();
     caps.setDoubleBuffered(false);
-    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps,
-                                                           initialMapDimensions[0],
-                                                           initialMapDimensions[1])) {
+    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {
       throw new GLException("Pbuffers not supported with this graphics card");
     }
     pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps,

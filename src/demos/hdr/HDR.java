@@ -281,8 +281,8 @@ public class HDR extends Demo {
     caps.setAlphaBits(floatAlphaBits);
     caps.setDepthBits(floatDepthBits);
     int[] tmp = new int[1];
-    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer(caps, pbuffer_w, pbuffer_h)) {
-      unavailableExtension("Can not create pbuffer of size (" + pbuffer_w + ", " + pbuffer_h + ")");
+    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {
+      unavailableExtension("Can not create pbuffer");
     }
     if (pbuffer != null) {
       pbuffer.destroy();
