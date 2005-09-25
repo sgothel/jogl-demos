@@ -101,6 +101,7 @@ public class HWShadowmapsSimple extends Demo {
 
   private GLPbuffer pbuffer;
 
+  private GLU  glu;
   private GLUT glut;
 
   private float[] light_ambient   = { 0, 0, 0, 0 };
@@ -177,7 +178,7 @@ public class HWShadowmapsSimple extends Demo {
     // drawable.setGL(new DebugGL(drawable.getGL()));
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
+    glu = new GLU();
     glut = new GLUT();
 
     try {
@@ -196,14 +197,14 @@ public class HWShadowmapsSimple extends Demo {
     decal = genTexture(gl);
     gl.glBindTexture(GL.GL_TEXTURE_2D, decal);
     BufferedImage img = readPNGImage("demos/data/images/decal_image.png");
-    makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, true);
+    makeRGBTexture(gl, img, GL.GL_TEXTURE_2D, true);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 
     light_image = genTexture(gl);
     gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
     img = readPNGImage("demos/data/images/nvlogo_spot.png");
-    makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, true);
+    makeRGBTexture(gl, img, GL.GL_TEXTURE_2D, true);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
@@ -226,13 +227,13 @@ public class HWShadowmapsSimple extends Demo {
 
     wirecube = gl.glGenLists(1);
     gl.glNewList(wirecube, GL.GL_COMPILE);
-    glut.glutWireCube(gl, 2);
+    glut.glutWireCube(2);
     gl.glEndList();
 
     geometry = gl.glGenLists(1);
     gl.glNewList(geometry, GL.GL_COMPILE);
     gl.glPushMatrix();
-    glut.glutSolidTeapot(gl, 0.8f);
+    glut.glutSolidTeapot(0.8f);
     gl.glPopMatrix();
     gl.glEndList();
 
@@ -332,7 +333,6 @@ public class HWShadowmapsSimple extends Demo {
     }
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -349,9 +349,9 @@ public class HWShadowmapsSimple extends Demo {
     }
 
     switch (displayMode) {
-    case RENDER_SCENE_FROM_CAMERA_VIEW:          render_scene_from_camera_view(gl, glu, drawable, params); break;
-    case RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED: render_scene_from_camera_view_shadowed(gl, glu, drawable, params); break;
-    case RENDER_SCENE_FROM_LIGHT_VIEW:           render_scene_from_light_view(gl, glu, drawable, viewportX, viewportY); break;
+    case RENDER_SCENE_FROM_CAMERA_VIEW:          render_scene_from_camera_view(gl, drawable, params); break;
+    case RENDER_SCENE_FROM_CAMERA_VIEW_SHADOWED: render_scene_from_camera_view_shadowed(gl, drawable, params); break;
+    case RENDER_SCENE_FROM_LIGHT_VIEW:           render_scene_from_light_view(gl, drawable, viewportX, viewportY); break;
     default: throw new RuntimeException("Illegal display mode " + displayMode);
     }
   }
@@ -405,7 +405,6 @@ public class HWShadowmapsSimple extends Demo {
       // drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
       gl.glEnable(GL.GL_DEPTH_TEST);
 
@@ -426,7 +425,6 @@ public class HWShadowmapsSimple extends Demo {
 
     public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -434,7 +432,7 @@ public class HWShadowmapsSimple extends Demo {
                          ((Tweak) tweaks.get(POLYGON_OFFSET_BIAS)).val);
       gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 
-      render_scene_from_light_view(gl, glu, drawable, 0, 0);
+      render_scene_from_light_view(gl, drawable, 0, 0);
 
       gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
     
@@ -478,7 +476,7 @@ public class HWShadowmapsSimple extends Demo {
     }
   }
 
-  private void makeRGBTexture(GL gl, GLU glu, BufferedImage img, int target, boolean mipmapped) {
+  private void makeRGBTexture(GL gl, BufferedImage img, int target, boolean mipmapped) {
     ByteBuffer dest = null;
     switch (img.getType()) {
     case BufferedImage.TYPE_3BYTE_BGR:
@@ -627,7 +625,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glPopMatrix();
   }
 
-  private void render_scene_from_camera_view(GL gl, GLU glu, GLAutoDrawable drawable, CameraParameters params) {
+  private void render_scene_from_camera_view(GL gl, GLAutoDrawable drawable, CameraParameters params) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -674,7 +672,7 @@ public class HWShadowmapsSimple extends Demo {
     render_light_frustum(gl);
   }
 
-  private void render_scene_from_camera_view_shadowed(GL gl, GLU glu, GLAutoDrawable drawable, CameraParameters params) {
+  private void render_scene_from_camera_view_shadowed(GL gl, GLAutoDrawable drawable, CameraParameters params) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();
@@ -753,7 +751,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glViewport(viewportX, viewportY, size, size);
   }
 
-  private void render_scene_from_light_view(GL gl, GLU glu, GLAutoDrawable drawable, int viewportX, int viewportY) {
+  private void render_scene_from_light_view(GL gl, GLAutoDrawable drawable, int viewportX, int viewportY) {
     // place light
     gl.glPushMatrix();
     gl.glLoadIdentity();

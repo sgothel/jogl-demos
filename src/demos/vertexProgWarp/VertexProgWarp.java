@@ -139,12 +139,12 @@ public class VertexProgWarp extends Demo {
   private float freq = 8.0f;
   private float d    = 4.0f;
 
+  private GLU glu = new GLU();
   private ExaminerViewer viewer;
 
   public void init(GLAutoDrawable drawable) {
     initComplete = false;
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     float cc = 0.0f;
     gl.glClearColor(cc, cc, cc, 1);
@@ -162,7 +162,7 @@ public class VertexProgWarp extends Demo {
 
     for(int i=0; i<NUM_OBJS; i++) {
       gl.glNewList(i+1, GL.GL_COMPILE);
-      drawObject(gl, glu, i);
+      drawObject(gl, i);
       gl.glEndList();
     }    
 
@@ -246,7 +246,6 @@ public class VertexProgWarp extends Demo {
     time.update();
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -431,7 +430,7 @@ public class VertexProgWarp extends Demo {
     titleSetter.setTitle("SpaceWarp - " + programNames[program]);
   }
 
-  private void drawObject(GL gl, GLU glu, int which) {
+  private void drawObject(GL gl, int which) {
     switch(which) {
     case 0:
       drawSphere(gl, 0.5f, 100, 100);
@@ -455,7 +454,7 @@ public class VertexProgWarp extends Demo {
       break;
 
     case 4:
-      drawCylinder(gl, glu);
+      drawCylinder(gl);
       break;
     }
   }
@@ -605,7 +604,7 @@ public class VertexProgWarp extends Demo {
     }
   }
 
-  private void drawCylinder(GL gl, GLU glu) {
+  private void drawCylinder(GL gl) {
     GLUquadric quad;
 
     quad = glu.gluNewQuadric();

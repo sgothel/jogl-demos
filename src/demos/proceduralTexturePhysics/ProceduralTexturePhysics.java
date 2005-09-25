@@ -38,7 +38,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 import demos.common.*;
 import demos.util.*;
@@ -210,7 +209,6 @@ public class ProceduralTexturePhysics extends Demo {
     }
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 

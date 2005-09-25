@@ -74,14 +74,12 @@ public class TestExaminerViewer {
   }
 
   static class Listener implements GLEventListener {
-    private GL gl;
-    private GLU glu;
+    private GLU glu = new GLU();
     private CameraParameters params = new CameraParameters();
     private ExaminerViewer viewer;
 
     public void init(GLAutoDrawable drawable) {
-      gl = drawable.getGL();
-      glu = drawable.getGLU();
+      GL gl = drawable.getGL();
 
       gl.glClearColor(0, 0, 0, 0);
       float[] lightPosition = new float[] {1, 1, 1, 0};
@@ -125,6 +123,7 @@ public class TestExaminerViewer {
     }
 
     public void display(GLAutoDrawable drawable) {
+      GL gl = drawable.getGL();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
       viewer.update(gl);
       ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());

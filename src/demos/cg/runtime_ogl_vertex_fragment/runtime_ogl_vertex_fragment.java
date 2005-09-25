@@ -57,6 +57,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   // in as well as handles to the vertex and fragment program used in this
   // demo.
 
+  private GLU glu = new GLU();
   CGcontext context;
   CGprogram vertexProgram, fragmentProgram;
 
@@ -131,7 +132,6 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   {
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
     
     // The usual OpenGL stuff to clear the screen and set up viewing.
     gl.glClearColor(.25f, .25f, .25f, 1.0f);

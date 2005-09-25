@@ -63,6 +63,8 @@ public class Water {
   // used to render the water geometry (with the parent drawable's GL
   // object).
 
+  private GLU glu = new GLU();
+
   // Rendering modes
   public static final int CA_FULLSCREEN_REFLECT   = 0;
   public static final int CA_FULLSCREEN_FORCE     = 1;
@@ -424,9 +426,8 @@ public class Water {
   class Listener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
-      initOpenGL(gl, glu);
+      initOpenGL(gl);
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -488,7 +489,7 @@ public class Water {
     initialMapDimensions[1] = initialMap.getHeight();
   }
 
-  private void initOpenGL(GL gl, GLU glu) {
+  private void initOpenGL(GL gl) {
     loadTextures(gl, tmpSpinFilename, tmpDropletFilename, tmpCubeMapFilenamePattern);
     tmpSpinFilename           = null;
     tmpDropletFilename        = null;

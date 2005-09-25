@@ -53,13 +53,11 @@ public class TestHandleBox {
   private static final int Y_SIZE = 400;
 
   static class Listener implements GLEventListener {
-    private GL gl;
-    private GLU glu;
+    private GLU glu = new GLU();
     private CameraParameters params = new CameraParameters();
 
     public void init(GLAutoDrawable drawable) {
-      gl = drawable.getGL();
-      glu = drawable.getGLU();
+      GL gl = drawable.getGL();
 
       gl.glClearColor(0, 0, 0, 0);
       float[] lightPosition = new float[] {1, 1, 1, 0};
@@ -98,12 +96,14 @@ public class TestHandleBox {
     }
 
     public void display(GLAutoDrawable drawable) {
+      GL gl = drawable.getGL();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
       ManipManager.getManipManager().updateCameraParameters(drawable, params);
       ManipManager.getManipManager().render(drawable, gl);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
+      GL gl = drawable.getGL();
       float aspect, theta;
       aspect = (float) w / (float) h;
       if (w >= h)

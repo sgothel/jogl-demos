@@ -130,6 +130,7 @@ public class VertexBufferObject extends Demo {
   // Internals only below this point
   //
 
+  private GLU glu = new GLU();
   private boolean initComplete;
   private boolean[] b = new boolean[256];
   private static final int SIZEOF_FLOAT = 4;
@@ -276,7 +277,6 @@ public class VertexBufferObject extends Demo {
     //    drawable.setGL(new DebugGL(drawable.getGL()));
 
     GL  gl  = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     // Try and disable synch-to-retrace for fastest framerate
     gl.setSwapInterval(0);
@@ -451,7 +451,6 @@ public class VertexBufferObject extends Demo {
     }
 
     GL  gl  = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     // Check to see whether to animate
     if (getFlag(' ')) {

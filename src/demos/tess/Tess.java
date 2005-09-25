@@ -99,14 +99,13 @@ public class Tess {
 
     public static class TessRenderer implements GLEventListener {
         private GL gl;
-        private GLU glu;
+        private GLU glu = new GLU();
         private int startList;
 
         public void init(GLAutoDrawable drawable) {
             drawable.setGL(new DebugGL(drawable.getGL()));
 
             gl = drawable.getGL();
-            glu = drawable.getGLU();
 
             double[][] rect = new double[][]{{50.0, 50.0, 0.0},
                                              {200.0, 50.0, 0.0},

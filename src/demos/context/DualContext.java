@@ -57,6 +57,7 @@ public class DualContext extends Canvas {
   private GLDrawable drawable;
   private GLContext  context1;
   private GLContext  context2;
+  private GLU        glu;
   private GLUT       glut;
   private int        repaintNum;
 
@@ -65,6 +66,7 @@ public class DualContext extends Canvas {
     drawable = GLDrawableFactory.getFactory().getGLDrawable(this, capabilities, null);
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
+    glu = new GLU();
     glut = new GLUT();
   }
 
@@ -87,7 +89,6 @@ public class DualContext extends Canvas {
     int res = context1.makeCurrent();
     if (res != GLContext.CONTEXT_NOT_CURRENT) {
       clearAndDraw(context1.getGL(),
-                   context1.getGLU(),
                    1, 0, 0,
                    0, 0, mid, height, str);
       context1.release();
@@ -96,7 +97,6 @@ public class DualContext extends Canvas {
     res = context2.makeCurrent();
     if (res != GLContext.CONTEXT_NOT_CURRENT) {
       clearAndDraw(context2.getGL(),
-                   context2.getGLU(),
                    0, 0, 1,
                    mid, 0, width - mid, height, str);
       context2.release();
@@ -106,7 +106,6 @@ public class DualContext extends Canvas {
   }
 
   private void clearAndDraw(GL gl,
-                            GLU glu,
                             float br,
                             float bg,
                             float bb,
@@ -125,7 +124,7 @@ public class DualContext extends Canvas {
     gl.glLoadIdentity();
     glu.gluOrtho2D(x, x + width, y, y + height);
     gl.glTranslatef(x + (width - length) / 2, y + height / 2, 0);
-    glut.glutStrokeString(gl, GLUT.STROKE_ROMAN, str);
+    glut.glutStrokeString(GLUT.STROKE_ROMAN, str);
   }
 
   public static void main(String[] args) {

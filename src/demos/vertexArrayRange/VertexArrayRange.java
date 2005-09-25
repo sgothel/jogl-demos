@@ -141,6 +141,7 @@ public class VertexArrayRange extends Demo {
   // Internals only below this point
   //
 
+  private GLU glu = new GLU();
   private boolean[] b = new boolean[256];
   private static final int SIZEOF_FLOAT = 4;
   private static final int STRIP_SIZE  = 48;
@@ -273,7 +274,6 @@ public class VertexArrayRange extends Demo {
     //    drawable.setGL(new DebugGL(drawable.getGL()));
 
     GL  gl  = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     // Try and disable synch-to-retrace for fastest framerate
     gl.setSwapInterval(0);
@@ -452,7 +452,6 @@ public class VertexArrayRange extends Demo {
 
   public void display(GLAutoDrawable drawable) {
     GL  gl  = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     // Check to see whether to animate
     if (getFlag(' ')) {

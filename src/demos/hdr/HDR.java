@@ -236,13 +236,13 @@ public class HDR extends Demo {
   private float zFar  = 10.0f;
   private boolean wire = false;
   private boolean toggleWire = false;
+  private GLU glu = new GLU();
 
   public void init(GLAutoDrawable drawable) {
     initComplete = false;
     //      printThreadName("init for Listener");
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
     checkExtension(gl, "GL_ARB_pbuffer");
@@ -373,7 +373,6 @@ public class HDR extends Demo {
     time.update();
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     // OK, ready to go
     if (b[' ']) {
@@ -570,11 +569,10 @@ public class HDR extends Demo {
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
       gl.glEnable(GL.GL_DEPTH_TEST);
 
       // FIXME: what about the ExaminerViewer?
-      setPerspectiveProjection(gl, glu, pbuffer_w, pbuffer_h);
+      setPerspectiveProjection(gl, pbuffer_w, pbuffer_h);
 
       GLPbuffer pbuffer = (GLPbuffer) drawable;
       int fpmode = pbuffer.getFloatingPointMode();
@@ -615,9 +613,8 @@ public class HDR extends Demo {
       //      printThreadName("display for PbufferListener");
 
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
-      renderScene(gl, glu);
+      renderScene(gl);
 
       // Copy results back to texture
       pipeline.copyToTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h);
@@ -632,7 +629,7 @@ public class HDR extends Demo {
     //
 
     // render scene to float pbuffer
-    private void renderScene(GL gl, GLU glu) {
+    private void renderScene(GL gl) {
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
       if (doViewAll) {
@@ -720,16 +717,16 @@ public class HDR extends Demo {
 
       switch(modelno) {
         case 0:
-          glut.glutSolidTorus(gl, 0.25, 0.5, 40, 40);
+          glut.glutSolidTorus( 0.25, 0.5, 40, 40);
           break;
         case 1:
-          glut.glutSolidSphere(glu, 0.75f, 40, 40);
+          glut.glutSolidSphere(0.75f, 40, 40);
           break;
         case 2:
-          glut.glutSolidTetrahedron(gl);
+          glut.glutSolidTetrahedron();
           break;
         case 3:
-          glut.glutSolidCube(gl, 1.0f);
+          glut.glutSolidCube(1.0f);
           break;
         case 4:
           // Something about the teapot's geometry causes bad artifacts
@@ -872,7 +869,7 @@ public class HDR extends Demo {
     gl.glViewport(x, y, w, h);
   }
     
-  private void setPerspectiveProjection(GL gl, GLU glu, int w, int h) {
+  private void setPerspectiveProjection(GL gl, int w, int h) {
     // FIXME: what about ExaminerViewer?
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -973,7 +970,7 @@ public class HDR extends Demo {
     gl.glPushMatrix();
     gl.glLoadIdentity();
     gl.glScalef(10.0f, 10.0f, 10.0f);
-    glut.glutSolidCube(gl, 1.0f);
+    glut.glutSolidCube(1.0f);
     gl.glPopMatrix();
 
     gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);

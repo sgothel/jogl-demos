@@ -147,6 +147,7 @@ public class InfiniteShadowVolumes extends Demo {
   private static final int CLIP_VIEW   = 2;
   private int curr_view  = CAMERA_VIEW;
 
+  private GLU  glu  = new GLU();
   private GLUT glut = new GLUT();
 
   private GLAutoDrawable drawable;
@@ -177,7 +178,6 @@ public class InfiniteShadowVolumes extends Demo {
 
   public void init(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     gl.glClearStencil(128);
     //glEnable(GL.GL_DEPTH_CLAMP_NV);
@@ -301,7 +301,6 @@ public class InfiniteShadowVolumes extends Demo {
 
   public void display(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -532,7 +531,7 @@ public class InfiniteShadowVolumes extends Demo {
       gl.glDisable(GL.GL_CLIP_PLANE5);
     }
 
-    drawLight(gl, glu);
+    drawLight(gl);
 
     gl.glPopMatrix();
 
@@ -549,7 +548,7 @@ public class InfiniteShadowVolumes extends Demo {
       }
       gl.glColor3f(.75f,.75f,0);
       gl.glLineWidth(3);
-      glut.glutWireCube(gl, 2);
+      glut.glutWireCube(2);
       gl.glLineWidth(1);
       gl.glPopMatrix();
     }
@@ -1161,13 +1160,13 @@ public class InfiniteShadowVolumes extends Demo {
 
   // Draw an icon to show where the local light is
   // or in what direction the infinite light is pointing. 
-  private void drawLight(GL gl, GLU glu) {
+  private void drawLight(GL gl) {
     gl.glColor3f(1,1,0);
     gl.glPushMatrix();
     gl.glMultMatrixf(getData(lightManipXform), 0);
     gl.glScalef(light_object_scale, light_object_scale, light_object_scale);
     if (b['L']) {
-      glut.glutSolidSphere(glu, .01f, 20, 10);
+      glut.glutSolidSphere(.01f, 20, 10);
     } else {
       Vec3f ldir = new Vec3f(light_position.get(0),
                              light_position.get(1),
@@ -1180,7 +1179,7 @@ public class InfiniteShadowVolumes extends Demo {
       gl.glRotatef(180, 1, 0, 0);
       gl.glTranslatef(0,0,-0.02f);
       gl.glMultMatrixf(getData(m), 0);
-      glut.glutSolidCube(gl, 2);
+      glut.glutSolidCube(2);
     }
     gl.glPopMatrix();
   }

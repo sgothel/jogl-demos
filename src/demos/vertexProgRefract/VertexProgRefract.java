@@ -104,6 +104,7 @@ public class VertexProgRefract extends Demo {
   private int bunnydl;
   private int obj;
 
+  private GLU  glu  = new GLU();
   private GLUT glut = new GLUT();
 
   private GLAutoDrawable drawable;
@@ -225,7 +226,6 @@ public class VertexProgRefract extends Demo {
   public void init(GLAutoDrawable drawable) {
     initComplete = false;
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
     float cc = 1.0f;
     gl.glClearColor(cc, cc, cc, 1);
     gl.glColor3f(1,1,1);
@@ -278,7 +278,7 @@ public class VertexProgRefract extends Demo {
     gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
 
     try {
-      loadPNGCubemap(gl, glu, "demos/data/cubemaps/uffizi", true);
+      loadPNGCubemap(gl, "demos/data/cubemaps/uffizi", true);
     } catch (IOException e) {
       shutdownDemo();
       throw new RuntimeException(e);
@@ -342,7 +342,6 @@ public class VertexProgRefract extends Demo {
     time.update();
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT|GL.GL_DEPTH_BUFFER_BIT);
 
     if (doViewAll) {
@@ -366,7 +365,7 @@ public class VertexProgRefract extends Demo {
 
     // draw background
     gl.glDisable(GL.GL_DEPTH_TEST);
-    drawSkyBox(gl, glu);
+    drawSkyBox(gl);
     gl.glEnable(GL.GL_DEPTH_TEST);
 
     gl.glPushMatrix();
@@ -409,13 +408,13 @@ public class VertexProgRefract extends Demo {
     if (getFlag('s')) {
       // single pass
       setRefraction(gl, refract);
-      drawObj(gl, glu, obj);
+      drawObj(gl, obj);
 
     } else {
       // red pass
       gl.glColorMask(true, false, false, false);
       setRefraction(gl, refract);
-      drawObj(gl, glu, obj);
+      drawObj(gl, obj);
   
       gl.glDepthMask(false);
       gl.glDepthFunc(GL.GL_EQUAL);
@@ -423,12 +422,12 @@ public class VertexProgRefract extends Demo {
       // green pass
       gl.glColorMask(false, true, false, false);
       setRefraction(gl, refract + wavelengthDelta);
-      drawObj(gl, glu, obj);
+      drawObj(gl, obj);
 
       // blue pass
       gl.glColorMask(false, false, true, false);
       setRefraction(gl, refract + (wavelengthDelta * 2));
-      drawObj(gl, glu, obj);
+      drawObj(gl, obj);
 
       gl.glDepthMask(true);
       gl.glDepthFunc(GL.GL_LESS);
@@ -517,7 +516,7 @@ public class VertexProgRefract extends Demo {
                     GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
                     GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
                     GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
-  private void loadPNGCubemap(GL gl, GLU glu, String baseName, boolean mipmapped) throws IOException {
+  private void loadPNGCubemap(GL gl, String baseName, boolean mipmapped) throws IOException {
     for (int i = 0; i < suffixes.length; i++) {
       String resourceName = baseName + "_" + suffixes[i] + ".png";
       // Note: use of BufferedInputStream works around 4764639/4892246
@@ -525,11 +524,11 @@ public class VertexProgRefract extends Demo {
       if (img == null) {
         throw new RuntimeException("Error reading PNG image " + resourceName);
       }
-      makeRGBTexture(gl, glu, img, targets[i], mipmapped);
+      makeRGBTexture(gl, img, targets[i], mipmapped);
     }
   }
 
-  private void makeRGBTexture(GL gl, GLU glu, BufferedImage img, int target, boolean mipmapped) {
+  private void makeRGBTexture(GL gl, BufferedImage img, int target, boolean mipmapped) {
     switch (img.getType()) {
     case BufferedImage.TYPE_3BYTE_BGR:
     case BufferedImage.TYPE_CUSTOM: {
@@ -640,7 +639,7 @@ public class VertexProgRefract extends Demo {
     }
   }
 
-  private void drawSkyBox(GL gl, GLU glu) {
+  private void drawSkyBox(GL gl) {
     // Compensates for ExaminerViewer's modification of modelview matrix
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
@@ -674,7 +673,7 @@ public class VertexProgRefract extends Demo {
     gl.glScalef(1.0f, -1.0f, 1.0f);
     viewer.updateInverseRotation(gl);
     
-    glut.glutSolidSphere(glu, 5.0, 40, 20);
+    glut.glutSolidSphere(5.0, 40, 20);
 
     gl.glDisable(GL.GL_LIGHTING);
 
@@ -686,18 +685,18 @@ public class VertexProgRefract extends Demo {
     gl.glDisable(GL.GL_TEXTURE_GEN_R);
   }
 
-  private void drawObj(GL gl, GLU glu, int obj) {
+  private void drawObj(GL gl, int obj) {
     switch(obj) {
     case 0:
       gl.glCallList(bunnydl);
       break;
     
     case 1:
-      glut.glutSolidSphere(glu, 0.5, 64, 64);
+      glut.glutSolidSphere(0.5, 64, 64);
       break;
 
     case 2:
-      glut.glutSolidTorus(gl, 0.25, 0.5, 64, 64);
+      glut.glutSolidTorus(0.25, 0.5, 64, 64);
       break;
 
     case 3:

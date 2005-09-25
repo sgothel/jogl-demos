@@ -56,6 +56,7 @@ public class cgGL_vertex_example implements GLEventListener
 
   private final int TextureRes = 512;
   
+  private GLU glu = new GLU();
   private static CGcontext Context = null;
   private static CGprogram Program = null;
   private static CGparameter KdParam = null;
@@ -225,7 +226,6 @@ public class cgGL_vertex_example implements GLEventListener
       CheckCgError();
     }
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     InitializeCube(CubeVertices);
 

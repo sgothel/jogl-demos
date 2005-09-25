@@ -42,7 +42,6 @@ package demos.multisample;
 import java.awt.*;
 import java.awt.event.*;
 import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
 
 public class Multisample {
@@ -127,7 +126,6 @@ public class Multisample {
   class Listener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
       gl.glClearColor(0, 0, 0, 0);
       //      gl.glEnable(GL.GL_DEPTH_TEST);
@@ -142,7 +140,6 @@ public class Multisample {
 
     public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
