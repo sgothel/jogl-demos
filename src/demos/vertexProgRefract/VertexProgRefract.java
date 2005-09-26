@@ -535,7 +535,7 @@ public class VertexProgRefract extends Demo {
       byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
       if (mipmapped) {
         glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, data);
+                              GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
       } else {
         gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
                         GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
@@ -547,7 +547,7 @@ public class VertexProgRefract extends Demo {
       int[] data = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
       if (mipmapped) {
         glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, data);
+                              GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
       } else {
         gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
                         GL.GL_RGB, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
