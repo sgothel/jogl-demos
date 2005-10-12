@@ -53,6 +53,8 @@ import demos.vertexBufferObject.VertexBufferObject;
 import demos.vertexProgRefract.VertexProgRefract;
 import demos.vertexProgWarp.VertexProgWarp;
 
+import demos.xtrans.*;
+
 /**
   Wavelength-dependent refraction demo<br>
   It's a chromatic aberration!<br>
@@ -210,13 +212,13 @@ public class JRefract {
       });
 
     inner.getContentPane().setLayout(new BorderLayout());
-    if (which == REFRACT) {
+    /*    if (which == REFRACT) {
       // Testing scrolling
       canvas.setSize(512, 512);
       canvas.setPreferredSize(new Dimension(512, 512));
       JScrollPane scroller = new JScrollPane(canvas);
       inner.getContentPane().add(scroller);
-    } else if (which == GEARS) {
+      } else */ if (which == GEARS) {
       // Provide control over transparency of gears background
       canvas.setOpaque(false);
       JPanel gradientPanel = JGears.createGradientPanel();
@@ -244,7 +246,14 @@ public class JRefract {
 
   public void run(String[] args) {
     JFrame frame = new JFrame("JOGL and Swing Interoperability");
-    desktop = new JDesktopPane();
+    if ((args.length > 0) && args[0].equals("-xt")) {
+      desktop = new XTDesktopPane();
+      // FIXME: this is a hack to get the repaint behavior to work correctly
+      ((XTDesktopPane) desktop).setAlwaysRedraw(true);
+    } else {
+      desktop = new JDesktopPane();
+    }
+
     desktop.setSize(1024, 768);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(desktop, BorderLayout.CENTER);

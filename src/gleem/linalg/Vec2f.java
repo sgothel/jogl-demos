@@ -59,6 +59,10 @@ public class Vec2f {
     return new Vec2f(this);
   }
 
+  public void set(Vec2f arg) {
+    set(arg.x, arg.y);
+  }
+
   public void set(float x, float y) {
     this.x = x;
     this.y = y;
