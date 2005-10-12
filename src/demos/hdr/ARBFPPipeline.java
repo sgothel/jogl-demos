@@ -27,11 +27,8 @@ public class ARBFPPipeline implements Pipeline {
   }
 
   public void copyToTexture(GL gl, int textureObject, int w, int h) {
-    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, textureObject);
-    long start = System.currentTimeMillis();
+    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, textureObject); 
     gl.glCopyTexSubImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, 0, 0, 0, 0, w, h);
-    long end = System.currentTimeMillis();
-    System.err.println("glCopyTexSubImage2D " + w + "x" + h + " took " + (end - start) + " ms");
   }
 
   public void bindTexture(GL gl, int textureObject) {
