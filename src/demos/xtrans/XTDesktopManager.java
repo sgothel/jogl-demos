@@ -11,8 +11,6 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.impl.*;
 
-import com.sun.opengl.impl.windows.*;
-
 /** A desktop manager implementation supporting accelerated
     transitions of the components on the desktop via OpenGL. This
     class does not need to be instantiated by end users; it is

@@ -8,8 +8,6 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.impl.*;
 
-import com.sun.opengl.impl.windows.*;
-
 /** A JDesktopPane subclass supporting Accelerated Transitions (XT) of
     the components contained within. */
 
