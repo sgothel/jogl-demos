@@ -7,9 +7,10 @@ import java.nio.*;
 import java.util.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
-import net.java.games.cg.*;
-import net.java.games.jogl.util.*;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import com.sun.opengl.utils.*;
+import demos.common.*;
 import demos.util.*;
 import gleem.*;
 import gleem.linalg.*;
@@ -19,12 +20,19 @@ import gleem.linalg.*;
     Ported to Java by Kenneth Russell
 */
 
-public class HDR {
+public class HDR extends Demo {
+  private static String[] defaultArgs = {
+    "demos/data/images/stpeters_cross.hdr",
+    "512",
+    "384",
+    "2",
+    "7",
+    "3",
+    "demos/data/models/teapot.obj"
+  };
+  private GLAutoDrawable drawable;
   private boolean  useCg;
-  private GLCanvas canvas;
-  private Frame    frame;
-  private Animator animator;
-  private boolean  initFailed;
+  private boolean  initComplete;
   private HDRTexture hdr;
   private String modelFilename;
   private ObjReader model;
@@ -97,10 +105,42 @@ public class HDR {
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
   public static void main(String[] args) {
-    new HDR().run(args);
+    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    HDR demo = new HDR();
+    canvas.addGLEventListener(demo);
+
+    final Animator animator = new Animator(canvas);
+    demo.setDemoListener(new DemoListener() {
+        public void shutdownDemo() {
+          runExit(animator);
+        }
+        public void repaint() {}
+      });
+    demo.setup(args);
+
+    Frame frame = new Frame("High Dynamic Range Rendering Demo");
+    frame.setLayout(new BorderLayout());
+    canvas.setSize(demo.getPreferredWidth(), demo.getPreferredHeight());
+    
+    frame.add(canvas, BorderLayout.CENTER);
+    frame.pack();
+    frame.show();
+    canvas.requestFocus();
+
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          runExit(animator);
+        }
+      });
+
+    animator.start();
   }
 
-  public void run(String[] args) {
+  public void setup(String[] args) {
+    if ((args == null) || (args.length == 0)) {
+      args = defaultArgs;
+    }
+
     if (args.length < 6 || args.length > 8) {
       usage();
     }
@@ -168,333 +208,354 @@ public class HDR {
       System.exit(0);
     }
 
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
-    canvas.addGLEventListener(new Listener());
-    canvas.setNoAutoRedrawMode(true);
+  }
 
-    animator = new Animator(canvas);
+  public int getPreferredWidth() {
+    return win_w;
+  }
 
-    frame = new Frame("HDR test");
-    frame.setLayout(new BorderLayout());
-    canvas.setSize(win_w, win_h);
-    
-    frame.add(canvas, BorderLayout.CENTER);
-    frame.pack();
-    frame.setResizable(false);
-    frame.show();
-    canvas.requestFocus();
-
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          runExit();
-        }
-      });
-
-    animator.start();
+  public int getPreferredHeight() {
+    return win_h;
   }
 
   //----------------------------------------------------------------------
   // Internals only below this point
   //
 
+  public void shutdownDemo() {
+    ManipManager.getManipManager().unregisterWindow(drawable);
+    drawable.removeGLEventListener(this);
+    super.shutdownDemo();
+  }
+
   //----------------------------------------------------------------------
-  // Listeners for main window and pbuffers
+  // Listener for main window
   //
 
-  class Listener implements GLEventListener {
-    private float zNear = 0.1f;
-    private float zFar  = 10.0f;
-    private boolean wire = false;
-    private boolean toggleWire = false;
+  private float zNear = 0.1f;
+  private float zFar  = 10.0f;
+  private boolean wire = false;
+  private boolean toggleWire = false;
+  private GLU glu = new GLU();
 
-    public void init(GLDrawable drawable) {
-      //      printThreadName("init for Listener");
+  public void init(GLAutoDrawable drawable) {
+    initComplete = false;
+    //      printThreadName("init for Listener");
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    GL gl = drawable.getGL();
 
-      checkExtension(gl, "GL_ARB_multitexture");
-      checkExtension(gl, "GL_ARB_pbuffer");
-      checkExtension(gl, "GL_ARB_vertex_program");
-      checkExtension(gl, "GL_ARB_fragment_program");
-      if (!gl.isExtensionAvailable("GL_NV_texture_rectangle") &&
-          !gl.isExtensionAvailable("GL_EXT_texture_rectangle") &&
-          !gl.isExtensionAvailable("GL_ARB_texture_rectangle")) {
-        // NOTE: it turns out the constants associated with these extensions are all identical
-        unavailableExtension("Texture rectangle extension not available (need one of GL_NV_texture_rectangle, GL_EXT_texture_rectangle or GL_ARB_texture_rectangle");
-      }
-
-      if (!gl.isExtensionAvailable("GL_NV_float_buffer") &&
-          !gl.isExtensionAvailable("GL_ATI_texture_float") &&
-          !gl.isExtensionAvailable("GL_APPLE_float_pixels")) {
-        unavailableExtension("Floating-point textures not available (need one of GL_NV_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
-      }
-
-      setOrthoProjection(gl, win_w, win_h);
-
-      gamma_tex = createGammaTexture(gl, 1024, 1.0f / 2.2f);
-      vignette_tex = createVignetteTexture(gl, pbuffer_w, pbuffer_h, 0.25f*pbuffer_w, 0.7f*pbuffer_w);
-
-      int floatBits = 16;
-      int floatAlphaBits = 0;
-      // int floatDepthBits = 16;
-      // Workaround for apparent bug when not using render-to-texture-rectangle
-      int floatDepthBits = 1;
-
-      GLCapabilities caps = new GLCapabilities();
-      caps.setDoubleBuffered(false);
-      caps.setOffscreenFloatingPointBuffers(true);
-      caps.setRedBits(floatBits);
-      caps.setGreenBits(floatBits);
-      caps.setBlueBits(floatBits);
-      caps.setAlphaBits(floatAlphaBits);
-      caps.setDepthBits(floatDepthBits);
-      int[] tmp = new int[1];
-      pbuffer = drawable.createOffscreenDrawable(caps, pbuffer_w, pbuffer_h);
-      pbuffer.addGLEventListener(new PbufferListener());
-      gl.glGenTextures(1, tmp);
-      pbuffer_tex = tmp[0];
-      blur_pbuffer = drawable.createOffscreenDrawable(caps, blur_w, blur_h);
-      blur_pbuffer.addGLEventListener(new BlurPbufferListener());
-      gl.glGenTextures(1, tmp);
-      blur_pbuffer_tex = tmp[0];
-      blur2_pbuffer = drawable.createOffscreenDrawable(caps, blur_w, blur_h);
-      blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
-      gl.glGenTextures(1, tmp);
-      blur2_pbuffer_tex = tmp[0];
-      caps.setOffscreenFloatingPointBuffers(false);
-      caps.setRedBits(8);
-      caps.setGreenBits(8);
-      caps.setBlueBits(8);
-      caps.setDepthBits(24);
-      tonemap_pbuffer = drawable.createOffscreenDrawable(caps, pbuffer_w, pbuffer_h);
-      tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
-      gl.glGenTextures(1, tmp);
-      tonemap_pbuffer_tex = tmp[0];
-      
-      drawable.addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            dispatchKey(e.getKeyCode(), e.getKeyChar());
-          }
-        });
-
-      // Register the window with the ManipManager
-      ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
-
-      viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-      viewer.setNoAltKeyMode(true);
-      viewer.attach(drawable, new BSphereProvider() {
-	  public BSphere getBoundingSphere() {
-	    return new BSphere(new Vec3f(0, 0, 0), 1.0f);
-	  }
-	});
-      viewer.setZNear(zNear);
-      viewer.setZFar(zFar);
+    checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
+    checkExtension(gl, "GL_ARB_pbuffer");
+    checkExtension(gl, "GL_ARB_vertex_program");
+    checkExtension(gl, "GL_ARB_fragment_program");
+    if (!gl.isExtensionAvailable("GL_NV_texture_rectangle") &&
+        !gl.isExtensionAvailable("GL_EXT_texture_rectangle") &&
+        !gl.isExtensionAvailable("GL_ARB_texture_rectangle")) {
+      // NOTE: it turns out the constants associated with these extensions are all identical
+      unavailableExtension("Texture rectangle extension not available (need one of GL_NV_texture_rectangle, GL_EXT_texture_rectangle or GL_ARB_texture_rectangle");
     }
 
-    public void display(GLDrawable drawable) {
-      //      printThreadName("display for Listener");
+    if (!gl.isExtensionAvailable("GL_NV_float_buffer") &&
+        !gl.isExtensionAvailable("GL_ATI_texture_float") &&
+        !gl.isExtensionAvailable("GL_APPLE_float_pixels")) {
+      unavailableExtension("Floating-point textures not available (need one of GL_NV_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
+    }
 
-      if (initFailed) {
-        return;
-      }
+    setOrthoProjection(gl, 0, 0, win_w, win_h);
 
-      if (!firstRender) {
-        if (++frameCount == 30) {
-          timer.stop();
-          System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
-          timer.reset();
-          timer.start();
-          frameCount = 0;
+    gamma_tex = createGammaTexture(gl, 1024, 1.0f / 2.2f);
+    vignette_tex = createVignetteTexture(gl, pbuffer_w, pbuffer_h, 0.25f*pbuffer_w, 0.7f*pbuffer_w);
+
+    int floatBits = 16;
+    int floatAlphaBits = 0;
+    // int floatDepthBits = 16;
+    // Workaround for apparent bug when not using render-to-texture-rectangle
+    int floatDepthBits = 1;
+
+    GLCapabilities caps = new GLCapabilities();
+    caps.setDoubleBuffered(false);
+    caps.setOffscreenFloatingPointBuffers(true);
+    caps.setRedBits(floatBits);
+    caps.setGreenBits(floatBits);
+    caps.setBlueBits(floatBits);
+    caps.setAlphaBits(floatAlphaBits);
+    caps.setDepthBits(floatDepthBits);
+    int[] tmp = new int[1];
+    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {
+      unavailableExtension("Can not create pbuffer");
+    }
+    if (pbuffer != null) {
+      pbuffer.destroy();
+      pbuffer = null;
+    }
+    if (blur_pbuffer != null) {
+      blur_pbuffer.destroy();
+      blur_pbuffer = null;
+    }
+    if (blur2_pbuffer != null) {
+      blur2_pbuffer.destroy();
+      blur2_pbuffer = null;
+    }
+    if (tonemap_pbuffer != null) {
+      tonemap_pbuffer.destroy();
+      tonemap_pbuffer = null;
+    }
+
+    GLContext parentContext = drawable.getContext();
+    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
+    pbuffer.addGLEventListener(new PbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    pbuffer_tex = tmp[0];
+    blur_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
+    blur_pbuffer.addGLEventListener(new BlurPbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    blur_pbuffer_tex = tmp[0];
+    blur2_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
+    blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    blur2_pbuffer_tex = tmp[0];
+    caps.setOffscreenFloatingPointBuffers(false);
+    caps.setRedBits(8);
+    caps.setGreenBits(8);
+    caps.setBlueBits(8);
+    caps.setDepthBits(24);
+    tonemap_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
+    tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
+    gl.glGenTextures(1, tmp, 0);
+    tonemap_pbuffer_tex = tmp[0];
+      
+    drawable.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          dispatchKey(e.getKeyCode(), e.getKeyChar());
         }
-      } else {
-        firstRender = false;
+      });
+
+    doViewAll = true;
+
+    // Register the window with the ManipManager
+    ManipManager manager = ManipManager.getManipManager();
+    manager.registerWindow(drawable);
+    this.drawable = drawable;
+
+    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer.setAutoRedrawMode(false);
+    viewer.setNoAltKeyMode(true);
+    viewer.attach(drawable, new BSphereProvider() {
+        public BSphere getBoundingSphere() {
+          return new BSphere(new Vec3f(0, 0, 0), 1.0f);
+        }
+      });
+    viewer.setZNear(zNear);
+    viewer.setZFar(zFar);
+    initComplete = true;
+  }
+
+  public void display(GLAutoDrawable drawable) {
+    //      printThreadName("display for Listener");
+
+    if (!initComplete) {
+      return;
+    }
+
+    if (!firstRender) {
+      if (++frameCount == 30) {
+        timer.stop();
+        System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
+        timer.reset();
         timer.start();
+        frameCount = 0;
       }
+    } else {
+      firstRender = false;
+      timer.start();
+    }
 
-      time.update();
+    time.update();
 
-      GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
+    GL gl = drawable.getGL();
 
-      // OK, ready to go
-      if (b[' ']) {
-        viewer.rotateAboutFocalPoint(new Rotf(Vec3f.Y_AXIS, (float) (time.deltaT() * animRate)));
-      }
+    // OK, ready to go
+    if (b[' ']) {
+      viewer.rotateAboutFocalPoint(new Rotf(Vec3f.Y_AXIS, (float) (time.deltaT() * animRate)));
+    }
 
-      pbuffer.display();
+    pbuffer.display();
 
-      // blur pass
-      if (b['g']) {
-        // shrink image
-        blur2Pass = BLUR2_SHRINK_PASS;
-        blur2_pbuffer.display();
-      }
+    // FIXME: because of changes in lazy pbuffer instantiation
+    // behavior the pbuffer might not have been run just now
+    if (pipeline == null) {
+      return;
+    }
 
-      // horizontal blur
-      blur_pbuffer.display();
-
-      // vertical blur
-      blur2Pass = BLUR2_VERT_BLUR_PASS;
+    // blur pass
+    if (b['g']) {
+      // shrink image
+      blur2Pass = BLUR2_SHRINK_PASS;
       blur2_pbuffer.display();
-
-      // tone mapping pass
-      tonemap_pbuffer.display();
-
-      // display in window
-      gl.glEnable(GL.GL_TEXTURE_RECTANGLE_NV);
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-      gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, tonemap_pbuffer_tex);
-      if (b['n']) {
-        gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-      } else {
-        gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      }
-      drawQuadRect4(gl, win_w, win_h, pbuffer_w, pbuffer_h);
-      gl.glDisable(GL.GL_TEXTURE_RECTANGLE_NV);
-
-      // Try to avoid swamping the CPU on Linux
-      Thread.yield();
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
+    // horizontal blur
+    blur_pbuffer.display();
 
-    // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    // vertical blur
+    blur2Pass = BLUR2_VERT_BLUR_PASS;
+    blur2_pbuffer.display();
 
-    //----------------------------------------------------------------------
-    // Internals only below this point
-    //
-    private void checkExtension(GL gl, String glExtensionName) {
-      if (!gl.isExtensionAvailable(glExtensionName)) {
-        unavailableExtension("Unable to initialize " + glExtensionName + " OpenGL extension");
-      }
+    // tone mapping pass
+    tonemap_pbuffer.display();
+
+    // display in window
+    gl.glEnable(GL.GL_TEXTURE_RECTANGLE_NV);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
+    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, tonemap_pbuffer_tex);
+    if (b['n']) {
+      gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+    } else {
+      gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
     }
+    drawQuadRect4(gl, win_w, win_h, pbuffer_w, pbuffer_h);
+    gl.glDisable(GL.GL_TEXTURE_RECTANGLE_NV);
 
-    private void unavailableExtension(String message) {
-      JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
-      initFailed = true;
-      runExit();
-      throw new GLException(message);
+    // Try to avoid swamping the CPU on Linux
+    Thread.yield();
+  }
+
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    setOrthoProjection(drawable.getGL(), x, y, width, height);
+    win_w = width;
+    win_h = height;
+  }
+
+  // Unused routines
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+
+  private void checkExtension(GL gl, String glExtensionName) {
+    if (!gl.isExtensionAvailable(glExtensionName)) {
+      unavailableExtension("Unable to initialize " + glExtensionName + " OpenGL extension");
     }
+  }
 
-    private void dispatchKey(int keyCode, char k) {
-      if (k < 256)
-        b[k] = !b[k];
+  private void unavailableExtension(String message) {
+    JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
+    shutdownDemo();
+    throw new GLException(message);
+  }
 
-      switch (keyCode) {
-        case KeyEvent.VK_ESCAPE:
-        case KeyEvent.VK_Q:
-          runExit();
-          break;
+  private void dispatchKey(int keyCode, char k) {
+    if (k < 256)
+      b[k] = !b[k];
 
-        case KeyEvent.VK_EQUALS:
-          exposure *= 2;
-          break;
+    switch (keyCode) {
+    case KeyEvent.VK_ESCAPE:
+    case KeyEvent.VK_Q:
+      shutdownDemo();
+      break;
 
-        case KeyEvent.VK_MINUS:
-          exposure *= 0.5f;
-          break;
+    case KeyEvent.VK_EQUALS:
+      exposure *= 2;
+      break;
 
-        case KeyEvent.VK_PLUS:
-          exposure += 1.0f;
-          break;
+    case KeyEvent.VK_MINUS:
+      exposure *= 0.5f;
+      break;
 
-        case KeyEvent.VK_UNDERSCORE:
-          exposure -= 1.0f;
-          break;
+    case KeyEvent.VK_PLUS:
+      exposure += 1.0f;
+      break;
 
-        case KeyEvent.VK_PERIOD:
-          blurAmount += 0.1f;
-          break;
+    case KeyEvent.VK_UNDERSCORE:
+      exposure -= 1.0f;
+      break;
 
-        case KeyEvent.VK_COMMA:
-          blurAmount -= 0.1f;
-          break;
+    case KeyEvent.VK_PERIOD:
+      blurAmount += 0.1f;
+      break;
 
-        case KeyEvent.VK_G:
-          if (b['g'])
-            blurAmount = 0.5f;
-          else
-            blurAmount = 0.0f;
-          break;
+    case KeyEvent.VK_COMMA:
+      blurAmount -= 0.1f;
+      break;
 
-        case KeyEvent.VK_O:
-          modelno = (modelno + 1) % numModels;
-          break;
+    case KeyEvent.VK_G:
+      if (b['g'])
+        blurAmount = 0.5f;
+      else
+        blurAmount = 0.0f;
+      break;
+
+    case KeyEvent.VK_O:
+      modelno = (modelno + 1) % numModels;
+      break;
           
-        case KeyEvent.VK_V:
-          doViewAll = true;
-          break;
-      }
+    case KeyEvent.VK_V:
+      doViewAll = true;
+      break;
+    }
+  }
+
+  // create gamma lookup table texture
+  private int createGammaTexture(GL gl, int size, float gamma) {
+    int[] tmp = new int[1];
+    gl.glGenTextures(1, tmp, 0);
+    int texid = tmp[0];
+
+    int target = GL.GL_TEXTURE_1D;
+    gl.glBindTexture(target, texid);
+    gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+
+    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+
+    float[] img = new float [size];
+
+    for(int i=0; i<size; i++) {
+      float x = i / (float) size;
+      img[i] = (float) Math.pow(x, gamma);
     }
 
-    // create gamma lookup table texture
-    private int createGammaTexture(GL gl, int size, float gamma) {
-      int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp);
-      int texid = tmp[0];
+    gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(img));
 
-      int target = GL.GL_TEXTURE_1D;
-      gl.glBindTexture(target, texid);
-      gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    return texid;
+  }
 
-      gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-
-      float[] img = new float [size];
-
-      for(int i=0; i<size; i++) {
-        float x = i / (float) size;
-        img[i] = (float) Math.pow(x, gamma);
-      }
-
-      gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img);
-
-      return texid;
-    }
-
-    // create vignette texture
-    // based on Debevec's pflare.c
-    int createVignetteTexture(GL gl, int xsiz, int ysiz, float r0, float r1) {
-      int[] tmp = new int[1];
-      gl.glGenTextures(1, tmp);
-      int texid = tmp[0];
+  // create vignette texture
+  // based on Debevec's pflare.c
+  int createVignetteTexture(GL gl, int xsiz, int ysiz, float r0, float r1) {
+    int[] tmp = new int[1];
+    gl.glGenTextures(1, tmp, 0);
+    int texid = tmp[0];
       
-      gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, texid);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-      gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, texid);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
-      gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
 
-      float[] img = new float [xsiz*ysiz];
+    float[] img = new float [xsiz*ysiz];
 
-      for (int y = 0; y < ysiz; y++) {
-        for (int x = 0; x < xsiz; x++) {
-          float radius = (float) Math.sqrt((x-xsiz/2)*(x-xsiz/2) + (y-ysiz/2)*(y-ysiz/2));
-          if (radius > r0) {
-	    if (radius < r1) {
-	      float t = 1.0f - (radius-r0)/(r1-r0);
-	      float a = t * 2 - 1;
-	      float reduce = (float) ((0.25 * Math.PI + 0.5 * Math.asin(a) + 0.5 * a * Math.sqrt( 1 - a*a ))/(0.5 * Math.PI));
-	      img[y*xsiz + x] = reduce;
-	    } else {
-	      img[y*xsiz + x] = 0.0f;
-	    }
+    for (int y = 0; y < ysiz; y++) {
+      for (int x = 0; x < xsiz; x++) {
+        float radius = (float) Math.sqrt((x-xsiz/2)*(x-xsiz/2) + (y-ysiz/2)*(y-ysiz/2));
+        if (radius > r0) {
+          if (radius < r1) {
+            float t = 1.0f - (radius-r0)/(r1-r0);
+            float a = t * 2 - 1;
+            float reduce = (float) ((0.25 * Math.PI + 0.5 * Math.asin(a) + 0.5 * a * Math.sqrt( 1 - a*a ))/(0.5 * Math.PI));
+            img[y*xsiz + x] = reduce;
           } else {
-            img[y*xsiz + x] = 1.0f;
+            img[y*xsiz + x] = 0.0f;
           }
+        } else {
+          img[y*xsiz + x] = 1.0f;
         }
       }
-
-      gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, img);
-
-      return texid;
     }
+
+    gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(img));
+
+    return texid;
   }
 
   //----------------------------------------------------------------------
@@ -502,17 +563,16 @@ public class HDR {
   //
 
   class PbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
       gl.glEnable(GL.GL_DEPTH_TEST);
 
       // FIXME: what about the ExaminerViewer?
-      setPerspectiveProjection(gl, glu, pbuffer_w, pbuffer_h);
+      setPerspectiveProjection(gl, pbuffer_w, pbuffer_h);
 
       GLPbuffer pbuffer = (GLPbuffer) drawable;
       int fpmode = pbuffer.getFloatingPointMode();
@@ -549,28 +609,27 @@ public class HDR {
       pipeline.initFloatingPointTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for PbufferListener");
 
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
-      renderScene(gl, glu);
+      renderScene(gl);
 
       // Copy results back to texture
       pipeline.copyToTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h);
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point
     //
 
     // render scene to float pbuffer
-    private void renderScene(GL gl, GLU glu) {
+    private void renderScene(GL gl) {
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
       if (doViewAll) {
@@ -583,10 +642,10 @@ public class HDR {
         gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
       if (b['m']) {
-        gl.glEnable(GL.GL_MULTISAMPLE_ARB);
+        gl.glEnable(GL.GL_MULTISAMPLE);
         gl.glHint(GL.GL_MULTISAMPLE_FILTER_HINT_NV, GL.GL_NICEST);
       } else {
-        gl.glDisable(GL.GL_MULTISAMPLE_ARB);
+        gl.glDisable(GL.GL_MULTISAMPLE);
       }
   
       if (!b['e']) {
@@ -625,32 +684,32 @@ public class HDR {
       view.xformPt(eyePos_eye, eyePos_model);
       pipeline.setVertexProgramParameter3f(gl, eyePos_param, eyePos_model.x(), eyePos_model.y(), eyePos_model.z());
 
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex);
-      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE0);
+      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex);
+      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
       boolean linear = b['l'];
       if (linear) {
-        gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+        gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
       } else {
-        //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
+        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
       }
 
       if (hilo) {
-        gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-        gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex2);
-        gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+        gl.glActiveTexture(GL.GL_TEXTURE1);
+        gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex2);
+        gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
         if (linear) {
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
         } else {
-          //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP_ARB, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+          //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
         }
       }
 
@@ -658,16 +717,16 @@ public class HDR {
 
       switch(modelno) {
         case 0:
-          glut.glutSolidTorus(gl, 0.25, 0.5, 40, 40);
+          glut.glutSolidTorus( 0.25, 0.5, 40, 40);
           break;
         case 1:
-          glut.glutSolidSphere(glu, 0.75f, 40, 40);
+          glut.glutSolidSphere(0.75f, 40, 40);
           break;
         case 2:
-          glut.glutSolidTetrahedron(gl);
+          glut.glutSolidTetrahedron();
           break;
         case 3:
-          glut.glutSolidCube(gl, 1.0f);
+          glut.glutSolidCube(1.0f);
           break;
         case 4:
           // Something about the teapot's geometry causes bad artifacts
@@ -679,7 +738,7 @@ public class HDR {
           gl.glVertexPointer(3, GL.GL_FLOAT, 0, model.getVertices());
           gl.glNormalPointer(GL.GL_FLOAT, 0, model.getVertexNormals());
           int[] indices = model.getFaceIndices();
-          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, indices);
+          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, IntBuffer.wrap(indices));
           gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
           gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
           break;
@@ -693,7 +752,7 @@ public class HDR {
   }
 
   class BlurPbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for BlurPbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -701,19 +760,19 @@ public class HDR {
       GL gl = drawable.getGL();
 
       // FIXME: what about the ExaminerViewer?
-      setOrthoProjection(gl, blur_w, blur_h);
+      setOrthoProjection(gl, 0, 0, blur_w, blur_h);
 
       pipeline.initFloatingPointTexture(gl, blur_pbuffer_tex, blur_w, blur_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for BlurPbufferListener");
 
       GL gl = drawable.getGL();
 
       // horizontal blur
       gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, blurh_fprog);
-      gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE0);
       pipeline.bindTexture(gl, blur2_pbuffer_tex);
       glowPass(gl);
 
@@ -721,24 +780,24 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   class Blur2PbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for Blur2PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
       // FIXME: what about the ExaminerViewer?
-      setOrthoProjection(gl, blur_w, blur_h);
+      setOrthoProjection(gl, 0, 0, blur_w, blur_h);
 
       pipeline.initFloatingPointTexture(gl, blur2_pbuffer_tex, blur_w, blur_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for Blur2PbufferListener");
 
       GL gl = drawable.getGL();
@@ -747,8 +806,8 @@ public class HDR {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
         pipeline.enableFragmentProgram(gl, shrink_fprog);
-        setOrthoProjection(gl, blur_w, blur_h);
-        gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+        setOrthoProjection(gl, 0, 0, blur_w, blur_h);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
         drawQuadRect2(gl, blur_w, blur_h, pbuffer_w, pbuffer_h);
         pipeline.disableFragmentProgram(gl);
@@ -757,7 +816,7 @@ public class HDR {
 
         // vertical blur
         gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, blurv_fprog);
-        gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+        gl.glActiveTexture(GL.GL_TEXTURE0);
         pipeline.bindTexture(gl, blur_pbuffer_tex);
         glowPass(gl);
         
@@ -769,20 +828,20 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   class TonemapPbufferListener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
 
-      setOrthoProjection(gl, pbuffer_w, pbuffer_h);
+      setOrthoProjection(gl, 0, 0, pbuffer_w, pbuffer_h);
 
       pipeline.initTexture(gl, tonemap_pbuffer_tex, pbuffer_w, pbuffer_h);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
 
       toneMappingPass(gl);
@@ -791,15 +850,15 @@ public class HDR {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   //----------------------------------------------------------------------
   // Rendering routines
   //
 
-  private void setOrthoProjection(GL gl, int w, int h) {
+  private void setOrthoProjection(GL gl, int x, int y, int w, int h) {
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
     gl.glOrtho(0, w, 0, h, -1.0, 1.0);
@@ -807,10 +866,10 @@ public class HDR {
     gl.glLoadIdentity();
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
-    gl.glViewport(0, 0, w, h);
+    gl.glViewport(x, y, w, h);
   }
     
-  private void setPerspectiveProjection(GL gl, GLU glu, int w, int h) {
+  private void setPerspectiveProjection(GL gl, int w, int h) {
     // FIXME: what about ExaminerViewer?
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -825,7 +884,7 @@ public class HDR {
     gl.glDisable(GL.GL_DEPTH_TEST);
     gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
 
-    setOrthoProjection(gl, blur_w, blur_h);
+    setOrthoProjection(gl, 0, 0, blur_w, blur_h);
     drawQuadRect(gl, blur_w, blur_h);
 
     gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
@@ -833,10 +892,10 @@ public class HDR {
 
   private void drawQuadRect(GL gl, int w, int h) {
     gl.glBegin(GL.GL_QUADS);
-    gl.glTexCoord2f(0, h); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
-    gl.glTexCoord2f(w, h); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
-    gl.glTexCoord2f(w, 0); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, w / blur_scale, 0); gl.glVertex3f(w, 0, 0);
-    gl.glTexCoord2f(0, 0); gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, 0, 0); gl.glVertex3f(0, 0, 0);
+    gl.glTexCoord2f(0, h); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
+    gl.glTexCoord2f(w, h); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
+    gl.glTexCoord2f(w, 0); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, w / blur_scale, 0); gl.glVertex3f(w, 0, 0);
+    gl.glTexCoord2f(0, 0); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, 0, 0); gl.glVertex3f(0, 0, 0);
     gl.glEnd();
   }
 
@@ -873,27 +932,27 @@ public class HDR {
 
   // draw cubemap background
   private void drawSkyBox(GL gl) {
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
+    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex);
+    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
 
     if (hilo) {
-      gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
-      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP_ARB, hdr_tex2);
-      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+      gl.glActiveTexture(GL.GL_TEXTURE1);
+      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex2);
+      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
     }
 
     // initialize object linear texgen
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glLoadIdentity();
     float[] s_plane = { 1.0f, 0.0f, 0.0f, 0.0f };
     float[] t_plane = { 0.0f, 1.0f, 0.0f, 0.0f };
     float[] r_plane = { 0.0f, 0.0f, 1.0f, 0.0f };
-    gl.glTexGenfv(GL.GL_S, GL.GL_OBJECT_PLANE, s_plane);
-    gl.glTexGenfv(GL.GL_T, GL.GL_OBJECT_PLANE, t_plane);
-    gl.glTexGenfv(GL.GL_R, GL.GL_OBJECT_PLANE, r_plane);
+    gl.glTexGenfv(GL.GL_S, GL.GL_OBJECT_PLANE, s_plane, 0);
+    gl.glTexGenfv(GL.GL_T, GL.GL_OBJECT_PLANE, t_plane, 0);
+    gl.glTexGenfv(GL.GL_R, GL.GL_OBJECT_PLANE, r_plane, 0);
     gl.glPopMatrix();
     gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
     gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
@@ -911,10 +970,10 @@ public class HDR {
     gl.glPushMatrix();
     gl.glLoadIdentity();
     gl.glScalef(10.0f, 10.0f, 10.0f);
-    glut.glutSolidCube(gl, 1.0f);
+    glut.glutSolidCube(1.0f);
     gl.glPopMatrix();
 
-    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP_ARB);
+    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
 
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glPopMatrix();
@@ -927,18 +986,18 @@ public class HDR {
   private void toneMappingPass(GL gl) {
     gl.glFinish();
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE1);
     if (blur2_pbuffer != null) {
       gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, blur2_pbuffer_tex);
     }
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE2_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glBindTexture(GL.GL_TEXTURE_1D, gamma_tex);
 
-    gl.glActiveTextureARB(GL.GL_TEXTURE3_ARB);
+    gl.glActiveTexture(GL.GL_TEXTURE3);
     pipeline.bindTexture(gl, vignette_tex);
 
     pipeline.enableFragmentProgram(gl, tonemap_fprog);
@@ -958,7 +1017,14 @@ public class HDR {
 
   private String shaderRoot = "demos/hdr/shaders/";
   private void initCg(GL gl) {
-    pipeline = new CgPipeline();
+    // NOTE: need to instantiate CgPipeline reflectively to avoid
+    // compile-time dependence (since Cg support might not be present)
+    try {
+      Class cgPipelineClass = Class.forName("demos.hdr.CgPipeline");
+      pipeline = (Pipeline) cgPipelineClass.newInstance();
+    } catch (Exception e) {
+      throw new GLException(e);
+    }
     pipeline.init();
 
     try {
@@ -1032,13 +1098,13 @@ public class HDR {
   private int loadProgram(GL gl, int target, String code) {
     int prog_id;
     int[] tmp = new int[1];
-    gl.glGenProgramsARB(1, tmp);
+    gl.glGenProgramsARB(1, tmp, 0);
     prog_id = tmp[0];
     gl.glBindProgramARB(target, prog_id);
     int size = code.length();
     gl.glProgramStringARB(target, GL.GL_PROGRAM_FORMAT_ASCII_ARB, code.length(), code);
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
     if (errPos[0] >= 0) {
       String kind = "Program";
       if (target == GL.GL_VERTEX_PROGRAM_ARB) {
@@ -1065,7 +1131,7 @@ public class HDR {
         int[] isNative = new int[1];
         gl.glGetProgramivARB(GL.GL_FRAGMENT_PROGRAM_ARB,
                              GL.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
-                             isNative);
+                             isNative, 0);
         if (isNative[0] != 1) {
           System.out.println("WARNING: fragment program is over native resource limits");
           Thread.dumpStack();
@@ -1154,19 +1220,19 @@ public class HDR {
   private void applyTransform(GL gl, Mat4f mat) {
     float[] data = new float[16];
     mat.getColumnMajorData(data);
-    gl.glMultMatrixf(data);
+    gl.glMultMatrixf(data, 0);
   }
 
   private void usage() {
     System.err.println("usage: java demos.hdr.HDR [-cg] image.hdr pbuffer_w pbuffer_h window_scale blur_width blur_decimate [obj file]");
-    System.exit(1);
+    shutdownDemo();
   }
 
   private void printThreadName(String where) {
     System.err.println("In " + where + ": current thread = " + Thread.currentThread().getName());
   }
 
-  private void runExit() {
+  private static void runExit(final Animator animator) {
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking

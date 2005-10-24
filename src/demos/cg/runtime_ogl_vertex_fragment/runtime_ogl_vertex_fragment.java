@@ -33,9 +33,11 @@
 
 package demos.cg.runtime_ogl_vertex_fragment;
 
-import net.java.games.cg.*;
-import net.java.games.jogl.*;
-import net.java.games.jogl.util.*;
+import com.sun.opengl.cg.*;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import com.sun.opengl.utils.*;
+import com.sun.opengl.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -55,6 +57,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   // in as well as handles to the vertex and fragment program used in this
   // demo.
 
+  private GLU glu = new GLU();
   CGcontext context;
   CGprogram vertexProgram, fragmentProgram;
 
@@ -91,7 +94,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // and all the rest happens in the display function...
   }
 
-  public void init(GLDrawable drawable) 
+  public void init(GLAutoDrawable drawable) 
   {
     // Use debug pipeline
     // drawable.setGL(new DebugGL(drawable.getGL()));
@@ -125,11 +128,10 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   private static int curTime = 0;
   
   // display callback function
-  public void display(GLDrawable drawable) 
+  public void display(GLAutoDrawable drawable) 
   {
 
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
     
     // The usual OpenGL stuff to clear the screen and set up viewing.
     gl.glClearColor(.25f, .25f, .25f, 1.0f);
@@ -168,15 +170,15 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // vertex shader could be modified so that these were uniform for
     // better efficiency, but this gives us flexibility for the future.
     float Kd[] = { .7f, .2f, .2f }, Ks[] = { .9f, .9f, .9f };
-    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "diffuse"), Kd);
-    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "specular"), Ks);
+    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "diffuse"), Kd, 0);
+    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(vertexProgram, "specular"), Ks, 0);
 
     // Now bind uniform parameters to fragment shader
     float lightPos[] = { 3, 2, -3 };
-    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(fragmentProgram, "Plight"), lightPos);
+    CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(fragmentProgram, "Plight"), lightPos, 0);
     float lightColor[] = { 1, 1, 1 };
     CgGL.cgGLSetParameter3fv(CgGL.cgGetNamedParameter(fragmentProgram, "lightColor"), 
-                             lightColor);
+                             lightColor, 0);
     CgGL.cgGLSetParameter1f(CgGL.cgGetNamedParameter(fragmentProgram, "shininess"), 40);
 
     // And finally, enable the approprate texture for fragment shader; the
@@ -273,7 +275,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // checkerboard--which is used to modulate the diffuse channel in the
     // fragment shader.
     int[] handle = new int[1];
-    gl.glGenTextures(1, handle);
+    gl.glGenTextures(1, handle, 0);
 
     // Basic OpenGL texture state setup
     gl.glBindTexture(GL.GL_TEXTURE_2D, handle[0]);
@@ -303,7 +305,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
       }
     }
 
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, RES, RES, 0, GL.GL_RGBA, GL.GL_FLOAT, data);
+    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, RES, RES, 0, GL.GL_RGBA, GL.GL_FLOAT, FloatBuffer.wrap(data));
 
     // Tell Cg which texture handle should be associated with the sampler2D
     // parameter to the fragment shader.
@@ -417,12 +419,12 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     N.put(offsetN + 2, P.get(offsetP + 2));
   }
 
-  public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged)
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged)
   {
     // nothing
   }
 
-  public void reshape(GLDrawable drawable, int x, int y, int width, int height)
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height)
   {
     // do nothing
   }

@@ -3,8 +3,9 @@ package demos.hdr;
 import java.io.*;
 import java.util.*;
 
-import net.java.games.jogl.*;
-import net.java.games.cg.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
+import com.sun.opengl.cg.*;
 import demos.util.*;
 
 public class CgPipeline implements Pipeline {
@@ -108,6 +109,6 @@ public class CgPipeline implements Pipeline {
   }
   
   public void setMatrixParameterfc(GL gl, int param, float[] matrix) {
-    CgGL.cgGLSetMatrixParameterfc((CGparameter) parameters.get(param), matrix);
+    CgGL.cgGLSetMatrixParameterfc((CGparameter) parameters.get(param), matrix, 0);
   }
 }

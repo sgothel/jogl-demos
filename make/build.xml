@@ -32,7 +32,7 @@
     </target>
 
     <target name="setup.cg.excludes" unless="jogl.cg">
-        <property name="jogl.cg.excludes" value="demos/cg/**,demos/hdr/**" />
+        <property name="jogl.cg.excludes" value="demos/cg/**,demos/hdr/CgPipeline.java,demos/hdr/shaders/cg/**" />
     </target>
 
     <target name="skip.cg.excludes" if="jogl.cg">

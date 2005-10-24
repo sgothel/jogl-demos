@@ -2,9 +2,16 @@ package demos.jgears;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
+import java.awt.image.*;
+import java.io.*;
+import java.text.*;
+import javax.imageio.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
+import demos.gears.Gears;
 
 /**
  * JGears.java <BR>
@@ -13,16 +20,68 @@ import net.java.games.jogl.*;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 
-public class JGears {
-  public static void main(String[] args) {
-    JFrame frame = new JFrame("Gear Demo");
-    frame.getContentPane().setLayout(new BorderLayout());
-    GLCapabilities caps = new GLCapabilities();
-    caps.setAlphaBits(8);
-    final GLJPanel drawable = GLDrawableFactory.getFactory().createGLJPanel(caps);
-    drawable.setOpaque(false);
-    drawable.addGLEventListener(new GearRenderer());
+public class JGears extends GLJPanel {
+  private static GLCapabilities caps;
+  private long startTime;
+  private int frameCount;
+  private float fps;
+  private static Font fpsFont = new Font("SansSerif", Font.BOLD, 24);
+  private DecimalFormat format = new DecimalFormat("####.00");
+  private BufferedImage javaImage;
+  private BufferedImage openglImage;
 
+  static {
+    caps = new GLCapabilities();
+    caps.setAlphaBits(8);
+  }
+  
+  public JGears() {
+    super(caps, null, null);
+    addGLEventListener(new Gears());
+    try {
+      InputStream in = JGears.class.getClassLoader().getResourceAsStream("demos/data/images/java_logo.png");
+      BufferedImage image = ImageIO.read(in);
+      javaImage = scaleImage(image, 0.25f, 0.25f);
+
+      in = JGears.class.getClassLoader().getResourceAsStream("demos/data/images/opengl_logo.png");
+      image = ImageIO.read(in);
+      openglImage = scaleImage(image, 0.45f, 0.45f);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    if (startTime == 0) {
+      startTime = System.currentTimeMillis();
+    }
+
+    if (++frameCount == 30) {
+      long endTime = System.currentTimeMillis();
+      fps = 30.0f / (float) (endTime - startTime) * 1000;
+      frameCount = 0;
+      startTime = System.currentTimeMillis();
+    }
+
+    if (fps > 0) {
+      g.setColor(Color.WHITE);
+      g.setFont(fpsFont);
+      g.drawString("FPS: " + format.format(fps), getWidth() - 140, getHeight() - 30);
+    }
+
+    int sp = 10;
+    if (javaImage != null) {
+      g.drawImage(javaImage, sp, getHeight() - javaImage.getHeight() - sp, null);
+      if (openglImage != null) {
+        g.drawImage(openglImage, sp + javaImage.getWidth() + sp, getHeight() - openglImage.getHeight() - sp, null);
+      }
+    }
+  }
+
+  // Helper routine for various demos
+  public static JPanel createGradientPanel() {
     JPanel gradientPanel = new JPanel() {
         public void paintComponent(Graphics g) {
           ((Graphics2D) g).setPaint(new GradientPaint(0, 0, Color.WHITE,
@@ -31,6 +90,29 @@ public class JGears {
         }
       };
     gradientPanel.setLayout(new BorderLayout());
+    return gradientPanel;
+  }
+
+  private BufferedImage scaleImage(BufferedImage img, float xScale, float yScale) {
+    BufferedImage scaled = new BufferedImage((int) (img.getWidth() * xScale),
+                                             (int) (img.getHeight() * yScale),
+                                             BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = scaled.createGraphics();
+    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    g.drawRenderedImage(img, AffineTransform.getScaleInstance(xScale, yScale));
+    return scaled;
+  }
+
+  public static void main(String[] args) {
+    JFrame frame = new JFrame("Gear Demo");
+    frame.getContentPane().setLayout(new BorderLayout());
+    GLCapabilities caps = new GLCapabilities();
+    caps.setAlphaBits(8);
+    final GLJPanel drawable = new JGears();
+    drawable.setOpaque(false);
+
+    JPanel gradientPanel = createGradientPanel();
     frame.getContentPane().add(gradientPanel, BorderLayout.CENTER);
     gradientPanel.add(drawable, BorderLayout.CENTER);
 
@@ -60,278 +142,4 @@ public class JGears {
     frame.show();
     animator.start();
   }
-
-  static class GearRenderer implements GLEventListener, MouseListener, MouseMotionListener {
-    private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
-    private int gear1, gear2, gear3;
-    private float angle = 0.0f;
-
-    private int prevMouseX, prevMouseY;
-    private boolean mouseRButtonDown = false;
-
-
-    public void init(GLDrawable drawable) {
-      // Use debug pipeline
-      // drawable.setGL(new DebugGL(drawable.getGL()));
-
-      GL gl = drawable.getGL();
-      System.err.println("INIT GL IS: " + gl.getClass().getName());
-
-      float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
-      float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
-      float green[] = { 0.0f, 0.8f, 0.2f, 1.0f };
-      float blue[] = { 0.2f, 0.2f, 1.0f, 1.0f };
-
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos);
-      gl.glEnable(GL.GL_CULL_FACE);
-      gl.glEnable(GL.GL_LIGHTING);
-      gl.glEnable(GL.GL_LIGHT0);
-      gl.glEnable(GL.GL_DEPTH_TEST);
-            
-      /* make the gears */
-      gear1 = gl.glGenLists(1);
-      gl.glNewList(gear1, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
-      gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
-      gl.glEndList();
-            
-      gear2 = gl.glGenLists(1);
-      gl.glNewList(gear2, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green);
-      gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
-      gl.glEndList();
-            
-      gear3 = gl.glGenLists(1);
-      gl.glNewList(gear3, GL.GL_COMPILE);
-      gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue);
-      gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
-      gl.glEndList();
-            
-      gl.glEnable(GL.GL_NORMALIZE);
-                
-      drawable.addMouseListener(this);
-      drawable.addMouseMotionListener(this);
-    }
-    
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
-      GL gl = drawable.getGL();
-
-      float h = (float)height / (float)width;
-            
-      gl.glMatrixMode(GL.GL_PROJECTION);
-
-      System.err.println("GL_VENDOR: " + gl.glGetString(GL.GL_VENDOR));
-      System.err.println("GL_RENDERER: " + gl.glGetString(GL.GL_RENDERER));
-      System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
-      System.err.println();
-      System.err.println("glLoadTransposeMatrixfARB() supported: " +
-                         gl.isFunctionAvailable("glLoadTransposeMatrixfARB"));
-      if (!gl.isFunctionAvailable("glLoadTransposeMatrixfARB")) {
-        // --- not using extensions
-        gl.glLoadIdentity();
-      } else {
-        // --- using extensions
-        final float[] identityTranspose = new float[] {
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 1
-        };
-        gl.glLoadTransposeMatrixfARB(identityTranspose);
-      }
-      gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
-      gl.glLoadIdentity();
-      gl.glTranslatef(0.0f, 0.0f, -40.0f);
-    }
-
-    public void display(GLDrawable drawable) {
-      angle += 2.0f;
-
-      GL gl = drawable.getGL();
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-            
-      gl.glPushMatrix();
-      gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
-      gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
-      gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
-            
-      gl.glPushMatrix();
-      gl.glTranslatef(-3.0f, -2.0f, 0.0f);
-      gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-      gl.glCallList(gear1);
-      gl.glPopMatrix();
-            
-      gl.glPushMatrix();
-      gl.glTranslatef(3.1f, -2.0f, 0.0f);
-      gl.glRotatef(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
-      gl.glCallList(gear2);
-      gl.glPopMatrix();
-            
-      gl.glPushMatrix();
-      gl.glTranslatef(-3.1f, 4.2f, 0.0f);
-      gl.glRotatef(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
-      gl.glCallList(gear3);
-      gl.glPopMatrix();
-            
-      gl.glPopMatrix();
-    }
-
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-
-    private void gear(GL gl,
-                      float inner_radius,
-                      float outer_radius,
-                      float width,
-                      int teeth,
-                      float tooth_depth)
-    {
-      int i;
-      float r0, r1, r2;
-      float angle, da;
-      float u, v, len;
-
-      r0 = inner_radius;
-      r1 = outer_radius - tooth_depth / 2.0f;
-      r2 = outer_radius + tooth_depth / 2.0f;
-            
-      da = 2.0f * (float) Math.PI / teeth / 4.0f;
-            
-      gl.glShadeModel(GL.GL_FLAT);
-
-      gl.glNormal3f(0.0f, 0.0f, 1.0f);
-
-      /* draw front face */
-      gl.glBegin(GL.GL_QUAD_STRIP);
-      for (i = 0; i <= teeth; i++)
-        {
-          angle = i * 2.0f * (float) Math.PI / teeth;
-          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
-          if(i < teeth)
-            {
-              gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
-              gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
-            }
-        }
-      gl.glEnd();
-
-      /* draw front sides of teeth */
-      gl.glBegin(GL.GL_QUADS);
-      for (i = 0; i < teeth; i++)
-        {
-          angle = i * 2.0f * (float) Math.PI / teeth;
-          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), width * 0.5f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + 2.0f * da), r2 * (float)Math.sin(angle + 2.0f * da), width * 0.5f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
-        }
-      gl.glEnd();
-    
-      /* draw back face */
-      gl.glBegin(GL.GL_QUAD_STRIP);
-      for (i = 0; i <= teeth; i++)
-        {
-          angle = i * 2.0f * (float) Math.PI / teeth;
-          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
-          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
-          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
-        }
-      gl.glEnd();
-    
-      /* draw back sides of teeth */
-      gl.glBegin(GL.GL_QUADS);
-      for (i = 0; i < teeth; i++)
-        {
-          angle = i * 2.0f * (float) Math.PI / teeth;
-          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), -width * 0.5f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), -width * 0.5f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
-        }
-      gl.glEnd();
-    
-      /* draw outward faces of teeth */
-      gl.glBegin(GL.GL_QUAD_STRIP);
-      for (i = 0; i < teeth; i++)
-        {
-          angle = i * 2.0f * (float) Math.PI / teeth;
-          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), width * 0.5f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
-          u = r2 * (float)Math.cos(angle + da) - r1 * (float)Math.cos(angle);
-          v = r2 * (float)Math.sin(angle + da) - r1 * (float)Math.sin(angle);
-          len = (float)Math.sqrt(u * u + v * v);
-          u /= len;
-          v /= len;
-          gl.glNormal3f(v, -u, 0.0f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), width * 0.5f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + da), r2 * (float)Math.sin(angle + da), -width * 0.5f);
-          gl.glNormal3f((float)Math.cos(angle), (float)Math.sin(angle), 0.0f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), width * 0.5f);
-          gl.glVertex3f(r2 * (float)Math.cos(angle + 2 * da), r2 * (float)Math.sin(angle + 2 * da), -width * 0.5f);
-          u = r1 * (float)Math.cos(angle + 3 * da) - r2 * (float)Math.cos(angle + 2 * da);
-          v = r1 * (float)Math.sin(angle + 3 * da) - r2 * (float)Math.sin(angle + 2 * da);
-          gl.glNormal3f(v, -u, 0.0f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), width * 0.5f);
-          gl.glVertex3f(r1 * (float)Math.cos(angle + 3 * da), r1 * (float)Math.sin(angle + 3 * da), -width * 0.5f);
-          gl.glNormal3f((float)Math.cos(angle), (float)Math.sin(angle), 0.0f);
-        }
-      gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), width * 0.5f);
-      gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
-      gl.glEnd();
-    
-      gl.glShadeModel(GL.GL_SMOOTH);
-    
-      /* draw inside radius cylinder */
-      gl.glBegin(GL.GL_QUAD_STRIP);
-      for (i = 0; i <= teeth; i++)
-        {
-          angle = i * 2.0f * (float) Math.PI / teeth;
-          gl.glNormal3f(-(float)Math.cos(angle), -(float)Math.sin(angle), 0.0f);
-          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
-          gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), width * 0.5f);
-        }
-      gl.glEnd();
-    }
-
-    // Methods required for the implementation of MouseListener
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-
-    public void mousePressed(MouseEvent e) {
-      prevMouseX = e.getX();
-      prevMouseY = e.getY();
-      if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
-        mouseRButtonDown = true;
-      }
-    }
-    
-    public void mouseReleased(MouseEvent e) {
-      if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
-        mouseRButtonDown = false;
-      }
-    }
-    
-    public void mouseClicked(MouseEvent e) {}
-    
-    // Methods required for the implementation of MouseMotionListener
-    public void mouseDragged(MouseEvent e) {
-      int x = e.getX();
-      int y = e.getY();
-      Dimension size = e.getComponent().getSize();
-
-      float thetaY = 360.0f * ( (float)(x-prevMouseX)/(float)size.width);
-      float thetaX = 360.0f * ( (float)(prevMouseY-y)/(float)size.height);
-    
-      prevMouseX = x;
-      prevMouseY = y;
-
-      view_rotx += thetaX;
-      view_roty += thetaY;
-    }
-    
-    public void mouseMoved(MouseEvent e) {}
-  }
 }
-

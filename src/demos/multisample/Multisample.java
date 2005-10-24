@@ -41,7 +41,8 @@ package demos.multisample;
 
 import java.awt.*;
 import java.awt.event.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 public class Multisample {
   private GLCanvas canvas;
@@ -83,7 +84,7 @@ public class Multisample {
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(4);
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(caps, chooser);
+    canvas = GLDrawableFactory.getFactory().createGLCanvas(caps, chooser, null, null);
     canvas.addGLEventListener(new Listener());
     
     Frame frame = new Frame("Full-scene antialiasing");
@@ -123,9 +124,8 @@ public class Multisample {
   }
 
   class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
       gl.glClearColor(0, 0, 0, 0);
       //      gl.glEnable(GL.GL_DEPTH_TEST);
@@ -138,9 +138,8 @@ public class Multisample {
       gl.glOrtho(-1, 1, -1, 1, -1, 1);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       GL gl = drawable.getGL();
-      GLU glu = drawable.getGLU();
 
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -161,8 +160,8 @@ public class Multisample {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   private void runExit() {

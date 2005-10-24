@@ -44,13 +44,14 @@ import java.awt.event.*;
 import java.util.*;
 
 import gleem.linalg.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** <P> This is an application-level class, not part of the
     manipulator hierarchy. It is an example of how you might integrate
     gleem with another application which uses the mouse. </P>
 
-    <P> For the given GLDrawable, the ExaminerViewer takes over the
+    <P> For the given GLAutoDrawable, the ExaminerViewer takes over the
     setting of the view position. It passes along mouse events it is
     not interested in to the ManipManager's mouse routines. </P>
 
@@ -71,13 +72,14 @@ import net.java.games.jogl.*;
     button. </P> */
 
 public class ExaminerViewer {
-  private GLDrawable window;
+  private GLAutoDrawable window;
   /** Simple state machine for figuring out whether we are grabbing
       events */
   private boolean interactionUnderway;
   private boolean iOwnInteraction;
 
   private boolean noAltKeyMode;
+  private boolean autoRedrawMode = true;
 
   /** Simple state machine for computing distance dragged */
   private boolean button1Down;
@@ -125,12 +127,12 @@ public class ExaminerViewer {
     };
 
   private GLEventListener glListener = new GLEventListener() {
-      public void init(GLDrawable drawable) {}
-      public void display(GLDrawable drawable) {}
-      public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+      public void init(GLAutoDrawable drawable) {}
+      public void display(GLAutoDrawable drawable) {}
+      public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         reshapeMethod(width, height);
       }
-      public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+      public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
     };
 
   /** The constructor takes the number of mouse buttons on this system
@@ -140,17 +142,17 @@ public class ExaminerViewer {
     oldNumMouseButtons = numMouseButtons;
   }
 
-  /** <P> Attaches this ExaminerViewer to the given GLDrawable. This
+  /** <P> Attaches this ExaminerViewer to the given GLAutoDrawable. This
       causes the ManipManager's mouse routines to be removed from the
       window (using ManipManager.removeMouseListeners) and the
-      ExaminerViewer's to be installed. The GLDrawable should be
+      ExaminerViewer's to be installed. The GLAutoDrawable should be
       registered with the ManipManager before the ExaminerViewer is
       attached to it. </P>
 
       <P> In order for the viewer to do anything useful, you need to
       provide a BSphereProvider to it to allow "view all"
       functionality. </P> */
-  public void attach(GLDrawable window, BSphereProvider provider) {
+  public void attach(GLAutoDrawable window, BSphereProvider provider) {
     this.window = window;
     this.provider = provider;
     init();
@@ -158,7 +160,7 @@ public class ExaminerViewer {
   }
 
   /** Detaches from the given window. This causes the ManipManager's
-      mouse listeners to be reinstalled on the GLDrawable and the
+      mouse listeners to be reinstalled on the GLAutoDrawable and the
       ExaminerViewer's to be removed. */
   public void detach() {
     removeListeners();
@@ -300,6 +302,20 @@ public class ExaminerViewer {
     return noAltKeyMode;
   }
 
+  /** Enables or disables the automatic redrawing of the
+      GLAutoDrawable to which this ExaminerViewer is attached. If the
+      GLAutoDrawable is already being animated, disabling auto redraw
+      mode may provide better performance. Defaults to on. */
+  public void setAutoRedrawMode(boolean onOrOff) {
+    autoRedrawMode = onOrOff;
+  }
+
+  /** Returns whether this ExaminerViewer automatically redraws the
+      GLAutoDrawable to which it is attached upon updates. */
+  public boolean getAutoRedrawMode() {
+    return autoRedrawMode;
+  }
+
   /** Rotates this ExaminerViewer about the focal point by the
       specified incremental rotation; performs postmultiplication,
       i.e. the incremental rotation is applied after the current
@@ -355,9 +371,8 @@ public class ExaminerViewer {
     button1Down = false;
     button2Down = false;
 
-    Dimension size = window.getSize();
-    int xSize = size.width;
-    int ySize = size.height;
+    int xSize = window.getWidth();
+    int ySize = window.getHeight();
     params.setOrientation(orientation);
     params.setPosition(computePosition(new Vec3f()));
     params.setForwardDirection(Vec3f.NEG_Z_AXIS);
@@ -411,9 +426,9 @@ public class ExaminerViewer {
 
       }
 
-      // Force redraw if window will not do it automatically
-      if (!window.getNoAutoRedrawMode()) {
-        window.display();
+      if (autoRedrawMode) {
+        // Force redraw
+        window.repaint();
       }
     }
   }
@@ -471,9 +486,9 @@ public class ExaminerViewer {
         iOwnInteraction = false;
       }
 
-      // Force redraw if window will not do it automatically
-      if (!window.getNoAutoRedrawMode()) {
-        window.display();
+      if (autoRedrawMode) {
+        // Force redraw
+        window.repaint();
       }
     }
   }
@@ -581,11 +596,11 @@ public class ExaminerViewer {
     gl.glMatrixMode(GL.GL_MODELVIEW);
     float[] data = new float[16];
     params.getModelviewMatrix().getColumnMajorData(data);
-    gl.glLoadMatrixf(data);
+    gl.glLoadMatrixf(data, 0);
 
     gl.glMatrixMode(GL.GL_PROJECTION);
     params.getProjectionMatrix().getColumnMajorData(data);
-    gl.glLoadMatrixf(data);
+    gl.glLoadMatrixf(data, 0);
   }
 
   private void recalcInverseRotation(GL gl) {

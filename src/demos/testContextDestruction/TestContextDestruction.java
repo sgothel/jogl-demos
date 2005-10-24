@@ -44,7 +44,8 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 /** A simple demonstration exercising context creation and destruction
     as a GLCanvas is added to and removed from its parent container. */
@@ -176,14 +177,14 @@ public class TestContextDestruction {
   }
 
   class Listener implements GLEventListener {
-    public void init(GLDrawable drawable) {
+    public void init(GLAutoDrawable drawable) {
       System.out.println("Listener.init()");
       drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
 
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
       gl.glEnable(GL.GL_CULL_FACE);
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_LIGHT0);
@@ -193,11 +194,10 @@ public class TestContextDestruction {
 
       gl.glEnable(GL.GL_NORMALIZE);
 
-      Dimension d = drawable.getSize();
-      reshape(drawable, 0, 0, d.width, d.height);
+      reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
       angle += 2.0f;
 
       GL gl = drawable.getGL();
@@ -210,7 +210,7 @@ public class TestContextDestruction {
       gl.glPopMatrix();
     }
 
-    public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
       System.out.println("Listener.reshape()");
       GL gl = drawable.getGL();
 
@@ -224,7 +224,7 @@ public class TestContextDestruction {
       gl.glTranslatef(0.0f, 0.0f, -40.0f);
     }
 
-    public void destroy(GLDrawable drawable) {
+    public void destroy(GLAutoDrawable drawable) {
       System.out.println("Listener.destroy()");
       GL gl = drawable.getGL();
       gl.glDeleteLists(gearDisplayList, 1);
@@ -232,14 +232,14 @@ public class TestContextDestruction {
     }
 
     // Unused routines
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   private synchronized void initializeDisplayList(GL gl) {
     gearDisplayList = gl.glGenLists(1);
     gl.glNewList(gearDisplayList, GL.GL_COMPILE);
     float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red);
+    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
     gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
     gl.glEndList();
   }

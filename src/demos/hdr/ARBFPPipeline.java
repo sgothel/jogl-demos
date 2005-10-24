@@ -3,7 +3,8 @@ package demos.hdr;
 import java.io.*;
 import java.util.*;
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 import demos.util.*;
 
 public class ARBFPPipeline implements Pipeline {
@@ -26,7 +27,7 @@ public class ARBFPPipeline implements Pipeline {
   }
 
   public void copyToTexture(GL gl, int textureObject, int w, int h) {
-    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, textureObject);
+    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, textureObject); 
     gl.glCopyTexSubImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, 0, 0, 0, 0, w, h);
   }
 
@@ -46,12 +47,12 @@ public class ARBFPPipeline implements Pipeline {
   private int loadProgram(GL gl, String fileName, int profile) throws IOException {
     String programBuffer = FileUtils.loadStreamIntoString(getClass().getClassLoader().getResourceAsStream(fileName));
     int[] tmpInt = new int[1];
-    gl.glGenProgramsARB(1, tmpInt);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int res = tmpInt[0];
     gl.glBindProgramARB(profile, res);
     gl.glProgramStringARB(profile, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programBuffer.length(), programBuffer);
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos);
+    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
     if (errPos[0] >= 0) {
       String kind = "Program";
       if (profile == GL.GL_VERTEX_PROGRAM_ARB) {
@@ -78,7 +79,7 @@ public class ARBFPPipeline implements Pipeline {
         int[] isNative = new int[1];
         gl.glGetProgramivARB(GL.GL_FRAGMENT_PROGRAM_ARB,
                              GL.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
-                             isNative);
+                             isNative, 0);
         if (isNative[0] != 1) {
           System.out.println("WARNING: fragment program is over native resource limits");
           Thread.dumpStack();
@@ -146,8 +147,8 @@ public class ARBFPPipeline implements Pipeline {
     float[] mvp        = new float[16];
 
     // Get matrices
-    gl.glGetFloatv(GL.GL_PROJECTION_MATRIX, projection);
-    gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, modelView);
+    gl.glGetFloatv(GL.GL_PROJECTION_MATRIX, projection, 0);
+    gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, modelView, 0);
     // Multiply together
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {

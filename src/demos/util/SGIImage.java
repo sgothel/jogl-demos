@@ -5,7 +5,8 @@
 package demos.util;
 
 import java.io.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import com.sun.opengl.utils.*;
 
 // Test harness
 import java.awt.image.*;
@@ -131,7 +132,7 @@ public class SGIImage {
     return header.ysize;
   }
 
-  /** Returns the OpenGL format for this texture; e.g. GL.GL_BGR_EXT or GL.GL_BGRA_EXT. */
+  /** Returns the OpenGL format for this texture; e.g. GL.GL_BGR or GL.GL_BGRA. */
   public int getFormat() {
     return format;
   }
@@ -201,7 +202,7 @@ public class SGIImage {
     rowSize  = null;
     tmpData  = null;
     tmpRead  = null;
-    format   = GL.GL_BGRA_EXT;
+    format   = GL.GL_BGRA;
   }
 
   private void getRow(byte[] buf, int y, int z) {

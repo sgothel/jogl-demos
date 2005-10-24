@@ -41,7 +41,9 @@ package gleem;
 
 import java.awt.*;
 import java.awt.event.*;
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import com.sun.opengl.utils.*;
 import gleem.linalg.*;
 
 /** Tests the Examiner Viewer. */
@@ -72,22 +74,20 @@ public class TestExaminerViewer {
   }
 
   static class Listener implements GLEventListener {
-    private GL gl;
-    private GLU glu;
+    private GLU glu = new GLU();
     private CameraParameters params = new CameraParameters();
     private ExaminerViewer viewer;
 
-    public void init(GLDrawable drawable) {
-      gl = drawable.getGL();
-      glu = drawable.getGLU();
+    public void init(GLAutoDrawable drawable) {
+      GL gl = drawable.getGL();
 
       gl.glClearColor(0, 0, 0, 0);
       float[] lightPosition = new float[] {1, 1, 1, 0};
       float[] ambient       = new float[] { 0.0f, 0.0f, 0.0f, 1.0f };
       float[] diffuse       = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT,  ambient);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE,  diffuse);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT,  ambient, 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE,  diffuse, 0);
+      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
 
       gl.glEnable(GL.GL_LIGHTING);
       gl.glEnable(GL.GL_LIGHT0);
@@ -122,7 +122,8 @@ public class TestExaminerViewer {
       viewer.viewAll(gl);
     }
 
-    public void display(GLDrawable drawable) {
+    public void display(GLAutoDrawable drawable) {
+      GL gl = drawable.getGL();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
       viewer.update(gl);
       ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
@@ -130,8 +131,8 @@ public class TestExaminerViewer {
     }
 
     // Unused routines
-    public void reshape(GLDrawable drawable, int x, int y, int w, int h) {}
-    public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {}
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
   public static void main(String[] args) {

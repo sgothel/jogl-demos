@@ -58,7 +58,9 @@ package demos.tess;
  * @author Ported by Nathan Parker Burg, July 2003
  */
 
-import net.java.games.jogl.*;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import com.sun.opengl.utils.*;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -97,14 +99,13 @@ public class Tess {
 
     public static class TessRenderer implements GLEventListener {
         private GL gl;
-        private GLU glu;
+        private GLU glu = new GLU();
         private int startList;
 
-        public void init(GLDrawable drawable) {
+        public void init(GLAutoDrawable drawable) {
             drawable.setGL(new DebugGL(drawable.getGL()));
 
             gl = drawable.getGL();
-            glu = drawable.getGLU();
 
             double[][] rect = new double[][]{{50.0, 50.0, 0.0},
                                              {200.0, 50.0, 0.0},
@@ -122,7 +123,7 @@ public class Tess {
             gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
             startList = gl.glGenLists(2);
-            GLUtesselator tobj = glu.gluNewTess();
+            GLUtessellator tobj = glu.gluNewTess();
 
             TessCallback tessCallback = new TessCallback(gl, glu);
 
@@ -135,15 +136,15 @@ public class Tess {
             gl.glShadeModel(GL.GL_FLAT);
             glu.gluTessBeginPolygon(tobj, null);
             glu.gluTessBeginContour(tobj);
-            glu.gluTessVertex(tobj, rect[0], rect[0]);
-            glu.gluTessVertex(tobj, rect[1], rect[1]);
-            glu.gluTessVertex(tobj, rect[2], rect[2]);
-            glu.gluTessVertex(tobj, rect[3], rect[3]);
+            glu.gluTessVertex(tobj, rect[0], 0, rect[0]);
+            glu.gluTessVertex(tobj, rect[1], 0, rect[1]);
+            glu.gluTessVertex(tobj, rect[2], 0, rect[2]);
+            glu.gluTessVertex(tobj, rect[3], 0, rect[3]);
             glu.gluTessEndContour(tobj);
             glu.gluTessBeginContour(tobj);
-            glu.gluTessVertex(tobj, tri[0], tri[0]);
-            glu.gluTessVertex(tobj, tri[1], tri[1]);
-            glu.gluTessVertex(tobj, tri[2], tri[2]);
+            glu.gluTessVertex(tobj, tri[0], 0, tri[0]);
+            glu.gluTessVertex(tobj, tri[1], 0, tri[1]);
+            glu.gluTessVertex(tobj, tri[2], 0, tri[2]);
             glu.gluTessEndContour(tobj);
             glu.gluTessEndPolygon(tobj);
             gl.glEndList();
@@ -159,11 +160,11 @@ public class Tess {
             glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_POSITIVE);
             glu.gluTessBeginPolygon(tobj, null);
             glu.gluTessBeginContour(tobj);
-            glu.gluTessVertex(tobj, star[0], star[0]);
-            glu.gluTessVertex(tobj, star[1], star[1]);
-            glu.gluTessVertex(tobj, star[2], star[2]);
-            glu.gluTessVertex(tobj, star[3], star[3]);
-            glu.gluTessVertex(tobj, star[4], star[4]);
+            glu.gluTessVertex(tobj, star[0], 0, star[0]);
+            glu.gluTessVertex(tobj, star[1], 0, star[1]);
+            glu.gluTessVertex(tobj, star[2], 0, star[2]);
+            glu.gluTessVertex(tobj, star[3], 0, star[3]);
+            glu.gluTessVertex(tobj, star[4], 0, star[4]);
             glu.gluTessEndContour(tobj);
             glu.gluTessEndPolygon(tobj);
             gl.glEndList();
@@ -171,7 +172,7 @@ public class Tess {
         }//end init
 
 
-        public void reshape(GLDrawable drawable, int x, int y, int width, int height) {
+        public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
             gl.glMatrixMode(GL.GL_PROJECTION);
             gl.glLoadIdentity();
             gl.glOrtho( 0, 450, 0, 250, -1, 1 );
@@ -179,10 +180,10 @@ public class Tess {
             gl.glLoadIdentity();
         }
 
-        public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+        public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
         }
 
-        public void display(GLDrawable drawable) {
+        public void display(GLAutoDrawable drawable) {
             gl.glClear(GL.GL_COLOR_BUFFER_BIT);
             gl.glColor3d(1.0, 1.0, 1.0);
             gl.glCallList(startList);
@@ -193,7 +194,7 @@ public class Tess {
     }//end TessRenderer
 
 
-    public static class TessCallback extends net.java.games.jogl.GLUtesselatorCallbackAdapter {
+    public static class TessCallback extends javax.media.opengl.glu.GLUtessellatorCallbackAdapter {
         GL gl;
         GLU glu;
 
@@ -213,13 +214,9 @@ public class Tess {
             if (data instanceof double[]) {
                 double[] d = (double[]) data;
                 if (d.length == 6) {
-                    double[] d2 = {d[0], d[1], d[2]};
-                    gl.glVertex3dv(d2);
-                    d2 = new double[]{d[3], d[4], d[5]};
-                    gl.glColor3dv(d2);
-                } else if (d.length == 3) {
-                    gl.glVertex3dv(d);
+                    gl.glColor3dv(d, 3);
                 }
+                gl.glVertex3dv(d, 0);
             }
         }
 

@@ -33,8 +33,10 @@
 
 package demos.cg.runtime_ogl;
 
-import net.java.games.cg.*;
-import net.java.games.jogl.*;
+import com.sun.opengl.cg.*;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import com.sun.opengl.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -54,6 +56,7 @@ public class cgGL_vertex_example implements GLEventListener
 
   private final int TextureRes = 512;
   
+  private GLU glu = new GLU();
   private static CGcontext Context = null;
   private static CGprogram Program = null;
   private static CGparameter KdParam = null;
@@ -154,7 +157,7 @@ public class cgGL_vertex_example implements GLEventListener
     CgGL.cgGLDisableProfile(profile);
   }
 
-  public void display(GLDrawable drawable) 
+  public void display(GLAutoDrawable drawable) 
   {
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -173,12 +176,12 @@ public class cgGL_vertex_example implements GLEventListener
     v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
   }
   
-  public void displayChanged(GLDrawable drawable, boolean modeChanged, boolean deviceChanged)
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged)
   {
     // nothing
   }
 
-  public void init(GLDrawable drawable) 
+  public void init(GLAutoDrawable drawable) 
   {
     // Note: we initialize Cg in this init() method instead of main()
     // because Cg (apparently) requires an active OpenGL context in order to
@@ -223,13 +226,12 @@ public class cgGL_vertex_example implements GLEventListener
       CheckCgError();
     }
     GL gl = drawable.getGL();
-    GLU glu = drawable.getGLU();
 
     InitializeCube(CubeVertices);
 
     /* Enable a single OpenGL light. */
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, LightDiffuse);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, LightPosition);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, LightDiffuse, 0);
+    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, LightPosition, 0);
     gl.glEnable(GL.GL_LIGHT0);
     if (false) { // #if 0
       gl.glEnable(GL.GL_LIGHTING);
@@ -259,7 +261,7 @@ public class cgGL_vertex_example implements GLEventListener
   
   }
 
-  public void reshape(GLDrawable drawable, int x, int y, int width, int height)
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height)
   {
     // do nothing
   }
