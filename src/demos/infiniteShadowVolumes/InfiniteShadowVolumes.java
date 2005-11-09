@@ -71,7 +71,7 @@ public class InfiniteShadowVolumes extends Demo {
   public static void main(String[] args) {
     GLCapabilities caps = new GLCapabilities();
     caps.setStencilBits(16);
-    final GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(caps);
+    final GLCanvas canvas = new GLCanvas(caps);
     InfiniteShadowVolumes demo = new InfiniteShadowVolumes();
     canvas.addGLEventListener(demo);
 

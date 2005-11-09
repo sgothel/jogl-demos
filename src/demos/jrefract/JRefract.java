@@ -120,7 +120,7 @@ public class JRefract {
     final GLJPanel canvas =
       (which == GEARS) ?
       new JGears() :
-      GLDrawableFactory.getFactory().createGLJPanel(caps);
+      new GLJPanel(caps);
     final DemoListener demoListener = new DemoListener() {
         public void shutdownDemo() {
           removeJPanel(canvas);

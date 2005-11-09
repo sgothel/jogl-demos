@@ -85,7 +85,7 @@ public class VertexBufferObject extends Demo {
       }
     }
 
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     VertexBufferObject demo = new VertexBufferObject();
     demo.vboEnabled = vboEnabled;
     canvas.addGLEventListener(demo);

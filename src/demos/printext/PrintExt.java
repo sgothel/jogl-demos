@@ -12,7 +12,7 @@ import com.sun.opengl.utils.*;
 public class PrintExt {
   public static void main(String[] args) {
     Frame frame = new Frame();
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Listener());
     frame.setUndecorated(true);
     frame.add(canvas);

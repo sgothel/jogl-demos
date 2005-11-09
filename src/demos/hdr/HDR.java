@@ -105,7 +105,7 @@ public class HDR extends Demo {
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
   public static void main(String[] args) {
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     HDR demo = new HDR();
     canvas.addGLEventListener(demo);
 

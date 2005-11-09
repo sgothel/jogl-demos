@@ -61,7 +61,7 @@ import gleem.linalg.*;
 
 public class HWShadowmapsSimple extends Demo {
   public static void main(String[] args) {
-    final GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    final GLCanvas canvas = new GLCanvas();
     HWShadowmapsSimple demo = new HWShadowmapsSimple();
     canvas.addGLEventListener(demo);
 

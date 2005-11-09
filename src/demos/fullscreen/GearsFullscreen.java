@@ -52,7 +52,7 @@ public class GearsFullscreen {
     if (newMode != null) {
       frame.setUndecorated(true);
     }
-    final GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    final GLCanvas canvas = new GLCanvas();
 
     canvas.addGLEventListener(new Gears());
     canvas.addGLEventListener(new FullscreenWorkaround(initWidth, initHeight));

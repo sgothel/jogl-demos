@@ -56,14 +56,14 @@ public class TestContextSharing {
   }
 
   public void run(String[] args) {
-    GLCanvas canvas1 = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas1 = new GLCanvas();
     canvas1.addGLEventListener(new Listener());
     canvas1.setSize(256, 256);
     Frame frame1 = new Frame("Canvas 1");
     frame1.setLayout(new BorderLayout());
     frame1.add(canvas1, BorderLayout.CENTER);
 
-    GLCanvas canvas2 = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities(), null, canvas1.getContext(), null);
+    GLCanvas canvas2 = new GLCanvas(null, null, canvas1.getContext(), null);
     canvas2.addGLEventListener(new Listener());
     canvas2.setSize(256, 256);
     Frame frame2 = new Frame("Canvas 2");

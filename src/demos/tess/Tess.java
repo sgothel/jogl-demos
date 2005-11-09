@@ -72,7 +72,7 @@ public class Tess {
             Frame frame = new Frame("Tess Demo");
             frame.setSize(500, 500);
 
-            GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+            GLCanvas canvas = new GLCanvas();
             frame.add(canvas);
             canvas.addGLEventListener(new TessRenderer());
 

@@ -16,7 +16,7 @@ import com.sun.opengl.utils.*;
 public class Gears implements GLEventListener, MouseListener, MouseMotionListener {
   public static void main(String[] args) {
     Frame frame = new Frame("Gear Demo");
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
 
     canvas.addGLEventListener(new Gears());
     frame.add(canvas);

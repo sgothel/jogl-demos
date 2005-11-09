@@ -62,7 +62,8 @@ public class DualContext extends Canvas {
   private int        repaintNum;
 
   public DualContext(GLCapabilities capabilities) {
-    super(GLDrawableFactory.getFactory().chooseGraphicsConfiguration(capabilities, null, null));
+    super(unwrap((AWTGraphicsConfiguration)
+                 GLDrawableFactory.getFactory().chooseGraphicsConfiguration(capabilities, null, null)));
     drawable = GLDrawableFactory.getFactory().getGLDrawable(this, capabilities, null);
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
@@ -141,5 +142,12 @@ public class DualContext extends Canvas {
     frame.getContentPane().add(button, BorderLayout.SOUTH);
     frame.setSize(800, 400);
     frame.setVisible(true);
+  }
+
+  private static GraphicsConfiguration unwrap(AWTGraphicsConfiguration config) {
+    if (config == null) {
+      return null;
+    }
+    return config.getGraphicsConfiguration();
   }
 }

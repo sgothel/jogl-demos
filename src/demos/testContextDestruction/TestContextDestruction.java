@@ -68,7 +68,7 @@ public class TestContextDestruction {
   }
 
   public void run(String[] args) {
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Listener());
     canvas.setSize(256, 256);
 

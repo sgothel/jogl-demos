@@ -66,7 +66,7 @@ import gleem.linalg.*;
 
 public class VertexProgRefract extends Demo {
   public static void main(String[] args) {
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     VertexProgRefract demo = new VertexProgRefract();
     canvas.addGLEventListener(demo);
 

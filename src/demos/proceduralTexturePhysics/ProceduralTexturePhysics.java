@@ -60,7 +60,7 @@ import gleem.linalg.*;
 
 public class ProceduralTexturePhysics extends Demo {
   public static void main(String[] args) {
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
     canvas.addGLEventListener(demo);
 

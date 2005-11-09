@@ -93,7 +93,7 @@ public class VertexArrayRange extends Demo {
       }
     }
 
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     VertexArrayRange demo = new VertexArrayRange();
     if (startSlow) {
       demo.setFlag('v', false);   // VAR off

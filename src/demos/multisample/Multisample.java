@@ -84,7 +84,7 @@ public class Multisample {
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(4);
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(caps, chooser, null, null);
+    canvas = new GLCanvas(caps, chooser, null, null);
     canvas.addGLEventListener(new Listener());
     
     Frame frame = new Frame("Full-scene antialiasing");
@@ -104,7 +104,7 @@ public class Multisample {
 
     // No antialiasing (for comparison)
     caps.setSampleBuffers(false);
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(caps);
+    canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Listener());
     
     frame = new Frame("No antialiasing");

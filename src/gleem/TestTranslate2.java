@@ -134,8 +134,7 @@ public class TestTranslate2 {
         }
       });
     frame.setLayout(new BorderLayout());
-    GLCanvas canvas =
-      GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     canvas.setSize(400, 400);
     canvas.addGLEventListener(new Listener());
     frame.add(canvas, BorderLayout.CENTER);

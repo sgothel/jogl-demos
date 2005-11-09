@@ -72,7 +72,7 @@ public class VertexProgWarp extends Demo {
   }
 
   public void run(String[] args) {
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     VertexProgWarp demo = new VertexProgWarp();
     canvas.addGLEventListener(demo);
 
