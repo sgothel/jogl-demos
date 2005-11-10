@@ -82,7 +82,7 @@ public class ScreenResSelector {
       and requests selection of one of them. Returns the selected one. */
   public static DisplayMode showSelectionDialog() {
     SelectionDialog dialog = new SelectionDialog();
-    dialog.show();
+    dialog.setVisible(true);
     dialog.waitFor();
     return dialog.selected();
   }
@@ -186,7 +186,7 @@ public class ScreenResSelector {
             synchronized(monitor) {
               monitor.notify();
             }
-            hide();
+            setVisible(false);
             dispose();
           }
         });
@@ -200,7 +200,7 @@ public class ScreenResSelector {
             synchronized(monitor) {
               monitor.notify();
             }
-            hide();
+            setVisible(false);
             dispose();
           }
         });
