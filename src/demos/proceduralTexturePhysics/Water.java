@@ -453,6 +453,9 @@ public class Water {
         singleStep = false;
       }
 	
+      // Force rendering to pbuffer to complete
+      gl.glFlush();
+
       if (slow && (slowDelay > 0) ) {
         try {
           Thread.sleep(slowDelay);

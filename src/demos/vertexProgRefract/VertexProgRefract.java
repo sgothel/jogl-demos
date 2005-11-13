@@ -453,8 +453,10 @@ public class VertexProgRefract extends Demo {
   // Internals only below this point
   //
   public void shutdownDemo() {
-    ManipManager.getManipManager().unregisterWindow(drawable);
-    drawable.removeGLEventListener(this);
+    if (drawable != null) {
+      ManipManager.getManipManager().unregisterWindow(drawable);
+      drawable.removeGLEventListener(this);
+    }
     super.shutdownDemo();
   }
 
