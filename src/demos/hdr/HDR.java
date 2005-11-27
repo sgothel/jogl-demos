@@ -302,15 +302,15 @@ public class HDR extends Demo {
     }
 
     GLContext parentContext = drawable.getContext();
-    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
+    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, pbuffer_w, pbuffer_h, parentContext);
     pbuffer.addGLEventListener(new PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     pbuffer_tex = tmp[0];
-    blur_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
+    blur_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, blur_w, blur_h, parentContext);
     blur_pbuffer.addGLEventListener(new BlurPbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur_pbuffer_tex = tmp[0];
-    blur2_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, blur_w, blur_h, parentContext);
+    blur2_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, blur_w, blur_h, parentContext);
     blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur2_pbuffer_tex = tmp[0];
@@ -319,7 +319,7 @@ public class HDR extends Demo {
     caps.setGreenBits(8);
     caps.setBlueBits(8);
     caps.setDepthBits(24);
-    tonemap_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, pbuffer_w, pbuffer_h, parentContext);
+    tonemap_pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, pbuffer_w, pbuffer_h, parentContext);
     tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
     gl.glGenTextures(1, tmp, 0);
     tonemap_pbuffer_tex = tmp[0];

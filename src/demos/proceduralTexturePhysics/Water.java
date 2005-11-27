@@ -205,6 +205,7 @@ public class Water {
       throw new GLException("Pbuffers not supported with this graphics card");
     }
     pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps,
+                                                             null,
                                                              initialMapDimensions[0],
                                                              initialMapDimensions[1],
                                                              parentWindow.getContext());

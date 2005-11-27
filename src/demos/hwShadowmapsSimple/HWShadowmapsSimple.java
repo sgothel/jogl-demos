@@ -255,7 +255,7 @@ public class HWShadowmapsSimple extends Demo {
       pbuffer.destroy();
       pbuffer = null;
     }
-    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, TEX_SIZE, TEX_SIZE, drawable.getContext());
+    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, TEX_SIZE, TEX_SIZE, drawable.getContext());
     pbuffer.addGLEventListener(new PbufferListener());
 
     doViewAll = true;
