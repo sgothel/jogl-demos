@@ -107,8 +107,6 @@ public class JGears extends GLJPanel {
   public static void main(String[] args) {
     JFrame frame = new JFrame("Gear Demo");
     frame.getContentPane().setLayout(new BorderLayout());
-    GLCapabilities caps = new GLCapabilities();
-    caps.setAlphaBits(8);
     final GLJPanel drawable = new JGears();
     drawable.setOpaque(false);
 
