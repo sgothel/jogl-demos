@@ -463,8 +463,6 @@ public class Water {
         } catch (InterruptedException e) {
         }
       }
-
-      gl.glFinish();
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
