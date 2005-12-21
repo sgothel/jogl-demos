@@ -269,7 +269,7 @@ public class cgGL_vertex_example implements GLEventListener
   public static void main(String[] argv)
   {    
     Frame frame = new Frame("NVidia Cg Toolkit \"cgGL_vertex_example\" demo");
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new cgGL_vertex_example());
 
     frame.add(canvas);

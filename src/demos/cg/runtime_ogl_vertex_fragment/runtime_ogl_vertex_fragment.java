@@ -69,7 +69,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   public static void main(String[] argv)
   {    
     Frame frame = new Frame("Cg demo (runtime_ogl_vertex_fragment)");
-    GLCanvas canvas = GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
+    GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new runtime_ogl_vertex_fragment());
 
     frame.add(canvas);
