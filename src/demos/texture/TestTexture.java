@@ -182,17 +182,16 @@ public class TestTexture implements GLEventListener {
       texture.enable();
       gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
       texture.bind();
-      Point2D lowerLeft  = texture.getImageLowerLeftTexCoord();
-      Point2D upperRight = texture.getImageUpperRightTexCoord();
+      TextureCoords coords = texture.getImageTexCoords();
 
       gl.glBegin(GL.GL_QUADS);
-      gl.glTexCoord2d(lowerLeft.getX(), lowerLeft.getY());
+      gl.glTexCoord2f(coords.left(), coords.bottom());
       gl.glVertex3f(0, 0, 0);
-      gl.glTexCoord2d(upperRight.getX(), lowerLeft.getY());
+      gl.glTexCoord2f(coords.right(), coords.bottom());
       gl.glVertex3f(1, 0, 0);
-      gl.glTexCoord2d(upperRight.getX(), upperRight.getY());
+      gl.glTexCoord2f(coords.right(), coords.top());
       gl.glVertex3f(1, 1, 0);
-      gl.glTexCoord2d(lowerLeft.getX(), upperRight.getY());
+      gl.glTexCoord2f(coords.left(), coords.top());
       gl.glVertex3f(0, 1, 0);
       gl.glEnd();
       texture.disable();
