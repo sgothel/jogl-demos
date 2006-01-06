@@ -47,6 +47,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.*;
 
+import com.sun.opengl.utils.*;
+
 /** Simplified clone of DxTex tool from the DirectX SDK, written in
     Java using the DDSReader; tests fetching of texture data */
 
