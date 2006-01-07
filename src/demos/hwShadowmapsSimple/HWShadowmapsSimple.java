@@ -128,8 +128,8 @@ public class HWShadowmapsSimple extends Demo {
 
   // Texture objects
   private static final int TEX_SIZE = 1024;
-  private int decal;
-  private int light_image;
+  private Texture decal;
+  private Texture light_image;
   private int light_view_depth;
 
   // Depth buffer format
@@ -194,21 +194,18 @@ public class HWShadowmapsSimple extends Demo {
       
     gl.glClearColor(.5f, .5f, .5f, .5f);
 
-    decal = genTexture(gl);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, decal);
-    BufferedImage img = readPNGImage("demos/data/images/decal_image.png");
-    makeRGBTexture(gl, img, GL.GL_TEXTURE_2D, true);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-
-    light_image = genTexture(gl);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
-    img = readPNGImage("demos/data/images/nvlogo_spot.png");
-    makeRGBTexture(gl, img, GL.GL_TEXTURE_2D, true);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    try {
+      decal = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/decal_image.png"),
+                                   true,
+                                   TextureIO.PNG);
+      decal.setTexParameteri(GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+      decal.setTexParameteri(GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+      light_image = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/nvlogo_spot.png"),
+                                         true,
+                                         TextureIO.PNG);
+    } catch (IOException e) {
+      throw new GLException(e);
+    }
 
     quad = gl.glGenLists(1);
     gl.glNewList(quad, GL.GL_COMPILE);
@@ -463,51 +460,6 @@ public class HWShadowmapsSimple extends Demo {
     return tmp[0];
   }
 
-  private BufferedImage readPNGImage(String resourceName) {
-    try {
-      // Note: use of BufferedInputStream works around 4764639/4892246
-      BufferedImage img = ImageIO.read(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(resourceName)));
-      if (img == null) {
-        throw new RuntimeException("Error reading resource " + resourceName);
-      }
-      return img;
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void makeRGBTexture(GL gl, BufferedImage img, int target, boolean mipmapped) {
-    switch (img.getType()) {
-    case BufferedImage.TYPE_3BYTE_BGR:
-    case BufferedImage.TYPE_CUSTOM: {
-      byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-      if (mipmapped) {
-        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
-      } else {
-        gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
-      }
-      break;
-    }
-
-    case BufferedImage.TYPE_INT_RGB: {
-      int[] data = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-      if (mipmapped) {
-        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
-      } else {
-        gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
-      }
-      break;
-    }
-
-    default:
-      throw new RuntimeException("Unsupported image type " + img.getType());
-    }
-  }
-
   private void eye_linear_texgen(GL gl) {
     Mat4f m = new Mat4f();
     m.makeIdent();
@@ -576,10 +528,10 @@ public class HWShadowmapsSimple extends Demo {
     gl.glMatrixMode(GL.GL_MODELVIEW);
 
     gl.glDisable(GL.GL_LIGHTING);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, decal);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+    decal.bind();
+    decal.enable();
     gl.glCallList(quad);
-    gl.glDisable(GL.GL_TEXTURE_2D);
+    decal.disable();
     gl.glEnable(GL.GL_LIGHTING);
 
     texgen(gl, false);
@@ -650,8 +602,8 @@ public class HWShadowmapsSimple extends Demo {
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL.GL_MODELVIEW);
 
-    gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+    light_image.bind();
+    light_image.enable();
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
     gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -663,7 +615,7 @@ public class HWShadowmapsSimple extends Demo {
     render_scene(gl, cameraTransform, drawable, params);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    gl.glDisable(GL.GL_TEXTURE_2D);
+    light_image.disable();
     gl.glActiveTexture(GL.GL_TEXTURE0);
 
     render_manipulators(gl, cameraTransform, drawable, params);
@@ -697,8 +649,8 @@ public class HWShadowmapsSimple extends Demo {
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL.GL_MODELVIEW);
 
-    gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+    light_image.bind();
+    light_image.enable();
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
     // depth compare
@@ -732,7 +684,7 @@ public class HWShadowmapsSimple extends Demo {
     render_scene(gl, cameraTransform, drawable, params);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    gl.glDisable(GL.GL_TEXTURE_2D);
+    light_image.disable();
     gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glDisable(GL.GL_TEXTURE_2D);
     gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -772,8 +724,8 @@ public class HWShadowmapsSimple extends Demo {
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     gl.glMatrixMode(GL.GL_MODELVIEW);
 
-    gl.glBindTexture(GL.GL_TEXTURE_2D, light_image);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+    light_image.bind();
+    light_image.enable();
     gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
     gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -788,7 +740,7 @@ public class HWShadowmapsSimple extends Demo {
     render_scene(gl, spotlightTransform, null, null);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    gl.glDisable(GL.GL_TEXTURE_2D);
+    light_image.disable();
     gl.glActiveTexture(GL.GL_TEXTURE0);
   }
 

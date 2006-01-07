@@ -94,6 +94,7 @@ public class ProceduralTexturePhysics extends Demo {
   //
 
   public void shutdownDemo() {
+    viewer.detach();
     ManipManager.getManipManager().unregisterWindow(drawable);
     drawable.removeGLEventListener(this);
     super.shutdownDemo();
@@ -124,7 +125,8 @@ public class ProceduralTexturePhysics extends Demo {
     water.initialize("demos/data/images/nvfixed.tga", 
                      "demos/data/images/nvspin.tga", 
                      "demos/data/images/droplet.tga", 
-                     "demos/data/cubemaps/CloudyHills_{0}.tga",
+                     "demos/data/cubemaps/CloudyHills_",
+                     "tga",
                      drawable);
 
     GL gl = drawable.getGL();

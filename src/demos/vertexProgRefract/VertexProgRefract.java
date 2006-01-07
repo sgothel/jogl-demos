@@ -46,7 +46,6 @@ import javax.swing.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.utils.*;
-import com.sun.opengl.utils.*;
 import demos.common.*;
 import demos.util.*;
 import gleem.*;
@@ -100,7 +99,7 @@ public class VertexProgRefract extends Demo {
   private boolean firstRender = true;
   private int vtxProg;
   private int fragProg;
-  private int cubemap;
+  private Texture cubemap;
   private int bunnydl;
   private int obj;
 
@@ -269,16 +268,11 @@ public class VertexProgRefract extends Demo {
     gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, -1.0f, 1.0f, 0.0f);   // texture scale
     gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
 
-    int[] cubemapTmp = new int[1];
-    gl.glGenTextures(1, cubemapTmp, 0);
-    cubemap = cubemapTmp[0];
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
-
-    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-
     try {
-      loadPNGCubemap(gl, "demos/data/cubemaps/uffizi", true);
+      cubemap = Cubemap.loadFromStreams(getClass().getClassLoader(),
+                                        "demos/data/cubemaps/uffizi_",
+                                        "png",
+                                        true);
     } catch (IOException e) {
       shutdownDemo();
       throw new RuntimeException(e);
@@ -381,16 +375,16 @@ public class VertexProgRefract extends Demo {
 
     // set texture transforms
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+    cubemap.bind();
+    cubemap.enable();
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     gl.glScalef(1.0f, -1.0f, 1.0f);
     viewer.updateInverseRotation(gl);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+    cubemap.bind();
+    cubemap.enable();
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     gl.glScalef(1.0f, -1.0f, 1.0f);
@@ -454,6 +448,7 @@ public class VertexProgRefract extends Demo {
   //
   public void shutdownDemo() {
     if (drawable != null) {
+      viewer.detach();
       ManipManager.getManipManager().unregisterWindow(drawable);
       drawable.removeGLEventListener(this);
     }
@@ -506,60 +501,6 @@ public class VertexProgRefract extends Demo {
 
   private boolean getFlag(char key) {
     return b[((int) key) & 0xFF];
-  }
-
-  // FIXME: note we found that we had to swap the negy and posy portions of the cubemap.
-  // Not sure why this is the case. Vertical flip in the image read? Possible, but doesn't
-  // appear to be the case (have tried this and produced wrong results at the time).
-  String[] suffixes = { "posx", "negx", "negy", "posy", "posz", "negz" };
-  int[] targets = { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-                    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-                    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-                    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
-  private void loadPNGCubemap(GL gl, String baseName, boolean mipmapped) throws IOException {
-    for (int i = 0; i < suffixes.length; i++) {
-      String resourceName = baseName + "_" + suffixes[i] + ".png";
-      // Note: use of BufferedInputStream works around 4764639/4892246
-      BufferedImage img = ImageIO.read(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(resourceName)));
-      if (img == null) {
-        throw new RuntimeException("Error reading PNG image " + resourceName);
-      }
-      makeRGBTexture(gl, img, targets[i], mipmapped);
-    }
-  }
-
-  private void makeRGBTexture(GL gl, BufferedImage img, int target, boolean mipmapped) {
-    switch (img.getType()) {
-    case BufferedImage.TYPE_3BYTE_BGR:
-    case BufferedImage.TYPE_CUSTOM: {
-      byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-      if (mipmapped) {
-        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
-      } else {
-        gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(data));
-      }
-      break;
-    }
-
-    case BufferedImage.TYPE_INT_RGB: {
-      int[] data = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-      if (mipmapped) {
-        glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB,
-                              GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
-      } else {
-        gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0,
-                        GL.GL_RGB, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(data));
-      }
-      break;
-    }
-
-    default:
-      throw new RuntimeException("Unsupported image type " + img.getType());
-    }
   }
 
   private void initExtension(GL gl, String glExtensionName) {
@@ -650,8 +591,8 @@ public class VertexProgRefract extends Demo {
     gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
   
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, cubemap);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+    cubemap.bind();
+    cubemap.enable();
 
     // This is a workaround for a driver bug on Mac OS X where the
     // normals are not being sent down to the hardware in

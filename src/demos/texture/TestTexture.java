@@ -129,6 +129,8 @@ public class TestTexture implements GLEventListener {
   }
 
   public void init(GLAutoDrawable drawable) {
+    drawable.setGL(new DebugGL(drawable.getGL()));
+
     GL gl = drawable.getGL();
     gl.glClearColor(0, 0, 0, 0);
     gl.glEnable(GL.GL_DEPTH_TEST);
@@ -180,8 +182,8 @@ public class TestTexture implements GLEventListener {
 
     if (texture != null) {
       texture.enable();
-      gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
       texture.bind();
+      gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
       TextureCoords coords = texture.getImageTexCoords();
 
       gl.glBegin(GL.GL_QUADS);

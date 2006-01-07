@@ -74,21 +74,15 @@ public class Water {
   public static final int CA_DO_NOT_RENDER        = 5;
 
   private int[] initialMapDimensions = new int[2];
-  private TGAImage initialMap;
+  private TextureData initialMapData;
 
   private String tmpSpinFilename;
   private String tmpDropletFilename;
-  private String tmpCubeMapFilenamePattern;
+  private String tmpCubeMapFilenamePrefix;
+  private String tmpCubeMapFilenameSuffix;
 
   private GLPbuffer pbuffer;
   private Rotf cameraOrientation = new Rotf();
-
-  // Static texture names
-  private static final int CA_TEXTURE_INITIAL_MAP = 0;
-  private static final int CA_TEXTURE_SPIN        = 1;
-  private static final int CA_TEXTURE_DROPLET     = 2;
-  private static final int CA_TEXTURE_CUBEMAP     = 3;
-  private static final int CA_NUM_STATIC_TEXTURES = 4;
 
   // Dynamic texture names
   private static final int CA_TEXTURE_FORCE_INTERMEDIATE = 0;
@@ -111,8 +105,13 @@ public class Water {
   private static final int CA_DRAW_SCREEN_QUAD                       = 7;
   private static final int CA_NUM_LISTS                              = 8;
 
-  private int[]  staticTextureIDs = new int[CA_NUM_STATIC_TEXTURES];     
-  private int[]  dynamicTextureIDs = new int[CA_NUM_DYNAMIC_TEXTURES];
+  // Static textures
+  private Texture initialMapTex;
+  private Texture spinTex;
+  private Texture dropletTex;
+  private Texture cubemap;
+
+  private Texture[] dynamicTextures = new Texture[CA_NUM_DYNAMIC_TEXTURES];
     
   private int       texHeightInput;                 // current input height texture ID.
   private int       texHeightOutput;                // current output height texture ID.
@@ -190,12 +189,14 @@ public class Water {
   public void initialize(String initialMapFilename,
                          String spinFilename,
                          String dropletFilename,
-                         String cubeMapFilenamePattern,
+                         String cubeMapFilenamePrefix,
+                         String cubeMapFilenameSuffix,
                          GLAutoDrawable parentWindow) {
     loadInitialTexture(initialMapFilename);
     tmpSpinFilename           = spinFilename;
     tmpDropletFilename        = dropletFilename;
-    tmpCubeMapFilenamePattern = cubeMapFilenamePattern;
+    tmpCubeMapFilenamePrefix  = cubeMapFilenamePrefix;
+    tmpCubeMapFilenameSuffix  = cubeMapFilenameSuffix;
     
     // create the pbuffer.  Will use this as an offscreen rendering buffer.
     // it allows rendering a texture larger than our window.
@@ -258,11 +259,11 @@ public class Water {
 
           // Draw quad over full display
           gl.glActiveTexture(GL.GL_TEXTURE0);
-          gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
-          gl.glDisable(GL.GL_TEXTURE_2D);
+          dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind();
+          dynamicTextures[CA_TEXTURE_NORMAL_MAP].disable();
           gl.glActiveTexture(GL.GL_TEXTURE3);
-          gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, staticTextureIDs[CA_TEXTURE_CUBEMAP]);
-          gl.glEnable(GL.GL_TEXTURE_2D);
+          cubemap.bind();
+          cubemap.enable();
 
           gl.glColor4f(1, 1, 1, 1);
           gl.glBegin(GL.GL_QUADS);
@@ -293,6 +294,7 @@ public class Water {
                 
           gl.glEnd();
     
+          cubemap.disable();
           gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
                 
           break;
@@ -301,7 +303,7 @@ public class Water {
         case CA_FULLSCREEN_NORMALMAP: {
           // Draw quad over full display
           gl.glActiveTexture(GL.GL_TEXTURE0);
-          gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
+          dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind();
                 
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
           break;
@@ -319,7 +321,7 @@ public class Water {
         case CA_FULLSCREEN_FORCE: {
           // Draw quad over full display
           gl.glActiveTexture(GL.GL_TEXTURE0);
-          gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
+          dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind();
 			                 
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
           break;
@@ -329,7 +331,7 @@ public class Water {
           // Draw quad over full display
           // lower left
           gl.glActiveTexture(GL.GL_TEXTURE0);
-          gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
+          dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind();
           gl.glMatrixMode(GL.GL_MODELVIEW);
           gl.glPushMatrix();
 			                 
@@ -348,7 +350,7 @@ public class Water {
           gl.glPopMatrix();
 
           // upper left
-          gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
+          dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind();
           gl.glMatrixMode(GL.GL_MODELVIEW);
           gl.glPushMatrix();
 			                 
@@ -471,31 +473,30 @@ public class Water {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
-  private TGAImage loadImage(String resourceName) {
-    try {
-      return TGAImage.read(getClass().getClassLoader().getResourceAsStream(resourceName));
-    } catch (IOException e) {
-      throw new GLException(e);
-    }
-  }
-
   // We need to load the initial texture file early to get the width
   // and height for the pbuffer
   private void loadInitialTexture(String initialMapFilename) {
     try {
-      initialMap = TGAImage.read(getClass().getClassLoader().getResourceAsStream(initialMapFilename));
+      initialMapData = TextureIO.newTextureData(getClass().getClassLoader().getResourceAsStream(initialMapFilename),
+                                                false,
+                                                TextureIO.getFileSuffix(initialMapFilename));
     } catch (IOException e) {
       throw new GLException(e);
     }
-    initialMapDimensions[0] = initialMap.getWidth();
-    initialMapDimensions[1] = initialMap.getHeight();
+    initialMapDimensions[0] = initialMapData.getWidth();
+    initialMapDimensions[1] = initialMapData.getHeight();
   }
 
   private void initOpenGL(GL gl) {
-    loadTextures(gl, tmpSpinFilename, tmpDropletFilename, tmpCubeMapFilenamePattern);
+    try {
+      loadTextures(gl, tmpSpinFilename, tmpDropletFilename, tmpCubeMapFilenamePrefix, tmpCubeMapFilenameSuffix);
+    } catch (IOException e) {
+      throw new GLException(e);
+    }
     tmpSpinFilename           = null;
     tmpDropletFilename        = null;
-    tmpCubeMapFilenamePattern = null;
+    tmpCubeMapFilenamePrefix  = null;
+    tmpCubeMapFilenameSuffix  = null;
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
@@ -674,11 +675,11 @@ public class Water {
 
     switch (flipState) {
     case 0:
-      texHeightInput    = dynamicTextureIDs[CA_TEXTURE_HEIGHT_SOURCE];       // initial height map.
-      texHeightOutput   = dynamicTextureIDs[CA_TEXTURE_HEIGHT_TARGET];    // next height map.
+      texHeightInput    = dynamicTextures[CA_TEXTURE_HEIGHT_SOURCE].getTextureObject();    // initial height map.
+      texHeightOutput   = dynamicTextures[CA_TEXTURE_HEIGHT_TARGET].getTextureObject();    // next height map.
 
-      texVelocityInput  = dynamicTextureIDs[CA_TEXTURE_VELOCITY_SOURCE];  // initial velocity.
-      texVelocityOutput = dynamicTextureIDs[CA_TEXTURE_VELOCITY_TARGET];  // next velocity.
+      texVelocityInput  = dynamicTextures[CA_TEXTURE_VELOCITY_SOURCE].getTextureObject();  // initial velocity.
+      texVelocityOutput = dynamicTextures[CA_TEXTURE_VELOCITY_TARGET].getTextureObject();  // next velocity.
 
       // Clear initial velocity texture to 0x80 == gray
       gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -756,7 +757,7 @@ public class Water {
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTexture(GL.GL_TEXTURE2);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_INTERMEDIATE]);
+    dynamicTextures[CA_TEXTURE_FORCE_INTERMEDIATE].bind();    
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
@@ -798,7 +799,7 @@ public class Water {
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
+    dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind();
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
@@ -817,7 +818,7 @@ public class Water {
     gl.glActiveTexture(GL.GL_TEXTURE0);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texVelocityInput);
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_FORCE_TARGET]);
+    dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind();    
     gl.glActiveTexture(GL.GL_TEXTURE2);
     gl.glDisable(GL.GL_TEXTURE_2D);
     gl.glActiveTexture(GL.GL_TEXTURE3);
@@ -965,7 +966,7 @@ public class Water {
 
     // Now we need to copy the resulting pixels into the normal map
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, dynamicTextureIDs[CA_TEXTURE_NORMAL_MAP]);
+    dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind();
     
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
@@ -975,8 +976,8 @@ public class Water {
     gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
     
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_INITIAL_MAP]);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+    initialMapTex.bind();
+    initialMapTex.enable();
 
     gl.glEnable(GL.GL_ALPHA_TEST);
 
@@ -993,7 +994,7 @@ public class Water {
 
     if (spinLogo) {
       gl.glActiveTexture(GL.GL_TEXTURE0);
-      gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_SPIN]);
+      spinTex.bind();
       gl.glMatrixMode(GL.GL_MODELVIEW);
       gl.glPushMatrix();
       gl.glRotatef(angle, 0, 0, 1);
@@ -1008,100 +1009,39 @@ public class Water {
     gl.glDisable(GL.GL_BLEND);
   }
 
-  private void createTextureObject(GL gl, int id, TGAImage image, boolean test) {
-    // Fetch image data out of image
-    gl.glBindTexture(GL.GL_TEXTURE_2D, id);
-    gl.glTexImage2D (GL.GL_TEXTURE_2D, 
-                     0,
-                     GL.GL_RGBA8,
-                     image.getWidth(),
-                     image.getHeight(),
-                     0,
-                     image.getGLFormat(),
-                     GL.GL_UNSIGNED_BYTE,
-                     ByteBuffer.wrap(image.getData()));
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-  }
-
-  private void loadCubeMap(GL gl, int id, String filenamePattern, boolean mipmap) {
-    int[] faces = new int[] { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-                              GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-                              GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-                              GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
-    String[] faceNames = new String[] { "posx", "negx", "posy", "negy", "posz", "negz" };
-
-    // create and bind a cubemap texture object
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, id);
-
-    // enable automipmap generation if needed.
-    gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_GENERATE_MIPMAP_SGIS, (mipmap ? 1 : 0));
-    
-    if (mipmap)
-      gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-    else
-      gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-    gl.glTexParameterf(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-
-    // load 6 faces.
-    MessageFormat fmt = new MessageFormat(filenamePattern);
-    for (int i = 0; i < 6; i++) {
-      String filename = MessageFormat.format(filenamePattern, new String[] { faceNames[i] });
-      TGAImage image = loadImage(filename);
-      gl.glTexImage2D(faces[i], 
-                      0,
-                      GL.GL_RGBA8,
-                      image.getWidth(),
-                      image.getHeight(),
-                      0,
-                      image.getGLFormat(),
-                      GL.GL_UNSIGNED_BYTE,
-                      ByteBuffer.wrap(image.getData()));
-    }
-  }
-
   private void loadTextures(GL gl,
                             String spinFilename,
                             String dropletFilename,
-                            String cubeMapFilenamePattern) {
-    if (initialMap == null) {
+                            String cubeMapFilenamePrefix,
+                            String cubeMapFilenameSuffix) throws IOException {
+    if (initialMapData == null) {
       throw new GLException("Must call loadInitialTexture ahead of time");
     }
 
-    TGAImage spin    = loadImage(spinFilename);
-    TGAImage droplet = loadImage(dropletFilename);
-
-    gl.glGenTextures(CA_NUM_STATIC_TEXTURES, staticTextureIDs, 0); 
-    gl.glGenTextures(CA_NUM_DYNAMIC_TEXTURES, dynamicTextureIDs, 0); // also create intermediate texture object
-
-    // upload the initial map texture
-    createTextureObject(gl, staticTextureIDs[CA_TEXTURE_INITIAL_MAP], initialMap, true);
-
-    createTextureObject(gl, staticTextureIDs[CA_TEXTURE_SPIN], spin, true);
-
-    createTextureObject(gl, staticTextureIDs[CA_TEXTURE_DROPLET], droplet, false);
+    initialMapTex = TextureIO.newTexture(initialMapData);
+    spinTex       = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream(spinFilename), false,
+                                         TextureIO.getFileSuffix(spinFilename));
+    dropletTex    = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream(dropletFilename), false,
+                                         TextureIO.getFileSuffix(dropletFilename));
 
     // load the cubemap texture
-    loadCubeMap(gl, staticTextureIDs[CA_TEXTURE_CUBEMAP], cubeMapFilenamePattern, true);
+    cubemap = Cubemap.loadFromStreams(getClass().getClassLoader(),
+                                      cubeMapFilenamePrefix,
+                                      cubeMapFilenameSuffix,
+                                      true);
 
+    // now create dummy intermediate textures from the initial map texture
     for (int i = 0; i < CA_NUM_DYNAMIC_TEXTURES; i++) {
-      // now create a dummy intermediate textures from the initial map texture
-      createTextureObject(gl, dynamicTextureIDs[i], initialMap, false);
+      dynamicTextures[i] = TextureIO.newTexture(initialMapData);
     }
 
-    initialMap = null;
+    initialMapData = null;
 
-    texHeightInput    = staticTextureIDs [CA_TEXTURE_INITIAL_MAP];      // initial height map.
-    texHeightOutput   = dynamicTextureIDs[CA_TEXTURE_HEIGHT_TARGET];    // next height map.
+    texHeightInput    = initialMapTex.getTextureObject();                               // initial height map.
+    texHeightOutput   = dynamicTextures[CA_TEXTURE_HEIGHT_TARGET].getTextureObject();   // next height map.
     
-    texVelocityInput  = dynamicTextureIDs[CA_TEXTURE_VELOCITY_SOURCE];  // initial velocity.
-    texVelocityOutput = dynamicTextureIDs[CA_TEXTURE_VELOCITY_TARGET];  // next velocity.
+    texVelocityInput  = dynamicTextures[CA_TEXTURE_VELOCITY_SOURCE].getTextureObject(); // initial velocity.
+    texVelocityOutput = dynamicTextures[CA_TEXTURE_VELOCITY_TARGET].getTextureObject(); // next velocity.
   }
 
   private void createAndWriteUVOffsets(GL gl, int width, int height) {
@@ -1196,8 +1136,8 @@ public class Water {
     gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
 
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, staticTextureIDs[CA_TEXTURE_DROPLET]);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+    dropletTex.bind();
+    dropletTex.enable();
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
     gl.glDisable(GL.GL_TEXTURE_2D);

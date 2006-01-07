@@ -607,7 +607,6 @@ public class ExaminerViewer {
     Rotf oriInv = orientation.inverse();
     Vec3f tmp = new Vec3f();
     float ang = orientation.get(tmp);
-    gl.glLoadIdentity();
     if (tmp.lengthSquared() > EPSILON)
       gl.glRotatef((float) Math.toDegrees(ang), tmp.x(), tmp.y(), tmp.z());
   }
