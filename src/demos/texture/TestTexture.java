@@ -165,7 +165,7 @@ public class TestTexture implements GLEventListener {
 
       try {
         System.err.println("Loading texture...");
-        texture = TextureIO.newTexture(file);
+        texture = TextureIO.newTexture(file, true);
       } catch (IOException e) {
         e.printStackTrace();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
