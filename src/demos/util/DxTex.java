@@ -50,7 +50,7 @@ import javax.swing.filechooser.*;
 import com.sun.opengl.utils.*;
 
 /** Simplified clone of DxTex tool from the DirectX SDK, written in
-    Java using the DDSReader; tests fetching of texture data */
+    Java using the DDSImage; tests fetching of texture data */
 
 public class DxTex {
   private InternalFrameListener frameListener;
@@ -201,9 +201,8 @@ public class DxTex {
 
   private void openFile(File file) {
     try {
-      DDSReader reader = new DDSReader();
-      reader.loadFile(file.getAbsolutePath());
-      showImage(file.getName(), reader, 0);
+      DDSImage image = DDSImage.read(file);
+      showImage(file.getName(), image, 0);
     } catch (IOException e) {
       showMessageDialog("Error while opening file:" + endl +
                         exceptionToString(e),
@@ -216,9 +215,9 @@ public class DxTex {
   // Image display
   //
 
-  private void showImage(String filename, DDSReader reader, int mipMapLevel) {
+  private void showImage(String filename, DDSImage image, int mipMapLevel) {
     try {
-      ImageFrame fr = new ImageFrame(filename, reader, mipMapLevel);
+      ImageFrame fr = new ImageFrame(filename, image, mipMapLevel);
       desktop.add(fr);
       fr.show();
     } catch (Exception e) {
@@ -231,16 +230,16 @@ public class DxTex {
 
   class ImageFrame extends JInternalFrame {
     private String filename;
-    private DDSReader reader;
+    private DDSImage image;
     private int mipMapLevel;
     private int curWidth;
     private int curHeight;
     private JLabel label;
 
-    ImageFrame(String filename, DDSReader reader, int mipMapLevel) {
+    ImageFrame(String filename, DDSImage image, int mipMapLevel) {
       super();
       this.filename = filename;
-      this.reader = reader;
+      this.image = image;
 
       addInternalFrameListener(frameListener);
       label = new JLabel();
@@ -254,7 +253,7 @@ public class DxTex {
     }
 
     int getNumMipMaps() {
-      return reader.getNumMipMaps();
+      return image.getNumMipMaps();
     }
 
     void setMipMapLevel(int level) {
@@ -265,13 +264,13 @@ public class DxTex {
 
     void close() {
       System.err.println("Closing files");
-      reader.close();
+      image.close();
     }
 
     private void computeImage() {
       // Get image data
-      reader.getNumMipMaps();
-      DDSReader.ImageInfo info = reader.getMipMap(mipMapLevel);
+      image.getNumMipMaps();
+      DDSImage.ImageInfo info = image.getMipMap(mipMapLevel);
       int width = info.getWidth();
       int height = info.getHeight();
       curWidth = width;
@@ -284,13 +283,13 @@ public class DxTex {
       WritableRaster dst = img.getRaster();
 
       int skipSize;
-      if (reader.getPixelFormat() == DDSReader.D3DFMT_A8R8G8B8) {
+      if (image.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8) {
         skipSize = 4;
-      } else if (reader.getPixelFormat() == DDSReader.D3DFMT_R8G8B8) {
+      } else if (image.getPixelFormat() == DDSImage.D3DFMT_R8G8B8) {
         skipSize = 3;
       } else {
-        reader.close();
-        throw new RuntimeException("Unsupported pixel format " + reader.getPixelFormat());        
+        image.close();
+        throw new RuntimeException("Unsupported pixel format " + image.getPixelFormat());        
       }
 
       for (int y = 0; y < height; y++) {
@@ -309,7 +308,7 @@ public class DxTex {
     private void resetTitle() {
       setTitle(filename + " (" + curWidth + "x" + curHeight +
                ", mipmap " + (1 + mipMapLevel) + " of " +
-               reader.getNumMipMaps() + ")");
+               image.getNumMipMaps() + ")");
     }
   }
 
