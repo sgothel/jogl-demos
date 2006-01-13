@@ -7,7 +7,6 @@ package demos.printext;
 
 import java.awt.*;
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 public class PrintExt {
   public static void main(String[] args) {

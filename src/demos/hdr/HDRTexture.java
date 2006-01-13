@@ -4,7 +4,6 @@ import java.io.*;
 import java.nio.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 public class HDRTexture {
   private RGBE.Header header;

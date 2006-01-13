@@ -40,8 +40,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.*;
 import demos.common.*;
 import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;

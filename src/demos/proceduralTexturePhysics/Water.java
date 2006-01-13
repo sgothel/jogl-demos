@@ -43,7 +43,8 @@ import java.util.*;
 import gleem.linalg.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.texture.*;
 import demos.util.*;
 
 /**
@@ -479,7 +480,7 @@ public class Water {
     try {
       initialMapData = TextureIO.newTextureData(getClass().getClassLoader().getResourceAsStream(initialMapFilename),
                                                 false,
-                                                TextureIO.getFileSuffix(initialMapFilename));
+                                                FileUtil.getFileSuffix(initialMapFilename));
     } catch (IOException e) {
       throw new GLException(e);
     }
@@ -1020,9 +1021,9 @@ public class Water {
 
     initialMapTex = TextureIO.newTexture(initialMapData);
     spinTex       = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream(spinFilename), false,
-                                         TextureIO.getFileSuffix(spinFilename));
+                                         FileUtil.getFileSuffix(spinFilename));
     dropletTex    = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream(dropletFilename), false,
-                                         TextureIO.getFileSuffix(dropletFilename));
+                                         FileUtil.getFileSuffix(dropletFilename));
 
     // load the cubemap texture
     cubemap = Cubemap.loadFromStreams(getClass().getClassLoader(),

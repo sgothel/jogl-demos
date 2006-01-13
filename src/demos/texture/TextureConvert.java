@@ -43,7 +43,8 @@ import java.io.*;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.texture.*;
 
 /** Demonstrates how the TextureIO subsystem may be used to convert
     textures between multiple file formats, including texture
@@ -72,7 +73,7 @@ public class TextureConvert {
     GL gl = pbuffer.getGL();
 
     boolean attemptCompression = false;
-    if (TextureIO.DDS.equals(TextureIO.getFileSuffix(outputFile))) {
+    if (TextureIO.DDS.equals(FileUtil.getFileSuffix(outputFile))) {
       if (gl.isExtensionAvailable("GL_EXT_texture_compression_s3tc") ||
           gl.isExtensionAvailable("GL_NV_texture_compression_vtc")) {
         attemptCompression = true;

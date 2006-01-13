@@ -43,7 +43,7 @@ import java.io.*;
 import java.nio.*;
 import java.util.*;
 
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 
 /** Simple parser for Wavefront .OBJ files. Does not support all file
     options -- currently requires vertices and normals (only) to be
@@ -310,10 +310,10 @@ public class ObjReader {
     newVertices.trim();
     newVertexNormals.trim();
     newIndices.trim();
-    vertices = BufferUtils.newFloatBuffer(newVertices.size());
+    vertices = BufferUtil.newFloatBuffer(newVertices.size());
     vertices.put(newVertices.getData());
     vertices.rewind();
-    normals = BufferUtils.newFloatBuffer(newVertexNormals.size());
+    normals = BufferUtil.newFloatBuffer(newVertexNormals.size());
     normals.put(newVertexNormals.getData());
     normals.rewind();
     faceIndices = newIndices;

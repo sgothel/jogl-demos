@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 
 /**
  * Gears.java <BR>

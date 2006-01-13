@@ -36,8 +36,8 @@ package demos.cg.runtime_ogl_vertex_fragment;
 import com.sun.opengl.cg.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -329,9 +329,9 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     if (P == null) {
       int u, v;
 
-      P = BufferUtils.newFloatBuffer(3*nVerts);
-      N = BufferUtils.newFloatBuffer(3*nVerts);
-      uv = BufferUtils.newFloatBuffer(2*nVerts);
+      P = BufferUtil.newFloatBuffer(3*nVerts);
+      N = BufferUtil.newFloatBuffer(3*nVerts);
+      uv = BufferUtil.newFloatBuffer(2*nVerts);
 
       // Fill in the position, normal, and texture coordinate arrays.
       // Just loop over all of the vertices, compute their parametreic
@@ -354,7 +354,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
       }
 
       // Now fill in the vertex index arrays
-      indices = BufferUtils.newIntBuffer(3*nTris);
+      indices = BufferUtil.newIntBuffer(3*nTris);
       int ip = 0;
       for (v = 0; v < nv-1; ++v) {
         for (u = 0; u < nu-1; ++u) {

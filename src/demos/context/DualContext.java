@@ -45,7 +45,7 @@ import javax.swing.*;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 
 /** This demo illustrates the use of the GLDrawable and GLContext APIs
     to create two OpenGL contexts for the same Canvas. The red and

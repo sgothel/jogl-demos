@@ -43,7 +43,6 @@ import java.awt.*;
 import java.util.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 /** A simple demonstration of sharing of display lists between drawables. */
 

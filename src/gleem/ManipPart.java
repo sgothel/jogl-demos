@@ -43,7 +43,6 @@ import java.util.*;
 
 import gleem.linalg.*;
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 /** A ManipPart is a visible or invisible sub-part of a manipulator.
     ManipParts are organized into trees. */

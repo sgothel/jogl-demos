@@ -46,7 +46,7 @@ import javax.swing.*;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.texture.*;
 
 /** Demonstrates simple use of the TextureIO texture loader. */
 
@@ -106,7 +106,7 @@ public class TestTexture implements GLEventListener {
     menuBar.add(menu);
 
     canvas.addGLEventListener(this);
-    frame.add(canvas);
+    frame.getContentPane().add(canvas);
     frame.setJMenuBar(menuBar);
     frame.setSize(800, 600);
     frame.show();

@@ -42,7 +42,6 @@ package demos.util;
 import java.io.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 /** Renders a triceratops. <P>
 

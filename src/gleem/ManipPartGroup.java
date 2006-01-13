@@ -43,7 +43,6 @@ import java.util.*;
 
 import gleem.linalg.*;
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 /** This class groups a set of ManipParts. Makes a set of ManipParts
     look like one. */

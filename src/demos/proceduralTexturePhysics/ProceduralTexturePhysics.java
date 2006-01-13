@@ -38,7 +38,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 import demos.common.*;
 import demos.util.*;
 import gleem.*;

@@ -42,12 +42,9 @@ package demos.multisample;
 import java.awt.*;
 import java.awt.event.*;
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 public class Multisample {
   private GLCanvas canvas;
-  private Animator animator;
-  private volatile boolean quit;
 
   // Simple class to warn if results are not going to be as expected
   static class MultisampleChooser extends DefaultGLCapabilitiesChooser {
@@ -165,7 +162,6 @@ public class Multisample {
   }
 
   private void runExit() {
-    quit = true;
     // Note: calling System.exit() synchronously inside the draw,
     // reshape or init callbacks can lead to deadlocks on certain
     // platforms (in particular, X11) because the JAWT's locking

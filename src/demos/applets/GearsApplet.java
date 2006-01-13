@@ -5,7 +5,7 @@ import java.awt.*;
 import java.io.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 import demos.gears.Gears;
 
 /** Shows how to deploy an applet using JOGL. This demo must be

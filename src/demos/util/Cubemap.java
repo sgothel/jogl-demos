@@ -42,7 +42,8 @@ package demos.util;
 import java.io.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.texture.*;
 
 /** Helper class for loading cubemaps from a set of textures. */
 
@@ -65,7 +66,7 @@ public class Cubemap {
       String resourceName = basename + suffixes[i] + "." + suffix;
       TextureData data = TextureIO.newTextureData(scope.getResourceAsStream(resourceName),
                                                   mipmapped,
-                                                  TextureIO.getFileSuffix(resourceName));
+                                                  FileUtil.getFileSuffix(resourceName));
       if (data == null) {
         throw new IOException("Unable to load texture " + resourceName);
       }

@@ -55,7 +55,6 @@
     <target name="all" depends="init">
         <mkdir dir="${classes}" />
         <path id="jogl.classpath">
-            <pathelement path="${classpath}" />
             <pathelement location="${jogl.jar}" />
         </path>
         <javac destdir="${classes}" excludes="${jogl.cg.excludes}" source="1.4" debug="true" debuglevel="source,lines">

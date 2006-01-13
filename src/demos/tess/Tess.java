@@ -60,7 +60,7 @@ package demos.tess;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -76,22 +76,18 @@ public class Tess {
             frame.add(canvas);
             canvas.addGLEventListener(new TessRenderer());
 
-            final Animator animator = new Animator(canvas);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                   // Run this on another thread than the AWT event queue to
-                  // make sure the call to Animator.stop() completes before
-                  // exiting
+                  // avoid deadlocks on shutdown on some platforms
                   new Thread(new Runnable() {
                       public void run() {
-                        animator.stop();
                         System.exit(0);
                       }
                     }).start();
                 }
             });
             frame.show();
-            animator.start();
         } catch (Exception e) {
             e.printStackTrace();
         }

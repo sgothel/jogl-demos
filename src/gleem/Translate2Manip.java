@@ -43,7 +43,6 @@ import java.util.*;
 
 import gleem.linalg.*;
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
 
 /** A Translate2Manip is a Manip which translates in two dimensions and
     whose default representation is two arrows. */

@@ -45,7 +45,7 @@ import java.util.*;
 import javax.swing.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 
 /** A simple demonstration exercising context creation and destruction
     as a GLCanvas is added to and removed from its parent container. */

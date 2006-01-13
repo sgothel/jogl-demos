@@ -41,8 +41,7 @@ import javax.swing.*;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.utils.*;
-import com.sun.opengl.utils.*;
+import com.sun.opengl.util.*;
 import demos.common.*;
 import demos.util.*;
 
@@ -354,8 +353,8 @@ public class VertexBufferObject extends Demo {
       buffers[i].vertices = sliceBuffer(bigArray, startIndex, sliceSize);
       buffers[i].normals  = sliceBuffer(buffers[i].vertices, 3,
                                         buffers[i].vertices.limit() - 3);
-      buffers[i].vertexOffset = startIndex       * BufferUtils.SIZEOF_FLOAT;
-      buffers[i].normalOffset = (startIndex + 3) * BufferUtils.SIZEOF_FLOAT;
+      buffers[i].vertexOffset = startIndex       * BufferUtil.SIZEOF_FLOAT;
+      buffers[i].normalOffset = (startIndex + 3) * BufferUtil.SIZEOF_FLOAT;
     }
   }
 
@@ -630,7 +629,7 @@ public class VertexBufferObject extends Demo {
         for (int i = 0; i < len; i++) {
           ++numDrawElementsCalls;
           gl.glDrawElements(primitive, 2 * STRIP_SIZE, GL.GL_UNSIGNED_INT,
-                            i * 2 * STRIP_SIZE * BufferUtils.SIZEOF_INT);
+                            i * 2 * STRIP_SIZE * BufferUtil.SIZEOF_INT);
           if(getFlag('f')) {
             gl.glFlush();
           }
@@ -737,7 +736,7 @@ public class VertexBufferObject extends Demo {
     elementBufferObject = tmp[0];
     gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
     gl.glBufferDataARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB,
-                       linearElements.remaining() * BufferUtils.SIZEOF_INT,
+                       linearElements.remaining() * BufferUtil.SIZEOF_INT,
                        linearElements,
                        GL.GL_STATIC_DRAW_ARB);
     gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
