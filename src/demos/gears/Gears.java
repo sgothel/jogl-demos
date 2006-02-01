@@ -149,12 +149,12 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
 
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-  private void gear(GL gl,
-                    float inner_radius,
-                    float outer_radius,
-                    float width,
-                    int teeth,
-                    float tooth_depth)
+  public static void gear(GL gl,
+                          float inner_radius,
+                          float outer_radius,
+                          float width,
+                          int teeth,
+                          float tooth_depth)
   {
     int i;
     float r0, r1, r2;
