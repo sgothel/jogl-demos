@@ -338,10 +338,12 @@ public class ExaminerViewer {
   }
 
   private void removeListeners() {
-    window.removeMouseMotionListener(mouseMotionListener);
-    window.removeMouseListener(mouseListener);
-    window.removeGLEventListener(glListener);
-    ManipManager.getManipManager().setupMouseListeners(window);
+    if (window != null) {
+      window.removeMouseMotionListener(mouseMotionListener);
+      window.removeMouseListener(mouseListener);
+      window.removeGLEventListener(glListener);
+      ManipManager.getManipManager().setupMouseListeners(window);
+    }
   }
 
   private void passiveMotionMethod(MouseEvent e) {
