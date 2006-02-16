@@ -224,9 +224,9 @@ public class GLCapsTableDemo
         data[ pfd ][ 16 ] = "" + (cap.getSampleBuffers() ? t : f) + " | "
           + cap.getNumSamples();
         // concat p buffer nfo
-        String pbuf = (cap.getOffscreenFloatingPointBuffers() ? "T |" : "F |");
-        pbuf += (cap.getOffscreenRenderToTexture() ? "T | " : "F | ");
-        pbuf += (cap.getOffscreenRenderToTextureRectangle() ? t : f);
+        String pbuf = (cap.getPbufferFloatingPointBuffers() ? "T |" : "F |");
+        pbuf += (cap.getPbufferRenderToTexture() ? "T | " : "F | ");
+        pbuf += (cap.getPbufferRenderToTextureRectangle() ? t : f);
         data[ pfd ][ 17 ] = pbuf;
       }
     JTable table = new JTable(data, colNames) {
