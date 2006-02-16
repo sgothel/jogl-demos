@@ -274,7 +274,7 @@ public class HDR extends Demo {
 
     GLCapabilities caps = new GLCapabilities();
     caps.setDoubleBuffered(false);
-    caps.setOffscreenFloatingPointBuffers(true);
+    caps.setPbufferFloatingPointBuffers(true);
     caps.setRedBits(floatBits);
     caps.setGreenBits(floatBits);
     caps.setBlueBits(floatBits);
@@ -314,7 +314,7 @@ public class HDR extends Demo {
     blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur2_pbuffer_tex = tmp[0];
-    caps.setOffscreenFloatingPointBuffers(false);
+    caps.setPbufferFloatingPointBuffers(false);
     caps.setRedBits(8);
     caps.setGreenBits(8);
     caps.setBlueBits(8);
