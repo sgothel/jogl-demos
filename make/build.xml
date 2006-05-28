@@ -74,6 +74,11 @@
                 <include name="demos/hdr/shaders/**/*.arbvp1" />
                 <include name="demos/hdr/shaders/**/*.arbfp1" />
             </fileset>
+            <!-- Avoid requiring dependence on huge jogl-demos-data.jar for
+                 particle engine demo -->
+            <fileset dir="${src}">
+                <include name="demos/particles/engine/images/*.jpg" />
+            </fileset>
         </jar>
         <jar destfile="${jogl.demos.util.jar}">
             <fileset dir="${classes}">
