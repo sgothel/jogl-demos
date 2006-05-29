@@ -91,7 +91,7 @@ public class ControlWindow extends JFrame implements ActionListener, ChangeListe
     // Engine components 
     numParticles = new Integer(1000);
     engine = new Engine(numParticles.intValue(), "demos/particles/engine/images/particle.jpg");
-    glComponent = new GLComponent(100, new RGBA(0.0f, 0.0f, 0.0f, 1.0f), new RGBA(0.0f, 0.0f, 0.0f, 1.0f), engine);        
+    glComponent = new GLComponent(60, new RGBA(0.0f, 0.0f, 0.0f, 1.0f), new RGBA(0.0f, 0.0f, 0.0f, 1.0f), engine);        
     
     // Close and reset buttons
     resetButton = new JButton("Reset");
