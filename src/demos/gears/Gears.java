@@ -54,6 +54,8 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
 
     System.err.println("INIT GL IS: " + gl.getClass().getName());
 
+    System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
+
     gl.setSwapInterval(1);
 
     float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
