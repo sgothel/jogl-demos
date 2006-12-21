@@ -41,6 +41,8 @@
 
     <target name="init" depends="java.class.path.validate,setup.cg.excludes,skip.cg.excludes">
         <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
+        <property name="joal.jar"            value="../lib/joal.jar" />
+        <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
         <property name="classes"             value="../build/classes" />
         <property name="src"                 value="../src" />
         <property name="javadoc"             value="../javadoc" />
@@ -54,12 +56,14 @@
 
     <target name="all" depends="init">
         <mkdir dir="${classes}" />
-        <path id="jogl.classpath">
+        <path id="jogl-demos.classpath">
             <pathelement location="${jogl.jar}" />
+            <pathelement location="${joal.jar}" />
+            <pathelement location="${joal-demos.jar}" />
         </path>
         <javac destdir="${classes}" excludes="${jogl.cg.excludes}" source="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
-            <classpath refid="jogl.classpath" />
+            <classpath refid="jogl-demos.classpath" />
         </javac>
         <jar destfile="${jogl.demos.jar}">
             <fileset dir="${classes}">
