@@ -99,7 +99,7 @@
         <delete file="${jogl.demos.src.zip}" />
         <zip destfile="${jogl.demos.src.zip}"
 	     basedir="../.."
-	     includes="jogl-demos/doc/**,jogl-demos/make/**,jogl-demos/src/**"
+	     includes="jogl-demos/doc/**,jogl-demos/make/**,jogl-demos/src/**,jogl-demos/lib/**"
 	     excludes="**/*.class,**/*~"
 	     />
     </target>
