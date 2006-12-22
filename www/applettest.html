@@ -22,12 +22,12 @@ the standard Gears demo running as an applet:
      width=600
      height=400
      codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current"
-     archive="jogl.jar,jogl-demos.jar">
+     archive="jogl.jar,gluegen-rt.jar,jogl-demos.jar">
   <param name="subapplet.classname" VALUE="demos.applets.GearsApplet">
   <param name="subapplet.displayname" VALUE="JOGL Gears Applet">
   <param name="progressbar" value="true">
-  <param name="cache_archive" VALUE="jogl.jar,jogl-demos.jar">
-  <param name="cache_archive_ex" VALUE="jogl.jar;preload,jogl-demos.jar;preload">
+  <param name="cache_archive" VALUE="jogl.jar,gluegen-rt.jar,jogl-demos.jar">
+  <param name="cache_archive_ex" VALUE="jogl.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload">
 </applet>
 
 </P>
@@ -40,12 +40,12 @@ The applet above is instantiated with the following code:
      width=600
      height=400
      codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current"
-     archive="jogl.jar,jogl-demos.jar"&gt;
+     archive="jogl.jar,gluegen-rt.jar,jogl-demos.jar"&gt;
   &lt;param name="subapplet.classname" VALUE="demos.applets.GearsApplet"&gt;
   &lt;param name="subapplet.displayname" VALUE="JOGL Gears Applet"&gt;
   &lt;param name="progressbar" value="true"&gt;
-  &lt;param name="cache_archive" VALUE="jogl.jar,jogl-demos.jar"&gt;
-  &lt;param name="cache_archive_ex" VALUE="jogl.jar;preload,jogl-demos.jar;preload"&gt;
+  &lt;param name="cache_archive" VALUE="jogl.jar,gluegen-rt.jar,jogl-demos.jar"&gt;
+  &lt;param name="cache_archive_ex" VALUE="jogl.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload"&gt;
 &lt;/applet&gt;
 </pre>
 
