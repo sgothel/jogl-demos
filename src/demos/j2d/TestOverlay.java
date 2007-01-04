@@ -50,25 +50,24 @@ import java.awt.font.*;
 import java.text.*;
 
 import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
 import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
+import com.sun.opengl.util.j2d.*;
 
 import demos.gears.Gears;
 import demos.util.*;
 import gleem.linalg.*;
 
-/** A simple test of the J2DTextureRenderer class. Draws gears
-    underneath with moving Java 2D-rendered text on top. */
+/** A simple test of the Overlay utility class. Draws gears underneath
+    with moving Java 2D-rendered text on top. */
 
-public class TestJ2DRenderer implements GLEventListener {
+public class TestOverlay implements GLEventListener {
   public static void main(String[] args) {
-    Frame frame = new Frame("Java 2D Renderer Test");
+    Frame frame = new Frame("Java 2D Overlay Test");
     GLCapabilities caps = new GLCapabilities();
     caps.setAlphaBits(8);
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());
-    canvas.addGLEventListener(new TestJ2DRenderer());
+    canvas.addGLEventListener(new TestOverlay());
     frame.add(canvas);
     frame.setSize(512, 512);
     final Animator animator = new Animator(canvas);
@@ -89,16 +88,17 @@ public class TestJ2DRenderer implements GLEventListener {
     animator.start();
   }
 
-  private J2DTextureRenderer renderer;
+  private Overlay overlay;
   private Time time;
   private Font font;
   private Color TRANSPARENT_BLACK = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+  private FontRenderContext frc;
+  private GlyphVector gv;
   private Vec2f velocity = new Vec2f(100.0f, 150.0f);
   private Vec2f position;
   private Rectangle textBounds;
-  private Rectangle fpsBounds;
+  private Rectangle lastTextBounds;
   private String TEST_STRING = "Java 2D Text";
-  private GLU glu = new GLU();
   private long startTime;
   private int frameCount;
   private DecimalFormat format = new DecimalFormat("####.00");
@@ -107,7 +107,7 @@ public class TestJ2DRenderer implements GLEventListener {
     GL gl = drawable.getGL();
     gl.setSwapInterval(0);
 
-    renderer = new J2DTextureRenderer(256, 256, true);
+    overlay = new Overlay(drawable);
     time = new SystemTime();
     ((SystemTime) time).rebase();
 
@@ -116,17 +116,6 @@ public class TestJ2DRenderer implements GLEventListener {
 
     // Create the font, render context, and glyph vector
     font = new Font("SansSerif", Font.BOLD, 36);
-    Graphics2D g2d = renderer.createGraphics();
-    g2d.setFont(font);
-    g2d.setComposite(AlphaComposite.Src);
-    FontRenderContext frc = g2d.getFontRenderContext();
-    GlyphVector gv = font.createGlyphVector(frc, TEST_STRING);
-    g2d.setColor(TRANSPARENT_BLACK);
-    g2d.fillRect(0, 0, renderer.getWidth(), renderer.getHeight());
-    g2d.setColor(Color.WHITE);
-    g2d.drawString(TEST_STRING, 10, 50);
-    textBounds = gv.getPixelBounds(frc, 10, 50);
-    renderer.sync(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
   }
 
   public void display(GLAutoDrawable drawable) {
@@ -134,67 +123,79 @@ public class TestJ2DRenderer implements GLEventListener {
       startTime = System.currentTimeMillis();
     }
 
-    if (++frameCount == 100) {
+    Graphics2D g2d = overlay.createGraphics();
+
+    if (++frameCount == 30) {
       long endTime = System.currentTimeMillis();
-      float fps = 100.0f / (float) (endTime - startTime) * 1000;
+      float fps = 30.0f / (float) (endTime - startTime) * 1000;
       frameCount = 0;
       startTime = System.currentTimeMillis();
 
-      Graphics2D g2d = renderer.createGraphics();
-      g2d.setFont(font);
-      g2d.setComposite(AlphaComposite.Src);
       FontRenderContext frc = g2d.getFontRenderContext();
       String fpsString = "FPS: " + format.format(fps);
       GlyphVector gv = font.createGlyphVector(frc, TEST_STRING);
-      fpsBounds = gv.getPixelBounds(frc, 10, 100);
+      int x = drawable.getWidth() - 200;
+      int y = drawable.getHeight() - 20;
+      Rectangle fpsBounds = gv.getPixelBounds(frc, x, y);
+      g2d.setFont(font);
+      g2d.setComposite(AlphaComposite.Src);
       g2d.setColor(TRANSPARENT_BLACK);
       g2d.fillRect(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
       g2d.setColor(Color.WHITE);
-      g2d.drawString(fpsString, 10, 100);
+      g2d.drawString(fpsString, x, y);
+      overlay.sync(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
     }
 
     time.update();
 
+    // Move down the text bounds
+    lastTextBounds = textBounds;
+
+    g2d.setFont(font);
+    g2d.setComposite(AlphaComposite.Src);
+    if (overlay.contentsLost()) {
+      frc = g2d.getFontRenderContext();
+      gv = font.createGlyphVector(frc, TEST_STRING);
+    }
+
     // Compute the next position of the text
     position = position.plus(velocity.times((float) time.deltaT()));
     // Figure out whether we have to switch directions
-    Rectangle tmpBounds = new Rectangle((int) position.x(), (int) position.y(),
-                                        textBounds.width, textBounds.height);
-    if (tmpBounds.getMinX() < 0) {
+    textBounds = gv.getPixelBounds(frc, position.x(), position.y());
+    if (textBounds.getMinX() < 0) {
       velocity.setX(Math.abs(velocity.x()));
-    } else if (tmpBounds.getMaxX() > drawable.getWidth()) {
+    } else if (textBounds.getMaxX() > drawable.getWidth()) {
       velocity.setX(-1.0f * Math.abs(velocity.x()));
     }
-    if (tmpBounds.getMinY() < 0) {
+    if (textBounds.getMinY() < 0) {
       velocity.setY(Math.abs(velocity.y()));
-    } else if (tmpBounds.getMaxY() > drawable.getHeight()) {
+    } else if (textBounds.getMaxY() > drawable.getHeight()) {
       velocity.setY(-1.0f * Math.abs(velocity.y()));
     }
 
-    GL gl = drawable.getGL();
-
-    // Prepare to draw from the renderer's texture
-    renderer.beginOrthoRendering(drawable.getWidth(), drawable.getHeight());
-
-    // Draw from the renderer's texture
-    renderer.drawOrthoRect((int) position.x(), (int) position.y(),
-                           textBounds.x,
-                           renderer.getHeight() - textBounds.y - textBounds.height,
-                           textBounds.width,
-                           textBounds.height);
-
-    // If we have the FPS, draw it
-    if (fpsBounds != null) {
-      renderer.drawOrthoRect(drawable.getWidth() - fpsBounds.width,
-                             20,
-                             fpsBounds.x,
-                             renderer.getHeight() - fpsBounds.y - fpsBounds.height,
-                             fpsBounds.width,
-                             fpsBounds.height);
+    // Clear the last text (if any) and draw the current
+    if (lastTextBounds != null) {
+      g2d.setColor(TRANSPARENT_BLACK);
+      g2d.fillRect((int) lastTextBounds.getMinX(), (int) lastTextBounds.getMinY(),
+                   (int) (lastTextBounds.getWidth() + 1), (int) (lastTextBounds.getHeight() + 1));
+    } else if (overlay.contentsLost()) {
+      g2d.setColor(TRANSPARENT_BLACK);
+      g2d.fillRect(0, 0, drawable.getWidth(), drawable.getHeight());
     }
-    
-    // Clean up rendering
-    renderer.endOrthoRendering();
+    g2d.setColor(Color.WHITE);
+    g2d.drawString(TEST_STRING, position.x(), position.y());
+
+    // Compute the union of these rectangles to push an update to
+    // the overlay
+    Rectangle union = new Rectangle(textBounds);
+    if (lastTextBounds != null) {
+      union.add(lastTextBounds);
+    }
+    overlay.sync(union.x, union.y, union.width, union.height);
+
+    // Draw the overlay
+    overlay.drawAll();
+    g2d.dispose();
   }
 
   // Unused methods
