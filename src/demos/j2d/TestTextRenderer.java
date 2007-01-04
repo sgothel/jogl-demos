@@ -39,9 +39,6 @@
 
 package demos.j2d;
 
-// Debugging only
-//import java.awt.EventQueue;
-//import java.awt.Rectangle;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.*;
@@ -61,16 +58,13 @@ import gleem.linalg.*;
     with moving Java 2D-rendered text on top. */
 
 public class TestTextRenderer implements GLEventListener {
-  //  private static final boolean DEBUG = false;
-
   public static void main(String[] args) {
     Frame frame = new Frame("Text Renderer Test");
     GLCapabilities caps = new GLCapabilities();
     caps.setAlphaBits(8);
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());
-    TestTextRenderer test = new TestTextRenderer();
-    canvas.addGLEventListener(test);
+    canvas.addGLEventListener(new TestTextRenderer());
     frame.add(canvas);
     frame.setSize(512, 512);
     final Animator animator = new Animator(canvas);
@@ -87,31 +81,6 @@ public class TestTextRenderer implements GLEventListener {
             }).start();
         }
       });
-
-    /*
-    if (DEBUG) {
-      Frame dbgFrame = new Frame("Debug Output");
-      GLCanvas dbgCanvas = new GLCanvas(caps, null, canvas.getContext(), null);
-      dbgCanvas.addGLEventListener(test.new DebugListener(dbgFrame));
-      dbgFrame.add(dbgCanvas);
-      final FPSAnimator anim = new FPSAnimator(dbgCanvas, 10);
-      dbgFrame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-            // Run this on another thread than the AWT event queue to
-            // make sure the call to Animator.stop() completes before
-            // exiting
-            new Thread(new Runnable() {
-                public void run() {
-                  anim.stop();
-                }
-              }).start();
-          }
-        });
-      dbgFrame.setSize(256, 256);
-      dbgFrame.setVisible(true);
-      anim.start();
-    }
-    */
 
     frame.show();
     animator.start();
@@ -206,41 +175,4 @@ public class TestTextRenderer implements GLEventListener {
   // Unused methods
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-
-  /*
-  class DebugListener implements GLEventListener {
-    private GLU glu = new GLU();
-    private Frame frame;
-
-    DebugListener(Frame frame) {
-      this.frame = frame;
-    }
-
-    public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
-      gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
-      if (renderer != null) {
-        J2DTextureRenderer rend = renderer.getBackingStore();
-        final int w = rend.getWidth();
-        final int h = rend.getHeight();
-        rend.beginOrthoRendering(w, h);
-        rend.drawOrthoRect(0, 0);
-        rend.endOrthoRendering();
-        if (frame.getWidth() != w ||
-            frame.getHeight() != h) {
-          EventQueue.invokeLater(new Runnable() {
-              public void run() {
-                frame.setSize(w, h);
-              }
-            });
-        }
-      }
-    }
-
-    // Unused methods
-    public void init(GLAutoDrawable drawable) {}
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-  }
-  */
 }
