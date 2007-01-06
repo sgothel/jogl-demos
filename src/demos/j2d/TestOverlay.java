@@ -103,6 +103,8 @@ public class TestOverlay implements GLEventListener {
   private int frameCount;
   private DecimalFormat format = new DecimalFormat("####.00");
 
+  private Rectangle fpsBounds;
+
   public void init(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
     gl.setSwapInterval(0);
@@ -134,22 +136,19 @@ public class TestOverlay implements GLEventListener {
       FontRenderContext frc = g2d.getFontRenderContext();
       String fpsString = "FPS: " + format.format(fps);
       GlyphVector gv = font.createGlyphVector(frc, TEST_STRING);
-      int x = drawable.getWidth() - 200;
+      fpsBounds = gv.getPixelBounds(frc, 0, 0);
+      int x = drawable.getWidth() - fpsBounds.width - 20;
       int y = drawable.getHeight() - 20;
-      Rectangle fpsBounds = gv.getPixelBounds(frc, x, y);
       g2d.setFont(font);
       g2d.setComposite(AlphaComposite.Src);
       g2d.setColor(TRANSPARENT_BLACK);
-      g2d.fillRect(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
+      g2d.fillRect(x + fpsBounds.x, y + fpsBounds.y, fpsBounds.width, fpsBounds.height);
       g2d.setColor(Color.WHITE);
       g2d.drawString(fpsString, x, y);
-      overlay.sync(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
+      overlay.sync(x + fpsBounds.x, y + fpsBounds.y, fpsBounds.width, fpsBounds.height);
     }
 
     time.update();
-
-    // Move down the text bounds
-    lastTextBounds = textBounds;
 
     g2d.setFont(font);
     g2d.setComposite(AlphaComposite.Src);
@@ -191,7 +190,11 @@ public class TestOverlay implements GLEventListener {
     if (lastTextBounds != null) {
       union.add(lastTextBounds);
     }
-    overlay.sync(union.x, union.y, union.width, union.height);
+    // Put a little slop around this text due to apparent rounding errors
+    overlay.sync(union.x, union.y, union.width + 10, union.height + 10);
+
+    // Move down the text bounds
+    lastTextBounds = textBounds;
 
     // Draw the overlay
     overlay.drawAll();

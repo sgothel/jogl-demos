@@ -134,7 +134,7 @@ public class TestTextRenderer implements GLEventListener {
       fpsText = "FPS: " + format.format(fps);
       if (fpsWidth == 0) {
         // Place it at a fixed offset wrt the lower right corner
-        fpsWidth = (int) renderer.getBounds("FPS: 1000.00").getWidth();
+        fpsWidth = (int) renderer.getBounds("FPS: 10000.00").getWidth();
       }
     }
 

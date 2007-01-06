@@ -151,6 +151,7 @@ public class TestTextureRenderer implements GLEventListener {
       g2d.fillRect(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
       g2d.setColor(Color.WHITE);
       g2d.drawString(fpsString, 10, 100);
+      renderer.sync(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
     }
 
     time.update();
