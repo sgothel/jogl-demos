@@ -46,6 +46,7 @@ import demos.common.*;
 import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
+import demos.j2d.FlyingText;
 import demos.jgears.JGears;
 import demos.proceduralTexturePhysics.ProceduralTexturePhysics;
 import demos.util.*;
@@ -82,9 +83,10 @@ public class JRefract {
   private static final int HWSHADOWS = 3;
   private static final int INFINITE  = 4;
   private static final int REFRACT   = 5;
-  private static final int VBO       = 6;
-  private static final int WARP      = 7;
-  private static final int WATER     = 8;
+  private static final int TEXT      = 6;
+  private static final int VBO       = 7;
+  private static final int WARP      = 8;
+  private static final int WATER     = 9;
 
   private JInternalFrame addWindow(int which) {
     // FIXME: workaround for problem in 1.6 where ALL Components,
@@ -105,6 +107,7 @@ public class JRefract {
     case HWSHADOWS: str = "ARB_shadow Shadows"; break;
     case INFINITE:  str = "Infinite Shadow Volumes"; break;
     case REFRACT:   str = "Refraction Using Vertex Programs"; break;
+    case TEXT:      str = "Flying Text"; break;
     case VBO:       str = "Very Simple vertex_buffer_object demo"; break;
     case WATER:     str = "Procedural Texture Waves"; break;
     }
@@ -162,6 +165,11 @@ public class JRefract {
 
       case REFRACT: {
         demo = new VertexProgRefract();
+        break;
+      }
+
+      case TEXT: {
+        demo = new FlyingText();
         break;
       }
 
@@ -232,6 +240,10 @@ public class JRefract {
           }
         });
       inner.getContentPane().add(checkBox, BorderLayout.SOUTH);
+    } else if (which == TEXT) {
+      FlyingText text = (FlyingText) demo;
+      inner.getContentPane().add(text.buildGUI(), BorderLayout.NORTH);
+      inner.getContentPane().add(canvas, BorderLayout.CENTER);
     } else {
       inner.getContentPane().add(canvas, BorderLayout.CENTER);
     }
@@ -308,6 +320,14 @@ public class JRefract {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           addWindow(REFRACT);
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Text");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          addWindow(TEXT);
         }
       });
     menu.add(item);
