@@ -136,13 +136,7 @@ public class FlyingText extends Demo {
 
   private int maxTextWidth;
 
-  // FPS computation and rendering
-  private TextRenderer fpsRenderer;
-  private int fpsWidth;
-  private int frameCount;
-  private long startTime;
-  private DecimalFormat format = new DecimalFormat("####.00");
-  private String fpsText;
+  private FPSCounter fps;
 
   public Container buildGUI() {
     // Create gui
@@ -230,9 +224,8 @@ public class FlyingText extends Demo {
     // Create the text renderer
     renderer = new TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true);
 
-    // Use a different font for the FPS
-    fpsRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36), true, true);
-    fpsWidth = (int) fpsRenderer.getBounds("FPS: 1000.00").getWidth();
+    // Create the FPS counter
+    fps = new FPSCounter(drawable, 36);
 
     width = drawable.getWidth();
     height = drawable.getWidth();
@@ -259,19 +252,6 @@ public class FlyingText extends Demo {
   }
 
   public void display(GLAutoDrawable drawable) {
-    if (startTime == 0) {
-      startTime = System.currentTimeMillis();
-    }
-
-    if (++frameCount == 100) {
-      long endTime = System.currentTimeMillis();
-      float fps = 100.0f / (float) (endTime - startTime) * 1000;
-      frameCount = 0;
-      startTime = System.currentTimeMillis();
-
-      fpsText = "FPS: " + format.format(fps);
-    }
-
     time.update();
 
     // Update velocities and positions of all text
@@ -389,11 +369,7 @@ public class FlyingText extends Demo {
     renderer.endRendering();
 
     // Use the FPS renderer last to render the FPS
-    if (fpsText != null) {
-      fpsRenderer.beginRendering(drawable.getWidth(), drawable.getHeight());
-      fpsRenderer.draw(fpsText, drawable.getWidth() - fpsWidth - 20, 20);
-      fpsRenderer.endRendering();
-    }
+    fps.draw();
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {

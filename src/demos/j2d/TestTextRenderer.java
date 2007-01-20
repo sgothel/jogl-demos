@@ -94,11 +94,7 @@ public class TestTextRenderer implements GLEventListener {
   private String TEST_STRING = "Java 2D Text";
   private int textWidth;
   private int textHeight;
-  private String fpsText;
-  private int fpsWidth;
-  private long startTime;
-  private int frameCount;
-  private DecimalFormat format = new DecimalFormat("####.00");
+  private FPSCounter fps;
 
   public void init(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
@@ -118,26 +114,11 @@ public class TestTextRenderer implements GLEventListener {
     Rectangle2D textBounds = renderer.getBounds(TEST_STRING);
     textWidth = (int) textBounds.getWidth();
     textHeight = (int) textBounds.getHeight();
+
+    fps = new FPSCounter(drawable, 36);
   }
 
   public void display(GLAutoDrawable drawable) {
-    if (startTime == 0) {
-      startTime = System.currentTimeMillis();
-    }
-
-    if (++frameCount == 100) {
-      long endTime = System.currentTimeMillis();
-      float fps = 100.0f / (float) (endTime - startTime) * 1000;
-      frameCount = 0;
-      startTime = System.currentTimeMillis();
-
-      fpsText = "FPS: " + format.format(fps);
-      if (fpsWidth == 0) {
-        // Place it at a fixed offset wrt the lower right corner
-        fpsWidth = (int) renderer.getBounds("FPS: 10000.00").getWidth();
-      }
-    }
-
     time.update();
 
     // Compute the next position of the text
@@ -162,11 +143,8 @@ public class TestTextRenderer implements GLEventListener {
     // Draw text
     renderer.draw(TEST_STRING, (int) position.x(), (int) position.y());
 
-    if (fpsWidth != 0) {
-      renderer.draw(fpsText,
-                    drawable.getWidth() - fpsWidth - 10,
-                    20);
-    }
+    // Draw FPS
+    fps.draw();
 
     // Clean up rendering
     renderer.endRendering();
