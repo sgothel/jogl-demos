@@ -42,8 +42,10 @@ package demos.j2d;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.text.*;
@@ -77,7 +79,12 @@ public class FlyingText extends Demo {
     frame.getContentPane().add(canvas, BorderLayout.CENTER);
     frame.getContentPane().add(demo.buildGUI(), BorderLayout.NORTH);
 
-    frame.setSize(512, 512);
+    DisplayMode mode =
+      GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+
+    frame.setSize((int) (0.75f * mode.getWidth()),
+                  (int) (0.75f * mode.getHeight()));
+
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
