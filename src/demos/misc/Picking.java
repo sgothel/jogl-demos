@@ -1,3 +1,5 @@
+package demos.misc;
+
 //=================================================================================
 // Picking 0.2                                                       (Thomas Bladh)
 //=================================================================================
@@ -171,6 +173,7 @@ public class Picking
       GLRectangleEntity r1 = new GLRectangleEntity(gl, glu);
       r1.x = 0.15f;
       r1.y = 0.25f;
+      r1.z = 0.75f;
       r1.w = 0.4f;
       r1.h = 0.4f;
       r1.c = red;
@@ -181,6 +184,7 @@ public class Picking
       GLRectangleEntity r2 = new GLRectangleEntity(gl, glu);
       r2.x = 0.35f;
       r2.y = 0.45f;
+      r2.z = 0.5f;
       r2.w = 0.4f;
       r2.h = 0.4f;
       r2.c = green;
@@ -191,6 +195,7 @@ public class Picking
       GLRectangleEntity r3 = new GLRectangleEntity(gl, glu);
       r3.x = 0.45f;
       r3.y = 0.15f;
+      r3.z = 0.25f;
       r3.w = 0.4f;
       r3.h = 0.4f;
       r3.c = blue;
