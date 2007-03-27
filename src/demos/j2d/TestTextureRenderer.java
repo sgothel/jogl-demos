@@ -126,7 +126,7 @@ public class TestTextureRenderer implements GLEventListener {
     g2d.setColor(Color.WHITE);
     g2d.drawString(TEST_STRING, 10, 50);
     textBounds = gv.getPixelBounds(frc, 10, 50);
-    renderer.sync(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
+    renderer.markDirty(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
   }
 
   public void display(GLAutoDrawable drawable) {
@@ -151,7 +151,7 @@ public class TestTextureRenderer implements GLEventListener {
       g2d.fillRect(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
       g2d.setColor(Color.WHITE);
       g2d.drawString(fpsString, 10, 100);
-      renderer.sync(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
+      renderer.markDirty(fpsBounds.x, fpsBounds.y, fpsBounds.width, fpsBounds.height);
     }
 
     time.update();

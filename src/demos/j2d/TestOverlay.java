@@ -145,7 +145,7 @@ public class TestOverlay implements GLEventListener {
       g2d.fillRect(x + fpsBounds.x, y + fpsBounds.y, fpsBounds.width, fpsBounds.height);
       g2d.setColor(Color.WHITE);
       g2d.drawString(fpsString, x, y);
-      overlay.sync(x + fpsBounds.x, y + fpsBounds.y, fpsBounds.width, fpsBounds.height);
+      overlay.markDirty(x + fpsBounds.x, y + fpsBounds.y, fpsBounds.width, fpsBounds.height);
     }
 
     time.update();
@@ -191,7 +191,7 @@ public class TestOverlay implements GLEventListener {
       union.add(lastTextBounds);
     }
     // Put a little slop around this text due to apparent rounding errors
-    overlay.sync(union.x, union.y, union.width + 10, union.height + 10);
+    overlay.markDirty(union.x, union.y, union.width + 10, union.height + 10);
 
     // Move down the text bounds
     lastTextBounds = textBounds;
