@@ -598,7 +598,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     gl.glTranslatef(.5f, .5f, .5f);
-    gl.glScalef(.5f, .5f, .5f);
+    gl.glScalef(.5f, -.5f, .5f);
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -645,7 +645,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     gl.glTranslatef(.5f, .5f, .5f);
-    gl.glScalef(.5f, .5f, .5f);
+    gl.glScalef(.5f, -.5f, .5f);
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL.GL_MODELVIEW);

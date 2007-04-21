@@ -380,7 +380,6 @@ public class VertexProgRefract extends Demo {
     cubemap.enable();
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
-    gl.glScalef(1.0f, -1.0f, 1.0f);
     viewer.updateInverseRotation(gl);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
@@ -388,7 +387,6 @@ public class VertexProgRefract extends Demo {
     cubemap.enable();
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
-    gl.glScalef(1.0f, -1.0f, 1.0f);
     viewer.updateInverseRotation(gl);
 
     if (useRegisterCombiners) {
@@ -614,7 +612,6 @@ public class VertexProgRefract extends Demo {
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glPushMatrix();
     gl.glLoadIdentity();
-    gl.glScalef(1.0f, -1.0f, 1.0f);
     viewer.updateInverseRotation(gl);
     
     glut.glutSolidSphere(5.0, 40, 20);
