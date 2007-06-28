@@ -7,16 +7,17 @@
 
 <P>
 
-<applet code="com.sun.opengl.util.JOGLAppletLauncher"
+<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
      width=600
      height=400
      codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-next"
-     archive="jogl.jar,gluegen-rt.jar,jogl-demos.jar">
-  <param name="subapplet.classname" VALUE="demos.applets.GearsApplet">
-  <param name="subapplet.displayname" VALUE="JOGL Gears Applet">
+     archive="applet-launcher.jar,jogl.jar,gluegen-rt.jar,jogl-demos.jar">
+  <param name="subapplet.classname" value="demos.applets.GearsApplet">
+  <param name="subapplet.displayname" value="JOGL Gears Applet">
   <param name="progressbar" value="true">
-  <param name="cache_archive" VALUE="jogl.jar,gluegen-rt.jar,jogl-demos.jar">
-  <param name="cache_archive_ex" VALUE="jogl.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload">
+  <param name="jnlpNumExtensions" value="1">
+  <param name="jnlpExtension1"
+         value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-next/jogl.jnlp">
 </applet>
 
 </P>
