@@ -7,27 +7,33 @@
 
 <P>
 
-The new JOGL Applet Launcher enables the creation and deployment of
-applets using 3D graphics via OpenGL without requiring the applet to
-be signed or performing any manual installation of software on users'
-computers. It has been tested and should work on any OS/CPU
-combination supported by JOGL with a Java Runtime Environment version
-1.4.2 or later installed into the web browser. Here is an example of
-the standard Gears demo running as an applet:
+The new <a
+href="http://applet-launcher.dev.java.net">JNLPAppletLauncher</a>
+enables the creation and deployment of applets using 3D graphics via
+OpenGL without requiring the applet to be signed or performing any
+manual installation of software on users' computers. It has been
+tested and should work on any OS/CPU combination supported by JOGL
+with a Java Runtime Environment version 1.4.2 or later installed into
+the web browser. Here is an example of the standard Gears demo running
+as an applet:
 
 </P>
 <P>
 
-<applet code="com.sun.opengl.util.JOGLAppletLauncher"
-     width=600
-     height=400
-     codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current"
-     archive="jogl.jar,gluegen-rt.jar,jogl-demos.jar">
-  <param name="subapplet.classname" VALUE="demos.applets.GearsApplet">
-  <param name="subapplet.displayname" VALUE="JOGL Gears Applet">
-  <param name="progressbar" value="true">
-  <param name="cache_archive" VALUE="jogl.jar,gluegen-rt.jar,jogl-demos.jar">
-  <param name="cache_archive_ex" VALUE="jogl.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload">
+<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
+      width=600
+      height=400
+      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,
+               http://download.java.net/media/gluegen/webstart/gluegen-rt.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl-demos.jar">
+   <param name="subapplet.classname" value="demos.applets.GearsApplet">
+   <param name="subapplet.displayname" value="JOGL Gears Applet">
+   <param name="noddraw.check" value="true">
+   <param name="progressbar" value="true">
+   <param name="jnlpNumExtensions" value="1">
+   <param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp">
 </applet>
 
 </P>
@@ -36,16 +42,20 @@ the standard Gears demo running as an applet:
 The applet above is instantiated with the following code:
 
 <pre>
-&lt;applet code="com.sun.opengl.util.JOGLAppletLauncher"
-     width=600
-     height=400
-     codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current"
-     archive="jogl.jar,gluegen-rt.jar,jogl-demos.jar"&gt;
-  &lt;param name="subapplet.classname" VALUE="demos.applets.GearsApplet"&gt;
-  &lt;param name="subapplet.displayname" VALUE="JOGL Gears Applet"&gt;
-  &lt;param name="progressbar" value="true"&gt;
-  &lt;param name="cache_archive" VALUE="jogl.jar,gluegen-rt.jar,jogl-demos.jar"&gt;
-  &lt;param name="cache_archive_ex" VALUE="jogl.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload"&gt;
+&lt;applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
+      width=600
+      height=400
+      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,
+               http://download.java.net/media/gluegen/webstart/gluegen-rt.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl-demos.jar"&gt;
+   &lt;param name="subapplet.classname" value="demos.applets.GearsApplet"&gt;
+   &lt;param name="subapplet.displayname" value="JOGL Gears Applet"&gt;
+   &lt;param name="noddraw.check" value="true"&gt;
+   &lt;param name="progressbar" value="true"&gt;
+   &lt;param name="jnlpNumExtensions" value="1"&gt;
+   &lt;param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp"&gt;
 &lt;/applet&gt;
 </pre>
 
@@ -54,25 +64,18 @@ The applet above is instantiated with the following code:
 
 Note that the jogl-demos.jar, which contains the GearsApplet class,
 <B>does not need to be signed</B>! Sun Microsystems, Inc. signs
-jogl.jar and gluegen-rt.jar, which contain the JOGLAppletLauncher and
-supporting classes; this is the only Java code which needs to be
-signed in order to deploy applets using JOGL and is the only
-certificate the end user must accept.
+applet-launcher.jar, jogl.jar and gluegen-rt.jar, which contain the
+JNLPAppletLauncher and JOGL's supporting classes; this is the only
+Java code which needs to be signed in order to deploy applets using
+JOGL and is the only certificate the end user must accept.
 
 </P>
 <P>
 
-The <a
-href="http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html">JOGLAppletLauncher
-javadoc</a> contains more information about what files must be placed
-on the web server in order to enable the deployment of applets using
-JOGL.
-
-</P>
-<P>
-
-The JOGL Applet Launcher was originally contributed by Lilian
-Chamontin.
+The <a href="http://applet-launcher.dev.java.net">JNLPAppletLauncher
+home page</a> contains more information about what files must be
+placed on the web server in order to enable the deployment of applets
+using JOGL and other extensions.
 
 </P>
 

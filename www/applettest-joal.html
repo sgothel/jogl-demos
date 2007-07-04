@@ -7,14 +7,15 @@
 
 <P>
 
-The <a href="applettest.html">JOGL Applet Launcher</a> now supports
-deployment of high-end applets using both OpenGL for 3D graphics via
-JOGL and OpenAL for spatialized audio via JOAL. The user's applet does
-not have to be signed, and no manual installation of software on the
-user's machine is necessary. Combined JOGL and JOAL applets are
-supported by the JOGLAppletLauncher on all OS and CPU combinations
-where these libraries are supported: currently Windows/x86, Linux/x86,
-and Mac OS X, both PowerPC and Intel.
+The new <a
+href="http://applet-launcher.dev.java.net">JNLPAppletLauncher</a>
+supports deployment of high-end applets using arbitrary extensions
+such as JOGL for 3D graphics and JOAL for spatialized audio. The
+user's applet does not have to be signed, and no manual installation
+of software on the user's machine is necessary. Combined JOGL and JOAL
+applets are supported by the JNLPAppletLauncher on all OS and CPU
+combinations where these libraries are supported: currently
+Windows/x86, Linux/x86, and Mac OS X, both PowerPC and Intel.
 
 </P>
 <P>
@@ -25,16 +26,24 @@ rendering and OpenAL audio:
 </P>
 <P>
 
-<applet code="com.sun.opengl.util.JOGLAppletLauncher"
-     width=600
-     height=400
-     codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current"
-     archive="jogl.jar,joal.jar,gluegen-rt.jar,jogl-demos.jar,joal-demos.jar">
-  <param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet">
-  <param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet">
-  <param name="progressbar" value="true">
-  <param name="cache_archive" VALUE="jogl.jar,joal.jar,gluegen-rt.jar,jogl-demos.jar,joal-demos.jar">
-  <param name="cache_archive_ex" VALUE="jogl.jar;preload,joal.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload,joal-demos.jar;preload">
+<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
+      width=600
+      height=400
+      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,
+               http://download.java.net/media/gluegen/webstart/gluegen-rt.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl-demos.jar,
+               http://download.java.net/media/joal/webstart/joal.jar,
+               http://download.java.net/media/joal/webstart/joal-demos.jar">
+   <param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet">
+   <param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet">
+   <param name="noddraw.check" value="true">
+   <param name="progressbar" value="true">
+   <param name="jnlpNumExtensions" value="2">
+   <param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp">
+   <param name="jnlpExtension2"
+          value="http://download.java.net/media/joal/webstart/joal.jnlp">
 </applet>
 
 </P>
@@ -43,16 +52,24 @@ rendering and OpenAL audio:
 The applet above is instantiated with the following code:
 
 <pre>
-&lt;applet code="com.sun.opengl.util.JOGLAppletLauncher"
-     width=600
-     height=400
-     codebase="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current"
-     archive="jogl.jar,joal.jar,gluegen-rt.jar,jogl-demos.jar,joal-demos.jar"&gt;
-  &lt;param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet"&gt;
-  &lt;param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet"&gt;
-  &lt;param name="progressbar" value="true"&gt;
-  &lt;param name="cache_archive" VALUE="jogl.jar,joal.jar,gluegen-rt.jar,jogl-demos.jar,joal-demos.jar"&gt;
-  &lt;param name="cache_archive_ex" VALUE="jogl.jar;preload,joal.jar;preload,gluegen-rt.jar;preload,jogl-demos.jar;preload,joal-demos.jar;preload"&gt;
+&lt;applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
+      width=600
+      height=400
+      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,
+               http://download.java.net/media/gluegen/webstart/gluegen-rt.jar,
+               http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl-demos.jar,
+               http://download.java.net/media/joal/webstart/joal.jar,
+               http://download.java.net/media/joal/webstart/joal-demos.jar"&gt;
+   &lt;param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet"&gt;
+   &lt;param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet"&gt;
+   &lt;param name="noddraw.check" value="true"&gt;
+   &lt;param name="progressbar" value="true"&gt;
+   &lt;param name="jnlpNumExtensions" value="2"&gt;
+   &lt;param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp"&gt;
+   &lt;param name="jnlpExtension2"
+          value="http://download.java.net/media/joal/webstart/joal.jnlp"&gt;
 &lt;/applet&gt;
 </pre>
 
@@ -61,25 +78,19 @@ The applet above is instantiated with the following code:
 
 Note that the jogl-demos.jar and joal-demos.jar files, which contain
 the applet's classes, <B>do not need to be signed</B>! Sun
-Microsystems, Inc. signs jogl.jar, joal.jar and gluegen-rt.jar, which
-contain the JOGLAppletLauncher, JOAL and supporting classes; this is
-the only Java code which needs to be signed in order to deploy applets
-using JOGL and is the only certificate the end user must accept.
+Microsystems, Inc. signs applet-launcher.jar, jogl.jar, joal.jar and
+gluegen-rt.jar, which contain the JNLPAppletLauncher, JOGL, JOAL and
+supporting classes; this is the only Java code which needs to be
+signed in order to deploy applets using JOGL and JOAL and is the only
+certificate the end user must accept.
 
 </P>
 <P>
 
-The <a
-href="http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html">JOGLAppletLauncher
-javadoc</a> contains more information about what files must be placed
-on the web server in order to enable the deployment of applets using
-JOGL.
-
-</P>
-<P>
-
-The JOGL Applet Launcher was originally contributed by Lilian
-Chamontin.
+The <a href="http://applet-launcher.dev.java.net">JNLPAppletLauncher
+home page</a> contains more information about what files must be
+placed on the web server in order to enable the deployment of applets
+using JOGL and other extensions.
 
 </P>
 
