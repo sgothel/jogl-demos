@@ -112,9 +112,14 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
   }
 
   public void display(GLAutoDrawable drawable) {
+    // Turn the gears' teeth
     angle += 2.0f;
 
+    // Get the GL corresponding to the drawable we are animating
     GL gl = drawable.getGL();
+
+    // Special handling for the case where the GLJPanel is translucent
+    // and wants to be composited with other Java 2D content
     if ((drawable instanceof GLJPanel) &&
         !((GLJPanel) drawable).isOpaque() &&
         ((GLJPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
@@ -123,29 +128,36 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     }
             
+    // Rotate the entire assembly of gears based on how the user
+    // dragged the mouse around
     gl.glPushMatrix();
     gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
     gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
     gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
             
+    // Place the first gear and call its display list
     gl.glPushMatrix();
     gl.glTranslatef(-3.0f, -2.0f, 0.0f);
     gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
     gl.glCallList(gear1);
     gl.glPopMatrix();
             
+    // Place the second gear and call its display list
     gl.glPushMatrix();
     gl.glTranslatef(3.1f, -2.0f, 0.0f);
     gl.glRotatef(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
     gl.glCallList(gear2);
     gl.glPopMatrix();
             
+    // Place the third gear and call its display list
     gl.glPushMatrix();
     gl.glTranslatef(-3.1f, 4.2f, 0.0f);
     gl.glRotatef(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
     gl.glCallList(gear3);
     gl.glPopMatrix();
             
+    // Remember that every push needs a pop; this one is paired with
+    // rotating the entire gear assembly
     gl.glPopMatrix();
   }
 
