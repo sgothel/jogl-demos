@@ -167,6 +167,7 @@ public class TestTexture implements GLEventListener {
       try {
         System.err.println("Loading texture...");
         texture = TextureIO.newTexture(file, true);
+        System.err.println("Texture estimated memory size = " + texture.getEstimatedMemorySize());
       } catch (IOException e) {
         e.printStackTrace();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
