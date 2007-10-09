@@ -359,6 +359,8 @@ public class FlyingText extends Demo {
                       0);
       gl.glRotatef(info.angle, 0, 0, 1);
       renderer.draw(info.text, 0, 0);
+      // We need to call flush() only because we're modifying the modelview matrix
+      renderer.flush();
     }
 
     // Now render the actual text
@@ -371,6 +373,8 @@ public class FlyingText extends Demo {
       gl.glRotatef(info.angle, 0, 0, 1);
       renderer.setColor(info.r, info.g, info.b, 1);
       renderer.draw(info.text, 0, 0);
+      // We need to call flush() only because we're modifying the modelview matrix
+      renderer.flush();
     }
 
     renderer.endRendering();

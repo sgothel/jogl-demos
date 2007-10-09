@@ -384,6 +384,12 @@ public class CustomText extends Demo {
       return false;
     }
 
+    public Rectangle2D getBounds(CharSequence str,
+                                 Font font,
+                                 FontRenderContext frc) {
+      return getBounds(str.toString(), font, frc);
+    }
+
     public Rectangle2D getBounds(String str,
                                  Font font,
                                  FontRenderContext frc) {
@@ -395,6 +401,15 @@ public class CustomText extends Demo {
                                     stringBounds.getHeight() + dropShadowDepth);
     }
     
+    public void drawGlyphVector(Graphics2D graphics, GlyphVector str, int x, int y) {
+      graphics.setColor(DROP_SHADOW_COLOR);
+      graphics.drawGlyphVector(str, x + dropShadowDepth, y + dropShadowDepth);
+      graphics.setColor(Color.WHITE);
+      graphics.setPaint(new GradientPaint(x, y, color1,
+                                          x, y + gradientSize / 2, color2,
+                                          true));
+      graphics.drawGlyphVector(str, x, y);
+    }
 
     public void draw(Graphics2D graphics, String str, int x, int y) {
       graphics.setColor(DROP_SHADOW_COLOR);
