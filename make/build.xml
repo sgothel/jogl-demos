@@ -43,6 +43,7 @@
         <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
+        <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
         <property name="classes"             value="../build/classes" />
         <property name="src"                 value="../src" />
         <property name="javadoc"             value="../javadoc" />
@@ -54,17 +55,37 @@
         <property name="jogl.demos.src.zip"  value="../build/jogl-demos-src.zip" />
     </target>
 
+    <target name="nurbs" if="jogl.nurbs">
+        <!-- NOTE: this target requires a 1.5 javac to be on the PATH -->
+        <javac destdir="${classes}" includes="demos/nurbs/**" source="1.5" debug="true" debuglevel="source,lines">
+            <src path="${src}" />
+            <classpath refid="jogl-demos.classpath" />
+        </javac>
+	<!-- Copy icons to output dir -->
+        <copy todir="../build">
+            <fileset dir="${src}">
+                <include name="demos/nurbs/icons/*.png" />
+            </fileset>
+        </copy>
+	<!-- Copy dependent libraries to output dir -->
+        <copy file="../lib/simple-xml-1.1.1.jar" todir="../build" />
+        <copy file="../lib/stax-api-1.0.1.jar" todir="../build" />
+        <copy file="../lib/stax-1.2.0.jar" todir="../build" />
+    </target>
+
     <target name="all" depends="init">
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
             <pathelement location="${jogl.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${joal-demos.jar}" />
+            <pathelement location="${simple-xml.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes}" source="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
+        <antcall target="nurbs" inheritrefs="true" />
         <jar destfile="${jogl.demos.jar}">
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
