@@ -309,6 +309,7 @@ public class CustomText extends Demo {
                       0);
       gl.glRotatef(info.angle, 0, 0, 1);
       renderer.draw(info.text, 0, 0);
+      renderer.flush();
     }
 
     renderer.endRendering();
@@ -393,7 +394,10 @@ public class CustomText extends Demo {
     public Rectangle2D getBounds(String str,
                                  Font font,
                                  FontRenderContext frc) {
-      GlyphVector gv = font.createGlyphVector(frc, str);
+      return getBounds(font.createGlyphVector(frc, str), frc);
+    }
+
+    public Rectangle2D getBounds(GlyphVector gv, FontRenderContext frc) {
       Rectangle2D stringBounds = gv.getPixelBounds(frc, 0, 0);
       return new Rectangle2D.Double(stringBounds.getX(),
                                     stringBounds.getY(),
