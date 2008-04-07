@@ -156,6 +156,8 @@ public class GLCapsTableDemo
 
   private void initComponents()
   {
+    pane = new JPanel();
+    pane2 = new JPanel();
     // Hack: use multisampled capabilities to pick up more detailed information on Windows
     GLCapabilities multisampledCaps = new GLCapabilities();
     multisampledCaps.setSampleBuffers(true);
@@ -174,8 +176,6 @@ public class GLCapsTableDemo
     //    canvas2.setPreferredSize(defdim);
     //    canvas2.setMaximumSize(defdim);
     animator.add(canvas2);
-    pane = new JPanel();
-    pane2 = new JPanel();
     pane.add(canvas);
     pane2.add(canvas2);
     canvasPane = new JSplitPane();
