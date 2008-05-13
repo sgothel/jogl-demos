@@ -31,6 +31,23 @@
         </fail>
     </target>
 
+    <target name="setup.gles">
+        <condition property="isGLES">
+          <or>
+            <isset property="jogl.es1" />
+            <isset property="jogl.es2" />
+          </or>
+        </condition>
+
+        <condition property="isGLES1">
+            <isset property="jogl.es1" />
+        </condition>
+
+        <condition property="isGLES2">
+            <isset property="jogl.es2" />
+        </condition>
+    </target>
+
     <target name="setup.cg.excludes" unless="jogl.cg">
         <property name="jogl.cg.excludes" value="demos/cg/**,demos/hdr/CgPipeline.java,demos/hdr/shaders/cg/**" />
     </target>
@@ -39,7 +56,7 @@
         <property name="jogl.cg.excludes" value="" />
     </target>
 
-    <target name="init" depends="java.class.path.validate,setup.cg.excludes,skip.cg.excludes">
+    <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes">
         <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
@@ -73,7 +90,7 @@
         <copy file="../lib/stax-1.2.0.jar" todir="../build" />
     </target>
 
-    <target name="all" depends="init">
+    <target name="all-desktop" unless="isGLES">
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
             <pathelement location="${jogl.jar}" />
@@ -81,7 +98,7 @@
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${simple-xml.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,demos/apx/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -124,6 +141,42 @@
 	     excludes="**/*.class,**/*~"
 	     />
     </target>
+
+    <target name="all-gles1" if="isGLES1">
+        <mkdir dir="${classes}" />
+        <path id="jogl-demos.classpath">
+            <pathelement location="${jogl.jar}" />
+        </path>
+        <javac destdir="${classes}" includes="demos/apx/es1/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+               bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
+            <src path="${src}" />
+            <classpath refid="jogl-demos.classpath" />
+        </javac>
+        <jar destfile="${jogl.demos.jar}">
+            <fileset dir="${classes}">
+                <include name="**" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="all-gles2" if="isGLES2">
+        <mkdir dir="${classes}" />
+        <path id="jogl-demos.classpath">
+            <pathelement location="${jogl.jar}" />
+        </path>
+        <javac destdir="${classes}" includes="demos/apx/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+               bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
+            <src path="${src}" />
+            <classpath refid="jogl-demos.classpath" />
+        </javac>
+        <jar destfile="${jogl.demos.jar}">
+            <fileset dir="${classes}">
+                <include name="**" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="all" depends="init, all-desktop, all-gles1, all-gles2" />
 
     <target name="javadoc" depends="init">
         <mkdir dir="${javadoc}" />
