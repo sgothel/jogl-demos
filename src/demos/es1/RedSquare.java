@@ -1,4 +1,4 @@
-package demos.apx.es1;
+package demos.es1;
 
 import java.nio.*;
 import javax.media.opengl.*;
