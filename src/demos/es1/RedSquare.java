@@ -13,6 +13,13 @@ public class RedSquare {
         try {
             Window window = Window.create();
 
+            // Size OpenGL to Video Surface
+            int width = 800;
+            int height = 480;
+            if (!window.setFullscreen(true)) {
+                window.setSize(width, height);
+            }
+
             // Hook this into EGL
             GLDrawableFactory.initialize(GLDrawableFactory.PROFILE_GLES1);
             GLDrawableFactory factory = GLDrawableFactory.getFactory();
@@ -36,38 +43,14 @@ public class RedSquare {
 
             System.out.println("Entering initialization");
 
-            // Size OpenGL to Video Surface
-            int width = 800;
-            int height = 480;
-            if (!window.setFullscreen(true)) {
-                window.setSize(width, height);
-            }
-
-            // See how big it got
-            width = window.getWidth();
-            height = window.getHeight();
-
-            System.out.println("calling glViewport()");
-            gl.glViewport(0, 0, width, height);
-            System.out.println("calling glMatrixMode()");
-            gl.glMatrixMode(GL.GL_PROJECTION);
-            System.out.println("calling glLoadIdentity()");
-            gl.glLoadIdentity();
-            System.out.println("calling gluPerspective()");
-            glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
-            System.out.println("calling glMatrixMode()");
-            gl.glMatrixMode(GL.GL_MODELVIEW);
-
-            System.out.println("Intialized matrices");
-
             // Allocate vertex arrays
-            FloatBuffer colors   = BufferUtil.newFloatBuffer(12);
+            FloatBuffer colors   = BufferUtil.newFloatBuffer(16);
             FloatBuffer vertices = BufferUtil.newFloatBuffer(12);
             // Fill them up
-            colors.put(0, 1);     colors.put( 1, 0);     colors.put( 2, 0);
-            colors.put(3, 1);     colors.put( 4, 0);     colors.put( 5, 0);
-            colors.put(6, 1);     colors.put( 7, 0);     colors.put( 8, 0);
-            colors.put(9, 1);     colors.put(10, 0);     colors.put(11, 0);
+            colors.put( 0, 1);    colors.put( 1, 0);     colors.put( 2, 0);    colors.put( 3, 1);
+            colors.put( 4, 1);    colors.put( 5, 0);     colors.put( 6, 0);    colors.put( 7, 1);
+            colors.put( 8, 1);    colors.put( 9, 0);     colors.put(10, 0);    colors.put(11, 1);
+            colors.put(12, 1);    colors.put(13, 0);     colors.put(14, 0);    colors.put(15, 1);
             vertices.put(0, -2);  vertices.put( 1,  2);  vertices.put( 2,  0);
             vertices.put(3,  2);  vertices.put( 4,  2);  vertices.put( 5,  0);
             vertices.put(6, -2);  vertices.put( 7, -2);  vertices.put( 8,  0);
@@ -76,12 +59,11 @@ public class RedSquare {
             gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, vertices);
             gl.glEnableClientState(GL.GL_COLOR_ARRAY);
-            gl.glColorPointer(3, GL.GL_FLOAT, 0, colors);
+            gl.glColorPointer(4, GL.GL_FLOAT, 0, colors);
 
             // OpenGL Render Settings
             gl.glClearColor(0, 0, 0, 1);
-            //            gl.glClearDepthf(1.0f);
-            //            gl.glEnable(GL.GL_DEPTH_TEST);
+            gl.glEnable(GL.GL_DEPTH_TEST);
 
             //----------------------------------------------------------------------
             // Code for GLEventListener.display()
@@ -93,6 +75,13 @@ public class RedSquare {
                 gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
                 // Set location in front of camera
+                width = window.getWidth();
+                height = window.getHeight();
+                gl.glViewport(0, 0, width, height);
+                gl.glMatrixMode(GL.GL_PROJECTION);
+                gl.glLoadIdentity();
+                glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
+                gl.glMatrixMode(GL.GL_MODELVIEW);
                 gl.glLoadIdentity();
                 gl.glTranslatef(0, 0, -10);
 
