@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Angeles Main");
         try {
-            Window window = Window.create();
+            Window window = Window.create(0); // dummy VisualID
 
             // Size OpenGL to Video Surface
             int width = 800;
