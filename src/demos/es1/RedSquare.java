@@ -42,6 +42,9 @@ public class RedSquare {
             //
 
             System.out.println("Entering initialization");
+            System.out.println("GL_VERSION=" + gl.glGetString(GL.GL_VERSION));
+            System.out.println("GL_EXTENSIONS:");
+            System.out.println("  " + gl.glGetString(GL.GL_EXTENSIONS));
 
             // Allocate vertex arrays
             FloatBuffer colors   = BufferUtil.newFloatBuffer(16);
@@ -62,7 +65,7 @@ public class RedSquare {
             gl.glColorPointer(4, GL.GL_FLOAT, 0, colors);
 
             // OpenGL Render Settings
-            gl.glClearColor(0, 0, 0, 1);
+            gl.glClearColorx(0, 0, 0, 65535);
             gl.glEnable(GL.GL_DEPTH_TEST);
 
             //----------------------------------------------------------------------
