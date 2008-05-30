@@ -4,11 +4,37 @@ import java.nio.*;
 import javax.media.opengl.*;
 import com.sun.javafx.newt.*;
 
-public class Main {
+public class Main implements MouseListener {
+
+    public boolean quit = false;
+
+    public void mouseClicked(MouseEvent e) {
+        if(e.getClickCount()>1) {
+            quit=true;
+        }
+    }
+    public void mouseEntered(MouseEvent e) {
+    }
+    public void mouseExited(MouseEvent e) {
+    }
+    public void mousePressed(MouseEvent e) {
+    }
+    public void mouseReleased(MouseEvent e) {
+    }
+    public void mouseMoved(MouseEvent e) {
+    }
+    public void mouseDragged(MouseEvent e) {
+    }
+
     public static void main(String[] args) {
         System.out.println("Angeles Main");
         try {
-            Window window = Window.create(0); // dummy VisualID
+            Display display = new Display();
+            Screen screen  = new Screen(display);
+            Window window = Window.create(screen, 0); // dummy VisualID
+
+            Main ml = new Main();
+            window.addMouseListener(ml);
 
             // Size OpenGL to Video Surface
             int width = 800;
@@ -26,7 +52,7 @@ public class Main {
             caps.setGreenBits(5);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            GLDrawable drawable = factory.getGLDrawable(new Long(window.getWindowHandle()), caps, null);
+            GLDrawable drawable = factory.getGLDrawable(window.getHandles(), caps, null);
             drawable.setRealized(true);
             GLContext context = drawable.createContext(null);
             context.makeCurrent();
@@ -51,7 +77,7 @@ public class Main {
                 //                    Thread.sleep(10);
                 //                } catch(InterruptedException ie) {}
                 curTime = System.currentTimeMillis();
-            } while ((curTime - startTime) < 115000);
+            } while (!ml.quit && (curTime - startTime) < 215000);
 
             // Shut things down cooperatively
             context.release();
