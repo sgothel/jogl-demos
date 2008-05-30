@@ -52,7 +52,7 @@ public class RedSquare implements MouseListener {
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
-            caps.setGreenBits(5);
+            caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
             GLDrawable drawable = factory.getGLDrawable(window.getHandles(), caps, null);
