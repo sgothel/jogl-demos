@@ -133,8 +133,7 @@ public class RedSquare implements MouseListener {
             // Shut things down cooperatively
             context.release();
             context.destroy();
-            drawable.setRealized(false);
-            factory.shutdown();
+            drawable.destroy();
             System.out.println("RedSquare shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

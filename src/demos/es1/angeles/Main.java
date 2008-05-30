@@ -82,8 +82,7 @@ public class Main implements MouseListener {
             // Shut things down cooperatively
             context.release();
             context.destroy();
-            drawable.setRealized(false);
-            factory.shutdown();
+            drawable.destroy();
             System.out.println("Angeles shut down cleanly.");
         } catch (GLException e) {
             e.printStackTrace();
