@@ -65,7 +65,7 @@ public class RedSquare {
             gl.glColorPointer(4, GL.GL_FLOAT, 0, colors);
 
             // OpenGL Render Settings
-            gl.glClearColorx(0, 0, 0, 65535);
+            gl.glClearColor(0, 0, 0, 1);
             gl.glEnable(GL.GL_DEPTH_TEST);
 
             //----------------------------------------------------------------------
@@ -74,6 +74,7 @@ public class RedSquare {
             
             long startTime = System.currentTimeMillis();
             long curTime;
+            int ang = 0;
             while ((System.currentTimeMillis() - startTime) < 10000) {
                 gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -87,6 +88,8 @@ public class RedSquare {
                 gl.glMatrixMode(GL.GL_MODELVIEW);
                 gl.glLoadIdentity();
                 gl.glTranslatef(0, 0, -10);
+                gl.glRotatef(ang, 0, 0, 1);
+                ang++;
 
                 // Draw a square
                 gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
@@ -100,8 +103,15 @@ public class RedSquare {
                 } catch (InterruptedException e) {
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            // Shut things down cooperatively
+            context.release();
+            context.destroy();
+            drawable.setRealized(false);
+            factory.shutdown();
+            System.out.println("RedSquare shut down cleanly.");
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
 
         System.exit(0);
