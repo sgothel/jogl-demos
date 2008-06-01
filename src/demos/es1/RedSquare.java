@@ -105,8 +105,7 @@ public class RedSquare implements MouseListener {
             
             long startTime = System.currentTimeMillis();
             long curTime;
-            int ang = 0;
-            while (!ml.quit && (System.currentTimeMillis() - startTime) < 20000) {
+            while (!ml.quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
                 gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
                 // Set location in front of camera
@@ -119,8 +118,9 @@ public class RedSquare implements MouseListener {
                 gl.glMatrixMode(GL.GL_MODELVIEW);
                 gl.glLoadIdentity();
                 gl.glTranslatef(0, 0, -10);
+                // One rotation every four seconds
+                float ang = (((float) (curTime - startTime)) * 360.0f) / 4000.0f;
                 gl.glRotatef(ang, 0, 0, 1);
-                ang++;
 
                 // Draw a square
                 gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
@@ -133,11 +133,6 @@ public class RedSquare implements MouseListener {
                 }
 
                 window.pumpMessages();
-
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                }
             }
 
             // Shut things down cooperatively
