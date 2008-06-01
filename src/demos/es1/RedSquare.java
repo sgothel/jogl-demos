@@ -55,6 +55,7 @@ public class RedSquare implements MouseListener {
             caps.setBlueBits(5);
             caps.setDepthBits(16);
             GLDrawable drawable = factory.createGLDrawable(window, caps, null);
+            window.setVisible(true);
             drawable.setRealized(true);
             GLContext context = drawable.createContext(null);
             context.makeCurrent();
