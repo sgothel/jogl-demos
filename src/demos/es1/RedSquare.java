@@ -32,9 +32,9 @@ public class RedSquare implements MouseListener {
     public static void main(String[] args) {
         System.out.println("RedSquare.main()");
         try {
-            Display display = new Display();
-            Screen screen  = new Screen(display);
-            Window window = Window.create(screen, 0); // dummy VisualID
+            Display display = NewtFactory.createDisplay(null); // local display
+            Screen screen  = NewtFactory.createScreen(display, 0); // screen 0
+            Window window = NewtFactory.createWindow(screen, 0); // dummy VisualID
 
             RedSquare ml = new RedSquare();
             window.addMouseListener(ml);
@@ -47,15 +47,14 @@ public class RedSquare implements MouseListener {
             }
 
             // Hook this into EGL
-            GLDrawableFactory.initialize(GLDrawableFactory.PROFILE_GLES1);
-            GLDrawableFactory factory = GLDrawableFactory.getFactory();
+            GLDrawableFactory factory = GLDrawableFactory.getFactory(GLDrawableFactory.PROFILE_GLES1, window);
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            GLDrawable drawable = factory.getGLDrawable(window.getHandles(), caps, null);
+            GLDrawable drawable = factory.createGLDrawable(window, caps, null);
             drawable.setRealized(true);
             GLContext context = drawable.createContext(null);
             context.makeCurrent();
@@ -134,6 +133,7 @@ public class RedSquare implements MouseListener {
             context.release();
             context.destroy();
             drawable.destroy();
+            factory.shutdown();
             System.out.println("RedSquare shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
