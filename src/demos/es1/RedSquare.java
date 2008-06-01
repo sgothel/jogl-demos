@@ -10,10 +10,16 @@ import com.sun.javafx.newt.*;
 public class RedSquare implements MouseListener {
 
     public boolean quit = false;
+    public boolean toggleFS = false;
 
     public void mouseClicked(MouseEvent e) {
-        if(e.getClickCount()>1) {
-            quit=true;
+        switch(e.getClickCount()) {
+            case 1:
+                toggleFS=true;
+                break;
+            default: 
+                quit=true;
+                break;
         }
     }
     public void mouseEntered(MouseEvent e) {
@@ -42,9 +48,8 @@ public class RedSquare implements MouseListener {
             // Size OpenGL to Video Surface
             int width = 800;
             int height = 480;
-            if (!window.setFullscreen(true)) {
-                window.setSize(width, height);
-            }
+            window.setSize(width, height);
+            window.setFullscreen(true);
 
             // Hook this into EGL
             GLDrawableFactory factory = GLDrawableFactory.getFactory(GLDrawableFactory.PROFILE_GLES1, window);
@@ -121,6 +126,11 @@ public class RedSquare implements MouseListener {
                 gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
 
                 drawable.swapBuffers();
+
+                if(ml.toggleFS) {
+                    window.setFullscreen(!window.isFullscreen());
+                    ml.toggleFS=false;
+                }
 
                 window.pumpMessages();
 

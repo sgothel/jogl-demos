@@ -7,10 +7,16 @@ import com.sun.javafx.newt.*;
 public class Main implements MouseListener {
 
     public boolean quit = false;
+    public boolean toggleFS = false;
 
     public void mouseClicked(MouseEvent e) {
-        if(e.getClickCount()>1) {
-            quit=true;
+        switch(e.getClickCount()) {
+            case 1:
+                toggleFS=true;
+                break;
+            default: 
+                quit=true;
+                break;
         }
     }
     public void mouseEntered(MouseEvent e) {
@@ -39,9 +45,8 @@ public class Main implements MouseListener {
             // Size OpenGL to Video Surface
             int width = 800;
             int height = 480;
-            if (!window.setFullscreen(true)) {
-                window.setSize(width, height);
-            }
+            window.setSize(width, height);
+            window.setFullscreen(true);
 
             // Hook this into EGL
             GLDrawableFactory factory = GLDrawableFactory.getFactory(GLDrawableFactory.PROFILE_GLES1, window);
@@ -69,6 +74,12 @@ public class Main implements MouseListener {
             do {
                 angel.display(gl);
                 drawable.swapBuffers();
+
+                if(ml.toggleFS) {
+                    window.setFullscreen(!window.isFullscreen());
+                    ml.toggleFS=false;
+                }
+
                 window.pumpMessages();
 
                 //                Thread.yield();
