@@ -69,11 +69,23 @@ public class Main implements MouseListener {
             angel.reshape(gl, 0, 0, window.getWidth(), window.getHeight());
 
             long startTime = System.currentTimeMillis();
-            long curTime = 0;
+            long lastTime = startTime, curTime = 0, dt0, dt1;
+            int totalFrames = 0, lastFrames = 0;
 
             do {
                 angel.display(gl);
                 drawable.swapBuffers();
+
+                totalFrames++; lastFrames++;
+                curTime = System.currentTimeMillis();
+                dt0 = curTime-lastTime;
+                if ( (curTime-lastTime) > 5000 ) {
+                    dt1 = curTime-startTime;
+                    System.out.println(curTime/1000+"s, 5s: "+ (lastFrames*1000)/dt0 + " fps, "+
+                                                 "total: "+ (totalFrames*1000)/dt1 + " fps");
+                    lastTime=curTime;
+                    lastFrames=0;
+                }
 
                 if(ml.toggleFS) {
                     window.setFullscreen(!window.isFullscreen());
@@ -87,7 +99,6 @@ public class Main implements MouseListener {
                 //                try{
                 //                    Thread.sleep(10);
                 //                } catch(InterruptedException ie) {}
-                curTime = System.currentTimeMillis();
             } while (!ml.quit && (curTime - startTime) < 215000);
 
             // Shut things down cooperatively

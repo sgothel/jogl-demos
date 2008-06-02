@@ -111,18 +111,26 @@ public class Angeles /* implements GLEventListener */ {
 
         this.gl = gl;
 
+        gl.glMatrixMode(gl.GL_MODELVIEW);
+        gl.glLoadIdentity();
+
         gl.glClearColorx((int)(0.1f * 65536),
                       (int)(0.2f * 65536),
                       (int)(0.3f * 65536), 0x10000);
-        gl.glClear(gl.GL_DEPTH_BUFFER_BIT | gl.GL_COLOR_BUFFER_BIT);
 
-        gl.glMatrixMode(gl.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
+        gl.glCullFace(GL.GL_FRONT);
 
-        gl.glMatrixMode(gl.GL_MODELVIEW);
+        gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
-        gl.glLoadIdentity();
+        //gl.glShadeModel(GL.GL_SMOOTH);
+        gl.glShadeModel(GL.GL_FLAT);
+        gl.glDisable(GL.GL_DITHER);
+
+        //gl.glMatrixMode(gl.GL_PROJECTION);
+        //gl.glLoadIdentity();
+        //gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
+
+        System.out.println("reshape ..");
     }
 
     public void display(GL gl) {
@@ -143,7 +151,11 @@ public class Angeles /* implements GLEventListener */ {
             return;
         }
 
-        reshape(gl, 0, 0, width, height);
+        gl.glClear(gl.GL_DEPTH_BUFFER_BIT | gl.GL_COLOR_BUFFER_BIT);
+
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glLoadIdentity();
+        gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
 
         // Update the camera position and set the lookat.
         camTrack();
