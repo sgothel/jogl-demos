@@ -249,7 +249,7 @@ public class GLObject {
 
     void seal()
     {
-        rewind();
+        flip();
         vbo = new int[3];
         gl.glGenBuffers(3, vbo, 0);
 
@@ -263,10 +263,10 @@ public class GLObject {
 
         if (null!=normalArray)
         {
+            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * BufferUtil.SIZEOF_INT, normalArray, GL.GL_STATIC_DRAW);
             gl.glNormalPointer(gl.GL_FLOAT, 0, 0);
-            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
         } else {
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
         }
@@ -281,9 +281,9 @@ public class GLObject {
 
         if (null!=normalArray)
         {
+            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
             gl.glNormalPointer(gl.GL_FIXED, 0, 0);
-            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
         }
         else
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
@@ -295,6 +295,13 @@ public class GLObject {
         colorArray.rewind();
         if (normalArray != null) {
             normalArray.rewind();
+        }
+    }
+    void flip() {
+        vertexArray.flip();
+        colorArray.flip();
+        if (normalArray != null) {
+            normalArray.flip();
         }
     }
 }

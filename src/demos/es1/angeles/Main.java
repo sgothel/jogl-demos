@@ -81,8 +81,8 @@ public class Main implements MouseListener {
                 dt0 = curTime-lastTime;
                 if ( (curTime-lastTime) > 5000 ) {
                     dt1 = curTime-startTime;
-                    System.out.println(curTime/1000+"s, 5s: "+ (lastFrames*1000)/dt0 + " fps, "+
-                                                 "total: "+ (totalFrames*1000)/dt1 + " fps");
+                    System.out.println(dt1/1000+"s, 5s: "+ (lastFrames*1000)/dt0 + " fps, "+
+                                       "total: "+ (totalFrames*1000)/dt1 + " fps");
                     lastTime=curTime;
                     lastFrames=0;
                 }

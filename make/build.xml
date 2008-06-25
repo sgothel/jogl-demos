@@ -57,7 +57,20 @@
     </target>
 
     <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes">
-        <property name="jogl.jar"            value="../../jogl/build/jogl.jar" />
+        <property name="jogl.core.jar"       value="../../jogl/build/jogl.core.jar" />
+        <property name="jogl.oswin.jar"      value="../../jogl/build/jogl.oswin.jar" />
+        <property name="jogl.gles1.jar"      value="../../jogl/build/jogl.gles1.jar" />
+        <property name="jogl.gles1.dbg.jar"  value="../../jogl/build/jogl.gles1.dbg.jar" />
+        <property name="jogl.gles2.jar"      value="../../jogl/build/jogl.gles2.jar" />
+        <property name="jogl.gles2.dbg.jar"  value="../../jogl/build/jogl.gles2.dbg.jar" />
+        <property name="jogl.egl.jar"        value="../../jogl/build/jogl.egl.jar" />
+        <property name="jogl.gl2.jar"        value="../../jogl/build/jogl.gl2.jar" />
+        <property name="jogl.gl2.dbg.jar"    value="../../jogl/build/jogl.gl2.dbg.jar" />
+        <property name="jogl.awt.jar"        value="../../jogl/build/jogl.awt.jar" />
+        <property name="jogl.util.jar"       value="../../jogl/build/jogl.util.jar" />
+        <property name="jogl.util.awt.jar"   value="../../jogl/build/jogl.util.awt.jar" />
+        <property name="jogl.util.gl2.jar"   value="../../jogl/build/jogl.util.gl2.jar" />
+        <property name="newt.jar"            value="../../jogl/build/newt.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
         <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
@@ -93,7 +106,20 @@
     <target name="all-desktop" unless="isGLES">
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${jogl.jar}" />
+            <pathelement location="${jogl.core.jar}" />
+            <pathelement location="${jogl.oswin.jar}" />
+            <pathelement location="${jogl.gles1.jar}" />
+            <pathelement location="${jogl.gles1.dbg.jar}" />
+            <pathelement location="${jogl.gles2.jar}" />
+            <pathelement location="${jogl.gles2.dbg.jar}" />
+            <pathelement location="${jogl.egl.jar}" />
+            <pathelement location="${jogl.gl2.jar}" />
+            <pathelement location="${jogl.gl2.dbg.jar}" />
+            <pathelement location="${jogl.awt.jar}" />
+            <pathelement location="${jogl.util.jar}" />
+            <pathelement location="${jogl.util.awt.jar}" />
+            <pathelement location="${jogl.util.gl2.jar}" />
+            <pathelement location="${newt.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${simple-xml.jar}" />
@@ -143,11 +169,21 @@
     </target>
 
     <target name="all-gles1" if="isGLES1">
+        <echo message="classes destdir ${classes}" />
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${jogl.jar}" />
+            <pathelement location="${jogl.core.jar}" />
+            <pathelement location="${jogl.gles1.jar}" />
+            <pathelement location="${jogl.gles1.dbg.jar}" />
+            <pathelement location="${jogl.egl.jar}" />
+            <pathelement location="${newt.jar}" />
         </path>
-        <javac destdir="${classes}" includes="demos/es1/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+        <!--javac destdir="${classes}" includes="demos/es1/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+               bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
+            <src path="${src}" />
+            <classpath refid="jogl-demos.classpath" />
+        </javac-->
+        <javac destdir="${classes}" includes="demos/es1/RedSquare.java" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
                bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
@@ -156,13 +192,20 @@
             <fileset dir="${classes}">
                 <include name="**" />
             </fileset>
+            <fileset dir="${src}">
+                <include name="demos/es1/bump/*.brs" />
+            </fileset>
         </jar>
     </target>
 
     <target name="all-gles2" if="isGLES2">
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${jogl.jar}" />
+            <pathelement location="${jogl.core.jar}" />
+            <pathelement location="${jogl.gles2.jar}" />
+            <pathelement location="${jogl.gles2.dbg.jar}" />
+            <pathelement location="${jogl.egl.jar}" />
+            <pathelement location="${newt.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
                bootclasspath="../../gluegen/make/lib/cdc_fp.jar">

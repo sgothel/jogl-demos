@@ -2,8 +2,8 @@ package demos.es1;
 
 import java.nio.*;
 import javax.media.opengl.*;
+import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
 
 import com.sun.javafx.newt.*;
 
@@ -37,6 +37,7 @@ public class RedSquare implements MouseListener {
 
     public static void main(String[] args) {
         System.out.println("RedSquare.main()");
+        GLProfile.setProfile(GLProfile.GLES1);
         try {
             Display display = NewtFactory.createDisplay(null); // local display
             Screen screen  = NewtFactory.createScreen(display, 0); // screen 0
@@ -52,7 +53,7 @@ public class RedSquare implements MouseListener {
             window.setFullscreen(true);
 
             // Hook this into EGL
-            GLDrawableFactory factory = GLDrawableFactory.getFactory(GLDrawableFactory.PROFILE_GLES1, window);
+            GLDrawableFactory factory = GLDrawableFactory.getFactory(window);
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
@@ -65,17 +66,17 @@ public class RedSquare implements MouseListener {
             GLContext context = drawable.createContext(null);
             context.makeCurrent();
 
-            GL gl = context.getGL();
-            GLU glu = new GLU();
+            GL2ES1 gl = context.getGL().getGL2ES1();
+            GLU glu = new javax.media.opengl.glu.es1.GLUes1();
 
             //----------------------------------------------------------------------
             // Code for GLEventListener.init()
             //
 
             System.out.println("Entering initialization");
-            System.out.println("GL_VERSION=" + gl.glGetString(GL.GL_VERSION));
+            System.out.println("GL_VERSION=" + gl.glGetString(GL2ES1.GL_VERSION));
             System.out.println("GL_EXTENSIONS:");
-            System.out.println("  " + gl.glGetString(GL.GL_EXTENSIONS));
+            System.out.println("  " + gl.glGetString(GL2ES1.GL_EXTENSIONS));
 
             // Allocate vertex arrays
             FloatBuffer colors   = BufferUtil.newFloatBuffer(16);
@@ -90,14 +91,14 @@ public class RedSquare implements MouseListener {
             vertices.put(6, -2);  vertices.put( 7, -2);  vertices.put( 8,  0);
             vertices.put(9,  2);  vertices.put(10, -2);  vertices.put(11,  0);
 
-            gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-            gl.glVertexPointer(3, GL.GL_FLOAT, 0, vertices);
-            gl.glEnableClientState(GL.GL_COLOR_ARRAY);
-            gl.glColorPointer(4, GL.GL_FLOAT, 0, colors);
+            gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY);
+            gl.glVertexPointer(3, GL2ES1.GL_FLOAT, 0, vertices);
+            gl.glEnableClientState(GL2ES1.GL_COLOR_ARRAY);
+            gl.glColorPointer(4, GL2ES1.GL_FLOAT, 0, colors);
 
             // OpenGL Render Settings
             gl.glClearColor(0, 0, 0, 1);
-            gl.glEnable(GL.GL_DEPTH_TEST);
+            gl.glEnable(GL2ES1.GL_DEPTH_TEST);
 
             //----------------------------------------------------------------------
             // Code for GLEventListener.display()
@@ -106,16 +107,16 @@ public class RedSquare implements MouseListener {
             long startTime = System.currentTimeMillis();
             long curTime;
             while (!ml.quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
-                gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+                gl.glClear(GL2ES1.GL_COLOR_BUFFER_BIT | GL2ES1.GL_DEPTH_BUFFER_BIT);
 
                 // Set location in front of camera
                 width = window.getWidth();
                 height = window.getHeight();
                 gl.glViewport(0, 0, width, height);
-                gl.glMatrixMode(GL.GL_PROJECTION);
+                gl.glMatrixMode(GL2ES1.GL_PROJECTION);
                 gl.glLoadIdentity();
                 glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
-                gl.glMatrixMode(GL.GL_MODELVIEW);
+                gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
                 gl.glLoadIdentity();
                 gl.glTranslatef(0, 0, -10);
                 // One rotation every four seconds
@@ -123,7 +124,7 @@ public class RedSquare implements MouseListener {
                 gl.glRotatef(ang, 0, 0, 1);
 
                 // Draw a square
-                gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+                gl.glDrawArrays(GL2ES1.GL_TRIANGLE_STRIP, 0, 4);
 
                 drawable.swapBuffers();
 
