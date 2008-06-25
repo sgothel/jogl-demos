@@ -37,7 +37,7 @@ public class RedSquare implements MouseListener {
 
     public static void main(String[] args) {
         System.out.println("RedSquare.main()");
-        GLProfile.setProfile(GLProfile.GLES1);
+        GLProfile.setProfileGL2ES1();
         try {
             Display display = NewtFactory.createDisplay(null); // local display
             Screen screen  = NewtFactory.createScreen(display, 0); // screen 0
@@ -67,7 +67,7 @@ public class RedSquare implements MouseListener {
             context.makeCurrent();
 
             GL2ES1 gl = context.getGL().getGL2ES1();
-            GLU glu = new javax.media.opengl.glu.es1.GLUes1();
+            GLU glu = GLU.createGLU(gl);
 
             //----------------------------------------------------------------------
             // Code for GLEventListener.init()
