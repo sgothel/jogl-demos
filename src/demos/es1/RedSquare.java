@@ -64,7 +64,12 @@ public class RedSquare implements MouseListener {
             window.setVisible(true);
             drawable.setRealized(true);
             GLContext context = drawable.createContext(null);
-            context.makeCurrent();
+            System.out.println("Created context: " + context);
+            int res = context.makeCurrent();
+            if (res == GLContext.CONTEXT_NOT_CURRENT) {
+                System.out.println("Unable to make OpenGL context current, exiting...");
+                System.exit(0);
+            }
 
             GL2ES1 gl = context.getGL().getGL2ES1();
             System.out.println("Created GL: "+gl);
