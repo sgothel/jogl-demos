@@ -67,6 +67,7 @@ public class RedSquare implements MouseListener {
             context.makeCurrent();
 
             GL2ES1 gl = context.getGL().getGL2ES1();
+            System.out.println("Created GL: "+gl);
             GLU glu = GLU.createGLU(gl);
 
             //----------------------------------------------------------------------
