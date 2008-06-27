@@ -112,6 +112,7 @@ public class RedSquare implements MouseListener {
             
             long startTime = System.currentTimeMillis();
             long curTime;
+            int frameCount = 0;
             while (!ml.quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
                 gl.glClear(GL2ES1.GL_COLOR_BUFFER_BIT | GL2ES1.GL_DEPTH_BUFFER_BIT);
 
@@ -140,6 +141,20 @@ public class RedSquare implements MouseListener {
                 }
 
                 window.pumpMessages();
+
+                // Periodically release the OpenGL context to allow
+                // messages to be pumped in some configurations (in
+                // particular, if using the AWT)
+                if (++frameCount > 10) {
+                    frameCount = 0;
+                    context.release();
+                    if ((res = context.makeCurrent()) == GLContext.CONTEXT_NOT_CURRENT) {
+                        System.out.println("Unexpected error making context current again");
+                        System.exit(0);
+                    } else if (res == GLContext.CONTEXT_CURRENT_NEW) {
+                        gl = context.getGL().getGL2ES1();
+                    }
+                }
             }
 
             // Shut things down cooperatively
