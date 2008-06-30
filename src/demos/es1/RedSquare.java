@@ -7,16 +7,19 @@ import javax.media.opengl.glu.*;
 
 import com.sun.javafx.newt.*;
 
-public class RedSquare implements MouseListener {
+public class RedSquare implements MouseListener, GLEventListener {
 
-    public boolean quit = false;
-    public boolean toggleFS = false;
+    private GLWindow window;
+    private GLU glu;
+    private boolean quit = false;
+    private long startTime;
+    private long curTime;
 
     public void mouseClicked(MouseEvent e) {
         System.out.println("mouseevent: "+e);
         switch(e.getClickCount()) {
             case 1:
-                toggleFS=true;
+                window.setFullscreen(!window.isFullscreen());
                 break;
             default: 
                 quit=true;
@@ -36,153 +39,111 @@ public class RedSquare implements MouseListener {
     public void mouseDragged(MouseEvent e) {
     }
 
-    public static void main(String[] args) {
-        System.out.println("RedSquare.main()");
+    private void run() {
+        System.err.println("RedSquare.run()");
         GLProfile.setProfileGL2ES1();
         try {
-            Display display;
-            Screen screen;
-            Window window;
-
-            if(args.length>=1 && args[0].equals("-awt")) {
-                display = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
-                screen  = NewtFactory.createScreen(NewtFactory.AWT, display, 0); // screen 0
-                window = NewtFactory.createWindow(NewtFactory.AWT, screen, 0); // dummy VisualID
-            } else {
-                display = NewtFactory.createDisplay(null); // local display
-                screen  = NewtFactory.createScreen(display, 0); // screen 0
-                window = NewtFactory.createWindow(screen, 0); // dummy VisualID
-            }
-
-            System.out.println("Created Window: "+window);
-
-            RedSquare ml = new RedSquare();
-            window.addMouseListener(ml);
-
-            // Size OpenGL to Video Surface
-            int width = 800;
-            int height = 480;
-            window.setSize(width, height);
-            window.setFullscreen(true);
-
-            // Hook this into EGL
-            GLDrawableFactory factory = GLDrawableFactory.getFactory(window);
-            System.out.println("Drawable Factory: "+factory);
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            GLDrawable drawable = factory.createGLDrawable(window, caps, null);
+            window = GLWindow.create(caps);
+
+            window.addMouseListener(this);
+            window.addGLEventListener(this);
+
+            // Size OpenGL to Video Surface
+            int width = 800;
+            int height = 480;
+            window.setSize(width, height);
+            window.setFullscreen(true);
             window.setVisible(true);
-            drawable.setRealized(true);
-            System.out.println("Drawable: "+drawable);
-            GLContext context = drawable.createContext(null);
-            System.out.println("Created context: " + context);
-            int res = context.makeCurrent();
-            if (res == GLContext.CONTEXT_NOT_CURRENT) {
-                System.out.println("Unable to make OpenGL context current, exiting...");
-                System.exit(0);
-            }
 
-            GL2ES1 gl = context.getGL().getGL2ES1();
-            System.out.println("Created GL: "+gl);
-            GLU glu = GLU.createGLU(gl);
-
-            //----------------------------------------------------------------------
-            // Code for GLEventListener.init()
-            //
-
-            System.out.println("Entering initialization");
-            System.out.println("GL_VERSION=" + gl.glGetString(GL2ES1.GL_VERSION));
-            System.out.println("GL_EXTENSIONS:");
-            System.out.println("  " + gl.glGetString(GL2ES1.GL_EXTENSIONS));
-
-            // Allocate vertex arrays
-            FloatBuffer colors   = BufferUtil.newFloatBuffer(16);
-            FloatBuffer vertices = BufferUtil.newFloatBuffer(12);
-            // Fill them up
-            colors.put( 0, 1);    colors.put( 1, 0);     colors.put( 2, 0);    colors.put( 3, 1);
-            colors.put( 4, 1);    colors.put( 5, 0);     colors.put( 6, 0);    colors.put( 7, 1);
-            colors.put( 8, 1);    colors.put( 9, 0);     colors.put(10, 0);    colors.put(11, 1);
-            colors.put(12, 1);    colors.put(13, 0);     colors.put(14, 0);    colors.put(15, 1);
-            vertices.put(0, -2);  vertices.put( 1,  2);  vertices.put( 2,  0);
-            vertices.put(3,  2);  vertices.put( 4,  2);  vertices.put( 5,  0);
-            vertices.put(6, -2);  vertices.put( 7, -2);  vertices.put( 8,  0);
-            vertices.put(9,  2);  vertices.put(10, -2);  vertices.put(11,  0);
-
-            gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY);
-            gl.glVertexPointer(3, GL2ES1.GL_FLOAT, 0, vertices);
-            gl.glEnableClientState(GL2ES1.GL_COLOR_ARRAY);
-            gl.glColorPointer(4, GL2ES1.GL_FLOAT, 0, colors);
-
-            // OpenGL Render Settings
-            gl.glClearColor(0, 0, 0, 1);
-            gl.glEnable(GL2ES1.GL_DEPTH_TEST);
-
-            //----------------------------------------------------------------------
-            // Code for GLEventListener.display()
-            //
-            
-            long startTime = System.currentTimeMillis();
-            long curTime;
-            int frameCount = 0;
-            while (!ml.quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
-                gl.glClear(GL2ES1.GL_COLOR_BUFFER_BIT | GL2ES1.GL_DEPTH_BUFFER_BIT);
-
-                // Set location in front of camera
-                width = window.getWidth();
-                height = window.getHeight();
-                gl.glViewport(0, 0, width, height);
-                gl.glMatrixMode(GL2ES1.GL_PROJECTION);
-                gl.glLoadIdentity();
-                glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
-                gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
-                gl.glLoadIdentity();
-                gl.glTranslatef(0, 0, -10);
-                // One rotation every four seconds
-                float ang = (((float) (curTime - startTime)) * 360.0f) / 4000.0f;
-                gl.glRotatef(ang, 0, 0, 1);
-
-                // Draw a square
-                gl.glDrawArrays(GL2ES1.GL_TRIANGLE_STRIP, 0, 4);
-
-                drawable.swapBuffers();
-
-                if(ml.toggleFS) {
-                    window.setFullscreen(!window.isFullscreen());
-                    ml.toggleFS=false;
-                }
-
-                window.pumpMessages();
-
-                // Periodically release the OpenGL context to allow
-                // messages to be pumped in some configurations (in
-                // particular, if using the AWT)
-                if (++frameCount > 10) {
-                    frameCount = 0;
-                    context.release();
-                    if ((res = context.makeCurrent()) == GLContext.CONTEXT_NOT_CURRENT) {
-                        System.out.println("Unexpected error making context current again");
-                        System.exit(0);
-                    } else if (res == GLContext.CONTEXT_CURRENT_NEW) {
-                        gl = context.getGL().getGL2ES1();
-                    }
-                }
+            startTime = System.currentTimeMillis();
+            while (!quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
+                window.display();
             }
 
             // Shut things down cooperatively
-            context.release();
-            context.destroy();
-            drawable.destroy();
-            factory.shutdown();
-            //window.close();
+            window.close();
+            window.getFactory().shutdown();
             System.out.println("RedSquare shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
 
+    // FIXME: we must add storage of the pointers in the GL state to
+    // the GLImpl classes. The need for this can be seen by making
+    // these variables method local instead of instance members. The
+    // square will disappear after a second or so due to garbage
+    // collection. On desktop OpenGL this implies a stack of
+    // references due to the existence of glPush/PopClientAttrib. On
+    // OpenGL ES 1/2 it can simply be one set of references.
+    private FloatBuffer colors;
+    private FloatBuffer vertices;
+
+    public void init(GLAutoDrawable drawable) {
+        glu = GLU.createGLU();
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        System.err.println("Entering initialization");
+        System.err.println("GL_VERSION=" + gl.glGetString(GL2ES1.GL_VERSION));
+        System.err.println("GL_EXTENSIONS:");
+        System.err.println("  " + gl.glGetString(GL2ES1.GL_EXTENSIONS));
+
+        // Allocate vertex arrays
+        colors   = BufferUtil.newFloatBuffer(16);
+        vertices = BufferUtil.newFloatBuffer(12);
+        // Fill them up
+        colors.put( 0, 1);    colors.put( 1, 0);     colors.put( 2, 0);    colors.put( 3, 1);
+        colors.put( 4, 1);    colors.put( 5, 0);     colors.put( 6, 0);    colors.put( 7, 1);
+        colors.put( 8, 1);    colors.put( 9, 0);     colors.put(10, 0);    colors.put(11, 1);
+        colors.put(12, 1);    colors.put(13, 0);     colors.put(14, 0);    colors.put(15, 1);
+        vertices.put(0, -2);  vertices.put( 1,  2);  vertices.put( 2,  0);
+        vertices.put(3,  2);  vertices.put( 4,  2);  vertices.put( 5,  0);
+        vertices.put(6, -2);  vertices.put( 7, -2);  vertices.put( 8,  0);
+        vertices.put(9,  2);  vertices.put(10, -2);  vertices.put(11,  0);
+
+        gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY);
+        gl.glVertexPointer(3, GL2ES1.GL_FLOAT, 0, vertices);
+        gl.glEnableClientState(GL2ES1.GL_COLOR_ARRAY);
+        gl.glColorPointer(4, GL2ES1.GL_FLOAT, 0, colors);
+
+        // OpenGL Render Settings
+        gl.glClearColor(0, 0, 0, 1);
+        gl.glEnable(GL2ES1.GL_DEPTH_TEST);
+    }
+
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        // Set location in front of camera
+        gl.glMatrixMode(GL2ES1.GL_PROJECTION);
+        gl.glLoadIdentity();
+        glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
+    }
+
+    public void display(GLAutoDrawable drawable) {
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        gl.glClear(GL2ES1.GL_COLOR_BUFFER_BIT | GL2ES1.GL_DEPTH_BUFFER_BIT);
+
+        // One rotation every four seconds
+        gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
+        gl.glLoadIdentity();
+        gl.glTranslatef(0, 0, -10);
+        float ang = ((float) (curTime - startTime) * 360.0f) / 4000.0f;
+        gl.glRotatef(ang, 0, 0, 1);
+
+        // Draw a square
+        gl.glDrawArrays(GL2ES1.GL_TRIANGLE_STRIP, 0, 4);
+    }
+
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    }
+
+    public static void main(String[] args) {
+        new RedSquare().run();
         System.exit(0);
     }
 }
