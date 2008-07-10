@@ -7,12 +7,14 @@ import com.sun.javafx.newt.*;
 public class Main implements MouseListener {
 
     public boolean quit = false;
-    public boolean toggleFS = false;
+    public GLWindow window = null;
 
     public void mouseClicked(MouseEvent e) {
         switch(e.getClickCount()) {
             case 1:
-                toggleFS=true;
+                if(null!=window) {
+                    window.setFullscreen(!window.isFullscreen());
+                }
                 break;
             default: 
                 quit=true;
@@ -32,49 +34,53 @@ public class Main implements MouseListener {
     public void mouseDragged(MouseEvent e) {
     }
 
-    public static void main(String[] args) {
-        System.out.println("Angeles Main");
+    private void run(int type) {
+        int width = 800;
+        int height = 480;
+        System.out.println("angeles.Main.run()");
+        GLProfile.setProfileGL2ES1();
         try {
-            Display display = NewtFactory.createDisplay(null); // local display
-            Screen screen  = NewtFactory.createScreen(display, 0); // screen 0
-            Window window = NewtFactory.createWindow(screen, 0); // dummy VisualID
-
-            Main ml = new Main();
-            window.addMouseListener(ml);
-
-            // Size OpenGL to Video Surface
-            int width = 800;
-            int height = 480;
-            window.setSize(width, height);
-            window.setFullscreen(true);
+            Window nWindow = null;
+            if(0!=(type&USE_AWT)) {
+                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, 0); // dummy VisualID
+            }
 
             // Hook this into EGL
-            GLDrawableFactory factory = GLDrawableFactory.getFactory(GLDrawableFactory.PROFILE_GLES1, window);
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            GLDrawable drawable = factory.createGLDrawable(window, caps, null);
+            GLWindow window = GLWindow.create(nWindow, caps);
+
+            window.addMouseListener(this);
+
+            window.setSize(width, height);
+            window.setFullscreen(true);
             window.setVisible(true);
-            drawable.setRealized(true);
-            GLContext context = drawable.createContext(null);
-            context.makeCurrent();
 
-            GL gl = context.getGL();
-
-            Angeles angel = new Angeles();
-            angel.init(gl);
-            angel.reshape(gl, 0, 0, window.getWidth(), window.getHeight());
+            GL gl = window.getGL();
+            if(gl.isGLES1() && 0==(type&USE_ANGELESF)) {
+                System.out.println("Using: AngelesES1 .. ");
+                AngelesES1 angel = new AngelesES1();
+                window.addGLEventListener(angel);
+            } else if(gl.isGL2ES1()) {
+                System.out.println("Using: AngelesGL2ES1 .. ");
+                AngelesGL2ES1 angel = new AngelesGL2ES1();
+                window.addGLEventListener(angel);
+            } else {
+                System.out.println("Using: nop .. ");
+            }
 
             long startTime = System.currentTimeMillis();
             long lastTime = startTime, curTime = 0, dt0, dt1;
             int totalFrames = 0, lastFrames = 0;
 
             do {
-                angel.display(gl);
-                drawable.swapBuffers();
+                window.display();
 
                 totalFrames++; lastFrames++;
                 curTime = System.currentTimeMillis();
@@ -87,29 +93,33 @@ public class Main implements MouseListener {
                     lastFrames=0;
                 }
 
-                if(ml.toggleFS) {
-                    window.setFullscreen(!window.isFullscreen());
-                    ml.toggleFS=false;
-                }
-
-                window.pumpMessages();
-
-                //                Thread.yield();
-
-                //                try{
-                //                    Thread.sleep(10);
-                //                } catch(InterruptedException ie) {}
-            } while (!ml.quit && (curTime - startTime) < 215000);
+            } while (!quit && (curTime - startTime) < 215000);
 
             // Shut things down cooperatively
-            context.release();
-            context.destroy();
-            drawable.destroy();
-            factory.shutdown();
-            System.out.println("Angeles shut down cleanly.");
+            window.close();
+            window.getFactory().shutdown();
+            System.out.println("angeles.Main shut down cleanly.");
         } catch (GLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int USE_NEWT      = 0;
+    public static int USE_AWT       = 1 << 0;
+    public static int USE_ANGELESF  = 1 << 1;
+
+    public static void main(String[] args) {
+        int type = USE_NEWT ;
+        for(int i=args.length-1; i>=0; i--) {
+            if(args[i].equals("-awt")) {
+                type |= USE_AWT; 
+            }
+            if(args[i].equals("-angelesf")) {
+                type |= USE_ANGELESF; 
+            }
+        }
+        new Main().run(type);
         System.exit(0);
     }
+
 }

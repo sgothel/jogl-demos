@@ -25,38 +25,39 @@
 package demos.es1.angeles;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
+import javax.media.opengl.util.*;
+import javax.media.opengl.glu.*;
 import java.nio.*;
 
-public class Angeles /* implements GLEventListener */ {
+public class AngelesGL2ES1 implements GLEventListener {
 
-    public Angeles() {
-        quadVertices = BufferUtil.newIntBuffer(12);
-        quadVertices.put(new int[]{
-            -0x10000, -0x10000,
-             0x10000, -0x10000,
-            -0x10000,  0x10000,
-             0x10000, -0x10000,
-             0x10000,  0x10000,
-            -0x10000,  0x10000
+    public AngelesGL2ES1() {
+        quadVertices = BufferUtil.newFloatBuffer(12);
+        quadVertices.put(new float[]{
+            -1.0f, -1.0f,
+             1.0f, -1.0f,
+            -1.0f,  1.0f,
+             1.0f, -1.0f,
+             1.0f,  1.0f,
+            -1.0f,  1.0f
         });
         quadVertices.rewind();
 
-        light0Position=BufferUtil.newIntBuffer(4);
-        light0Diffuse=BufferUtil.newIntBuffer(4);
-        light1Position=BufferUtil.newIntBuffer(4);
-        light1Diffuse=BufferUtil.newIntBuffer(4);
-        light2Position=BufferUtil.newIntBuffer(4);
-        light2Diffuse=BufferUtil.newIntBuffer(4);
-        materialSpecular=BufferUtil.newIntBuffer(4);
+        light0Position=BufferUtil.newFloatBuffer(4);
+        light0Diffuse=BufferUtil.newFloatBuffer(4);
+        light1Position=BufferUtil.newFloatBuffer(4);
+        light1Diffuse=BufferUtil.newFloatBuffer(4);
+        light2Position=BufferUtil.newFloatBuffer(4);
+        light2Diffuse=BufferUtil.newFloatBuffer(4);
+        materialSpecular=BufferUtil.newFloatBuffer(4);
 
-        light0Position.put(new int[] { -0x40000, 0x10000, 0x10000, 0 });
-        light0Diffuse.put(new int[] { 0x10000, 0x6666, 0, 0x10000 });
-        light1Position.put(new int[] { 0x10000, -0x20000, -0x10000, 0 });
-        light1Diffuse.put(new int[] { 0x11eb, 0x23d7, 0x5999, 0x10000 });
-        light2Position.put(new int[] { -0x10000, 0, -0x40000, 0 });
-        light2Diffuse.put(new int[] { 0x11eb, 0x2b85, 0x23d7, 0x10000 });
-        materialSpecular.put(new int[] { 0x10000, 0x10000, 0x10000, 0x10000 });
+        light0Position.put(new float[] { FixedPoint.toFloat(-0x40000), 1.0f, 1.0f, 0.0f });
+        light0Diffuse.put(new float[] { 1.0f, FixedPoint.toFloat(0x6666), 0.0f, 1.0f });
+        light1Position.put(new float[] { 1.0f, FixedPoint.toFloat(-0x20000), -1.0f, 0.0f });
+        light1Diffuse.put(new float[] { FixedPoint.toFloat(0x11eb), FixedPoint.toFloat(0x23d7), FixedPoint.toFloat(0x5999), 1.0f });
+        light2Position.put(new float[] { -1.0f, 0.0f, FixedPoint.toFloat(-0x40000), 0.0f });
+        light2Diffuse.put(new float[] { FixedPoint.toFloat(0x11eb), FixedPoint.toFloat(0x2b85), FixedPoint.toFloat(0x23d7), 1.0f });
+        materialSpecular.put(new float[] { 1.0f, 1.0f, 1.0f, 1.0f });
 
         light0Position.rewind();
         light0Diffuse.rewind();
@@ -74,10 +75,11 @@ public class Angeles /* implements GLEventListener */ {
         y=0;
     }
 
-    public void init(GL gl) {
+    public void init(GLAutoDrawable drawable) {
         // FIXME: gl.setSwapInterval(1);
 
-        this.gl = gl;
+        this.gl = drawable.getGL().getGL2ES1();
+        this.glu = GLU.createGLU(this.gl);
         gl.glEnable(gl.GL_NORMALIZE);
         gl.glEnable(gl.GL_DEPTH_TEST);
         gl.glDisable(gl.GL_CULL_FACE);
@@ -103,43 +105,41 @@ public class Angeles /* implements GLEventListener */ {
         frames=0;
     }
 
-    public void reshape(GL gl, int x, int y, int width, int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         this.width = width;
         this.height=height;
         this.x = x;
         this.y = y;
 
-        this.gl = gl;
+        this.gl = drawable.getGL().getGL2ES1();
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glClearColorx((int)(0.1f * 65536),
-                      (int)(0.2f * 65536),
-                      (int)(0.3f * 65536), 0x10000);
+        gl.glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
         gl.glCullFace(GL.GL_FRONT);
 
-        gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+        gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
         //gl.glShadeModel(GL.GL_SMOOTH);
-        gl.glShadeModel(GL.GL_FLAT);
-        gl.glDisable(GL.GL_DITHER);
+        gl.glShadeModel(gl.GL_FLAT);
+        gl.glDisable(gl.GL_DITHER);
 
         //gl.glMatrixMode(gl.GL_PROJECTION);
         //gl.glLoadIdentity();
-        //gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
+        //glu.gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
 
         System.out.println("reshape ..");
     }
 
-    public void display(GL gl) {
+    public void display(GLAutoDrawable drawable) {
         long tick = System.currentTimeMillis();
 
         if (gAppAlive==0)
             return;
 
-        this.gl = gl;
+        this.gl = drawable.getGL().getGL2ES1();
 
         // Actual tick value is "blurred" a little bit.
         sTick = (sTick + tick - sStartTick) >> 1;
@@ -155,7 +155,7 @@ public class Angeles /* implements GLEventListener */ {
 
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
-        gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
+        glu.gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
 
         // Update the camera position and set the lookat.
         camTrack();
@@ -183,10 +183,11 @@ public class Angeles /* implements GLEventListener */ {
         //        System.out.println(frames+"f, "+dT+"ms "+ (frames*1000)/dT +"fps");
     }
 
-    public void displayChanged(GL gl, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
-    
- private GL  gl;
+
+ private GL2ES1 gl;
+ private GLU glu;
 
  // Total run length is 20 * camera track base unit length (see cams.h).
  private int RUN_LENGTH  = (20 * CamTrack.CAMTRACK_LEN) ;
@@ -206,14 +207,6 @@ int randomUInt()
 }
 
 
-// Capped conversion from float to fixed.
-int FIXED(float value)
-{
-    if (value < -32768) value = -32768;
-    if (value > 32767) value = 32767;
-    return (int)(value * 65536);
-}
-
 // Definition of one GL object in this demo.
 public class GLObject {
     /* Vertex array and color array are enabled for all objects, so their
@@ -221,14 +214,14 @@ public class GLObject {
      * used by the ground plane, so when its pointer is null then normal
      * array usage is disabled.
      *
-     * Vertex array is supposed to use gl.GL_FIXED datatype and stride 0
+     * Vertex array is supposed to use gl.GL_FLOAT datatype and stride 0
      * (i.e. tightly packed array). Color array is supposed to have 4
      * components per color with gl.GL_UNSIGNED_BYTE datatype and stride 0.
-     * Normal array is supposed to use gl.GL_FIXED datatype and stride 0.
+     * Normal array is supposed to use gl.GL_FLOAT datatype and stride 0.
      */
-    IntBuffer vertexArray;
+    FloatBuffer vertexArray;
     ByteBuffer colorArray;
-    IntBuffer normalArray;
+    FloatBuffer normalArray;
     int vertexComponents;
     int count;
     int vbo[];
@@ -237,11 +230,11 @@ public class GLObject {
                     boolean useNormalArray) {
         this.count = vertices;
         this.vertexComponents = vertexComponents;
-        this.vertexArray = BufferUtil.newIntBuffer( vertices * vertexComponents );
+        this.vertexArray = BufferUtil.newFloatBuffer( vertices * vertexComponents );
         this.colorArray =  BufferUtil.newByteBuffer (vertices * 4 );
         if (useNormalArray)
         {
-            this.normalArray = BufferUtil.newIntBuffer (vertices * 3 );
+            this.normalArray = BufferUtil.newFloatBuffer (vertices * 3 );
         } else {
             this.normalArray = null;
         }
@@ -254,7 +247,10 @@ public class GLObject {
         gl.glGenBuffers(3, vbo, 0);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexArray.capacity() * BufferUtil.SIZEOF_INT, vertexArray, GL.GL_STATIC_DRAW);
+        if(null==vertexArray) {
+            throw new RuntimeException("vertexArray is null");
+        }
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexArray.capacity() * BufferUtil.SIZEOF_FLOAT, vertexArray, GL.GL_STATIC_DRAW);
         gl.glVertexPointer(vertexComponents, gl.GL_FLOAT, 0, 0);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
@@ -265,7 +261,7 @@ public class GLObject {
         {
             gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * BufferUtil.SIZEOF_INT, normalArray, GL.GL_STATIC_DRAW);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * BufferUtil.SIZEOF_FLOAT, normalArray, GL.GL_STATIC_DRAW);
             gl.glNormalPointer(gl.GL_FLOAT, 0, 0);
         } else {
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
@@ -275,7 +271,7 @@ public class GLObject {
     void draw()
     {
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
-        gl.glVertexPointer(vertexComponents, gl.GL_FIXED, 0, 0);
+        gl.glVertexPointer(vertexComponents, gl.GL_FLOAT, 0, 0);
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
         gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, 0);
 
@@ -283,7 +279,7 @@ public class GLObject {
         {
             gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
-            gl.glNormalPointer(gl.GL_FIXED, 0, 0);
+            gl.glNormalPointer(gl.GL_FLOAT, 0, 0);
         }
         else
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
@@ -458,9 +454,9 @@ GLObject createSuperShape(final float params[])
                      i < (currentVertex + 6) * 3;
                      i += 3)
                 {
-                    result.normalArray.put(i    , FIXED(n.x));
-                    result.normalArray.put(i + 1, FIXED(n.y));
-                    result.normalArray.put(i + 2, FIXED(n.z));
+                    result.normalArray.put(i    , (n.x));
+                    result.normalArray.put(i + 1, (n.y));
+                    result.normalArray.put(i + 2, (n.z));
                 }
                 for (i = currentVertex * 4;
                      i < (currentVertex + 6) * 4;
@@ -477,29 +473,29 @@ GLObject createSuperShape(final float params[])
                     result.colorArray.put(i + 2, (byte)color[2]);
                     result.colorArray.put(i + 3, (byte)0);
                 }
-                result.vertexArray.put(currentVertex * 3, FIXED(pa.x));
-                result.vertexArray.put(currentVertex * 3 + 1, FIXED(pa.y));
-                result.vertexArray.put(currentVertex * 3 + 2, FIXED(pa.z));
+                result.vertexArray.put(currentVertex * 3, (pa.x));
+                result.vertexArray.put(currentVertex * 3 + 1, (pa.y));
+                result.vertexArray.put(currentVertex * 3 + 2, (pa.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, FIXED(pb.x));
-                result.vertexArray.put(currentVertex * 3 + 1, FIXED(pb.y));
-                result.vertexArray.put(currentVertex * 3 + 2, FIXED(pb.z));
+                result.vertexArray.put(currentVertex * 3, (pb.x));
+                result.vertexArray.put(currentVertex * 3 + 1, (pb.y));
+                result.vertexArray.put(currentVertex * 3 + 2, (pb.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, FIXED(pd.x));
-                result.vertexArray.put(currentVertex * 3 + 1, FIXED(pd.y));
-                result.vertexArray.put(currentVertex * 3 + 2, FIXED(pd.z));
+                result.vertexArray.put(currentVertex * 3, (pd.x));
+                result.vertexArray.put(currentVertex * 3 + 1, (pd.y));
+                result.vertexArray.put(currentVertex * 3 + 2, (pd.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, FIXED(pb.x));
-                result.vertexArray.put(currentVertex * 3 + 1, FIXED(pb.y));
-                result.vertexArray.put(currentVertex * 3 + 2, FIXED(pb.z));
+                result.vertexArray.put(currentVertex * 3, (pb.x));
+                result.vertexArray.put(currentVertex * 3 + 1, (pb.y));
+                result.vertexArray.put(currentVertex * 3 + 2, (pb.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, FIXED(pc.x));
-                result.vertexArray.put(currentVertex * 3 + 1, FIXED(pc.y));
-                result.vertexArray.put(currentVertex * 3 + 2, FIXED(pc.z));
+                result.vertexArray.put(currentVertex * 3, (pc.x));
+                result.vertexArray.put(currentVertex * 3 + 1, (pc.y));
+                result.vertexArray.put(currentVertex * 3 + 2, (pc.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, FIXED(pd.x));
-                result.vertexArray.put(currentVertex * 3 + 1, FIXED(pd.y));
-                result.vertexArray.put(currentVertex * 3 + 2, FIXED(pd.z));
+                result.vertexArray.put(currentVertex * 3, (pd.x));
+                result.vertexArray.put(currentVertex * 3 + 1, (pd.y));
+                result.vertexArray.put(currentVertex * 3 + 2, (pd.z));
                 ++currentVertex;
             } // r0 && r1 && r2 && r3
             ++currentQuad;
@@ -554,8 +550,8 @@ GLObject createGroundPlane()
                 final int xm = x + ((0x1c >> a) & 1);
                 final int ym = y + ((0x31 >> a) & 1);
                 final float m = (float)(Math.cos(xm * 2) * Math.sin(ym * 4) * 0.75f);
-                result.vertexArray.put(currentVertex * 2, FIXED(xm * scale + m));
-                result.vertexArray.put(currentVertex * 2 + 1, FIXED(ym * scale + m));
+                result.vertexArray.put(currentVertex * 2, (xm * scale + m));
+                result.vertexArray.put(currentVertex * 2 + 1, (ym * scale + m));
                 ++currentVertex;
             }
             ++currentQuad;
@@ -589,8 +585,8 @@ void drawFadeQuad()
 
     if (minFade < 1024)
     {
-        final int fadeColor = minFade << 7;
-        gl.glColor4x(fadeColor, fadeColor, fadeColor, 0);
+        final float fadeColor = FixedPoint.toFloat(minFade << 7);
+        gl.glColor4f(fadeColor, fadeColor, fadeColor, 0f);
 
         gl.glDisable(gl.GL_DEPTH_TEST);
         gl.glEnable(gl.GL_BLEND);
@@ -606,7 +602,7 @@ void drawFadeQuad()
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
         gl.glDisableClientState(gl.GL_COLOR_ARRAY);
         gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
-        gl.glVertexPointer(2, gl.GL_FIXED, 0, quadVertices);
+        gl.glVertexPointer(2, gl.GL_FLOAT, 0, quadVertices);
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, 6);
 
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
@@ -619,26 +615,26 @@ void drawFadeQuad()
     }
 }
 
-IntBuffer quadVertices;
-IntBuffer light0Position;
-IntBuffer light0Diffuse;
-IntBuffer light1Position;
-IntBuffer light1Diffuse;
-IntBuffer light2Position;
-IntBuffer light2Diffuse;
-IntBuffer materialSpecular;
+FloatBuffer quadVertices;
+FloatBuffer light0Position;
+FloatBuffer light0Diffuse;
+FloatBuffer light1Position;
+FloatBuffer light1Diffuse;
+FloatBuffer light2Position;
+FloatBuffer light2Diffuse;
+FloatBuffer materialSpecular;
 
 void configureLightAndMaterial()
 {
-    gl.glLightxv(gl.GL_LIGHT0, gl.GL_POSITION, light0Position);
-    gl.glLightxv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light0Diffuse);
-    gl.glLightxv(gl.GL_LIGHT1, gl.GL_POSITION, light1Position);
-    gl.glLightxv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light1Diffuse);
-    gl.glLightxv(gl.GL_LIGHT2, gl.GL_POSITION, light2Position);
-    gl.glLightxv(gl.GL_LIGHT2, gl.GL_DIFFUSE, light2Diffuse);
-    gl.glMaterialxv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, materialSpecular);
+    gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0Position);
+    gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light0Diffuse);
+    gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1Position);
+    gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light1Diffuse);
+    gl.glLightfv(gl.GL_LIGHT2, gl.GL_POSITION, light2Position);
+    gl.glLightfv(gl.GL_LIGHT2, gl.GL_DIFFUSE, light2Diffuse);
+    gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, materialSpecular);
 
-    gl.glMaterialx(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, 60 << 16);
+    gl.glMaterialf(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, 60.0f);
     gl.glEnable(gl.GL_COLOR_MATERIAL);
 }
 
@@ -650,25 +646,21 @@ void drawModels(float zScale)
 
     seedRandom(9);
 
-    gl.glScalex(1 << 16, 1 << 16, (int)(zScale * 65536));
+    gl.glScalef(1.0f, 1.0f, zScale);
 
     for (y = -5; y <= 5; ++y)
     {
         for (x = -5; x <= 5; ++x)
         {
-            float buildingScale;
-            int fixedScale;
-
             int curShape = randomUInt() % SuperShape.COUNT;
-            buildingScale = SuperShape.sParams[curShape][SuperShape.PARAMS - 1];
-            fixedScale = (int)(buildingScale * 65536);
+            float buildingScale = SuperShape.sParams[curShape][SuperShape.PARAMS - 1];
 
             gl.glPushMatrix();
-            gl.glTranslatex((x * translationScale) * 65536,
-                         (y * translationScale) * 65536,
-                         0);
-            gl.glRotatex((int)((randomUInt() % 360) << 16), 0, 0, 1 << 16);
-            gl.glScalex(fixedScale, fixedScale, fixedScale);
+            gl.glTranslatef((float)(x * translationScale),
+                            (float)(y * translationScale),
+                            0f);
+            gl.glRotatef((float)(randomUInt() % 360), 0f, 0f, 1f);
+            gl.glScalef(buildingScale, buildingScale, buildingScale);
 
             sSuperShapeObjects[curShape].draw();
             gl.glPopMatrix();
@@ -680,14 +672,13 @@ void drawModels(float zScale)
         final int shipScale100 = translationScale * 500;
         final int offs100 = x * shipScale100 + (int)(sTick % shipScale100);
         float offs = offs100 * 0.01f;
-        int fixedOffs = (int)(offs * 65536);
         gl.glPushMatrix();
-        gl.glTranslatex(fixedOffs, -4 * 65536, 2 << 16);
+        gl.glTranslatef(offs, -4.0f, 2.0f);
         sSuperShapeObjects[SuperShape.COUNT - 1].draw();
         gl.glPopMatrix();
         gl.glPushMatrix();
-        gl.glTranslatex(-4 * 65536, fixedOffs, 4 << 16);
-        gl.glRotatex(90 << 16, 0, 0, 1 << 16);
+        gl.glTranslatef(-4.0f, offs, 4.0f);
+        gl.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
         sSuperShapeObjects[SuperShape.COUNT - 1].draw();
         gl.glPopMatrix();
     }
@@ -737,119 +728,10 @@ void camTrack()
         cY = eY + (float)Math.sin(lerp[3]);
         cZ = eZ + lerp[4];
     }
-    gluLookAt(eX, eY, eZ, cX, cY, cZ, 0, 0, 1);
+    glu.gluLookAt(eX, eY, eZ, cX, cY, cZ, 0, 0, 1);
 }
 
 private int gAppAlive = 0;
 private int width, height, x, y, frames;
-
-/* Following gluLookAt implementation is adapted from the
- * Mesa 3D Graphics library. http://www.mesa3d.org
- */
-void gluLookAt(float eyex, float eyey, float eyez,
-	           float centerx, float centery, float centerz,
-	           float upx, float upy, float upz)
-{
-    float m[] = new float[16];
-    float x[] = new float[3], y[] = new float[3], z[] = new float[3];
-    float mag;
-
-    /* Make rotation matrix */
-
-    /* Z vector */
-    z[0] = eyex - centerx;
-    z[1] = eyey - centery;
-    z[2] = eyez - centerz;
-    mag = (float)Math.sqrt(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
-    if (mag!=0.0) {			/* mpichler, 19950515 */
-        z[0] /= mag;
-        z[1] /= mag;
-        z[2] /= mag;
-    }
-
-    /* Y vector */
-    y[0] = upx;
-    y[1] = upy;
-    y[2] = upz;
-
-    /* X vector = Y cross Z */
-    x[0] = y[1] * z[2] - y[2] * z[1];
-    x[1] = -y[0] * z[2] + y[2] * z[0];
-    x[2] = y[0] * z[1] - y[1] * z[0];
-
-    /* Recompute Y = Z cross X */
-    y[0] = z[1] * x[2] - z[2] * x[1];
-    y[1] = -z[0] * x[2] + z[2] * x[0];
-    y[2] = z[0] * x[1] - z[1] * x[0];
-
-    /* mpichler, 19950515 */
-    /* cross product gives area of parallelogram, which is < 1.0 for
-     * non-perpendicular unit-length vectors; so normalize x, y here
-     */
-
-    mag = (float)Math.sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
-    if (mag!=0.0) {
-        x[0] /= mag;
-        x[1] /= mag;
-        x[2] /= mag;
-    }
-
-    mag = (float)Math.sqrt(y[0] * y[0] + y[1] * y[1] + y[2] * y[2]);
-    if (mag!=0.0) {
-        y[0] /= mag;
-        y[1] /= mag;
-        y[2] /= mag;
-    }
-
-    m[0 + 0*4] = x[0];
-    m[0 + 1*4] = x[1];
-    m[0 + 2*4] = x[2];
-    m[0 + 3*4] = 0.0f;
-    m[1 + 0*4] = y[0];
-    m[1 + 1*4] = y[1];
-    m[1 + 2*4] = y[2];
-    m[1 + 3*4] = 0.0f;
-    m[2 + 0*4] = z[0];
-    m[2 + 1*4] = z[1];
-    m[2 + 2*4] = z[2];
-    m[2 + 3*4] = 0.0f;
-    m[3 + 0*4] = 0.0f;
-    m[3 + 1*4] = 0.0f;
-    m[3 + 2*4] = 0.0f;
-    m[3 + 3*4] = 1.0f;
-    {
-        int a;
-        int fixedM[] = new int[16];
-        for (a = 0; a < 16; ++a)
-            fixedM[a] = (int)(m[a] * 65536);
-
-        IntBuffer nioM = BufferUtil.newIntBuffer(16);
-        nioM.put(fixedM);
-        nioM.rewind();
-        gl.glMultMatrixx(nioM);
-    }
-
-    /* Translate Eye to Origin */
-    gl.glTranslatex((int)(-eyex * 65536),
-                 (int)(-eyey * 65536),
-                 (int)(-eyez * 65536));
-}
-
-void gluPerspective(float fovy, float aspect,
-                    float zNear, float zFar)
-{
-    float xmin, xmax, ymin, ymax;
-
-    ymax = zNear * (float)Math.tan(fovy * Math.PI / 360.0);
-    ymin = -ymax;
-    xmin = ymin * aspect;
-    xmax = ymax * aspect;
-
-    gl.glFrustumx((int)(xmin * 65536), (int)(xmax * 65536),
-                  (int)(ymin * 65536), (int)(ymax * 65536),
-                  (int)(zNear * 65536), (int)(zFar * 65536));
-}
-
-
 }
 

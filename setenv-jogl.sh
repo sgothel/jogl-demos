@@ -19,6 +19,7 @@ CP_SEP=:
 
 export LIBXCB_ALLOW_SLOPPY_LOCK=1
 
+#PATH=/devtools/i686-unknown-linux-gnu/gcc-4.2.1-glibc-2.3.6/i686-unknown-linux-gnu/i686-unknown-linux-gnu/bin:$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
 PATH=/devtools/i686-unknown-linux-gnu/gcc-4.2.1-glibc-2.3.6/i686-unknown-linux-gnu/i686-unknown-linux-gnu/bin:$JAVA_HOME/bin:$PATH
 export PATH
 

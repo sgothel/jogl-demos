@@ -39,24 +39,31 @@ public class RedSquare implements MouseListener, GLEventListener {
     public void mouseDragged(MouseEvent e) {
     }
 
-    private void run() {
+    private void run(int type) {
+        int width = 800;
+        int height = 480;
         System.err.println("RedSquare.run()");
         GLProfile.setProfileGL2ES1();
         try {
+            Window nWindow = null;
+            if(0!=(type&USE_AWT)) {
+                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, 0); // dummy VisualID
+            }
+
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            window = GLWindow.create(caps);
+            window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);
             window.addGLEventListener(this);
 
             // Size OpenGL to Video Surface
-            int width = 800;
-            int height = 480;
             window.setSize(width, height);
             window.setFullscreen(true);
             window.setVisible(true);
@@ -142,8 +149,17 @@ public class RedSquare implements MouseListener, GLEventListener {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
+    public static int USE_NEWT      = 0;
+    public static int USE_AWT       = 1 << 0;
+
     public static void main(String[] args) {
-        new RedSquare().run();
+        int type = USE_NEWT ;
+        for(int i=args.length-1; i>=0; i--) {
+            if(args[i].equals("-awt")) {
+                type |= USE_AWT; 
+            }
+        }
+        new RedSquare().run(type);
         System.exit(0);
     }
 }
