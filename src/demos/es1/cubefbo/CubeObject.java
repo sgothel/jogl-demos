@@ -34,7 +34,7 @@
 package demos.es1.cubefbo;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
+import javax.media.opengl.util.*;
 import java.nio.*;
 
 class CubeObject {
@@ -63,7 +63,7 @@ class CubeObject {
         }
     }
 
-    private void perspective(GL gl, float fovy, float aspect, float zNear, float zFar) {
+    private void perspective(GL2ES1 gl, float fovy, float aspect, float zNear, float zFar) {
         float xmin;
         float xmax;
         float ymin;
@@ -83,44 +83,44 @@ class CubeObject {
     static final float[] material_spec = { 1.0f, 1.0f, 1.0f, 0.f };
     static final float[] zero_vec4 = { 0.0f, 0.0f, 0.0f, 0.f };
 
-    public void reshape(GL gl, int x, int y, int width, int height) {
+    public void reshape(GL2ES1 gl, int x, int y, int width, int height) {
         float aspect = (height != 0) ? ((float)width / (float)height) : 1.0f;
 
         gl.glViewport(0, 0, width, height);
         gl.glScissor(0, 0, width, height);
 
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, light_ambient, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, light_diffuse, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero_vec4, 0);
-        gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, material_spec, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, zero_vec4, 0);
+        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, material_spec, 0);
 
-        gl.glEnable(GL.GL_NORMALIZE);
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glEnable(GL.GL_LIGHT0);
-        gl.glEnable(GL.GL_COLOR_MATERIAL);
-        gl.glEnable(GL.GL_CULL_FACE);
+        gl.glEnable(gl.GL_NORMALIZE);
+        gl.glEnable(gl.GL_LIGHTING);
+        gl.glEnable(gl.GL_LIGHT0);
+        gl.glEnable(gl.GL_COLOR_MATERIAL);
+        gl.glEnable(gl.GL_CULL_FACE);
 
-        gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+        gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, gl.GL_FASTEST);
 
-        gl.glShadeModel(GL.GL_SMOOTH);
-        gl.glDisable(GL.GL_DITHER);
+        gl.glShadeModel(gl.GL_SMOOTH);
+        gl.glDisable(gl.GL_DITHER);
 
         gl.glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
 
-        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-        gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+        gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
+        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
         if (cubeTexCoords != null) {
-            gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+            gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         } else {
-            gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+            gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         }
 
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
 
         float fovy = 55.f;
@@ -131,14 +131,14 @@ class CubeObject {
         }
 
         perspective(gl, fovy, aspect, 0.1f, 100.f);
-        gl.glCullFace(GL.GL_BACK);
+        gl.glCullFace(gl.GL_BACK);
     }
 
-    public void display(GL gl, float xRot, float yRot) {
+    public void display(GL2ES1 gl, float xRot, float yRot) {
         //        System.out.println("CubeObject .. p1: "+this);
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
 
         gl.glTranslatef(0.f, 0.f, -30.f);
@@ -148,16 +148,16 @@ class CubeObject {
         gl.glRotatef(yRot, 0, 1, 0);
         gl.glRotatef(xRot, 1, 0, 0);
 
-        gl.glVertexPointer(3, GL.GL_SHORT, 0, cubeVertices);
-        gl.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, cubeColors);
-        gl.glNormalPointer(GL.GL_BYTE, 0, cubeNormals);
+        gl.glVertexPointer(3, gl.GL_SHORT, 0, cubeVertices);
+        gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, cubeColors);
+        gl.glNormalPointer(gl.GL_BYTE, 0, cubeNormals);
         if (cubeTexCoords != null) {
-            gl.glTexCoordPointer(2, GL.GL_SHORT, 0, cubeTexCoords);
-            gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+            gl.glTexCoordPointer(2, gl.GL_SHORT, 0, cubeTexCoords);
+            gl.glTexEnvi(gl.GL_TEXTURE_ENV, gl.GL_TEXTURE_ENV_MODE, gl.GL_REPLACE);
         }
 
         //        System.out.println("CubeObject .. p8: "+this);
-        gl.glDrawElements(GL.GL_TRIANGLES, 6 * 6, GL.GL_UNSIGNED_BYTE, cubeIndices);
+        gl.glDrawElements(gl.GL_TRIANGLES, 6 * 6, gl.GL_UNSIGNED_BYTE, cubeIndices);
         //        System.out.println("CubeObject .. p9: "+this);
 
         //        time += 0.01f;

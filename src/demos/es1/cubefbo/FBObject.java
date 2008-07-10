@@ -34,7 +34,6 @@
 package demos.es1.cubefbo;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 import java.nio.*;
 
 class FBObject {
@@ -56,78 +55,78 @@ class FBObject {
         gl.glBindTexture(GL.GL_TEXTURE_2D, fbo_tex);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8_OES, width, height, 0,
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, width, height, 0,
                         GL.GL_RGB, GL.GL_UNSIGNED_BYTE, null);
 
-        gl.glGenRenderbuffersOES(1, name, 0);
+        gl.glGenRenderbuffers(1, name, 0);
         depth_rb = name[0];
         System.out.println("depth_rb: "+depth_rb);
 
         // Initialize the depth buffer:
-        gl.glBindRenderbufferOES(GL.GL_RENDERBUFFER_OES, depth_rb);
-        gl.glRenderbufferStorageOES(GL.GL_RENDERBUFFER_OES,
-                                    GL.GL_DEPTH_COMPONENT16_OES, width, height);
+        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, depth_rb);
+        gl.glRenderbufferStorage(GL.GL_RENDERBUFFER,
+                                    GL.GL_DEPTH_COMPONENT16, width, height);
 
-        // gl.glGenRenderbuffersOES(1, name, 0);
+        // gl.glGenRenderbuffers(1, name, 0);
         // stencil_rb = name[0];
         stencil_rb = 0;
         System.out.println("stencil_rb: "+stencil_rb);
 
-        gl.glGenFramebuffersOES(1, name, 0);
+        gl.glGenFramebuffers(1, name, 0);
         fb = name[0];
         System.out.println("fb: "+fb);
 
         // bind fbo ..
-        gl.glBindFramebufferOES(GL.GL_FRAMEBUFFER_OES, fb);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fb);
 
         // Set up the color buffer for use as a renderable texture:
-        gl.glFramebufferTexture2DOES(GL.GL_FRAMEBUFFER_OES,
-                                  GL.GL_COLOR_ATTACHMENT0_OES,
+        gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+                                  GL.GL_COLOR_ATTACHMENT0,
                                   GL.GL_TEXTURE_2D, fbo_tex, 0); 
 
         // Set up the depth buffer attachment:
-        gl.glFramebufferRenderbufferOES(GL.GL_FRAMEBUFFER_OES,
-                                        GL.GL_DEPTH_ATTACHMENT_OES,
-                                        GL.GL_RENDERBUFFER_OES, depth_rb);
+        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                        GL.GL_DEPTH_ATTACHMENT,
+                                        GL.GL_RENDERBUFFER, depth_rb);
 
         // bind fbo ..
-        gl.glBindFramebufferOES(GL.GL_FRAMEBUFFER_OES, fb);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fb);
 
         // Setup the color buffer for use as a renderable texture:
         gl.glBindTexture(GL.GL_TEXTURE_2D, fbo_tex);
 
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8_OES, width, height, 0,
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, width, height, 0,
                      GL.GL_RGB, GL.GL_UNSIGNED_BYTE, null);
 
-        gl.glFramebufferTexture2DOES(GL.GL_FRAMEBUFFER_OES,
-                                  GL.GL_COLOR_ATTACHMENT0_OES,
+        gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+                                  GL.GL_COLOR_ATTACHMENT0,
                                   GL.GL_TEXTURE_2D, fbo_tex, 0); 
 
         // Initialize the depth buffer:
-        gl.glBindRenderbufferOES(GL.GL_RENDERBUFFER_OES, depth_rb);
+        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, depth_rb);
 
-        gl.glRenderbufferStorageOES(GL.GL_RENDERBUFFER_OES,
-                                    GL.GL_DEPTH_COMPONENT16_OES, width, height);
+        gl.glRenderbufferStorage(GL.GL_RENDERBUFFER,
+                                    GL.GL_DEPTH_COMPONENT16, width, height);
 
-        gl.glFramebufferRenderbufferOES(GL.GL_FRAMEBUFFER_OES,
-                                        GL.GL_DEPTH_ATTACHMENT_OES,
-                                        GL.GL_RENDERBUFFER_OES, depth_rb);
+        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                        GL.GL_DEPTH_ATTACHMENT,
+                                        GL.GL_RENDERBUFFER, depth_rb);
 
         if(stencil_rb!=0) {
             // Initialize the stencil buffer:
-            gl.glBindRenderbufferOES(GL.GL_RENDERBUFFER_OES, stencil_rb);
+            gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, stencil_rb);
 
-            gl.glRenderbufferStorageOES(GL.GL_RENDERBUFFER_OES,
-                                        GL.GL_STENCIL_INDEX8_OES, width, height);
+            gl.glRenderbufferStorage(GL.GL_RENDERBUFFER,
+                                        GL.GL_STENCIL_INDEX8, width, height);
 
-            gl.glFramebufferRenderbufferOES(GL.GL_FRAMEBUFFER_OES,
-                                            GL.GL_STENCIL_ATTACHMENT_OES,
-                                            GL.GL_RENDERBUFFER_OES, stencil_rb);
+            gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                            GL.GL_STENCIL_ATTACHMENT,
+                                            GL.GL_RENDERBUFFER, stencil_rb);
         }
 
         // Check the FBO for completeness
-        int res = gl.glCheckFramebufferStatusOES(fb);
-        if (res == GL.GL_FRAMEBUFFER_COMPLETE_OES) {
+        int res = gl.glCheckFramebufferStatus(fb);
+        if (res == GL.GL_FRAMEBUFFER_COMPLETE) {
             System.out.println("Framebuffer " + fb + " is complete");
         } else {
             System.out.println("Framebuffer " + fb + " is incomplete: status = 0x" + Integer.toHexString(res));
@@ -135,11 +134,11 @@ class FBObject {
     }
 
     public void bind(GL gl) {
-        gl.glBindFramebufferOES(GL.GL_FRAMEBUFFER_OES, fb); 
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fb); 
     }
 
     public void unbind(GL gl) {
-        gl.glBindFramebufferOES(GL.GL_FRAMEBUFFER_OES, 0);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
     }
 
     public int getFBName() {

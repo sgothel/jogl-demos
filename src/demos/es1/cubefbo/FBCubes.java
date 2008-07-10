@@ -34,10 +34,9 @@
 package demos.es1.cubefbo;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 import java.nio.*;
 
-class FBCubes {
+class FBCubes implements GLEventListener {
     private static final int FBO_SIZE = 128;
 
     public FBCubes () {
@@ -51,16 +50,27 @@ class FBCubes {
         fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
     }
 
-    public void init(GL gl) {
+    public void init(GLAutoDrawable drawable) {
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
         fbo1.init(gl);
         fbo2.init(gl);
     }
 
-    public void reshape(GL gl, int x, int y, int width, int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
         cubeOuter.reshape(gl, x, y, width, height);
     }
 
-    public void display(GL gl, float xRot, float yRot) {
+    float xRot=0f;
+    float yRot=0f;
+
+    public void rotate(float xRot, float yRot) {
+        this.xRot = xRot;
+        this.yRot = yRot;
+    }
+
+    public void display(GLAutoDrawable drawable) {
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
 
         fbo1.bind(gl);
         cubeInner.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
@@ -74,12 +84,12 @@ class FBCubes {
 
         for (int i = 0; i < MAX_ITER; i++) {
             rend.bind(gl);
-            gl.glEnable (GL.GL_TEXTURE_2D);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, tex.getTextureName()); // to use it ..
+            gl.glEnable (gl.GL_TEXTURE_2D);
+            gl.glBindTexture(gl.GL_TEXTURE_2D, tex.getTextureName()); // to use it ..
             cubeMiddle.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
             cubeMiddle.display(gl, xRot, yRot);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-            gl.glDisable (GL.GL_TEXTURE_2D);
+            gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
+            gl.glDisable (gl.GL_TEXTURE_2D);
             rend.unbind(gl);
             FBObject tmp = tex;
             tex = rend;
@@ -87,18 +97,18 @@ class FBCubes {
         }
 
         //        System.out.println("display .. p6");
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
         gl.glClearColor(0, 0, 0, 1);
 
-        gl.glEnable (GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, tex.getTextureName()); // to use it ..
+        gl.glEnable (gl.GL_TEXTURE_2D);
+        gl.glBindTexture(gl.GL_TEXTURE_2D, tex.getTextureName()); // to use it ..
         cubeOuter.display(gl, xRot, yRot);
         //        System.out.println("display .. p7");
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-        gl.glDisable (GL.GL_TEXTURE_2D);
+        gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
+        gl.glDisable (gl.GL_TEXTURE_2D);
     }
 
-    public void displayChanged(GL gl, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(javax.media.opengl.GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
     
     float time = 0.0f;

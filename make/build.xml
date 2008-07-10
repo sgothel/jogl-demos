@@ -183,7 +183,7 @@
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac-->
-        <javac destdir="${classes}" includes="demos/es1/RedSquare.java demos/es1/angeles/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+        <javac destdir="${classes}" includes="demos/es1/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
                bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
