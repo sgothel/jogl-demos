@@ -33,32 +33,36 @@
 
 package demos.es1.cubefbo;
 
+import demos.es1.cube.Cube;
 import javax.media.opengl.*;
+import javax.media.opengl.util.FBObject;
 import java.nio.*;
 
 class FBCubes implements GLEventListener {
-    private static final int FBO_SIZE = 128;
+    private static final int FBO_SIZE = 256;
 
     public FBCubes () {
-        cubeInner = new CubeObject(false);
-        cubeMiddle = new CubeObject(true);
-        cubeOuter = new CubeObject(true);
+        cubeOuter = new Cube(true, false);
 
-        //        cubeOuter = new CubeObject(false);
+        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE, FBObject.ATTR_DEPTH);
+        cubeInner = new Cube(false, true);
 
-        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE);
-        fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
+        // JAU cubeMiddle = new Cube(true, false);
+        // JAU fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
     }
 
     public void init(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
+
         fbo1.init(gl);
-        fbo2.init(gl);
+        cubeInner.init(drawable);
+        
+        cubeOuter.init(drawable);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
-        cubeOuter.reshape(gl, x, y, width, height);
+        cubeOuter.reshape(drawable, x, y, width, height);
     }
 
     float xRot=0f;
@@ -73,13 +77,25 @@ class FBCubes implements GLEventListener {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
 
         fbo1.bind(gl);
-        cubeInner.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
-        cubeInner.display(gl, xRot, yRot);
+        cubeInner.reshape(drawable, 0, 0, FBO_SIZE, FBO_SIZE);
+        cubeInner.display(drawable);
+        gl.glFinish();
         fbo1.unbind(gl);
 
-        FBObject tex = fbo1;
-        FBObject rend = fbo2;
 
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glEnable (gl.GL_TEXTURE_2D);
+        cubeOuter.reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
+        fbo1.use(gl);
+        cubeOuter.display(drawable);
+        fbo1.unbind(gl);
+
+        gl.glDisable (gl.GL_TEXTURE_2D);
+
+        // JAUFBObject tex = fbo1;
+        // JAU FBObject rend = fbo2;
+
+        /* JAU
         int MAX_ITER = 1;
 
         for (int i = 0; i < MAX_ITER; i++) {
@@ -106,16 +122,17 @@ class FBCubes implements GLEventListener {
         //        System.out.println("display .. p7");
         gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
         gl.glDisable (gl.GL_TEXTURE_2D);
+        */
     }
 
     public void displayChanged(javax.media.opengl.GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
     
     float time = 0.0f;
-    CubeObject cubeInner;
-    CubeObject cubeMiddle;
-    CubeObject cubeOuter;
+    Cube cubeInner=null;
+    // JAU Cube cubeMiddle=null;
+    Cube cubeOuter=null;
     FBObject   fbo1;
-    FBObject   fbo2;
+    // JAU FBObject   fbo2;
 }
 

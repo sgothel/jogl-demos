@@ -10,6 +10,7 @@ public class Main implements MouseListener {
     public GLWindow window = null;
 
     public void mouseClicked(MouseEvent e) {
+        //System.out.println(e);
         switch(e.getClickCount()) {
             case 1:
                 if(null!=window) {
@@ -54,7 +55,7 @@ public class Main implements MouseListener {
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            GLWindow window = GLWindow.create(nWindow, caps);
+            window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);
 

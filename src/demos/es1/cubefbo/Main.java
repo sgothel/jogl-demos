@@ -54,7 +54,7 @@ public class Main implements MouseListener {
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            GLWindow window = GLWindow.create(nWindow, caps);
+            window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);
 

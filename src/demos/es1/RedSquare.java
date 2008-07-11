@@ -93,8 +93,8 @@ public class RedSquare implements MouseListener, GLEventListener {
     private FloatBuffer vertices;
 
     public void init(GLAutoDrawable drawable) {
-        glu = GLU.createGLU();
         GL2ES1 gl = drawable.getGL().getGL2ES1();
+        glu = GLU.createGLU(gl);
         System.err.println("Entering initialization");
         System.err.println("GL_VERSION=" + gl.glGetString(GL2ES1.GL_VERSION));
         System.err.println("GL_EXTENSIONS:");
