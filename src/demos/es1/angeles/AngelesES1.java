@@ -41,7 +41,7 @@ public class AngelesES1 implements GLEventListener {
              0x10000,  0x10000,
             -0x10000,  0x10000
         });
-        quadVertices.rewind();
+        quadVertices.flip();
 
         light0Position=BufferUtil.newIntBuffer(4);
         light0Diffuse=BufferUtil.newIntBuffer(4);
@@ -59,13 +59,13 @@ public class AngelesES1 implements GLEventListener {
         light2Diffuse.put(new int[] { 0x11eb, 0x2b85, 0x23d7, 0x10000 });
         materialSpecular.put(new int[] { 0x10000, 0x10000, 0x10000, 0x10000 });
 
-        light0Position.rewind();
-        light0Diffuse.rewind();
-        light1Position.rewind();
-        light1Diffuse.rewind();
-        light2Position.rewind();
-        light2Diffuse.rewind();
-        materialSpecular.rewind();
+        light0Position.flip();
+        light0Diffuse.flip();
+        light1Position.flip();
+        light1Diffuse.flip();
+        light2Position.flip();
+        light2Diffuse.flip();
+        materialSpecular.flip();
 
         seedRandom(15);
 
@@ -79,7 +79,7 @@ public class AngelesES1 implements GLEventListener {
         // FIXME: gl.setSwapInterval(1);
 
         this.gl = drawable.getGL().getGLES1();
-        this.glu = GLU.createGLU(this.gl);
+        this.glu = GLU.createGLU();
         gl.glEnable(gl.GL_NORMALIZE);
         gl.glEnable(gl.GL_DEPTH_TEST);
         gl.glDisable(gl.GL_CULL_FACE);

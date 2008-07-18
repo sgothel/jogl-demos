@@ -49,30 +49,30 @@ public class Cube implements GLEventListener {
         // Initialize data Buffers
         this.cubeVertices = BufferUtil.newShortBuffer(s_cubeVertices.length);
         cubeVertices.put(s_cubeVertices);
-        cubeVertices.rewind();
+        cubeVertices.flip();
 
         this.cubeColors = BufferUtil.newByteBuffer(s_cubeColors.length);
         cubeColors.put(s_cubeColors);
-        cubeColors.rewind();
+        cubeColors.flip();
 
         this.cubeNormals = BufferUtil.newByteBuffer(s_cubeNormals.length);
         cubeNormals.put(s_cubeNormals);
-        cubeNormals.rewind();
+        cubeNormals.flip();
 
         this.cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices.length);
         cubeIndices.put(s_cubeIndices);
-        cubeIndices.rewind();
+        cubeIndices.flip();
         
         if (useTexCoords) {
             this.cubeTexCoords = BufferUtil.newShortBuffer(s_cubeTexCoords.length);
             cubeTexCoords.put(s_cubeTexCoords);
-            cubeTexCoords.rewind();
+            cubeTexCoords.flip();
         }
     }
 
     public void init(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
-        glu = GLU.createGLU(gl);
+        glu = GLU.createGLU();
 
     }
 
