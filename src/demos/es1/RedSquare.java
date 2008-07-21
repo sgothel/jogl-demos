@@ -62,6 +62,8 @@ public class RedSquare implements MouseListener, GLEventListener {
 
             window.addMouseListener(this);
             window.addGLEventListener(this);
+            // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
+            // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
 
             // Size OpenGL to Video Surface
             window.setSize(width, height);

@@ -1,0 +1,46 @@
+Release 20080311:
+- Added some JavaDoc documentation
+- Added RaycastVehicle and VehicleDemo
+- Refactored accessing of vertex data
+- Added CylinderShape
+- Implemented ray/trimesh hit detection
+- Added applet demo
+- Added binaries and dependant libraries into package
+
+Release 20080303:
+- Refactored enums
+- Fixed bug that caused occasional jitter
+- Added ConvexConcaveCollisionAlgorithm
+- Memory optimalizations
+- Implemented quantized BVH nodes
+- Made ConcaveDemo working
+
+Release 20080206:
+- Memory optimalizations
+- Added heap info
+- Implemented HeapSort
+- Added optional support for GNU Trove
+- Added BspDemo and fixed ConvexHullShape
+- Added ConcaveDemo and it's supporting classes
+- Abstracted OpenGL rendering
+
+Release 20080122:
+- Fixed convex/plane collision detection
+- Added GLDebugDrawer and fixed some bugs
+- Added CapsuleShape
+- Added ConeTwistConstraint, HingeConstraint and Generic6DofConstraint
+- Added GenericJointDemo
+- Optimized drawing of spheres and cylinders using display lists
+- Fixed collision of boxes
+- Added text overlay
+
+Release 20080116:
+- Moved all push/popProfile to try/finally blocks
+- Added final for Vectors/Transforms/etc fields where applicable, and fixed some discovered bugs
+- Fixed bug with non-functional removeOverlappingPair
+- Enabled ground BoxShape in BasicDemo
+- Implemented drawing of BoxShape
+- Fixed VectorUtil.maxAxis
+
+Release 20080111:
+- Initial release based on Bullet 2.66
