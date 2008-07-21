@@ -53,6 +53,7 @@ public class Info implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
+        System.err.println("GL Profile: "+GLProfile.getProfile());
         System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
         System.err.println("GL_EXTENSIONS: ");
         System.err.println("  " + gl.glGetString(GL.GL_EXTENSIONS));
