@@ -75,8 +75,8 @@ public class Cube implements GLEventListener {
         glu = GLU.createGLU();
         if(gl.isGLES2()) {
             if( 0 == ( gl.getGLES2().getEnabledFixedFunctionEmulationModes() & GLES2.FIXED_EMULATION_VERTEXCOLOR ) ) {
-                gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR);
-                System.err.println("Cubes Fixed emu: FIXED_EMULATION_VERTEXCOLOR");
+                gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR | GLES2.FIXED_EMULATION_TEXTURE);
+                System.err.println("Cubes Fixed emu: FIXED_EMULATION_VERTEXCOLOR | FIXED_EMULATION_TEXTURE");
             }
         }
         if(!innerCube) {
