@@ -52,16 +52,23 @@ class FBCubes implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
+
+        if(gl.isGLES2()) {
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR | GLES2.FIXED_EMULATION_TEXTURE);
+            System.err.println("FBCubes Fixed emu: FIXED_EMULATION_VERTEXCOLOR | FIXED_EMULATION_TEXTURE");
+        }
 
         fbo1.init(gl);
+        //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE);
+        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE);
+        //fbo1.init(gl, GL.GL_RGBA8, GL2.GL_BGRA, GL2.GL_UNSIGNED_INT_8_8_8_8_REV);
         cubeInner.init(drawable);
         
         cubeOuter.init(drawable);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
         cubeOuter.reshape(drawable, x, y, width, height);
     }
 
@@ -74,14 +81,13 @@ class FBCubes implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
 
         fbo1.bind(gl);
         cubeInner.reshape(drawable, 0, 0, FBO_SIZE, FBO_SIZE);
         cubeInner.display(drawable);
         gl.glFinish();
         fbo1.unbind(gl);
-
 
         gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glEnable (gl.GL_TEXTURE_2D);

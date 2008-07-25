@@ -7,6 +7,8 @@ else
 JOGL_PROFILE=$1
 shift
 
+echo JOGL PROFILE: $JOGL_PROFILE
+
 CVSROOT=":pserver:sgoethel@cvs.dev.java.net:/cvs"
 THISDIR=`pwd`
 export CVSROOT THISDIR
@@ -36,6 +38,7 @@ done
 export CLASSPATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLUEGEN_OS:$THISDIR/../jogl/build/obj
 
+echo JOGL_CLASSPATH: $JOGL_CLASSPATH
 fi
 
 

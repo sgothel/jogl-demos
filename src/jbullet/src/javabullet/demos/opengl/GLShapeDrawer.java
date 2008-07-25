@@ -71,7 +71,7 @@ public class GLShapeDrawer {
 	}
 	*/
 
-	public static void drawCoordSystem(GL2ES1 gl) {
+	public static void drawCoordSystem(GL gl) {
         ImmModeSink vbo = new ImmModeSink(gl.GL_FLOAT, gl.GL_STATIC_DRAW, 3, 0, 3, 0, 10);
 		vbo.glBegin(gl.GL_LINES);
 		vbo.glColor3f(1, 0, 0);
@@ -88,7 +88,7 @@ public class GLShapeDrawer {
 
 	private static float[] glMat = new float[16];
 	
-	public static void drawOpenGL(GLSRT glsrt, GL2ES1 gl, Transform trans, CollisionShape shape, Vector3f color, int debugMode) {
+	public static void drawOpenGL(GLSRT glsrt, GL gl, Transform trans, CollisionShape shape, Vector3f color, int debugMode) {
 		BulletStack stack = BulletStack.get();
 		
 		stack.pushCommonMath();
@@ -128,8 +128,8 @@ public class GLShapeDrawer {
 
 				//glPushMatrix();
 
-				gl.glEnable(gl.GL_COLOR_MATERIAL);
-				gl.glColor4f(color.x, color.y, color.z, 0f);
+                gl.glEnable(gl.GL_COLOR_MATERIAL);
+                gl.glColor4f(color.x, color.y, color.z, 0f);
 
 				boolean useWireframeFallback = true;
 
@@ -374,13 +374,13 @@ public class GLShapeDrawer {
 	}
 	
 	private static class GlDisplaylistDrawcallback implements TriangleCallback {
-		private GL2ES1 gl;
+		private GL gl;
 		
 		private final Vector3f diff1 = new Vector3f();
 		private final Vector3f diff2 = new Vector3f();
 		private final Vector3f normal = new Vector3f();
 
-		public GlDisplaylistDrawcallback(GL2ES1 gl) {
+		public GlDisplaylistDrawcallback(GL gl) {
 			this.gl = gl;
 		}
 		
@@ -428,10 +428,10 @@ public class GLShapeDrawer {
 	}
 	
 	private static class GlDrawcallback implements TriangleCallback {
-		private GL2ES1 gl;
+		private GL gl;
 		public boolean wireframe = false;
 
-		public GlDrawcallback(GL2ES1 gl) {
+		public GlDrawcallback(GL gl) {
 			this.gl = gl;
 		}
 		
@@ -464,9 +464,9 @@ public class GLShapeDrawer {
 	}
 	
 	private static class TriangleGlDrawcallback implements InternalTriangleIndexCallback {
-		private GL2ES1 gl;
+		private GL gl;
 
-		public TriangleGlDrawcallback(GL2ES1 gl) {
+		public TriangleGlDrawcallback(GL gl) {
 			this.gl = gl;
 		}
 		

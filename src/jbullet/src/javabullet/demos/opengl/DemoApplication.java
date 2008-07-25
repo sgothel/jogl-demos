@@ -137,24 +137,30 @@ public abstract class DemoApplication
 		/* light_position is NOT default value */
 		float[] light_position0 = new float[] { 1.0f, 10.0f, 1.0f, 0.0f };
 		float[] light_position1 = new float[] { -1.0f, -10.0f, -1.0f, 0.0f };
-        gl = drawable.getGL().getGL2ES1();
+        gl = drawable.getGL();
         glu = GLU.createGLU();
+
+        if(gl.isGLES2()) {
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR);
+        }
+
         glsrt = new GLSRT(glu, gl);
-		gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
-		gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
-		gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, light_specular, 0);
-		gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position0, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, light_specular, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position0, 0);
 
-		gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, light_ambient, 0);
-		gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse, 0);
-		gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, light_specular, 0);
-		gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light_position1, 0);
+        gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, light_ambient, 0);
+        gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse, 0);
+        gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, light_specular, 0);
+        gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light_position1, 0);
 
-		gl.glEnable(gl.GL_LIGHTING);
-		gl.glEnable(gl.GL_LIGHT0);
-		gl.glEnable(gl.GL_LIGHT1);
+        gl.glEnable(gl.GL_LIGHTING);
+        gl.glEnable(gl.GL_LIGHT0);
+        gl.glEnable(gl.GL_LIGHT1);
 
-		gl.glShadeModel(gl.GL_SMOOTH);
+        gl.glShadeModel(gl.GL_SMOOTH);
+
 		gl.glEnable(gl.GL_DEPTH_TEST);
 		gl.glDepthFunc(gl.GL_LESS);
 
@@ -166,7 +172,7 @@ public abstract class DemoApplication
 	}
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        gl = drawable.getGL().getGL2ES1();
+        gl = drawable.getGL();
 		glutScreenWidth = width;
 		glutScreenHeight = height;
 
@@ -177,7 +183,7 @@ public abstract class DemoApplication
 	}
 
     public void display(GLAutoDrawable drawable) {
-        gl = drawable.getGL().getGL2ES1();
+        gl = drawable.getGL();
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
@@ -208,7 +214,7 @@ public abstract class DemoApplication
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
-    protected GL2ES1  gl;
+    protected GL  gl;
 
     // 
     // MouseListener
@@ -906,7 +912,7 @@ public abstract class DemoApplication
 			float yIncr = 20f;
 
 			gl.glDisable(gl.GL_LIGHTING);
-			gl.glColor4f(0f, 0f, 0f, 0f);
+			// JAU gl.glColor4f(0f, 0f, 0f, 0f);
 
 /*
 			if ((debugMode & DebugDrawModes.NO_HELP_TEXT) == 0) {

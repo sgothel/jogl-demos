@@ -44,7 +44,7 @@ public class GLSRT {
 	private GLU    glu;
 	// private GLFont font;
 
-	public GLSRT(GLU glu, GL2ES1 gl) {
+	public GLSRT(GLU glu, GL gl) {
         System.out.println("VBO_CACHE: "+VBO_CACHE);
         this.glu = glu;
         /*
@@ -62,7 +62,7 @@ public class GLSRT {
 	
     ImmModeSink vboCube = null;
 
-	public void drawCube(GL2ES1 gl, float extent) {
+	public void drawCube(GL gl, float extent) {
 		extent = extent * 0.5f;
 		
         if(vboCube==null) {
@@ -117,7 +117,7 @@ public class GLSRT {
 	private static Map<SphereKey,ImmModeSink> sphereDisplayLists = new HashMap<SphereKey,ImmModeSink>();
 	private static SphereKey sphereKey = new SphereKey();
 	
-	public void drawSphere(GL2ES1 gl, float radius, int slices, int stacks) {
+	public void drawSphere(GL gl, float radius, int slices, int stacks) {
         if(sphere==null) {
             sphere = glu.gluNewQuadric();
             sphere.setImmMode((VBO_CACHE)?false:true);
@@ -178,7 +178,7 @@ public class GLSRT {
 	private static Map<CylinderKey,ImmModeSink> cylinderDisplayLists = new HashMap<CylinderKey,ImmModeSink>();
 	private static CylinderKey cylinderKey = new CylinderKey();
 	
-	public void drawCylinder(GL2ES1 gl, float radius, float halfHeight, int upAxis) {
+	public void drawCylinder(GL gl, float radius, float halfHeight, int upAxis) {
         if(cylinder==null) {
             cylinder = glu.gluNewQuadric();
             cylinder.setImmMode((VBO_CACHE)?false:true);
@@ -226,7 +226,7 @@ public class GLSRT {
 	
 	////////////////////////////////////////////////////////////////////////////
 
-	public void drawString(GL2ES1 gl, CharSequence s, int x, int y, float red, float green, float blue) {
+	public void drawString(GL gl, CharSequence s, int x, int y, float red, float green, float blue) {
         /*
 		if (font != null) {
 			FontRender.drawString(gl, font, s, x, y, red, green, blue);

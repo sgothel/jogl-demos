@@ -51,7 +51,7 @@ public class Cube implements GLEventListener {
         cubeVertices.put(s_cubeVertices);
         cubeVertices.flip();
 
-        this.cubeColors = BufferUtil.newByteBuffer(s_cubeColors.length);
+        this.cubeColors = BufferUtil.newFloatBuffer(s_cubeColors.length);
         cubeColors.put(s_cubeColors);
         cubeColors.flip();
 
@@ -71,15 +71,32 @@ public class Cube implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
         glu = GLU.createGLU();
-
+        if(gl.isGLES2()) {
+            if( 0 == ( gl.getGLES2().getEnabledFixedFunctionEmulationModes() & GLES2.FIXED_EMULATION_VERTEXCOLOR ) ) {
+                gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR);
+                System.err.println("Cubes Fixed emu: FIXED_EMULATION_VERTEXCOLOR");
+            }
+        }
+        if(!innerCube) {
+            System.err.println("Entering initialization");
+            System.err.println("GL Profile: "+GLProfile.getProfile());
+            System.err.println("GL:" + gl);
+            System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+            System.err.println("GL_EXTENSIONS:");
+            System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+        }
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         float aspect = (height != 0) ? ((float)width / (float)height) : 1.0f;
 
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
+        GL2ES1 glF=null;
+        if(gl.isGL2ES1()) {
+            glF = drawable.getGL().getGL2ES1();
+        }
 
         gl.glViewport(0, 0, width, height);
 
@@ -99,9 +116,12 @@ public class Cube implements GLEventListener {
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, zero_vec4, 0);
-        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, material_spec, 0);
+        if(null!=glF) {
+            glF.glMaterialfv(glF.GL_FRONT_AND_BACK, glF.GL_SPECULAR, material_spec, 0);
 
-        gl.glEnable(gl.GL_NORMALIZE);
+            glF.glEnable(glF.GL_NORMALIZE);
+        }
+
         gl.glEnable(gl.GL_LIGHTING);
         gl.glEnable(gl.GL_LIGHT0);
         gl.glEnable(gl.GL_COLOR_MATERIAL);
@@ -119,7 +139,9 @@ public class Cube implements GLEventListener {
             gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         }
 
-        gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, gl.GL_FASTEST);
+        if(null!=glF) {
+            glF.glHint(glF.GL_PERSPECTIVE_CORRECTION_HINT, glF.GL_FASTEST);
+        }
 
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
@@ -133,13 +155,13 @@ public class Cube implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
+        GL2ES1 glF=null;
+        if(gl.isGL2ES1()) {
+            glF = drawable.getGL().getGL2ES1();
+        }
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
-
-        // Draw a green square using MIDP
-        //g.setColor(0, 255, 0);
-        //g.fillRect(20, 20, width - 40, height - 40);
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -149,11 +171,13 @@ public class Cube implements GLEventListener {
         gl.glRotatef((float)(time * 22.311f), -0.1f, 0.0f, -5.0f);
 
         gl.glVertexPointer(3, gl.GL_SHORT, 0, cubeVertices);
-        gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, cubeColors);
+        gl.glColorPointer(4, gl.GL_FLOAT, 0, cubeColors);
         gl.glNormalPointer(gl.GL_BYTE, 0, cubeNormals);
         if (cubeTexCoords != null) {
             gl.glTexCoordPointer(2, gl.GL_SHORT, 0, cubeTexCoords);
-            gl.glTexEnvi(gl.GL_TEXTURE_ENV, gl.GL_TEXTURE_ENV_MODE, gl.GL_INCR);
+            if(null!=glF) {
+                glF.glTexEnvi(glF.GL_TEXTURE_ENV, glF.GL_TEXTURE_ENV_MODE, glF.GL_INCR);
+            }
         }
 
 
@@ -177,7 +201,7 @@ public class Cube implements GLEventListener {
     float time = 0.0f;
     ShortBuffer cubeVertices;
     ShortBuffer cubeTexCoords;
-    ByteBuffer cubeColors;
+    FloatBuffer cubeColors;
     ByteBuffer cubeNormals;
     ByteBuffer cubeIndices;
     private GLU glu;
@@ -211,25 +235,25 @@ public class Cube implements GLEventListener {
             0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
         };
 
-    private static final byte[] s_cubeColors =
+    private static final float[] s_cubeColors =
         {
-            (byte)40, (byte)80, (byte)160, (byte)255, (byte)40, (byte)80, (byte)160, (byte)255,
-            (byte)40, (byte)80, (byte)160, (byte)255, (byte)40, (byte)80, (byte)160, (byte)255,
+            40f/255f, 80f/255f, 160f/255f, 255f/255f, 40f/255f, 80f/255f, 160f/255f, 255f/255f,
+            40f/255f, 80f/255f, 160f/255f, 255f/255f, 40f/255f, 80f/255f, 160f/255f, 255f/255f,
             
-            (byte)40, (byte)80, (byte)160, (byte)255, (byte)40, (byte)80, (byte)160, (byte)255,
-            (byte)40, (byte)80, (byte)160, (byte)255, (byte)40, (byte)80, (byte)160, (byte)255,
+            40f/255f, 80f/255f, 160f/255f, 255f/255f, 40f/255f, 80f/255f, 160f/255f, 255f/255f,
+            40f/255f, 80f/255f, 160f/255f, 255f/255f, 40f/255f, 80f/255f, 160f/255f, 255f/255f,
             
-            (byte)128, (byte)128, (byte)128, (byte)255, (byte)128, (byte)128, (byte)128, (byte)255,
-            (byte)128, (byte)128, (byte)128, (byte)255, (byte)128, (byte)128, (byte)128, (byte)255,
+            128f/255f, 128f/255f, 128f/255f, 255f/255f, 128f/255f, 128f/255f, 128f/255f, 255f/255f,
+            128f/255f, 128f/255f, 128f/255f, 255f/255f, 128f/255f, 128f/255f, 128f/255f, 255f/255f,
             
-            (byte)128, (byte)128, (byte)128, (byte)255, (byte)128, (byte)128, (byte)128, (byte)255,
-            (byte)128, (byte)128, (byte)128, (byte)255, (byte)128, (byte)128, (byte)128, (byte)255,
+            128f/255f, 128f/255f, 128f/255f, 255f/255f, 128f/255f, 128f/255f, 128f/255f, 255f/255f,
+            128f/255f, 128f/255f, 128f/255f, 255f/255f, 128f/255f, 128f/255f, 128f/255f, 255f/255f,
             
-            (byte)255, (byte)110, (byte)10, (byte)255, (byte)255, (byte)110, (byte)10, (byte)255,
-            (byte)255, (byte)110, (byte)10, (byte)255, (byte)255, (byte)110, (byte)10, (byte)255,
+            255f/255f, 110f/255f, 10f/255f, 255f/255f, 255f/255f, 110f/255f, 10f/255f, 255f/255f,
+            255f/255f, 110f/255f, 10f/255f, 255f/255f, 255f/255f, 110f/255f, 10f/255f, 255f/255f,
             
-            (byte)255, (byte)70, (byte)60, (byte)255, (byte)255, (byte)70, (byte)60, (byte)255,
-            (byte)255, (byte)70, (byte)60, (byte)255, (byte)255, (byte)70, (byte)60, (byte)255
+            255f/255f, 70f/255f, 60f/255f, 255f/255f, 255f/255f, 70f/255f, 60f/255f, 255f/255f,
+            255f/255f, 70f/255f, 60f/255f, 255f/255f, 255f/255f, 70f/255f, 60f/255f, 255
         };
     private static final byte[] s_cubeIndices =
         {
@@ -259,7 +283,7 @@ public class Cube implements GLEventListener {
         int width = 800;
         int height = 480;
         System.err.println("Cube.run()");
-        GLProfile.setProfileGL2ES1();
+        GLProfile.setProfileGLAny();
         try {
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {

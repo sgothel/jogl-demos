@@ -43,7 +43,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         int width = 800;
         int height = 480;
         System.err.println("RedSquare.run()");
-        GLProfile.setProfileGL2ES1();
+        GLProfile.setProfileGLAny();
         try {
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
@@ -95,19 +95,25 @@ public class RedSquare implements MouseListener, GLEventListener {
     private FloatBuffer vertices;
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
         glu = GLU.createGLU();
         System.err.println("Entering initialization");
-        System.err.println("GL_VERSION=" + gl.glGetString(GL2ES1.GL_VERSION));
+        System.err.println("GL Profile: "+GLProfile.getProfile());
+        System.err.println("GL:" + gl);
+        System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
         System.err.println("GL_EXTENSIONS:");
-        System.err.println("  " + gl.glGetString(GL2ES1.GL_EXTENSIONS));
+        System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+
+        if(gl.isGLES2()) {
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR);
+        }
 
         // Allocate vertex arrays
         colors   = BufferUtil.newFloatBuffer(16);
         vertices = BufferUtil.newFloatBuffer(12);
         // Fill them up
         colors.put( 0, 1);    colors.put( 1, 0);     colors.put( 2, 0);    colors.put( 3, 1);
-        colors.put( 4, 1);    colors.put( 5, 0);     colors.put( 6, 0);    colors.put( 7, 1);
+        colors.put( 4, 0);    colors.put( 5, 0);     colors.put( 6, 1);    colors.put( 7, 1);
         colors.put( 8, 1);    colors.put( 9, 0);     colors.put(10, 0);    colors.put(11, 1);
         colors.put(12, 1);    colors.put(13, 0);     colors.put(14, 0);    colors.put(15, 1);
         vertices.put(0, -2);  vertices.put( 1,  2);  vertices.put( 2,  0);
@@ -115,37 +121,40 @@ public class RedSquare implements MouseListener, GLEventListener {
         vertices.put(6, -2);  vertices.put( 7, -2);  vertices.put( 8,  0);
         vertices.put(9,  2);  vertices.put(10, -2);  vertices.put(11,  0);
 
-        gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY);
-        gl.glVertexPointer(3, GL2ES1.GL_FLOAT, 0, vertices);
-        gl.glEnableClientState(GL2ES1.GL_COLOR_ARRAY);
-        gl.glColorPointer(4, GL2ES1.GL_FLOAT, 0, colors);
+        gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+        gl.glVertexPointer(3, gl.GL_FLOAT, 0, vertices);
+        gl.glColorPointer(4, gl.GL_FLOAT, 0, colors);
 
         // OpenGL Render Settings
         gl.glClearColor(0, 0, 0, 1);
-        gl.glEnable(GL2ES1.GL_DEPTH_TEST);
+        gl.glEnable(gl.GL_DEPTH_TEST);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
+        GL gl = drawable.getGL();
         // Set location in front of camera
-        gl.glMatrixMode(GL2ES1.GL_PROJECTION);
+        gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
         glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
+        //gl.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
-        gl.glClear(GL2ES1.GL_COLOR_BUFFER_BIT | GL2ES1.GL_DEPTH_BUFFER_BIT);
+        GL gl = drawable.getGL();
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
         // One rotation every four seconds
-        gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
+        gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
         gl.glTranslatef(0, 0, -10);
         float ang = ((float) (curTime - startTime) * 360.0f) / 4000.0f;
         gl.glRotatef(ang, 0, 0, 1);
+        gl.glRotatef(ang, 0, 1, 0);
+
 
         // Draw a square
-        gl.glDrawArrays(GL2ES1.GL_TRIANGLE_STRIP, 0, 4);
+        gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {

@@ -28,3 +28,7 @@ CLASSPATH_VECM=$LIB/vecmath.jar
 CLASSPATH=$CLASSPATH:$THISDIR/build/classes:$CLASSPATH_TROVE:$CLASSPATH_VECM
 export JOGL_HOME CLASSPATH_TROVE CLASSPATH_VECM CLASSPATH 
 
+#
+# java javabullet.demos.genericjoint.GenericJointDemo
+#
+

@@ -38,7 +38,7 @@ public class Main implements MouseListener {
         int width = 800;
         int height = 480;
         System.out.println("cubefbo.Main.run()");
-        GLProfile.setProfileGL2ES1();
+        GLProfile.setProfileGLAny();
         try {
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
