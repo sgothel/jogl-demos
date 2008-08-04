@@ -26,12 +26,14 @@ package javabullet.demos.opengl;
 import java.net.URL;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 // import javabullet.demos.opengl.FontRender.GLFont;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.opengl.util.ImmModeSink;
+import javax.media.opengl.util.BufferUtil;
 
 /**
  *
@@ -39,7 +41,8 @@ import javax.media.opengl.util.ImmModeSink;
  */
 public class GLSRT {
 
-    public static final boolean VBO_CACHE = true;
+    public static final boolean VBO_CACHE = true; // JAU
+    // public static final boolean VBO_CACHE = false;
 
 	private GLU    glu;
 	// private GLFont font;
@@ -66,25 +69,75 @@ public class GLSRT {
 		extent = extent * 0.5f;
 		
         if(vboCube==null) {
-            vboCube = new ImmModeSink(GL.GL_FLOAT, GL.GL_STATIC_DRAW, 3, 3, 0, 0, 24);
+            vboCube = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 24,
+                                  3, GL.GL_FLOAT,  // vertex
+                                  0, GL.GL_FLOAT,  // color
+                                  3, GL.GL_FLOAT,  // normal
+                                  0, GL.GL_FLOAT); // texture
 
-            vboCube.glBegin(ImmModeSink.GL_QUADS);
-            vboCube.glNormal3f( 1f, 0f, 0f); 
-            vboCube.glVertex3f(+extent,-extent,+extent); vboCube.glVertex3f(+extent,-extent,-extent); vboCube.glVertex3f(+extent,+extent,-extent); vboCube.glVertex3f(+extent,+extent,+extent);
-            vboCube.glNormal3f( 0f, 1f, 0f); 
-            vboCube.glVertex3f(+extent,+extent,+extent); vboCube.glVertex3f(+extent,+extent,-extent); vboCube.glVertex3f(-extent,+extent,-extent); vboCube.glVertex3f(-extent,+extent,+extent);
+            vboCube.glBegin(GL.GL_TRIANGLES);
             vboCube.glNormal3f( 0f, 0f, 1f); 
-            vboCube.glVertex3f(+extent,+extent,+extent); vboCube.glVertex3f(-extent,+extent,+extent); vboCube.glVertex3f(-extent,-extent,+extent); vboCube.glVertex3f(+extent,-extent,+extent);
-            vboCube.glNormal3f(-1f, 0f, 0f); 
-            vboCube.glVertex3f(-extent,-extent,+extent); vboCube.glVertex3f(-extent,+extent,+extent); vboCube.glVertex3f(-extent,+extent,-extent); vboCube.glVertex3f(-extent,-extent,-extent);
-            vboCube.glNormal3f( 0f,-1f, 0f); 
-            vboCube.glVertex3f(-extent,-extent,+extent); vboCube.glVertex3f(-extent,-extent,-extent); vboCube.glVertex3f(+extent,-extent,-extent); vboCube.glVertex3f(+extent,-extent,+extent);
+            vboCube.glNormal3f( 0f, 0f, 1f); 
+            vboCube.glNormal3f( 0f, 0f, 1f); 
+            vboCube.glNormal3f( 0f, 0f, 1f); 
+            vboCube.glVertex3f(-extent,+extent,+extent); 
+            vboCube.glVertex3f(+extent,-extent,+extent); 
+            vboCube.glVertex3f(+extent,+extent,+extent); 
+            vboCube.glVertex3f(-extent,-extent,+extent);
             vboCube.glNormal3f( 0f, 0f,-1f); 
-            vboCube.glVertex3f(-extent,-extent,-extent); vboCube.glVertex3f(-extent,+extent,-extent); vboCube.glVertex3f(+extent,+extent,-extent); vboCube.glVertex3f(+extent,-extent,-extent);
+            vboCube.glNormal3f( 0f, 0f,-1f); 
+            vboCube.glNormal3f( 0f, 0f,-1f); 
+            vboCube.glNormal3f( 0f, 0f,-1f); 
+            vboCube.glVertex3f(-extent,+extent,-extent); 
+            vboCube.glVertex3f(+extent,-extent,-extent); 
+            vboCube.glVertex3f(+extent,+extent,-extent); 
+            vboCube.glVertex3f(+extent,+extent,+extent);
+            vboCube.glNormal3f( 0f, -1f, 0f); 
+            vboCube.glNormal3f( 0f, -1f, 0f); 
+            vboCube.glNormal3f( 0f, -1f, 0f); 
+            vboCube.glNormal3f( 0f, -1f, 0f); 
+            vboCube.glVertex3f(-extent,-extent,+extent); 
+            vboCube.glVertex3f(+extent,-extent,-extent); 
+            vboCube.glVertex3f(+extent,-extent,+extent); 
+            vboCube.glVertex3f(-extent,-extent,-extent);
+            vboCube.glNormal3f( 0f,1f, 0f); 
+            vboCube.glNormal3f( 0f,1f, 0f); 
+            vboCube.glNormal3f( 0f,1f, 0f); 
+            vboCube.glNormal3f( 0f,1f, 0f); 
+            vboCube.glVertex3f(-extent,+extent,+extent); 
+            vboCube.glVertex3f(+extent,+extent,-extent); 
+            vboCube.glVertex3f(+extent,+extent,+extent); 
+            vboCube.glVertex3f(-extent,+extent,-extent);
+            vboCube.glNormal3f( 1f,0f, 0f); 
+            vboCube.glNormal3f( 1f,0f, 0f); 
+            vboCube.glNormal3f( 1f,0f, 0f); 
+            vboCube.glNormal3f( 1f,0f, 0f); 
+            vboCube.glVertex3f(+extent,-extent,+extent); 
+            vboCube.glVertex3f(+extent,+extent,-extent); 
+            vboCube.glVertex3f(+extent,+extent,+extent); 
+            vboCube.glVertex3f(+extent,-extent,-extent);
+            vboCube.glNormal3f( -1f, 0f, 0f); 
+            vboCube.glNormal3f( -1f, 0f, 0f); 
+            vboCube.glNormal3f( -1f, 0f, 0f); 
+            vboCube.glNormal3f( -1f, 0f, 0f); 
+            vboCube.glVertex3f(-extent,-extent,+extent); 
+            vboCube.glVertex3f(-extent,+extent,-extent); 
+            vboCube.glVertex3f(-extent,+extent,+extent); 
+            vboCube.glVertex3f(-extent,-extent,-extent);
             vboCube.glEnd(gl, false);
         }
-        vboCube.draw(gl, true);
+        vboCube.draw(gl, cubeIndices, true);
 	}
+    private static final byte[] s_cubeIndices =
+        {
+            0, 3, 1, 2, 0, 1, /* front  */
+            6, 5, 4, 5, 7, 4, /* back   */
+            8, 11, 9, 10, 8, 9, /* top    */
+            15, 12, 13, 12, 14, 13, /* bottom */
+            16, 19, 17, 18, 16, 17, /* right  */
+            23, 20, 21, 20, 22, 21 /* left   */
+    };
+    private ByteBuffer cubeIndices=BufferUtil.newByteBuffer(s_cubeIndices);
 	
 	////////////////////////////////////////////////////////////////////////////
 	

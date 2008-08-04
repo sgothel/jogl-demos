@@ -39,7 +39,8 @@ public class Main implements MouseListener {
         int width = 800;
         int height = 480;
         System.out.println("angeles.Main.run()");
-        GLProfile.setProfileGL2ES1();
+        //GLProfile.setProfileGL2ES1();
+        GLProfile.setProfileGLAny();
         try {
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
@@ -74,7 +75,7 @@ public class Main implements MouseListener {
                 window.addGLEventListener(angel);
             } else {
                 System.out.println("Using: nop .. ");
-            }
+            } 
 
             long startTime = System.currentTimeMillis();
             long lastTime = startTime, curTime = 0, dt0, dt1;

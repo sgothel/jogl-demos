@@ -141,8 +141,15 @@ public abstract class DemoApplication
         glu = GLU.createGLU();
 
         if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR);
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
         }
+
+        System.err.println("Entering initialization");
+        System.err.println("GL Profile: "+GLProfile.getProfile());
+        System.err.println("GL:" + gl);
+        System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+        System.err.println("GL_EXTENSIONS:");
+        System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
 
         glsrt = new GLSRT(glu, gl);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
@@ -176,7 +183,7 @@ public abstract class DemoApplication
 		glutScreenWidth = width;
 		glutScreenHeight = height;
 
-		gl.glViewport(x, y, width, height);
+		//gl.glViewport(x, y, width, height);
 		updateCamera();
 
         System.out.println("DemoApplication RESHAPE");
@@ -319,6 +326,7 @@ public abstract class DemoApplication
 					cameraTargetPosition.x, cameraTargetPosition.y, cameraTargetPosition.z,
 					cameraUp.x, cameraUp.y, cameraUp.z);
 			gl.glMatrixMode(gl.GL_MODELVIEW);
+			gl.glLoadIdentity();
 		}
 		finally {
 			stack.vectors.pop();
@@ -839,6 +847,7 @@ public abstract class DemoApplication
 		gl.glMatrixMode(gl.GL_MODELVIEW);
 	}
 	
+    /**
 	public void resetPerspectiveProjection() {
 		gl.glMatrixMode(gl.GL_PROJECTION);
 		gl.glPopMatrix();
@@ -851,6 +860,7 @@ public abstract class DemoApplication
 	}
 	
 	// TODO: protected void showProfileInfo(float& xOffset,float& yStart, float yIncr);
+    */
 
 	private final Transform m = new Transform();
 	private Vector3f wireColor = new Vector3f();
@@ -870,12 +880,15 @@ public abstract class DemoApplication
 				if (body != null && body.getMotionState() != null) {
 					DefaultMotionState myMotionState = (DefaultMotionState) body.getMotionState();
 					m.set(myMotionState.graphicsWorldTrans);
-				}
-				else {
+				} else {
 					m.set(colObj.getWorldTransform());
 				}
 
-				wireColor.set(1f, 1f, 0.5f); // wants deactivation
+                if(0==i) {
+                    wireColor.set(0.5f, 1f, 0.5f); // wants deactivation
+                } else {
+                    wireColor.set(1f, 1f, 0.5f); // wants deactivation
+                }
 				if ((i & 1) != 0) {
 					wireColor.set(0f, 0f, 1f);
 				}
@@ -904,8 +917,17 @@ public abstract class DemoApplication
 					}
 				}
 
+                // draw (saves the matrix already ..)
 				GLShapeDrawer.drawOpenGL(glsrt, gl, m, colObj.getCollisionShape(), wireColor, getDebugMode());
 			}
+            GLShapeDrawer.drawCoordSystem(gl);
+            if(false) {
+            System.err.println("++++++++++++++++++++++++++++++++");
+            System.err.println("++++++++++++++++++++++++++++++++");
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {}
+            }
 
 			float xOffset = 10f;
 			float yStart = 20f;

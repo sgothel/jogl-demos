@@ -38,36 +38,124 @@ import java.nio.*;
 
 import com.sun.javafx.newt.*;
 
-public class Cube implements GLEventListener {
-    public Cube () {
+public class CubeImmModeSink implements GLEventListener {
+    public CubeImmModeSink () {
         this(false, false);
     }
 
-    public Cube (boolean useTexCoords, boolean innerCube) {
-        this.innerCube = innerCube;
 
-        // Initialize data Buffers
-        this.cubeVertices = BufferUtil.newShortBuffer(s_cubeVertices.length);
-        cubeVertices.put(s_cubeVertices);
-        cubeVertices.flip();
-
-        this.cubeColors = BufferUtil.newFloatBuffer(s_cubeColors.length);
-        cubeColors.put(s_cubeColors);
-        cubeColors.flip();
-
-        this.cubeNormals = BufferUtil.newByteBuffer(s_cubeNormals.length);
-        cubeNormals.put(s_cubeNormals);
-        cubeNormals.flip();
-
-        this.cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices.length);
-        cubeIndices.put(s_cubeIndices);
-        cubeIndices.flip();
-        
-        if (useTexCoords) {
-            this.cubeTexCoords = BufferUtil.newShortBuffer(s_cubeTexCoords.length);
-            cubeTexCoords.put(s_cubeTexCoords);
-            cubeTexCoords.flip();
+    ByteBuffer cubeIndices=null;
+    ImmModeSink vboCubeF = null;
+    public void drawCube(GL gl, float extent) {
+        if(cubeIndices==null) {
+            cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices);
         }
+        
+        if(vboCubeF==null) {
+            ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 36,
+                                  3, GL.GL_SHORT,  // vertex
+                                  4, GL.GL_FLOAT,  // color
+                                  3, GL.GL_BYTE,  // normal
+                                  0, GL.GL_FLOAT); // texture
+
+            vbo.glBegin(GL.GL_TRIANGLES);
+
+            vbo.glVertexv(BufferUtil.newShortBuffer(s_cubeVertices));
+            vbo.glColorv(BufferUtil.newFloatBuffer(s_cubeColors));
+            vbo.glNormalv(BufferUtil.newByteBuffer(s_cubeNormals));
+
+            if(VBO_CACHE) {
+                vbo.glEnd(gl, false);
+            } else {
+                vbo.glEnd(gl, cubeIndices);
+            }
+            System.err.println("VBO Cube");
+            System.err.println(vbo);
+            if(VBO_CACHE) {
+                vboCubeF = vbo;
+            }
+        }
+        if(null!=vboCubeF) {
+            vboCubeF.draw(gl, cubeIndices, true);
+        }
+    }
+
+    private GLUquadric sphere=null;
+    private ImmModeSink vboSphere=null;
+    public void drawSphere(GL gl, float radius, int slices, int stacks) {
+        if(sphere==null) {
+            sphere = glu.gluNewQuadric();
+            sphere.setImmMode((VBO_CACHE)?false:true);
+        }
+        ImmModeSink vbo = vboSphere;
+        if (vbo == null) {
+            glu.gluSphere(sphere, radius, 8, 8);
+            if(VBO_CACHE) {
+                vboSphere = sphere.replaceImmModeSink();
+                vbo = vboSphere;
+            } 
+            System.err.println("VBO Sphere");
+            System.err.println(vbo);
+        }
+
+        if(VBO_CACHE && null!=vbo) {
+            vbo.draw(gl, true);
+        }
+    }
+
+
+    private static boolean VBO_CACHE = true;
+    private GLUquadric cylinder=null;
+    private ImmModeSink vboCylinder=null;
+    public void drawCylinder(GL gl, float radius, float halfHeight, int upAxis) {
+        if(cylinder==null) {
+            cylinder = glu.gluNewQuadric();
+            cylinder.setImmMode((VBO_CACHE)?false:true);
+        }
+
+        gl.glPushMatrix();
+        switch (upAxis) {
+            case 0:
+                gl.glRotatef(-90f, 0.0f, 1.0f, 0.0f);
+                gl.glTranslatef(0.0f, 0.0f, -halfHeight);
+                break;
+            case 1:
+                gl.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+                gl.glTranslatef(0.0f, 0.0f, -halfHeight);
+                break;
+            case 2:
+                gl.glTranslatef(0.0f, 0.0f, -halfHeight);
+                break;
+            default: {
+                assert (false);
+            }
+        }
+
+        ImmModeSink vbo = vboCylinder;
+        if (vbo == null) {
+            glu.gluQuadricDrawStyle(cylinder, glu.GLU_FILL);
+            glu.gluQuadricNormals(cylinder, glu.GLU_SMOOTH);
+            glu.gluCylinder(cylinder, radius, radius, 2f * halfHeight, 15, 10);
+            if(VBO_CACHE) {
+                vboCylinder = cylinder.replaceImmModeSink();
+                vbo = vboCylinder;
+            } 
+            System.err.println("VBO Cylinder");
+            System.err.println(vbo);
+        }
+
+        if(VBO_CACHE && null!=vbo) {
+            vbo.draw(gl, true);
+        }
+
+        gl.glPopMatrix();
+    }
+
+
+
+    public CubeImmModeSink (boolean useTexCoords, boolean innerCube) {
+        this.innerCube = innerCube;
+        this.useTexCoords = useTexCoords;
     }
 
     public void init(GLAutoDrawable drawable) {
@@ -75,7 +163,7 @@ public class Cube implements GLEventListener {
         glu = GLU.createGLU();
         if(gl.isGLES2()) {
             gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("Cubes Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+            System.err.println("CubeImmModeSink Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
         }
         if(!innerCube) {
             System.err.println("Entering initialization");
@@ -107,37 +195,23 @@ public class Cube implements GLEventListener {
             gl.glClearColor(1.0f, 1.0f, 1.0f, 0.6f);
         } else {
             // Clear background to blue
-            gl.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+            gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        if(!innerCube) {
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position, 0);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, zero_vec4, 0);
-        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, material_spec, 0);
+        gl.glMaterialfv(glF.GL_FRONT_AND_BACK, glF.GL_SPECULAR, material_spec, 0);
+        gl.glEnable(glF.GL_NORMALIZE);
 
         gl.glEnable(gl.GL_LIGHTING);
         gl.glEnable(gl.GL_LIGHT0);
         gl.glEnable(gl.GL_COLOR_MATERIAL);
-        } else {
-        gl.glDisable(gl.GL_LIGHTING);
-        gl.glDisable(gl.GL_LIGHT0);
-        }
-        gl.glEnable(gl.GL_NORMALIZE);
         gl.glEnable(gl.GL_CULL_FACE);
 
         gl.glShadeModel(gl.GL_SMOOTH);
         gl.glDisable(gl.GL_DITHER);
-
-        gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
-        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
-        if (cubeTexCoords != null) {
-            gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
-        } else {
-            gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
-        }
 
         if(null!=glF) {
             glF.glHint(glF.GL_PERSPECTIVE_CORRECTION_HINT, glF.GL_FASTEST);
@@ -166,26 +240,37 @@ public class Cube implements GLEventListener {
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glTranslatef(0.f, 0.f, -30.f);
+        gl.glTranslatef(0.f, 0.0f, -30.f);
         gl.glRotatef((float)(time * 29.77f), 1.0f, 2.0f, 0.0f);
         gl.glRotatef((float)(time * 22.311f), -0.1f, 0.0f, -5.0f);
 
-        gl.glVertexPointer(3, gl.GL_SHORT, 0, cubeVertices);
-        gl.glColorPointer(4, gl.GL_FLOAT, 0, cubeColors);
-        gl.glNormalPointer(gl.GL_BYTE, 0, cubeNormals);
-        if (cubeTexCoords != null) {
-            gl.glTexCoordPointer(2, gl.GL_SHORT, 0, cubeTexCoords);
-            if(null!=glF) {
-                glF.glTexEnvi(glF.GL_TEXTURE_ENV, glF.GL_TEXTURE_ENV_MODE, glF.GL_INCR);
-            }
+        gl.glColor4f(0f, 0f, 0f, 1f);
+
+        if(true) {
+            //gl.glColor4f(1f, 0f, 0f, 1f); // RED inside the color4f's
+            drawCube(gl, 10.0f);
         }
 
+        if(true) {
+            gl.glColor4f(0f, 1f, 0f, 1f);
+            gl.glPushMatrix();
+            gl.glTranslatef(15.0f, 0.0f, 0.0f);
+            drawSphere(gl, 5.0f, 10, 10);
+            gl.glPopMatrix();
+        }
 
-        gl.glDrawElements(gl.GL_TRIANGLES, 6 * 6, gl.GL_UNSIGNED_BYTE, cubeIndices);
-        // gl.glFinish();
+        if(true) {
+            gl.glColor4f(0f, 0f, 1f, 1f);
+            gl.glPushMatrix();
+            gl.glMultMatrixf(identity4x4f, 0);
+            drawCylinder(gl, 4.0f, 10.0f, 1);
+            gl.glPopMatrix();
+        }
 
+        frameNum++;
         time += 0.01f;
     }
+    int frameNum=0;
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
@@ -195,17 +280,10 @@ public class Cube implements GLEventListener {
     static final float[] light_diffuse = { 1.0f, 1.0f, 1.0f, 1.f };
     static final float[] material_spec = { 1.0f, 1.0f, 1.0f, 0.f };
     static final float[] zero_vec4 = { 0.0f, 0.0f, 0.0f, 0.f };
-
-    boolean innerCube;
-    boolean initialized = false;
-    float time = 0.0f;
-    ShortBuffer cubeVertices;
-    ShortBuffer cubeTexCoords;
-    FloatBuffer cubeColors;
-    ByteBuffer cubeNormals;
-    ByteBuffer cubeIndices;
-    private GLU glu;
-
+    static final float[] identity4x4f = { 1.0f, 0.0f, 0.0f, 0.0f,
+                                          0.0f, 1.0f, 0.0f, 0.0f,
+                                          0.0f, 0.0f, 1.0f, 0.0f,
+                                          0.0f, 0.0f, 0.0f, 1.0f };
     private static final short[] s_cubeVertices =
         {
             -10, 10, 10, 10, -10, 10, 10, 10, 10, -10, -10, 10,
@@ -279,10 +357,17 @@ public class Cube implements GLEventListener {
             -128, 0, 0, -128, 0, 0, -128, 0, 0, -128, 0, 0
         };
 
+
+    boolean innerCube;
+    boolean useTexCoords;
+    boolean initialized = false;
+    float time = 0.0f;
+    private GLU glu;
+
     private void run(int type) {
         int width = 800;
         int height = 480;
-        System.err.println("Cube.run()");
+        System.err.println("CubeImmModeSink.run()");
         GLProfile.setProfileGLAny();
         try {
             Window nWindow = null;
@@ -316,7 +401,7 @@ public class Cube implements GLEventListener {
             // Shut things down cooperatively
             window.close();
             window.getFactory().shutdown();
-            System.out.println("Cube shut down cleanly.");
+            System.out.println("CubeImmModeSink shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -332,7 +417,7 @@ public class Cube implements GLEventListener {
                 type |= USE_AWT; 
             }
         }
-        new Cube().run(type);
+        new CubeImmModeSink().run(type);
         System.exit(0);
     }
 }

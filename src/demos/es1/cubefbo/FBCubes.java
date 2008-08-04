@@ -55,8 +55,8 @@ class FBCubes implements GLEventListener {
         GL gl = drawable.getGL();
 
         if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR | GLES2.FIXED_EMULATION_TEXTURE);
-            System.err.println("FBCubes Fixed emu: FIXED_EMULATION_VERTEXCOLOR | FIXED_EMULATION_TEXTURE");
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
+            System.err.println("FBCubes Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
         }
 
         fbo1.init(gl);

@@ -80,7 +80,11 @@ public class AngelesGL2ES1 implements GLEventListener {
 
         this.gl = drawable.getGL().getGL2ES1();
         this.glu = GLU.createGLU();
-        gl.glEnable(gl.GL_NORMALIZE);
+        if(gl.isGLES2()) {
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
+            System.err.println("AngelesGL2ES1 Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+        }
+        gl.glEnable(GL2ES1.GL_NORMALIZE);
         gl.glEnable(gl.GL_DEPTH_TEST);
         gl.glDisable(gl.GL_CULL_FACE);
         gl.glShadeModel(gl.GL_FLAT);
@@ -120,7 +124,7 @@ public class AngelesGL2ES1 implements GLEventListener {
 
         gl.glCullFace(GL.GL_FRONT);
 
-        gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+        gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
         //gl.glShadeModel(GL.GL_SMOOTH);
         gl.glShadeModel(gl.GL_FLAT);

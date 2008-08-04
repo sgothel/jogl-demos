@@ -105,7 +105,8 @@ public class RedSquare implements MouseListener, GLEventListener {
         System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
 
         if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLOR);
+            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
+            System.err.println("RedSquare Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
         }
 
         // Allocate vertex arrays
@@ -138,6 +139,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         gl.glLoadIdentity();
         glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         //gl.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
+        //glu.gluLookAt(0, 0, -20, 0, 0, 0, 0, 1, 0);
     }
 
     public void display(GLAutoDrawable drawable) {

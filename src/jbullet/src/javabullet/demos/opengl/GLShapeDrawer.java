@@ -72,17 +72,24 @@ public class GLShapeDrawer {
 	*/
 
 	public static void drawCoordSystem(GL gl) {
-        ImmModeSink vbo = new ImmModeSink(gl.GL_FLOAT, gl.GL_STATIC_DRAW, 3, 0, 3, 0, 10);
+        ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 10,
+                              3, GL.GL_FLOAT,  // vertex
+                              4, GL.GL_FLOAT,  // color
+                              0, GL.GL_FLOAT,  // normal
+                              0, GL.GL_FLOAT); // texture
 		vbo.glBegin(gl.GL_LINES);
-		vbo.glColor3f(1, 0, 0);
-		vbo.glVertex3f(0, 0, 0);
-		vbo.glVertex3f(1, 0, 0);
-		vbo.glColor3f(0, 1, 0);
-		vbo.glVertex3f(0, 0, 0);
-		vbo.glVertex3f(0, 1, 0);
-		vbo.glColor3f(0, 0, 1);
-		vbo.glVertex3f(0, 0, 0);
-		vbo.glVertex3f(0, 0, 1);
+		vbo.glColor4f ( 1f,  1f,  1f, 1f);
+		vbo.glVertex3f( 0f,  0f,  0f);
+		vbo.glColor4f ( 1f,  1f,  1f, 1f);
+		vbo.glVertex3f( 1f,  0f,  0f);
+		vbo.glColor4f ( 1f,  1f,  1f, 1f);
+		vbo.glVertex3f( 0f,  0f,  0f);
+		vbo.glColor4f ( 1f,  1f,  1f, 1f);
+		vbo.glVertex3f( 0f,  1f,  0f);
+		vbo.glColor4f ( 1f,  1f,  1f, 1f);
+		vbo.glVertex3f( 0f,  0f,  0f);
+		vbo.glColor4f ( 1f,  1f,  1f, 1f);
+		vbo.glVertex3f( 0f,  0f,  1f);
 		vbo.glEnd(gl);
 	}
 
@@ -111,7 +118,6 @@ public class GLShapeDrawer {
 	//
 	//				drawOpenGL( (btScalar*)tmpScaling,convexShape,color,debugMode);
 	//			}
-	//			glPopMatrix();
 	//			return;
 	//		}
 
@@ -124,16 +130,12 @@ public class GLShapeDrawer {
 				}
 			}
 			else {
-				//drawCoordSystem();
-
-				//glPushMatrix();
-
                 gl.glEnable(gl.GL_COLOR_MATERIAL);
-                gl.glColor4f(color.x, color.y, color.z, 0f);
+                gl.glColor4f(color.x, color.y, color.z, 1f);
 
 				boolean useWireframeFallback = true;
 
-				if ((debugMode & DebugDrawModes.DRAW_WIREFRAME) == 0) {
+				if ( (debugMode & DebugDrawModes.DRAW_WIREFRAME) == 0) {
 					switch (shape.getShapeType()) {
 						case BOX_SHAPE_PROXYTYPE: {
 							BoxShape boxShape = (BoxShape) shape;
@@ -249,7 +251,11 @@ public class GLShapeDrawer {
 					if (shape.isPolyhedral()) {
 						PolyhedralConvexShape polyshape = (PolyhedralConvexShape) shape;
 
-                        ImmModeSink vbo = new ImmModeSink(gl.GL_FLOAT, gl.GL_STATIC_DRAW, 3, 0, 0, 0, polyshape.getNumEdges());
+                        ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, polyshape.getNumEdges()+3,
+                                              3, GL.GL_FLOAT,  // vertex
+                                              0, GL.GL_FLOAT,  // color
+                                              0, GL.GL_FLOAT,  // normal
+                                              0, GL.GL_FLOAT); // texture
 
 						vbo.glBegin(gl.GL_LINES);
 
@@ -357,11 +363,10 @@ public class GLShapeDrawer {
 				}
 				//gl.glEnable(GL_DEPTH_TEST);
 
-				//glPopMatrix();
 			}
-			gl.glPopMatrix();
 		}
 		finally {
+			gl.glPopMatrix();
 			stack.popCommonMath();
 		}
 	}
@@ -391,18 +396,22 @@ public class GLShapeDrawer {
 
 			normal.normalize();
 
-            ImmModeSink vbo = new ImmModeSink(gl.GL_FLOAT, gl.GL_STATIC_DRAW, 3, 3, 3, 0, 3);
+            ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 3,
+                                  3, GL.GL_FLOAT,  // vertex
+                                  4, GL.GL_FLOAT,  // color
+                                  3, GL.GL_FLOAT,  // normal
+                                  0, GL.GL_FLOAT); // texture
 
 			vbo.glBegin(gl.GL_TRIANGLES);
-			vbo.glColor3f(0, 1, 0);
+			vbo.glColor4f(0, 1f, 0, 1f);
 			vbo.glNormal3f(normal.x, normal.y, normal.z);
 			vbo.glVertex3f(triangle[0].x, triangle[0].y, triangle[0].z);
 
-			vbo.glColor3f(0, 1, 0);
+			vbo.glColor4f(0, 1f, 0, 1f);
 			vbo.glNormal3f(normal.x, normal.y, normal.z);
 			vbo.glVertex3f(triangle[1].x, triangle[1].y, triangle[1].z);
 
-			vbo.glColor3f(0, 1, 0);
+			vbo.glColor4f(0, 1f, 0, 1f);
 			vbo.glNormal3f(normal.x, normal.y, normal.z);
 			vbo.glVertex3f(triangle[2].x, triangle[2].y, triangle[2].z);
 			vbo.glEnd(gl);
@@ -436,27 +445,31 @@ public class GLShapeDrawer {
 		}
 		
 		public void processTriangle(Vector3f[] triangle, int partId, int triangleIndex) {
-            ImmModeSink vbo = new ImmModeSink(gl.GL_FLOAT, gl.GL_STATIC_DRAW, 3, 0, 3, 0, 10);
+            ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 10,
+                                  3, GL.GL_FLOAT,  // vertex
+                                  4, GL.GL_FLOAT,  // color
+                                  0, GL.GL_FLOAT,  // normal
+                                  0, GL.GL_FLOAT); // texture
 			if (wireframe) {
 				vbo.glBegin(gl.GL_LINES);
-				vbo.glColor3f(1, 0, 0);
+				vbo.glColor4f(1, 0, 0, 1);
 				vbo.glVertex3f(triangle[0].x, triangle[0].y, triangle[0].z);
 				vbo.glVertex3f(triangle[1].x, triangle[1].y, triangle[1].z);
-				vbo.glColor3f(0, 1, 0);
+				vbo.glColor4f(0, 1, 0, 1);
 				vbo.glVertex3f(triangle[2].x, triangle[2].y, triangle[2].z);
 				vbo.glVertex3f(triangle[1].x, triangle[1].y, triangle[1].z);
-				vbo.glColor3f(0, 0, 1);
+				vbo.glColor4f(0, 0, 1, 1);
 				vbo.glVertex3f(triangle[2].x, triangle[2].y, triangle[2].z);
 				vbo.glVertex3f(triangle[0].x, triangle[0].y, triangle[0].z);
 				vbo.glEnd(gl);
 			}
 			else {
 				vbo.glBegin(gl.GL_TRIANGLES);
-				vbo.glColor3f(1, 0, 0);
+				vbo.glColor4f(1, 0, 0, 1);
 				vbo.glVertex3f(triangle[0].x, triangle[0].y, triangle[0].z);
-				vbo.glColor3f(0, 1, 0);
+				vbo.glColor4f(0, 1, 0, 1);
 				vbo.glVertex3f(triangle[1].x, triangle[1].y, triangle[1].z);
-				vbo.glColor3f(0, 0, 1);
+				vbo.glColor4f(0, 0, 1, 1);
 				vbo.glVertex3f(triangle[2].x, triangle[2].y, triangle[2].z);
 				vbo.glEnd(gl);
 			}
@@ -471,15 +484,19 @@ public class GLShapeDrawer {
 		}
 		
 		public void internalProcessTriangleIndex(Vector3f[] triangle, int partId, int triangleIndex) {
-            ImmModeSink vbo = new ImmModeSink(gl.GL_FLOAT, gl.GL_STATIC_DRAW, 3, 0, 3, 0, 10);
+            ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 10,
+                                  3, GL.GL_FLOAT,  // vertex
+                                  4, GL.GL_FLOAT,  // color
+                                  0, GL.GL_FLOAT,  // normal
+                                  0, GL.GL_FLOAT); // texture
 			vbo.glBegin(gl.GL_TRIANGLES);//LINES);
-			vbo.glColor3f(1, 0, 0);
+			vbo.glColor4f(1, 0, 0, 1);
 			vbo.glVertex3f(triangle[0].x, triangle[0].y, triangle[0].z);
 			vbo.glVertex3f(triangle[1].x, triangle[1].y, triangle[1].z);
-			vbo.glColor3f(0, 1, 0);
+			vbo.glColor4f(0, 1, 0, 1);
 			vbo.glVertex3f(triangle[2].x, triangle[2].y, triangle[2].z);
 			vbo.glVertex3f(triangle[1].x, triangle[1].y, triangle[1].z);
-			vbo.glColor3f(0, 0, 1);
+			vbo.glColor4f(0, 0, 1, 1);
 			vbo.glVertex3f(triangle[2].x, triangle[2].y, triangle[2].z);
 			vbo.glVertex3f(triangle[0].x, triangle[0].y, triangle[0].z);
 			vbo.glEnd(gl);
