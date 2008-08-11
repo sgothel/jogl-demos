@@ -145,11 +145,14 @@ public abstract class DemoApplication
         }
 
         System.err.println("Entering initialization");
-        System.err.println("GL Profile: "+GLProfile.getProfile());
-        System.err.println("GL:" + gl);
-        System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
-        System.err.println("GL_EXTENSIONS:");
-        System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.print("GL Profile: ");
+        System.err.println(GLProfile.getProfile());
+        System.err.print("GL:");
+        System.err.println(gl);
+        System.err.print("GL_VERSION=");
+        System.err.println(gl.glGetString(gl.GL_VERSION));
+        System.err.print("GL_EXTENSIONS: ");
+        System.err.println(gl.glGetString(gl.GL_EXTENSIONS));
 
         glsrt = new GLSRT(glu, gl);
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);

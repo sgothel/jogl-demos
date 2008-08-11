@@ -63,10 +63,9 @@ public class JOGL implements MouseListener {
 		redisplay = true;
 	}
 
-    private void run(String title, DemoApplication demoApp, int type) {
-        int width = 480;
-        int height = 800;
-        System.err.println(title+"run()");
+    private void run(String title, DemoApplication demoApp, int type, int width, int height) {
+        System.err.print(title);
+        System.err.println(" run()");
         GLProfile.setProfileGLAny();
         try {
             Window nWindow = null;
@@ -126,7 +125,8 @@ public class JOGL implements MouseListener {
             // Shut things down cooperatively
             window.close();
             window.getFactory().shutdown();
-            System.out.println(title+" shut down cleanly.");
+            System.out.print(title);
+            System.out.println(" shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -136,13 +136,25 @@ public class JOGL implements MouseListener {
     public static int USE_AWT       = 1 << 0;
 
     public static void main(String title, DemoApplication demo, String[] args) {
+        int width = 480;
+        int height = 800;
         int type = USE_NEWT ;
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
             }
+            if(args[i].equals("-width") && i+1<args.length) {
+                try {
+                    width = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException nfe) {}
+            }
+            if(args[i].equals("-height") && i+1<args.length) {
+                try {
+                    height = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException nfe) {}
+            }
         }
-        new JOGL().run(title, demo, type);
+        new JOGL().run(title, demo, type, width, height);
         System.exit(0);
     }
 
