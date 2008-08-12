@@ -204,12 +204,15 @@
         </path>
         <javac destdir="${classes}" 
                includes="demos/GLInfo*, demos/es2/**" 
-               excludes="demos/es2/Shader*, demos/es2/Basic*" 
                source="1.4" target="1.4" debug="true" debuglevel="source,lines"
                bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
+        <copy todir="${classes}">
+            <fileset dir="${src}"
+                     includes="demos/es2/shader/**" />
+        </copy>
         <jar destfile="${jogl.demos.jar}">
             <fileset dir="${classes}">
                 <include name="**" />

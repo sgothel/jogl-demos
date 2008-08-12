@@ -4,6 +4,7 @@ import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
+import javax.media.opengl.glsl.*;
 
 import com.sun.javafx.newt.*;
 
@@ -84,126 +85,29 @@ public class RedSquare implements MouseListener, GLEventListener {
         }
     }
 
-    // FIXME: we must add storage of the pointers in the GL state to
-    // the GLImpl classes. The need for this can be seen by making
-    // these variables method local instead of instance members. The
-    // square will disappear after a second or so due to garbage
-    // collection. On desktop OpenGL this implies a stack of
-    // references due to the existence of glPush/PopClientAttrib. On
-    // OpenGL ES 1/2 it can simply be one set of references.
-    private FloatBuffer colors;
-    private FloatBuffer vertices;
-
-    public static final int VERTEX_ARRAY = 0;
-    public static final int COLOR_ARRAY = 1;
-
-    boolean shaderOk = false;
-    IntBuffer fragShader = BufferUtil.newIntBuffer(1);
-    IntBuffer vertShader = BufferUtil.newIntBuffer(1);
-    int shaderProgram=-1;
-    int shaderPMVMatrix=-1;
+    ShaderState st;
     PMVMatrix pmvMatrix;
-
-    public static final String[][] vertShaderSource = new String[][] { {
-        "#ifdef GL_ES\n"+
-        "  #define MEDIUMP mediump\n"+
-        "  #define HIGHP highp\n"+
-        "#else\n"+
-        "  #define MEDIUMP\n"+
-        "  #define HIGHP\n"+
-        "#endif\n"+
-        "\n"+
-        "uniform MEDIUMP mat4    mgl_PMVMatrix[2];\n"+
-        "attribute HIGHP vec4    mgl_Vertex;\n"+
-        "attribute HIGHP vec4    mgl_Color;\n"+
-        "varying   HIGHP vec4    frontColor;\n"+
-        "void main(void)\n"+
-        "{\n"+
-        "  frontColor=mgl_Color;\n"+
-        "  gl_Position = mgl_PMVMatrix[0] * mgl_PMVMatrix[1] * mgl_Vertex;\n"+
-        "}\n" } } ;
-
-    public static final String[][] fragShaderSource = new String[][] { {
-        "#ifdef GL_ES\n"+
-        "  #define MEDIUMP mediump\n"+
-        "  #define HIGHP highp\n"+
-        "#else\n"+
-        "  #define MEDIUMP\n"+
-        "  #define HIGHP\n"+
-        "#endif\n"+
-        "\n"+
-        "varying   HIGHP vec4    frontColor;\n"+
-        "void main (void)\n"+
-        "{\n"+
-        "    gl_FragColor = frontColor;\n"+
-        "}\n" } } ;
-
 
     private void initShader(GL2ES2 gl) {
         int tmpI;
 
-        // Create & Compile the vertex shader object
-        tmpI = gl.glCreateShader(gl.GL_VERTEX_SHADER);
-        vertShader.put(tmpI);
-        vertShader.flip();
+        // Create & Compile the shader objects
+        ShaderCode rsVp = ShaderCode.create(gl, gl.GL_VERTEX_SHADER, 1, RedSquare.class,
+                                            "shader", "shader/bin", "redsquare");
+        ShaderCode rsFp = ShaderCode.create(gl, gl.GL_FRAGMENT_SHADER, 1, RedSquare.class,
+                                            "shader", "shader/bin", "redsquare");
 
-        gl.glShaderSource(vertShader, vertShaderSource);
-        gl.glCompileShader(vertShader.get(0));
-        if ( ! gl.glIsShaderStatusValid(vertShader.get(0), gl.GL_COMPILE_STATUS) ) {
-                System.err.println("Failed to compile vertex shader: id "+vertShader.get(0)+
-                                   "\n\t"+gl.glGetShaderInfoLog(vertShader.get(0)));
-            return;
+        // Create & Link the shader program
+        ShaderProgram sp = new ShaderProgram();
+        sp.add(rsVp);
+        sp.add(rsFp);
+        if(!sp.link(gl, System.err)) {
+            throw new GLException("Couldn't link program: "+sp);
         }
 
-        // Create & Compile the fragment shader object
-        tmpI = gl.glCreateShader(gl.GL_FRAGMENT_SHADER);
-        fragShader.put(tmpI);
-        fragShader.flip();
-
-        gl.glShaderSource(fragShader, fragShaderSource);
-
-        gl.glCompileShader(fragShader.get(0));
-
-        if ( ! gl.glIsShaderStatusValid(fragShader.get(0), gl.GL_COMPILE_STATUS) ) {
-                System.err.println("Failed to compile fragment shader: id "+fragShader.get(0)+
-                                   "\n\t"+gl.glGetShaderInfoLog(fragShader.get(0)));
-            return;
-        }
-        
-        // Create the shader program
-        shaderProgram = gl.glCreateProgram();
-
-        // Attach the fragment and vertex shaders to it
-        gl.glAttachShader(shaderProgram, fragShader.get(0));
-        gl.glAttachShader(shaderProgram, vertShader.get(0));
-
-        gl.glBindAttribLocation(shaderProgram, VERTEX_ARRAY, "mgl_Vertex");
-        gl.glBindAttribLocation(shaderProgram, COLOR_ARRAY, "mgl_Color");
-
-        // Link the program
-        gl.glLinkProgram(shaderProgram);
-
-        if ( ! gl.glIsProgramValid(shaderProgram, System.err) )  {
-            return;
-        }
-
-        gl.glUseProgram(shaderProgram);
-
-        pmvMatrix.glMatrixMode(gl.GL_PROJECTION);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
-        pmvMatrix.glLoadIdentity();
-
-        shaderPMVMatrix = gl.glGetUniformLocation(shaderProgram, "mgl_PMVMatrix");
-        if(0<=shaderPMVMatrix) {
-            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMvMatrixf());
-        } else {
-            System.err.println("could not get uniform mgl_PMVMatrix: "+shaderPMVMatrix);
-            return;
-        }
-
-        shaderOk = true;
-
+        // Let's manage all our states using ShaderState.
+        st = new ShaderState();
+        st.attachShaderProgram(gl, sp);
     }
 
     public void init(GLAutoDrawable drawable) {
@@ -222,38 +126,57 @@ public class RedSquare implements MouseListener, GLEventListener {
 
         initShader(gl);
 
+        // Push the 1st uniform down the path 
+        st.glUseProgram(gl, true);
+
+        pmvMatrix.glMatrixMode(gl.GL_PROJECTION);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
+
+        if(!st.glUniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
+            throw new GLException("Error setting PMVMatrix in shader: "+st);
+        }
         // Allocate vertex arrays
-        colors   = BufferUtil.newFloatBuffer(16);
-        vertices = BufferUtil.newFloatBuffer(12);
-        // Fill them up
-        colors.put( 1);    colors.put( 0);     colors.put( 0);    colors.put( 1);
-        colors.put( 0);    colors.put( 0);     colors.put( 1);    colors.put( 1);
-        colors.put( 1);    colors.put( 0);     colors.put( 0);    colors.put( 1);
-        colors.put( 1);    colors.put( 0);     colors.put( 0);    colors.put( 1);
-        colors.flip();
+        GLArrayDataClient vertices = GLArrayDataClient.createGLSL(-1, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
+        {
+            // Fill them up
+            FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
+            verticeb.put(-2);  verticeb.put(  2);  verticeb.put( 0);
+            verticeb.put( 2);  verticeb.put(  2);  verticeb.put( 0);
+            verticeb.put(-2);  verticeb.put( -2);  verticeb.put( 0);
+            verticeb.put( 2);  verticeb.put( -2);  verticeb.put( 0);
+            verticeb.flip();
+        }
 
-        vertices.put(-2);  vertices.put(  2);  vertices.put( 0);
-        vertices.put( 2);  vertices.put(  2);  vertices.put( 0);
-        vertices.put(-2);  vertices.put( -2);  vertices.put( 0);
-        vertices.put( 2);  vertices.put( -2);  vertices.put( 0);
-        vertices.flip();
-    
-        gl.glEnableVertexAttribArray(VERTEX_ARRAY);
-        gl.glVertexAttribPointer(VERTEX_ARRAY, 3, gl.GL_FLOAT, false, 0, vertices);
-
-        gl.glEnableVertexAttribArray(COLOR_ARRAY);
-        gl.glVertexAttribPointer(COLOR_ARRAY, 4, gl.GL_FLOAT, false, 0, colors);
+        GLArrayDataClient colors = GLArrayDataClient.createGLSL(-1, "mgl_Color",  4, gl.GL_FLOAT, false, 4);
+        {
+            // Fill them up
+            FloatBuffer colorb = (FloatBuffer)colors.getBuffer();
+            colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
+            colorb.put( 0);    colorb.put( 0);     colorb.put( 1);    colorb.put( 1);
+            colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
+            colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
+            colorb.flip();
+        }
+        
+        st.glVertexAttribPointer(gl, vertices);
+        st.glVertexAttribPointer(gl, colors);
 
         // OpenGL Render Settings
         gl.glClearColor(0, 0, 0, 1);
         gl.glEnable(GL2ES2.GL_DEPTH_TEST);
 
-        gl.glUseProgram(0);
+        st.glUseProgram(gl, false);
 
+        // Let's show the completed shader state ..
+        System.out.println(st);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
+
+        st.glUseProgram(gl, true);
 
         // Set location in front of camera
         pmvMatrix.glMatrixMode(GL2ES2.GL_PROJECTION);
@@ -261,15 +184,19 @@ public class RedSquare implements MouseListener, GLEventListener {
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         //pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
 
-        if(0<=shaderPMVMatrix) {
-            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMvMatrixf());
-        }
+        GLUniformData ud = st.getUniform("mgl_PMVMatrix");
+        if(null!=ud) {
+            // same data object
+            st.glUniform(gl, ud);
+        } 
+
+        st.glUseProgram(gl, false);
     }
 
     public void display(GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        gl.glUseProgram(shaderProgram);
+        st.glUseProgram(gl, true);
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
@@ -281,15 +208,16 @@ public class RedSquare implements MouseListener, GLEventListener {
         pmvMatrix.glRotatef(ang, 0, 0, 1);
         pmvMatrix.glRotatef(ang, 0, 1, 0);
 
-        if(0<=shaderPMVMatrix) {
-            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMvMatrixf());
-        }
+        GLUniformData ud = st.getUniform("mgl_PMVMatrix");
+        if(null!=ud) {
+            // same data object
+            st.glUniform(gl, ud);
+        } 
 
         // Draw a square
         gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
 
-        gl.glUseProgram(0);
-
+        st.glUseProgram(gl, false);
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
