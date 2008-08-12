@@ -177,8 +177,8 @@ public abstract class DemoApplication
 		gl.glClearColor(0.7f, 0.7f, 0.7f, 0f);
 
         // JAU
-		// gl.glEnable(gl.GL_CULL_FACE);
-		// gl.glCullFace(gl.GL_BACK);
+		gl.glEnable(gl.GL_CULL_FACE);
+		gl.glCullFace(gl.GL_BACK);
 	}
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -837,7 +837,7 @@ public abstract class DemoApplication
 		gl.glMatrixMode(gl.GL_PROJECTION);
 		// save previous matrix which contains the 
 		//settings for the perspective projection
-		gl.glPushMatrix();
+		// gl.glPushMatrix();
 		// reset matrix
 		gl.glLoadIdentity();
 		// set a 2D orthographic projection

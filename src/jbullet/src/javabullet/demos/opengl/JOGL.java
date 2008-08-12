@@ -40,9 +40,9 @@ public class JOGL implements MouseListener {
     public boolean quit = false;
 
     public void mouseClicked(MouseEvent e) {
-        if(e.getClickCount()>1) {
+        //if(e.getClickCount()>1) {
             quit=true;
-        }
+        //}
     }
     public void mouseEntered(MouseEvent e) {
     }

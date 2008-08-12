@@ -178,7 +178,6 @@ public class GLShapeDrawer {
 
 							glsrt.drawCylinder(gl, radius,halfHeight,upAxis);
 
-							gl.glPushMatrix();
 							gl.glTranslatef(0f, -halfHeight, 0f);
 							//glutSolidSphere(radius,10,10);
 							//sphere.draw(radius, 10, 10);
@@ -187,7 +186,6 @@ public class GLShapeDrawer {
 							//glutSolidSphere(radius,10,10);
 							//sphere.draw(radius, 10, 10);
 							glsrt.drawSphere(gl, radius, 10, 10);
-							gl.glPopMatrix();
 							useWireframeFallback = false;
 							break;
 						}

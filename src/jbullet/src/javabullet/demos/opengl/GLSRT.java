@@ -44,6 +44,10 @@ public class GLSRT {
     public static final boolean VBO_CACHE = true; // JAU
     // public static final boolean VBO_CACHE = false;
 
+    /*static {
+        ImmModeSink.setVBOUsage(false);
+    }*/
+
 	private GLU    glu;
 	// private GLFont font;
 
