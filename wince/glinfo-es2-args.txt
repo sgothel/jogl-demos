@@ -1,0 +1,2 @@
+"-Dsun.boot.library.path=\Storage Card\bin" "-Xbootclasspath/a:\Storage Card\gluegen-rt.jar" "-Xbootclasspath/a:\Storage Card\jogl.core.jar" "-Xbootclasspath/a:\Storage Card\jogl.egl.jar" "-Xbootclasspath/a:\Storage Card\jogl.gles2.jar" "-Xbootclasspath/a:\Storage Card\jogl.fixed.jar""-Xbootclasspath/a:\Storage Card\newt.jar" "-Xbootclasspath/a:\Storage Card\jogl-demos.jar" "-Xopt:stdioPrefix=\Storage Card" -Dgluegen.debug.ProcAddressHelper demos.GLInfo
+
