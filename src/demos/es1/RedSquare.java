@@ -12,8 +12,6 @@ public class RedSquare implements MouseListener, GLEventListener {
     private GLWindow window;
     private GLU glu;
     private boolean quit = false;
-    private long startTime;
-    private long curTime;
 
     public void mouseClicked(MouseEvent e) {
         System.out.println("mouseevent: "+e);
@@ -65,13 +63,13 @@ public class RedSquare implements MouseListener, GLEventListener {
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
 
+            window.enablePerfLog(true);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);
             window.setVisible(true);
 
-            startTime = System.currentTimeMillis();
-            while (!quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
+            while (!quit && window.getDuration() < 20000) {
                 window.display();
             }
 
@@ -150,7 +148,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
         gl.glTranslatef(0, 0, -10);
-        float ang = ((float) (curTime - startTime) * 360.0f) / 4000.0f;
+        float ang = ((float) window.getDuration() * 360.0f) / 4000.0f;
         gl.glRotatef(ang, 0, 0, 1);
         gl.glRotatef(ang, 0, 1, 0);
 

@@ -147,7 +147,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         vertShader.put(tmpI);
         vertShader.flip();
 
-        gl.glShaderBinaryOrSource(vertShader, 0, null, vertShaderSource);
+        gl.glShaderSource(vertShader, vertShaderSource);
         gl.glCompileShader(vertShader.get(0));
         if ( ! gl.glIsShaderStatusValid(vertShader.get(0), gl.GL_COMPILE_STATUS) ) {
                 System.err.println("Failed to compile vertex shader: id "+vertShader.get(0)+
@@ -160,7 +160,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         fragShader.put(tmpI);
         fragShader.flip();
 
-        gl.glShaderBinaryOrSource(fragShader, 0, null, fragShaderSource);
+        gl.glShaderSource(fragShader, fragShaderSource);
 
         gl.glCompileShader(fragShader.get(0));
 
@@ -196,7 +196,7 @@ public class RedSquare implements MouseListener, GLEventListener {
 
         shaderPMVMatrix = gl.glGetUniformLocation(shaderProgram, "mgl_PMVMatrix");
         if(0<=shaderPMVMatrix) {
-            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMVMatrixf());
+            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMvMatrixf());
         } else {
             System.err.println("could not get uniform mgl_PMVMatrix: "+shaderPMVMatrix);
             return;
@@ -262,7 +262,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         //pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
 
         if(0<=shaderPMVMatrix) {
-            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMVMatrixf());
+            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMvMatrixf());
         }
     }
 
@@ -282,7 +282,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         pmvMatrix.glRotatef(ang, 0, 1, 0);
 
         if(0<=shaderPMVMatrix) {
-            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMVMatrixf());
+            gl.glUniformMatrix4fv(shaderPMVMatrix, 2, false, pmvMatrix.glGetPMvMatrixf());
         }
 
         // Draw a square

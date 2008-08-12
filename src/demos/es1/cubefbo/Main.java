@@ -58,6 +58,7 @@ public class Main implements MouseListener {
 
             window.addMouseListener(this);
 
+            window.enablePerfLog(true);
             window.setSize(width, height);
             window.setFullscreen(true);
             window.setVisible(true);
@@ -66,25 +67,9 @@ public class Main implements MouseListener {
             FBCubes cubes = new FBCubes();
             window.addGLEventListener(cubes);
 
-            long startTime = System.currentTimeMillis();
-            long lastTime = startTime, curTime = 0, dt0, dt1;
-            int totalFrames = 0, lastFrames = 0;
-
-            do {
+            while ( !quit && window.getDuration() < 215000) {
                 window.display();
-
-                totalFrames++; lastFrames++;
-                curTime = System.currentTimeMillis();
-                dt0 = curTime-lastTime;
-                if ( (curTime-lastTime) > 5000 ) {
-                    dt1 = curTime-startTime;
-                    System.out.println(dt1/1000+"s, 5s: "+ (lastFrames*1000)/dt0 + " fps, "+
-                                       "total: "+ (totalFrames*1000)/dt1 + " fps");
-                    lastTime=curTime;
-                    lastFrames=0;
-                }
-
-            } while (!quit && (curTime - startTime) < 215000);
+            }
 
             // Shut things down cooperatively
             window.close();

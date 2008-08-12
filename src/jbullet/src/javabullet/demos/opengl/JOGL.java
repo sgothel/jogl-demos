@@ -90,6 +90,7 @@ public class JOGL implements MouseListener {
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
 
+            window.enablePerfLog(true);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);
@@ -97,29 +98,8 @@ public class JOGL implements MouseListener {
             width = window.getWidth();
             height = window.getHeight();
 
-            long startTime = System.currentTimeMillis();
-            long lastTime = startTime, curTime = 0, dt0, dt1;
-            int totalFrames = 0, lastFrames = 0;
-
-            while (!quit) {
+            while (!quit && window.getDuration() < 200000) {
                 window.display();
-
-                totalFrames++; lastFrames++;
-                curTime = System.currentTimeMillis();
-                dt0 = curTime-lastTime;
-                if ( (curTime-lastTime) > 5000 ) {
-                    dt1 = curTime-startTime;
-                    StringBuffer sb = new StringBuffer();
-                    sb.append(dt1/1000);
-                    sb.append("s, 5s: ");
-                    sb.append((lastFrames*1000)/dt0);
-                    sb.append(" fps, total: ");
-                    sb.append((totalFrames*1000)/dt1);
-                    sb.append(" fps");
-                    System.out.println(sb);
-                    lastTime=curTime;
-                    lastFrames=0;
-                }
             }
 
             // Shut things down cooperatively

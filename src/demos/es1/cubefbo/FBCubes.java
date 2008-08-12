@@ -60,9 +60,10 @@ class FBCubes implements GLEventListener {
         }
 
         fbo1.init(gl);
-        //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE);
-        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE);
-        //fbo1.init(gl, GL.GL_RGBA8, GL2.GL_BGRA, GL2.GL_UNSIGNED_INT_8_8_8_8_REV);
+        //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE); // faster
+        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE); // GLES2 default
+        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_SHORT_5_5_5_1); // useless (1bit alpha)
+        //fbo1.init(gl, GL.GL_RGBA8, GL2.GL_BGRA, GL2.GL_UNSIGNED_INT_8_8_8_8_REV); // GL2 default
         cubeInner.init(drawable);
         
         cubeOuter.init(drawable);

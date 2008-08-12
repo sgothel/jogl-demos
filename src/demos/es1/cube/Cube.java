@@ -101,34 +101,36 @@ public class Cube implements GLEventListener {
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glScissor(0, 0, width, height);
+        // JAU gl.glScissor(0, 0, width, height);
         if(innerCube) {
             // Clear background to white
-            gl.glClearColor(1.0f, 1.0f, 1.0f, 0.6f);
+            gl.glClearColor(1.0f, 1.0f, 1.0f, 0.4f);
         } else {
             // Clear background to blue
             gl.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         }
 
         if(!innerCube) {
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, zero_vec4, 0);
-        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, material_spec, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, zero_vec4, 0);
+            gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, material_spec, 0);
 
-        gl.glEnable(gl.GL_LIGHTING);
-        gl.glEnable(gl.GL_LIGHT0);
-        gl.glEnable(gl.GL_COLOR_MATERIAL);
+            gl.glEnable(gl.GL_LIGHTING);
+            gl.glEnable(gl.GL_LIGHT0);
+            gl.glEnable(gl.GL_COLOR_MATERIAL);
         } else {
-        gl.glDisable(gl.GL_LIGHTING);
-        gl.glDisable(gl.GL_LIGHT0);
+            gl.glDisable(gl.GL_LIGHTING);
+            gl.glDisable(gl.GL_LIGHT0);
         }
-        gl.glEnable(gl.GL_NORMALIZE);
         gl.glEnable(gl.GL_CULL_FACE);
+        if(null!=glF) {
+            gl.glEnable(gl.GL_NORMALIZE);
 
-        gl.glShadeModel(gl.GL_SMOOTH);
-        gl.glDisable(gl.GL_DITHER);
+            gl.glShadeModel(gl.GL_SMOOTH);
+            gl.glDisable(gl.GL_DITHER);
+        }
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
         gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
@@ -302,14 +304,13 @@ public class Cube implements GLEventListener {
 
             window.addGLEventListener(this);
 
+            window.enablePerfLog(true);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);
             window.setVisible(true);
 
-            long curTime;
-            long startTime = System.currentTimeMillis();
-            while (((curTime = System.currentTimeMillis()) - startTime) < 20000) {
+            while (window.getDuration() < 20000) {
                 window.display();
             }
 
