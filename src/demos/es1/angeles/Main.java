@@ -70,12 +70,10 @@ public class Main implements MouseListener {
                 System.out.println("Using: AngelesES1 .. ");
                 AngelesES1 angel = new AngelesES1();
                 window.addGLEventListener(angel);
-            } else if(gl.isGL2ES1()) {
-                System.out.println("Using: AngelesGL2ES1 .. ");
-                AngelesGL2ES1 angel = new AngelesGL2ES1();
-                window.addGLEventListener(angel);
             } else {
-                System.out.println("Using: nop .. ");
+                System.out.println("Using: AngelesGL .. ");
+                AngelesGL angel = new AngelesGL();
+                window.addGLEventListener(angel);
             } 
 
             while (!quit && window.getDuration() < 215000) {

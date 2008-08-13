@@ -29,9 +29,9 @@ import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 import java.nio.*;
 
-public class AngelesGL2ES1 implements GLEventListener {
+public class AngelesGL implements GLEventListener {
 
-    public AngelesGL2ES1() {
+    public AngelesGL() {
         quadVertices = BufferUtil.newFloatBuffer(12);
         quadVertices.put(new float[]{
             -1.0f, -1.0f,
@@ -78,11 +78,11 @@ public class AngelesGL2ES1 implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         // FIXME: gl.setSwapInterval(1);
 
-        this.gl = drawable.getGL().getGL2ES1();
+        this.gl = drawable.getGL();
         this.glu = GLU.createGLU();
         if(gl.isGLES2()) {
             gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("AngelesGL2ES1 Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+            System.err.println("AngelesGL Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
         }
         gl.glEnable(GL2ES1.GL_NORMALIZE);
         gl.glEnable(gl.GL_DEPTH_TEST);
@@ -115,7 +115,7 @@ public class AngelesGL2ES1 implements GLEventListener {
         this.x = x;
         this.y = y;
 
-        this.gl = drawable.getGL().getGL2ES1();
+        this.gl = drawable.getGL();
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -143,7 +143,7 @@ public class AngelesGL2ES1 implements GLEventListener {
         if (gAppAlive==0)
             return;
 
-        this.gl = drawable.getGL().getGL2ES1();
+        this.gl = drawable.getGL();
 
         // Actual tick value is "blurred" a little bit.
         sTick = (sTick + tick - sStartTick) >> 1;
@@ -173,7 +173,7 @@ public class AngelesGL2ES1 implements GLEventListener {
         gl.glPopMatrix();
 
         // Blend the ground plane to the window.
-        drawGroundPlane();
+        drawGroundPlane(); 
 
         // Draw all the models normally.
         drawModels(1);
@@ -183,14 +183,12 @@ public class AngelesGL2ES1 implements GLEventListener {
 
         frames++;
         tick = System.currentTimeMillis();
-        long dT = tick - sStartTick;
-        //        System.out.println(frames+"f, "+dT+"ms "+ (frames*1000)/dT +"fps");
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
- private GL2ES1 gl;
+ private GL gl;
  private GLU glu;
 
  // Total run length is 20 * camera track base unit length (see cams.h).
@@ -223,50 +221,41 @@ public class GLObject {
      * components per color with gl.GL_UNSIGNED_BYTE datatype and stride 0.
      * Normal array is supposed to use gl.GL_FLOAT datatype and stride 0.
      */
-    FloatBuffer vertexArray;
-    ByteBuffer colorArray;
-    FloatBuffer normalArray;
-    int vertexComponents;
-    int count;
-    int vbo[];
+    private GLArrayDataServer vertexArray;
+    private GLArrayDataServer colorArray;
+    private GLArrayDataServer normalArray;
+    private int count;
     
     public GLObject(int vertices, int vertexComponents,
                     boolean useNormalArray) {
-        this.count = vertices;
-        this.vertexComponents = vertexComponents;
-        this.vertexArray = BufferUtil.newFloatBuffer( vertices * vertexComponents );
-        this.colorArray =  BufferUtil.newByteBuffer (vertices * 4 );
-        if (useNormalArray)
-        {
-            this.normalArray = BufferUtil.newFloatBuffer (vertices * 3 );
-        } else {
-            this.normalArray = null;
+        count = vertices;
+        vertexArray = GLArrayDataServer.createFixed(GL.GL_VERTEX_ARRAY, null, vertexComponents, 
+                                                    GL.GL_FLOAT, false, vertices, GL.GL_STATIC_DRAW);
+        colorArray = GLArrayDataServer.createFixed(GL.GL_COLOR_ARRAY, null, 4, 
+                                                    GL.GL_FLOAT, false, vertices, GL.GL_STATIC_DRAW);
+        if(useNormalArray) {
+            normalArray = GLArrayDataServer.createFixed(GL.GL_NORMAL_ARRAY, null, 3, 
+                                                        GL.GL_FLOAT, false, vertices, GL.GL_STATIC_DRAW);
         }
     }
 
+    void setCount(int c) { count = c; }
+
+    FloatBuffer vertexArray() { return (FloatBuffer)vertexArray.getBuffer(); }
+    FloatBuffer colorArray()  { return (FloatBuffer) colorArray.getBuffer(); }
+    FloatBuffer normalArray() { return (normalArray!=null)?(FloatBuffer)normalArray.getBuffer():null; }
+
     void seal()
     {
-        flip();
-        vbo = new int[3];
-        gl.glGenBuffers(3, vbo, 0);
+        vertexArray().position( count * vertexArray.getComponentNumber() );
+        vertexArray.seal(gl, true);
 
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
-        if(null==vertexArray) {
-            throw new RuntimeException("vertexArray is null");
-        }
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexArray.capacity() * BufferUtil.SIZEOF_FLOAT, vertexArray, GL.GL_STATIC_DRAW);
-        gl.glVertexPointer(vertexComponents, gl.GL_FLOAT, 0, 0);
+        colorArray().position( count * colorArray.getComponentNumber() );
+        colorArray.seal(gl, true);
 
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, colorArray.capacity() * BufferUtil.SIZEOF_BYTE, colorArray, GL.GL_STATIC_DRAW);
-        gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, 0);
-
-        if (null!=normalArray)
-        {
-            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * BufferUtil.SIZEOF_FLOAT, normalArray, GL.GL_STATIC_DRAW);
-            gl.glNormalPointer(gl.GL_FLOAT, 0, 0);
+        if(null!=normalArray) {
+            normalArray().position( count * normalArray.getComponentNumber() );
+            normalArray.seal(gl, true);
         } else {
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
         }
@@ -274,34 +263,20 @@ public class GLObject {
 
     void draw()
     {
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
-        gl.glVertexPointer(vertexComponents, gl.GL_FLOAT, 0, 0);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
-        gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, 0);
-
-        if (null!=normalArray)
-        {
-            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
-            gl.glNormalPointer(gl.GL_FLOAT, 0, 0);
-        }
-        else
+        vertexArray.enableBuffer(gl, true);
+        colorArray.enableBuffer(gl, true);
+        if(null!=normalArray) {
+            normalArray.enableBuffer(gl, true);
+        } else {
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
-        gl.glDrawArrays(gl.GL_TRIANGLES, 0, count);
-    }
-
-    void rewind() {
-        vertexArray.rewind();
-        colorArray.rewind();
-        if (normalArray != null) {
-            normalArray.rewind();
         }
-    }
-    void flip() {
-        vertexArray.flip();
-        colorArray.flip();
-        if (normalArray != null) {
-            normalArray.flip();
+
+        gl.glDrawArrays(gl.GL_TRIANGLES, 0, vertexArray.getElementNumber());
+
+        vertexArray.enableBuffer(gl, false);
+        colorArray.enableBuffer(gl, false);
+        if(null!=normalArray) {
+            normalArray.enableBuffer(gl, false);
         }
     }
 }
@@ -454,52 +429,55 @@ GLObject createSuperShape(final float params[])
 
                 ca = pa.z + 0.5f;
 
-                for (i = currentVertex * 3;
-                     i < (currentVertex + 6) * 3;
-                     i += 3)
-                {
-                    result.normalArray.put(i    , (n.x));
-                    result.normalArray.put(i + 1, (n.y));
-                    result.normalArray.put(i + 2, (n.z));
+                if(result.normalArray()!=null) {
+                    for (i = currentVertex * 3;
+                         i < (currentVertex + 6) * 3;
+                         i += 3)
+                    {
+                        result.normalArray().put(i    , (n.x));
+                        result.normalArray().put(i + 1, (n.y));
+                        result.normalArray().put(i + 2, (n.z));
+                    }
                 }
                 for (i = currentVertex * 4;
                      i < (currentVertex + 6) * 4;
                      i += 4)
                 {
-                    int j, color[] = new int[3];
+                    int j;
+                    float color[] = new float[3];
                     for (j = 0; j < 3; ++j)
                     {
-                        color[j] = (int)(ca * baseColor[j] * 255);
-                        if (color[j] > 255) color[j] = 255;
+                        color[j] = ca * baseColor[j];
+                        if (color[j] > 1.0f) color[j] = 1.0f;
                     }
-                    result.colorArray.put(i    , (byte)color[0]);
-                    result.colorArray.put(i + 1, (byte)color[1]);
-                    result.colorArray.put(i + 2, (byte)color[2]);
-                    result.colorArray.put(i + 3, (byte)0);
+                    result.colorArray().put(i    , color[0]);
+                    result.colorArray().put(i + 1, color[1]);
+                    result.colorArray().put(i + 2, color[2]);
+                    result.colorArray().put(i + 3, 0f);
                 }
-                result.vertexArray.put(currentVertex * 3, (pa.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pa.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pa.z));
+                result.vertexArray().put(currentVertex * 3, (pa.x));
+                result.vertexArray().put(currentVertex * 3 + 1, (pa.y));
+                result.vertexArray().put(currentVertex * 3 + 2, (pa.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pb.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pb.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pb.z));
+                result.vertexArray().put(currentVertex * 3, (pb.x));
+                result.vertexArray().put(currentVertex * 3 + 1, (pb.y));
+                result.vertexArray().put(currentVertex * 3 + 2, (pb.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pd.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pd.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pd.z));
+                result.vertexArray().put(currentVertex * 3, (pd.x));
+                result.vertexArray().put(currentVertex * 3 + 1, (pd.y));
+                result.vertexArray().put(currentVertex * 3 + 2, (pd.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pb.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pb.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pb.z));
+                result.vertexArray().put(currentVertex * 3, (pb.x));
+                result.vertexArray().put(currentVertex * 3 + 1, (pb.y));
+                result.vertexArray().put(currentVertex * 3 + 2, (pb.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pc.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pc.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pc.z));
+                result.vertexArray().put(currentVertex * 3, (pc.x));
+                result.vertexArray().put(currentVertex * 3 + 1, (pc.y));
+                result.vertexArray().put(currentVertex * 3 + 2, (pc.z));
                 ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pd.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pd.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pd.z));
+                result.vertexArray().put(currentVertex * 3, (pd.x));
+                result.vertexArray().put(currentVertex * 3 + 1, (pd.y));
+                result.vertexArray().put(currentVertex * 3 + 2, (pd.z));
                 ++currentVertex;
             } // r0 && r1 && r2 && r3
             ++currentQuad;
@@ -507,7 +485,7 @@ GLObject createSuperShape(final float params[])
     } // longitude
 
     // Set number of vertices in object to the actual amount created.
-    result.count = currentVertex;
+    result.setCount(currentVertex);
     result.seal();
     return result;
 }
@@ -535,15 +513,15 @@ GLObject createGroundPlane()
     {
         for (x = xBegin; x < xEnd; ++x)
         {
-            byte color;
+            float color;
             int i, a;
-            color = (byte)((randomUInt() & 0x5f) + 81);  // 101 1111
+            color = ((float)((randomUInt() & 0x5f) + 81))/255.0f;  // 101 1111
             for (i = currentVertex * 4; i < (currentVertex + 6) * 4; i += 4)
             {
-                result.colorArray.put(i, color);
-                result.colorArray.put(i + 1, color);
-                result.colorArray.put(i + 2, color);
-                result.colorArray.put(i + 3, (byte)0);
+                result.colorArray().put(i, color);
+                result.colorArray().put(i + 1, color);
+                result.colorArray().put(i + 2, color);
+                result.colorArray().put(i + 3, 0);
             }
 
             // Axis bits for quad triangles:
@@ -554,8 +532,8 @@ GLObject createGroundPlane()
                 final int xm = x + ((0x1c >> a) & 1);
                 final int ym = y + ((0x31 >> a) & 1);
                 final float m = (float)(Math.cos(xm * 2) * Math.sin(ym * 4) * 0.75f);
-                result.vertexArray.put(currentVertex * 2, (xm * scale + m));
-                result.vertexArray.put(currentVertex * 2 + 1, (ym * scale + m));
+                result.vertexArray().put(currentVertex * 2, (xm * scale + m));
+                result.vertexArray().put(currentVertex * 2 + 1, (ym * scale + m));
                 ++currentVertex;
             }
             ++currentQuad;

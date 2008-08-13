@@ -78,6 +78,7 @@ public class CubeImmModeSink implements GLEventListener {
         if(null!=vboCubeF) {
             vboCubeF.draw(gl, cubeIndices, true);
         }
+        System.err.println("VBO Cube fin");
     }
 
     private GLUquadric sphere=null;
@@ -160,6 +161,7 @@ public class CubeImmModeSink implements GLEventListener {
 
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
+
         glu = GLU.createGLU();
         if(gl.isGLES2()) {
             gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
@@ -173,6 +175,16 @@ public class CubeImmModeSink implements GLEventListener {
             System.err.println("GL_EXTENSIONS:");
             System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
         }
+
+        gl.glGetError(); // flush error ..
+
+        // Debug ..
+        // DebugGL2 gl2dbg = new DebugGL2(gl.getGL2());
+        // gl.getContext().setGL(gl2dbg);
+
+        // Trace ..
+        // TraceGL2 gl2trace = new TraceGL2(gl.getGL2(), System.err);
+        // gl.getContext().setGL(gl2trace);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -252,11 +264,13 @@ public class CubeImmModeSink implements GLEventListener {
         }
 
         if(true) {
+            gl.glDisable(GL.GL_LIGHTING);
             gl.glColor4f(0f, 1f, 0f, 1f);
             gl.glPushMatrix();
             gl.glTranslatef(15.0f, 0.0f, 0.0f);
             drawSphere(gl, 5.0f, 10, 10);
             gl.glPopMatrix();
+            gl.glEnable(GL.GL_LIGHTING);
         }
 
         if(true) {
