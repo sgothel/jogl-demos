@@ -185,6 +185,7 @@ public class Cube implements GLEventListener {
 
         gl.glDrawElements(gl.GL_TRIANGLES, 6 * 6, gl.GL_UNSIGNED_BYTE, cubeIndices);
         // gl.glFinish();
+        // System.err.println(gl);
 
         time += 0.01f;
     }

@@ -31,7 +31,8 @@ import java.nio.*;
 
 public class AngelesGL implements GLEventListener {
 
-    public AngelesGL() {
+    public AngelesGL(boolean enableBlending) {
+        blendingEnabled = enableBlending;
         quadVertices = BufferUtil.newFloatBuffer(12);
         quadVertices.put(new float[]{
             -1.0f, -1.0f,
@@ -87,6 +88,7 @@ public class AngelesGL implements GLEventListener {
         gl.glEnable(GL2ES1.GL_NORMALIZE);
         gl.glEnable(gl.GL_DEPTH_TEST);
         gl.glDisable(gl.GL_CULL_FACE);
+        gl.glCullFace(GL.GL_BACK);
         gl.glShadeModel(gl.GL_FLAT);
 
         gl.glEnable(gl.GL_LIGHTING);
@@ -107,6 +109,22 @@ public class AngelesGL implements GLEventListener {
 
         sStartTick = System.currentTimeMillis();
         frames=0;
+
+        /*
+        gl.glGetError(); // flush error ..
+        if(gl.isGLES2()) {
+            GLES2 gles2 = gl.getGLES2();
+
+            // Debug ..
+            //DebugGLES2 gldbg = new DebugGLES2(gles2);
+            //gles2.getContext().setGL(gldbg);
+            //gles2 = gldbg;
+
+            // Trace ..
+            TraceGLES2 gltrace = new TraceGLES2(gles2, System.err);
+            gles2.getContext().setGL(gltrace);
+            gles2 = gltrace;
+        } */
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -122,9 +140,7 @@ public class AngelesGL implements GLEventListener {
 
         gl.glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
-        gl.glCullFace(GL.GL_FRONT);
-
-        gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+        // JAU gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
         //gl.glShadeModel(GL.GL_SMOOTH);
         gl.glShadeModel(gl.GL_FLAT);
@@ -134,7 +150,7 @@ public class AngelesGL implements GLEventListener {
         //gl.glLoadIdentity();
         //glu.gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
 
-        System.out.println("reshape ..");
+        //System.out.println("reshape ..");
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -167,19 +183,28 @@ public class AngelesGL implements GLEventListener {
         // Configure environment.
         configureLightAndMaterial();
 
-        // Draw the reflection by drawing models with negated Z-axis.
-        gl.glPushMatrix();
-        drawModels(-1);
-        gl.glPopMatrix();
+        if(blendingEnabled) {
+            gl.glEnable(gl.GL_CULL_FACE);
+            // Draw the reflection by drawing models with negated Z-axis.
+            gl.glPushMatrix();
+            drawModels(-1);
+            gl.glPopMatrix();
+        }
 
-        // Blend the ground plane to the window.
+        // Draw the ground plane to the window. (opt. blending)
         drawGroundPlane(); 
+
+        if(blendingEnabled) {
+            gl.glDisable(gl.GL_CULL_FACE);
+        }
 
         // Draw all the models normally.
         drawModels(1);
 
-        // Draw fade quad over whole window (when changing cameras).
-        drawFadeQuad();
+        if(blendingEnabled) {
+            // Draw fade quad over whole window (when changing cameras).
+            drawFadeQuad();
+        }
 
         frames++;
         tick = System.currentTimeMillis();
@@ -188,6 +213,7 @@ public class AngelesGL implements GLEventListener {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
+ private boolean blendingEnabled = true;
  private GL gl;
  private GLU glu;
 
@@ -231,8 +257,10 @@ public class GLObject {
         count = vertices;
         vertexArray = GLArrayDataServer.createFixed(GL.GL_VERTEX_ARRAY, null, vertexComponents, 
                                                     GL.GL_FLOAT, false, vertices, GL.GL_STATIC_DRAW);
+        vertexArray.setEnableAlways(true);
         colorArray = GLArrayDataServer.createFixed(GL.GL_COLOR_ARRAY, null, 4, 
                                                     GL.GL_FLOAT, false, vertices, GL.GL_STATIC_DRAW);
+        colorArray.setEnableAlways(true);
         if(useNormalArray) {
             normalArray = GLArrayDataServer.createFixed(GL.GL_NORMAL_ARRAY, null, 3, 
                                                         GL.GL_FLOAT, false, vertices, GL.GL_STATIC_DRAW);
@@ -256,8 +284,7 @@ public class GLObject {
         if(null!=normalArray) {
             normalArray().position( count * normalArray.getComponentNumber() );
             normalArray.seal(gl, true);
-        } else {
-            gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
+            normalArray.enableBuffer(gl, false);
         }
     }
 
@@ -273,11 +300,11 @@ public class GLObject {
 
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, vertexArray.getElementNumber());
 
-        vertexArray.enableBuffer(gl, false);
-        colorArray.enableBuffer(gl, false);
+        // System.out.println(gl);
+
         if(null!=normalArray) {
             normalArray.enableBuffer(gl, false);
-        }
+        } 
     }
 }
 
@@ -501,8 +528,9 @@ GLObject createGroundPlane()
     GLObject result;
     int x, y;
     int currentVertex, currentQuad;
+    final int vcomps = 2;
 
-    result = new GLObject(vertices, 2, false);
+    result = new GLObject(vertices, vcomps, false);
     if (result == null)
         return null;
 
@@ -515,7 +543,7 @@ GLObject createGroundPlane()
         {
             float color;
             int i, a;
-            color = ((float)((randomUInt() & 0x5f) + 81))/255.0f;  // 101 1111
+            color = ((float)(randomUInt() % 255))/255.0f;
             for (i = currentVertex * 4; i < (currentVertex + 6) * 4; i += 4)
             {
                 result.colorArray().put(i, color);
@@ -532,8 +560,11 @@ GLObject createGroundPlane()
                 final int xm = x + ((0x1c >> a) & 1);
                 final int ym = y + ((0x31 >> a) & 1);
                 final float m = (float)(Math.cos(xm * 2) * Math.sin(ym * 4) * 0.75f);
-                result.vertexArray().put(currentVertex * 2, (xm * scale + m));
-                result.vertexArray().put(currentVertex * 2 + 1, (ym * scale + m));
+                result.vertexArray().put(currentVertex * vcomps, (xm * scale + m));
+                result.vertexArray().put(currentVertex * vcomps + 1, (ym * scale + m));
+                if(2<vcomps) {
+                    result.vertexArray().put(currentVertex * vcomps + 2, 0f);
+                }
                 ++currentVertex;
             }
             ++currentQuad;
@@ -546,17 +577,20 @@ GLObject createGroundPlane()
 
 void drawGroundPlane()
 {
-    gl.glDisable(gl.GL_CULL_FACE);
-    gl.glDisable(gl.GL_DEPTH_TEST);
-    gl.glEnable(gl.GL_BLEND);
-    gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
     gl.glDisable(gl.GL_LIGHTING);
+    gl.glDisable(gl.GL_DEPTH_TEST);
+    if(blendingEnabled) {
+        gl.glEnable(gl.GL_BLEND);
+        gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
+    }
 
     sGroundPlane.draw();
 
-    gl.glEnable(gl.GL_LIGHTING);
-    gl.glDisable(gl.GL_BLEND);
+    if(blendingEnabled) {
+        gl.glDisable(gl.GL_BLEND);
+    }
     gl.glEnable(gl.GL_DEPTH_TEST);
+    gl.glEnable(gl.GL_LIGHTING);
 }
 
 void drawFadeQuad()
@@ -584,10 +618,10 @@ void drawFadeQuad()
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
         gl.glDisableClientState(gl.GL_COLOR_ARRAY);
         gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
+        gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
         gl.glVertexPointer(2, gl.GL_FLOAT, 0, quadVertices);
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, 6);
-
-        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+        gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
 

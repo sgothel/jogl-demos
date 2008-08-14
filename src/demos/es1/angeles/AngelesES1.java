@@ -31,7 +31,8 @@ import java.nio.*;
 
 public class AngelesES1 implements GLEventListener {
 
-    public AngelesES1() {
+    public AngelesES1(boolean enableBlending) {
+        blendingEnabled = enableBlending;
         quadVertices = BufferUtil.newIntBuffer(12);
         quadVertices.put(new int[]{
             -0x10000, -0x10000,
@@ -165,19 +166,23 @@ public class AngelesES1 implements GLEventListener {
         // Configure environment.
         configureLightAndMaterial();
 
-        // Draw the reflection by drawing models with negated Z-axis.
-        gl.glPushMatrix();
-        drawModels(-1);
-        gl.glPopMatrix();
+        if(blendingEnabled) {
+            // Draw the reflection by drawing models with negated Z-axis.
+            gl.glPushMatrix();
+            drawModels(-1);
+            gl.glPopMatrix();
+        }
 
-        // Blend the ground plane to the window.
+        // Draw the ground plane to the window. (opt. blending)
         drawGroundPlane();
 
         // Draw all the models normally.
         drawModels(1);
 
-        // Draw fade quad over whole window (when changing cameras).
-        drawFadeQuad();
+        if(blendingEnabled) {
+            // Draw fade quad over whole window (when changing cameras).
+            drawFadeQuad();
+        }
 
         frames++;
         tick = System.currentTimeMillis();
@@ -188,6 +193,7 @@ public class AngelesES1 implements GLEventListener {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
+ private boolean blendingEnabled = true;
  private GLES1 gl;
  private GLU glu;
 
@@ -563,17 +569,20 @@ GLObject createGroundPlane()
 
 void drawGroundPlane()
 {
-    gl.glDisable(gl.GL_CULL_FACE);
-    gl.glDisable(gl.GL_DEPTH_TEST);
-    gl.glEnable(gl.GL_BLEND);
-    gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
     gl.glDisable(gl.GL_LIGHTING);
+    gl.glDisable(gl.GL_DEPTH_TEST);
+    if(blendingEnabled) {
+        gl.glEnable(gl.GL_BLEND);
+        gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
+    }
 
     sGroundPlane.draw();
 
-    gl.glEnable(gl.GL_LIGHTING);
-    gl.glDisable(gl.GL_BLEND);
+    if(blendingEnabled) {
+        gl.glDisable(gl.GL_BLEND);
+    }
     gl.glEnable(gl.GL_DEPTH_TEST);
+    gl.glEnable(gl.GL_LIGHTING);
 }
 
 void drawFadeQuad()

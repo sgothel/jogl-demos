@@ -10,17 +10,7 @@ public class Main implements MouseListener {
     public GLWindow window = null;
 
     public void mouseClicked(MouseEvent e) {
-        //System.out.println(e);
-        switch(e.getClickCount()) {
-            case 1:
-                if(null!=window) {
-                    window.setFullscreen(!window.isFullscreen());
-                }
-                break;
-            default: 
-                quit=true;
-                break;
-        }
+        quit=true;
     }
     public void mouseEntered(MouseEvent e) {
     }
@@ -55,6 +45,12 @@ public class Main implements MouseListener {
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
+            /*
+            caps.setRedBits(8);
+            caps.setGreenBits(8);
+            caps.setBlueBits(8);
+            caps.setAlphaBits(8);
+            */
             caps.setDepthBits(16);
             window = GLWindow.create(nWindow, caps);
 
@@ -68,11 +64,11 @@ public class Main implements MouseListener {
             GL gl = window.getGL();
             if(gl.isGLES1() && 0==(type&USE_ANGELESF)) {
                 System.out.println("Using: AngelesES1 .. ");
-                AngelesES1 angel = new AngelesES1();
+                AngelesES1 angel = new AngelesES1( 0 == (type&USE_NOBLEND) );
                 window.addGLEventListener(angel);
             } else {
                 System.out.println("Using: AngelesGL .. ");
-                AngelesGL angel = new AngelesGL();
+                AngelesGL angel = new AngelesGL( 0 == (type&USE_NOBLEND) );
                 window.addGLEventListener(angel);
             } 
 
@@ -92,15 +88,17 @@ public class Main implements MouseListener {
     public static int USE_NEWT      = 0;
     public static int USE_AWT       = 1 << 0;
     public static int USE_ANGELESF  = 1 << 1;
+    public static int USE_NOBLEND   = 1 << 2;
 
     public static void main(String[] args) {
         int type = USE_NEWT ;
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
-            }
-            if(args[i].equals("-angelesf")) {
+            } else if(args[i].equals("-angelesf")) {
                 type |= USE_ANGELESF; 
+            } else if(args[i].equals("-noblend")) {
+                type |= USE_NOBLEND; 
             }
         }
         new Main().run(type);
