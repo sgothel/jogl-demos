@@ -112,10 +112,21 @@ public abstract class DemoApplication
 	protected GLU    glu=null;
 	protected GLSRT  glsrt=null;
 
-	public DemoApplication() {
+	protected boolean useLight0 = true;
+	protected boolean useLight1 = true;
+
+	public DemoApplication(String[] args) {
         // debugMode |= DebugDrawModes.DRAW_WIREFRAME;
         debugMode |= DebugDrawModes.NO_HELP_TEXT;
         //debugMode |= DebugDrawModes.DISABLE_BULLET_LCP;
+
+        for(int i=args.length-1; i>=0; i--) {
+            if(args[i].equals("-nolight0")) {
+                useLight0=false;
+            } else if(args[i].equals("-nolight1")) {
+                useLight1=false;
+            }
+        }
 	}
 	
 	public abstract void initPhysics() throws Exception;
@@ -155,19 +166,29 @@ public abstract class DemoApplication
         System.err.println(gl.glGetString(gl.GL_EXTENSIONS));
 
         glsrt = new GLSRT(glu, gl);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, light_specular, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position0, 0);
+        if(useLight0) {
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_ambient, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, light_specular, 0);
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light_position0, 0);
+        }
 
-        gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, light_ambient, 0);
-        gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse, 0);
-        gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, light_specular, 0);
-        gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light_position1, 0);
+        if(useLight1) {
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, light_ambient, 0);
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse, 0);
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, light_specular, 0);
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light_position1, 0);
+        }
 
-        gl.glEnable(gl.GL_LIGHTING);
-        gl.glEnable(gl.GL_LIGHT0);
-        gl.glEnable(gl.GL_LIGHT1);
+        if(useLight0 || useLight1) {
+            gl.glEnable(gl.GL_LIGHTING);
+        }
+        if(useLight0) {
+            gl.glEnable(gl.GL_LIGHT0);
+        }
+        if(useLight1) {
+            gl.glEnable(gl.GL_LIGHT1);
+        }
 
         gl.glShadeModel(gl.GL_SMOOTH);
 
@@ -936,7 +957,7 @@ public abstract class DemoApplication
 			float yStart = 20f;
 			float yIncr = 20f;
 
-			gl.glDisable(gl.GL_LIGHTING);
+			// gl.glDisable(gl.GL_LIGHTING);
 			// JAU gl.glColor4f(0f, 0f, 0f, 0f);
 
 /*
@@ -1095,7 +1116,7 @@ public abstract class DemoApplication
 				resetPerspectiveProjection();
 			} */
 
-			gl.glEnable(gl.GL_LIGHTING);
+			// gl.glEnable(gl.GL_LIGHTING);
 		}
 	}
 	

@@ -52,8 +52,8 @@ public class GenericJointDemo extends DemoApplication {
 
 	private List<RagDoll> ragdolls = new ArrayList<RagDoll>();
 
-	public GenericJointDemo() {
-		super();
+	public GenericJointDemo(String[] args) {
+		super(args);
 	}
 
 	public void initPhysics() {
@@ -113,7 +113,7 @@ public class GenericJointDemo extends DemoApplication {
 	}
 
 	public static void main(String[] args) {
-		GenericJointDemo demoApp = new GenericJointDemo();
+		GenericJointDemo demoApp = new GenericJointDemo(args);
 		demoApp.initPhysics();
 		demoApp.setCameraDistance(10f);
 

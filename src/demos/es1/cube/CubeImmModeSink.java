@@ -401,6 +401,7 @@ public class CubeImmModeSink implements GLEventListener {
 
             window.addGLEventListener(this);
 
+            window.enablePerfLog(true);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);
