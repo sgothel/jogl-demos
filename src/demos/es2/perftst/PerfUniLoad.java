@@ -8,6 +8,8 @@ import javax.media.opengl.glsl.*;
 import com.sun.javafx.newt.*;
 
 public class PerfUniLoad extends PerfModule {
+    static final int MAX_ARRAYS = 12;
+    static final int MAX_ARRAY_ELEM = 16;
 
     GLUniformData[] dummyA, dummyB, dummyC;
     final int dataType=GL.GL_FLOAT;
@@ -26,12 +28,12 @@ public class PerfUniLoad extends PerfModule {
         // Vertices Data setup
         //
 
-        if(numObjs>16) {
-            throw new GLException("numObjs must be within 0..16");
+        if(numObjs>MAX_ARRAYS) {
+            throw new GLException("numObjs must be within 0.."+MAX_ARRAYS);
         }
 
-        if(numArrayElem>16) {
-            throw new GLException("numArrayElem must be within 0..16");
+        if(numArrayElem>MAX_ARRAY_ELEM) {
+            throw new GLException("numArrayElem must be within 0.."+MAX_ARRAY_ELEM);
         }
 
         st.glUseProgram(gl, true);
@@ -155,7 +157,7 @@ public class PerfUniLoad extends PerfModule {
         st.glUseProgram(gl, false);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(100);
         } catch (Exception e) {}
     }
 
@@ -168,13 +170,18 @@ public class PerfUniLoad extends PerfModule {
         runOneSet(drawable,  8,    1, loops);
         runOneSet(drawable,  1,    8, loops);
 
-        runOneSet(drawable, 16,    1, loops);
+        if(MAX_ARRAYS>8) {
+            runOneSet(drawable, MAX_ARRAYS,         1, loops);
+            runOneSet(drawable, 1,         MAX_ARRAYS, loops);
+        }
         runOneSet(drawable,  1,   16, loops);
 
         runOneSet(drawable,  2,   16, loops);
         runOneSet(drawable,  4,   16, loops);
         runOneSet(drawable,  8,   16, loops);
-        runOneSet(drawable, 16,   16, loops);
+        if(MAX_ARRAYS>8) {
+            runOneSet(drawable, MAX_ARRAYS,   16, loops);
+        }
     }
 
 }

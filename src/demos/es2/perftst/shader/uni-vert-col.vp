@@ -20,10 +20,12 @@ uniform MEDIUMP vec4    mgl_Dummy8[16];
 uniform MEDIUMP vec4    mgl_Dummy9[16];
 uniform MEDIUMP vec4    mgl_Dummy10[16];
 uniform MEDIUMP vec4    mgl_Dummy11[16];
+/*
 uniform MEDIUMP vec4    mgl_Dummy12[16];
 uniform MEDIUMP vec4    mgl_Dummy13[16];
 uniform MEDIUMP vec4    mgl_Dummy14[16];
 uniform MEDIUMP vec4    mgl_Dummy15[16];
+ */
 attribute HIGHP vec4    mgl_Vertex;
 attribute HIGHP vec4    mgl_Color;
 varying   HIGHP vec4    frontColor;
@@ -31,7 +33,7 @@ varying   HIGHP vec4    frontColor;
 void main(void)
 {
   int i;
-  vec4 val;
+  vec4 val=vec4(0);
 
   for(i=0; i<16; i++) {
     val += mgl_Dummy0[i];
@@ -46,10 +48,12 @@ void main(void)
     val += mgl_Dummy9[i];
     val += mgl_Dummy10[i];
     val += mgl_Dummy11[i];
+    /*
     val += mgl_Dummy12[i];
     val += mgl_Dummy13[i];
     val += mgl_Dummy14[i];
     val += mgl_Dummy15[i];
+     */
   }
 
   frontColor=mgl_Color+val;
