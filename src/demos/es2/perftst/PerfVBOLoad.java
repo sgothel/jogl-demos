@@ -86,7 +86,7 @@ public class PerfVBOLoad extends PerfModule {
             for(int j=0; j<numObjs; j++) {
                 if(i==0) {
                     vertices[j].seal(gl, true);
-                } else {
+                } else if(numObjs>1) {
                     vertices[j].enableBuffer(gl, true);
                 }
 
@@ -101,8 +101,14 @@ public class PerfVBOLoad extends PerfModule {
                 t2[i][j] = System.currentTimeMillis();
 
                 gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices[j].getElementNumber());
-                vertices[j].enableBuffer(gl, false);
-                colors[j].enableBuffer(gl, false);
+
+                if(numObjs>1) {
+                    // we need to re-enable the buffer,
+                    // incl. the vertex attribute refresh 
+                    // in case we switch to another buffer
+                    vertices[j].enableBuffer(gl, false);
+                    colors[j].enableBuffer(gl, false);
+                }
 
                 t3[i][j] = System.currentTimeMillis();
             }
