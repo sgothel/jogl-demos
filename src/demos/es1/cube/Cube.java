@@ -77,6 +77,9 @@ public class Cube implements GLEventListener {
             gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
             System.err.println("Cubes Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
         }
+
+        gl.glGenBuffers(4, vboNames, 0);
+
         if(!innerCube) {
             System.err.println("Entering initialization");
             System.err.println("GL Profile: "+GLProfile.getProfile());
@@ -133,13 +136,32 @@ public class Cube implements GLEventListener {
         }
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[0]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.limit() * BufferUtil.SIZEOF_SHORT, cubeVertices, GL.GL_STATIC_DRAW);
+        gl.glVertexPointer(3, gl.GL_SHORT, 0, 0);
+
         gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[1]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeNormals.limit() * BufferUtil.SIZEOF_BYTE, cubeNormals, GL.GL_STATIC_DRAW);
+        gl.glNormalPointer(gl.GL_BYTE, 0, 0);
+
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[2]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeColors.limit() * BufferUtil.SIZEOF_FLOAT, cubeColors, GL.GL_STATIC_DRAW);
+        gl.glColorPointer(4, gl.GL_FLOAT, 0, 0);
+
         if (cubeTexCoords != null) {
             gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[3]);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_SHORT, cubeTexCoords, GL.GL_STATIC_DRAW);
+            gl.glTexCoordPointer(2, gl.GL_SHORT, 0, 0);
+            if(null!=glF) {
+                glF.glTexEnvi(glF.GL_TEXTURE_ENV, glF.GL_TEXTURE_ENV_MODE, glF.GL_INCR);
+            }
         } else {
             gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         }
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
         if(null!=glF) {
             glF.glHint(glF.GL_PERSPECTIVE_CORRECTION_HINT, glF.GL_FASTEST);
@@ -172,17 +194,6 @@ public class Cube implements GLEventListener {
         gl.glRotatef((float)(time * 29.77f), 1.0f, 2.0f, 0.0f);
         gl.glRotatef((float)(time * 22.311f), -0.1f, 0.0f, -5.0f);
 
-        gl.glVertexPointer(3, gl.GL_SHORT, 0, cubeVertices);
-        gl.glColorPointer(4, gl.GL_FLOAT, 0, cubeColors);
-        gl.glNormalPointer(gl.GL_BYTE, 0, cubeNormals);
-        if (cubeTexCoords != null) {
-            gl.glTexCoordPointer(2, gl.GL_SHORT, 0, cubeTexCoords);
-            if(null!=glF) {
-                glF.glTexEnvi(glF.GL_TEXTURE_ENV, glF.GL_TEXTURE_ENV_MODE, glF.GL_INCR);
-            }
-        }
-
-
         gl.glDrawElements(gl.GL_TRIANGLES, 6 * 6, gl.GL_UNSIGNED_BYTE, cubeIndices);
         // gl.glFinish();
         // System.err.println(gl);
@@ -199,6 +210,7 @@ public class Cube implements GLEventListener {
     static final float[] material_spec = { 1.0f, 1.0f, 1.0f, 0.f };
     static final float[] zero_vec4 = { 0.0f, 0.0f, 0.0f, 0.f };
 
+    int[] vboNames = new int[4];
     boolean innerCube;
     boolean initialized = false;
     float time = 0.0f;
@@ -311,7 +323,7 @@ public class Cube implements GLEventListener {
             window.setFullscreen(true);
             window.setVisible(true);
 
-            while (window.getDuration() < 20000) {
+            while (window.getDuration() < 31000) {
                 window.display();
             }
 

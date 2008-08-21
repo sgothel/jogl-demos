@@ -67,7 +67,7 @@ public class Main implements MouseListener {
             FBCubes cubes = new FBCubes();
             window.addGLEventListener(cubes);
 
-            while ( !quit && window.getDuration() < 215000) {
+            while ( !quit && window.getDuration() < 31000) {
                 window.display();
             }
 

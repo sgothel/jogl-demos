@@ -211,7 +211,7 @@
         </javac>
         <copy todir="${classes}">
             <fileset dir="${src}"
-                     includes="demos/es2/shader/**" />
+                     includes="demos/es2/shader/**, demos/es2/perftst/shader/**" />
         </copy>
         <jar destfile="${jogl.demos.jar}">
             <fileset dir="${classes}">

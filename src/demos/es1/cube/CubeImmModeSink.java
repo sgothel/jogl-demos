@@ -43,6 +43,7 @@ public class CubeImmModeSink implements GLEventListener {
         this(false, false);
     }
 
+    private static boolean VBO_CACHE = true;
 
     ByteBuffer cubeIndices=null;
     ImmModeSink vboCubeF = null;
@@ -78,7 +79,6 @@ public class CubeImmModeSink implements GLEventListener {
         if(null!=vboCubeF) {
             vboCubeF.draw(gl, cubeIndices, true);
         }
-        System.err.println("VBO Cube fin");
     }
 
     private GLUquadric sphere=null;
@@ -86,6 +86,7 @@ public class CubeImmModeSink implements GLEventListener {
     public void drawSphere(GL gl, float radius, int slices, int stacks) {
         if(sphere==null) {
             sphere = glu.gluNewQuadric();
+            sphere.enableImmModeSink(true);
             sphere.setImmMode((VBO_CACHE)?false:true);
         }
         ImmModeSink vbo = vboSphere;
@@ -105,12 +106,12 @@ public class CubeImmModeSink implements GLEventListener {
     }
 
 
-    private static boolean VBO_CACHE = true;
     private GLUquadric cylinder=null;
     private ImmModeSink vboCylinder=null;
     public void drawCylinder(GL gl, float radius, float halfHeight, int upAxis) {
         if(cylinder==null) {
             cylinder = glu.gluNewQuadric();
+            cylinder.enableImmModeSink(true);
             cylinder.setImmMode((VBO_CACHE)?false:true);
         }
 
@@ -409,7 +410,7 @@ public class CubeImmModeSink implements GLEventListener {
 
             long curTime;
             long startTime = System.currentTimeMillis();
-            while (((curTime = System.currentTimeMillis()) - startTime) < 20000) {
+            while (((curTime = System.currentTimeMillis()) - startTime) < 31000) {
                 window.display();
             }
 
