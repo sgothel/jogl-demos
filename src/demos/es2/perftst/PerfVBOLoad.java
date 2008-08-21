@@ -65,7 +65,6 @@ public class PerfVBOLoad extends PerfModule {
         //
 
         long dtC, dt, dt2, dt3, dtF, dtS, dtT;
-        long tStart;
         long[] tC = new long[loops];
         long[] t0 = new long[loops];
         long[][] t1 = new long[loops][numObjs];
@@ -76,8 +75,6 @@ public class PerfVBOLoad extends PerfModule {
 
         // Push the 1st uniform down the path 
         st.glUseProgram(gl, true);
-
-        tStart = System.currentTimeMillis();
 
         for(int i=0; i<loops; i++) {
             tC[i] = System.currentTimeMillis();
@@ -119,19 +116,23 @@ public class PerfVBOLoad extends PerfModule {
             tS[i] = System.currentTimeMillis();
         }
 
-        dt = tS[loops-1] - tStart;
         int verticesElements = vertices[0].getElementNumber() * numObjs;
         int verticesBytes    = verticesElements * vertices[0].getComponentSize()* vertices[0].getComponentNumber();
         int colorsElements   = colors[0].getElementNumber()   * colors.length;
         int colorsBytes      = colorsElements * colors[0].getComponentSize()* colors[0].getComponentNumber();
-        System.out.println("");
 
+        dt = 0;
+        for(int i=1; i<loops; i++) {
+            dt += tS[i] - tC[i];
+        }
+
+        System.out.println("");
         System.out.println("Loops "+loops+", objects "+numObjs+", type "+getTypeName(dataType)+
                            ", vertices p.o. "+vertices[0].getElementNumber()+
                            ", colors p.o. "+colors[0].getElementNumber()+
                            ",\n total elements "+(verticesElements+colorsElements)+
                            ", total bytes "+(verticesBytes+colorsBytes)+", total time: "+dt +
-                           "ms, fps: "+((loops*1000)/dt)+
+                           "ms, fps(-1): "+(((loops-1)*1000)/dt)+
                            ",\n col.vert./s: " + ((double)(loops*verticesElements)/((double)dt/1000.0)));
 
         for(int i=0; i<loops; i++) {

@@ -88,15 +88,12 @@ public class PerfUniLoad extends PerfModule {
         //
 
         long dtC, dt, dt2, dt3, dtF, dtS, dtT;
-        long tStart;
         long[] tC = new long[loops];
         long[] t0 = new long[loops];
         long[][] t1 = new long[loops][numObjs];
         long[][] t2 = new long[loops][numObjs];
         long[] tF = new long[loops];
         long[] tS = new long[loops];
-
-        tStart = System.currentTimeMillis();
 
         for(int i=0; i<loops; i++) {
             tC[i] = System.currentTimeMillis();
@@ -124,16 +121,20 @@ public class PerfUniLoad extends PerfModule {
             tS[i] = System.currentTimeMillis();
         }
 
-        dt = tS[loops-1] - tStart;
         int uniElements = numObjs * numArrayElem ;
         int uniBytes    = uniElements * BufferUtil.SIZEOF_FLOAT;
-        System.out.println("");
 
+        dt = 0;
+        for(int i=1; i<loops; i++) {
+            dt += tS[i] - tC[i];
+        }
+
+        System.out.println("");
         System.out.println("Loops "+loops+", uniform arrays "+dummyUni.length+", type FLOAT"+
                            ", uniforms array size "+numArrayElem+
                            ",\n total elements "+uniElements+
                            ", total bytes "+uniBytes+", total time: "+dt +
-                           "ms, fps: "+((loops*1000)/dt)+
+                           "ms, fps(-1): "+(((loops-1)*1000)/dt)+
                            ",\n uni elem/s: " + ((double)(loops*uniElements)/((double)dt/1000.0)));
 
         for(int i=0; i<loops; i++) {
