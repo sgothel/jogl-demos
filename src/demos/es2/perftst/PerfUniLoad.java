@@ -68,7 +68,6 @@ public class PerfUniLoad extends PerfModule {
 
         for(int i=0; i<numObjs; i++) {
             FloatBuffer fb = BufferUtil.newFloatBuffer(4*numArrayElem);
-            dummyUni[i] = new GLUniformData("mgl_Dummy"+i, 4, fb);
 
             for(int j=0; j<numArrayElem; j++) {
                 // Fill them up
@@ -81,6 +80,8 @@ public class PerfUniLoad extends PerfModule {
                 if(y>1f) { x=0f; y=0f; z+=0.01f; }
             }
             fb.flip();
+
+            dummyUni[i] = new GLUniformData("mgl_Dummy"+i, 4, fb);
         }
 
         // 
