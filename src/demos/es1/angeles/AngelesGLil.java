@@ -29,9 +29,9 @@ import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 import java.nio.*;
 
-public class AngelesGL implements GLEventListener {
+public class AngelesGLil implements GLEventListener {
 
-    public AngelesGL(boolean enableBlending) {
+    public AngelesGLil(boolean enableBlending) {
         blendingEnabled = enableBlending;
         quadVertices = BufferUtil.newFloatBuffer(12);
         quadVertices.put(new float[]{
@@ -83,8 +83,9 @@ public class AngelesGL implements GLEventListener {
         this.glu = GLU.createGLU();
         if(gl.isGLES2()) {
             gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("AngelesGL Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+            System.err.println("AngelesGLil Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
         }
+
         cComps = gl.isGLES1() ? 4: 3;
 
         gl.glEnable(GL2ES1.GL_NORMALIZE);
@@ -96,7 +97,7 @@ public class AngelesGL implements GLEventListener {
         gl.glEnable(gl.GL_LIGHTING);
         gl.glEnable(gl.GL_LIGHT0);
         gl.glEnable(gl.GL_LIGHT1);
-        gl.glEnable(gl.GL_LIGHT2); 
+        gl.glEnable(gl.GL_LIGHT2);
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
@@ -126,7 +127,19 @@ public class AngelesGL implements GLEventListener {
             TraceGLES2 gltrace = new TraceGLES2(gles2, System.err);
             gles2.getContext().setGL(gltrace);
             gles2 = gltrace;
-        } */
+        } else if(gl.isGL2()) {
+            GL2 gl2 = gl.getGL2();
+
+            // Debug ..
+            //DebugGL2 gldbg = new DebugGL2(gl2);
+            //gl2.getContext().setGL(gldbg);
+            //gl2 = gldbg;
+
+            // Trace ..
+            TraceGL2 gltrace = new TraceGL2(gl2, System.err);
+            gl2.getContext().setGL(gltrace);
+            gl2 = gltrace;
+        }*/
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -236,6 +249,7 @@ int randomUInt()
     return Math.abs((int) (sRandomSeed >> 16));
 }
 
+
 private int cComps;
 
 // Definition of one GL object in this demo.
@@ -250,63 +264,47 @@ public class GLObject {
      * components per color with gl.GL_UNSIGNED_BYTE datatype and stride 0.
      * Normal array is supposed to use gl.GL_FLOAT datatype and stride 0.
      */
-    private int vboName, count;
-    private int vComps, nComps;
-    private ByteBuffer pBuffer=null;
-    private FloatBuffer vertexArray=null;
-    private FloatBuffer colorArray=null;
-    private FloatBuffer normalArray=null;
+    protected int vboName, count;
+    protected int vComps, nComps;
+    protected ByteBuffer  pBuffer;
+    protected FloatBuffer interlArray;
     protected GLArrayDataWrapper vArrayData, cArrayData, nArrayData=null;
-    
+
     public GLObject(int vertices, int vertexComponents,
                     boolean useNormalArray) {
         count = vertices;
         vComps= vertexComponents;
         nComps = useNormalArray ? 3 : 0;
 
-        int bSize = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * ( vComps + cComps + nComps) ;
+        int bStride = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * ( vComps + cComps + nComps );
+        int bSize = count * bStride;
+
         pBuffer = BufferUtil.newByteBuffer(bSize);
+        interlArray = pBuffer.asFloatBuffer();
 
-        int pos = 0;
-        int size= BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * vComps ;
-        vertexArray = (FloatBuffer) BufferUtil.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
         int vOffset = 0;
-        pos+=size;
-
-        size=BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * cComps ;
-        colorArray = (FloatBuffer) BufferUtil.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
-        int cOffset=pos;
-        pos+=size;
-
-        int nOffset=0;
-        if(useNormalArray) {
-            size=BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * nComps ;
-            normalArray = (FloatBuffer) BufferUtil.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
-            nOffset=pos;
-            pos+=size;
-        }
-        pBuffer.position(pos);
-        pBuffer.flip();
+        int cOffset = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * (vComps);
+        int nOffset = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * (vComps + cComps);
 
         int[] tmp = new int[1];
         gl.glGenBuffers(1, tmp, 0);
         vboName = tmp[0];
 
+        pBuffer.position(bSize);
+        pBuffer.flip();
+
+        // just for documentation reasons ..
+        interlArray.position(count*(vComps+cComps+nComps));
+        interlArray.flip();
+
         vArrayData = GLArrayDataWrapper.createFixed(GL.GL_VERTEX_ARRAY, vComps, GL.GL_FLOAT, false,
-                                                    0, pBuffer, vboName, vOffset);
+                                                    bStride, pBuffer, vboName, vOffset);
         cArrayData = GLArrayDataWrapper.createFixed(GL.GL_COLOR_ARRAY, cComps, GL.GL_FLOAT, false,
-                                                    0, pBuffer, vboName, cOffset);
+                                                    bStride, pBuffer, vboName, cOffset);
         if(useNormalArray) {
             nArrayData = GLArrayDataWrapper.createFixed(GL.GL_NORMAL_ARRAY, nComps, GL.GL_FLOAT, false,
-                                                        0, pBuffer, vboName, nOffset);
+                                                        bStride, pBuffer, vboName, nOffset);
         }
-    }
-
-    void setCount(int c) { 
-        if(count != c) {
-            throw new RuntimeException("diff count: "+count+" -> "+c);
-        }
-        count = c; 
     }
 
     private boolean sealed = false;
@@ -315,15 +313,6 @@ public class GLObject {
     {
         if(sealed) return;
         sealed = true;
-
-        vertexArray.position(count);
-        vertexArray.flip();
-        colorArray.position(count);
-        colorArray.flip();
-        if(nComps>0) {
-            normalArray.position(count);
-            normalArray.flip();
-        }
 
         if(nComps>0) {
             gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
@@ -352,7 +341,6 @@ public class GLObject {
         if(nComps>0) {
             gl.glNormalPointer(nArrayData);
         }
-
 
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, count);
 
@@ -436,18 +424,20 @@ GLObject createSuperShape(final float params[])
     final int vertices = triangleCount * 3;
     GLObject result;
     float baseColor[] = new float[3];
+    float color[] = new float[3];
     int a, longitude, latitude;
-    int currentVertex, currentQuad;
+    int currentIndex, currentQuad;
 
     result = new GLObject(vertices, 3, true);
     if (result == null)
         return null;
 
-    for (a = 0; a < 3; ++a)
+    for (a = 0; a < 3; ++a) {
         baseColor[a] = ((randomUInt() % 155) + 100) / 255.f;
+    }
 
     currentQuad = 0;
-    currentVertex = 0;
+    currentIndex = 0;
 
     // longitude -pi to pi
     for (longitude = 0; longitude < longitudeCount; ++longitude)
@@ -512,69 +502,110 @@ GLObject createSuperShape(final float params[])
 
                 ca = pa.z + 0.5f;
 
-                if(result.normalArray!=null) {
-                    for (i = currentVertex * 3;
-                         i < (currentVertex + 6) * 3;
-                         i += 3)
-                    {
-                        result.normalArray.put(i    , (n.x));
-                        result.normalArray.put(i + 1, (n.y));
-                        result.normalArray.put(i + 2, (n.z));
-                    }
-                }
-                for (i = currentVertex * cComps;
-                     i < (currentVertex + 6) * cComps;
-                     i += cComps)
+                for (int j = 0; j < 3; ++j)
                 {
-                    int j;
-                    float color[] = new float[3];
-                    for (j = 0; j < 3; ++j)
-                    {
-                        color[j] = ca * baseColor[j];
-                        if (color[j] > 1.0f) color[j] = 1.0f;
-                    }
-                    result.colorArray.put(i    , color[0]);
-                    result.colorArray.put(i + 1, color[1]);
-                    result.colorArray.put(i + 2, color[2]);
-                    if(3<cComps) {
-                        result.colorArray.put(i + 3, 0f);
-                    }
+                    color[j] = ca * baseColor[j];
+                    if (color[j] > 1.0f) color[j] = 1.0f;
                 }
-                result.vertexArray.put(currentVertex * 3, (pa.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pa.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pa.z));
-                ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pb.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pb.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pb.z));
-                ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pd.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pd.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pd.z));
-                ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pb.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pb.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pb.z));
-                ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pc.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pc.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pc.z));
-                ++currentVertex;
-                result.vertexArray.put(currentVertex * 3, (pd.x));
-                result.vertexArray.put(currentVertex * 3 + 1, (pd.y));
-                result.vertexArray.put(currentVertex * 3 + 2, (pd.z));
-                ++currentVertex;
+
+                result.interlArray.put(currentIndex++, (pa.x));
+                result.interlArray.put(currentIndex++, (pa.y));
+                result.interlArray.put(currentIndex++, (pa.z));
+                result.interlArray.put(currentIndex++, color[0]);
+                result.interlArray.put(currentIndex++, color[1]);
+                result.interlArray.put(currentIndex++, color[2]);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0f);
+                }
+                if(result.nComps>0) {
+                    result.interlArray.put(currentIndex++, (n.x));
+                    result.interlArray.put(currentIndex++, (n.y));
+                    result.interlArray.put(currentIndex++, (n.z));
+                }
+
+                result.interlArray.put(currentIndex++, (pb.x));
+                result.interlArray.put(currentIndex++, (pb.y));
+                result.interlArray.put(currentIndex++, (pb.z));
+                result.interlArray.put(currentIndex++, color[0]);
+                result.interlArray.put(currentIndex++, color[1]);
+                result.interlArray.put(currentIndex++, color[2]);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0f);
+                }
+                if(result.nComps>0) {
+                    result.interlArray.put(currentIndex++, (n.x));
+                    result.interlArray.put(currentIndex++, (n.y));
+                    result.interlArray.put(currentIndex++, (n.z));
+                }
+
+                result.interlArray.put(currentIndex++, (pd.x));
+                result.interlArray.put(currentIndex++, (pd.y));
+                result.interlArray.put(currentIndex++, (pd.z));
+                result.interlArray.put(currentIndex++, color[0]);
+                result.interlArray.put(currentIndex++, color[1]);
+                result.interlArray.put(currentIndex++, color[2]);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0f);
+                }
+                if(result.nComps>0) {
+                    result.interlArray.put(currentIndex++, (n.x));
+                    result.interlArray.put(currentIndex++, (n.y));
+                    result.interlArray.put(currentIndex++, (n.z));
+                }
+                
+                result.interlArray.put(currentIndex++, (pb.x));
+                result.interlArray.put(currentIndex++, (pb.y));
+                result.interlArray.put(currentIndex++, (pb.z));
+                result.interlArray.put(currentIndex++, color[0]);
+                result.interlArray.put(currentIndex++, color[1]);
+                result.interlArray.put(currentIndex++, color[2]);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0f);
+                }
+                if(result.nComps>0) {
+                    result.interlArray.put(currentIndex++, (n.x));
+                    result.interlArray.put(currentIndex++, (n.y));
+                    result.interlArray.put(currentIndex++, (n.z));
+                }
+
+                result.interlArray.put(currentIndex++, (pc.x));
+                result.interlArray.put(currentIndex++, (pc.y));
+                result.interlArray.put(currentIndex++, (pc.z));
+                result.interlArray.put(currentIndex++, color[0]);
+                result.interlArray.put(currentIndex++, color[1]);
+                result.interlArray.put(currentIndex++, color[2]);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0f);
+                }
+                if(result.nComps>0) {
+                    result.interlArray.put(currentIndex++, (n.x));
+                    result.interlArray.put(currentIndex++, (n.y));
+                    result.interlArray.put(currentIndex++, (n.z));
+                }
+
+                result.interlArray.put(currentIndex++, (pd.x));
+                result.interlArray.put(currentIndex++, (pd.y));
+                result.interlArray.put(currentIndex++, (pd.z));
+                result.interlArray.put(currentIndex++, color[0]);
+                result.interlArray.put(currentIndex++, color[1]);
+                result.interlArray.put(currentIndex++, color[2]);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0f);
+                }
+                if(result.nComps>0) {
+                    result.interlArray.put(currentIndex++, (n.x));
+                    result.interlArray.put(currentIndex++, (n.y));
+                    result.interlArray.put(currentIndex++, (n.z));
+                }
+
             } // r0 && r1 && r2 && r3
             ++currentQuad;
         } // latitude
     } // longitude
 
-    // Set number of vertices in object to the actual amount created.
-    result.setCount(currentVertex);
     result.seal();
     return result;
 }
-
 
 GLObject createGroundPlane()
 {
@@ -585,7 +616,7 @@ GLObject createGroundPlane()
     final  int vertices = triangleCount * 3;
     GLObject result;
     int x, y;
-    int currentVertex, currentQuad;
+    int currentIndex, currentQuad;
     final int vcomps = 2;
 
     result = new GLObject(vertices, vcomps, false);
@@ -593,7 +624,7 @@ GLObject createGroundPlane()
         return null;
 
     currentQuad = 0;
-    currentVertex = 0;
+    currentIndex = 0;
 
     for (y = yBegin; y < yEnd; ++y)
     {
@@ -602,15 +633,6 @@ GLObject createGroundPlane()
             float color;
             int i, a;
             color = ((float)(randomUInt() % 255))/255.0f;
-            for (i = currentVertex * cComps; i < (currentVertex + 6) * cComps; i += cComps)
-            {
-                result.colorArray.put(i, color);
-                result.colorArray.put(i + 1, color);
-                result.colorArray.put(i + 2, color);
-                if(3<cComps) {
-                    result.colorArray.put(i + 3, 0);
-                }
-            }
 
             // Axis bits for quad triangles:
             // x: 011100 (0x1c), y: 110001 (0x31)  (clockwise)
@@ -620,12 +642,17 @@ GLObject createGroundPlane()
                 final int xm = x + ((0x1c >> a) & 1);
                 final int ym = y + ((0x31 >> a) & 1);
                 final float m = (float)(Math.cos(xm * 2) * Math.sin(ym * 4) * 0.75f);
-                result.vertexArray.put(currentVertex * vcomps, (xm * scale + m));
-                result.vertexArray.put(currentVertex * vcomps + 1, (ym * scale + m));
+                result.interlArray.put(currentIndex++, (xm * scale + m));
+                result.interlArray.put(currentIndex++, (ym * scale + m));
                 if(2<vcomps) {
-                    result.vertexArray.put(currentVertex * vcomps + 2, 0f);
+                    result.interlArray.put(currentIndex++, 0f);
                 }
-                ++currentVertex;
+                result.interlArray.put(currentIndex++, color);
+                result.interlArray.put(currentIndex++, color);
+                result.interlArray.put(currentIndex++, color);
+                if(3<cComps) {
+                    result.interlArray.put(currentIndex++, 0);
+                }
             }
             ++currentQuad;
         }

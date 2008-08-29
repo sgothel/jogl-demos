@@ -16,7 +16,7 @@ public class PerfVBOLoad extends PerfModule {
         initShaderState(gl, "vbo-vert-col", "fcolor");
     }
 
-    protected void runOneSet(GLAutoDrawable drawable, int dataType, int numObjs, int numVertices, int loops) {
+    protected void runOneSet(GLAutoDrawable drawable, int dataType, int numObjs, int numVertices, int loops, boolean useVBO) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         // 
@@ -31,6 +31,7 @@ public class PerfVBOLoad extends PerfModule {
 
         for(int i=0; i<numObjs; i++) {
             vertices[i] = GLArrayDataServer.createGLSL("mgl_Vertex", 3, dataType, true, numVertices, GL.GL_STATIC_DRAW);
+            vertices[i].setVBOUsage(useVBO);
             {
                 Buffer verticeb = vertices[i].getBuffer();
                 for(int j=0; j<numVertices; j++) {
@@ -44,6 +45,7 @@ public class PerfVBOLoad extends PerfModule {
                 }
             }
             colors[i] = GLArrayDataServer.createGLSL("mgl_Color",  4, dataType, true, numVertices, GL.GL_STATIC_DRAW);
+            colors[i].setVBOUsage(useVBO);
             {
                 // Fill them up
                 Buffer colorb = colors[i].getBuffer();
@@ -87,6 +89,9 @@ public class PerfVBOLoad extends PerfModule {
                 if(i==0) {
                     vertices[j].seal(gl, true);
                 } else if(numObjs>1) {
+                    // we need to re-enable the buffer,
+                    // incl. the vertex attribute refresh 
+                    // in case we switch to another buffer
                     vertices[j].enableBuffer(gl, true);
                 }
 
@@ -103,9 +108,6 @@ public class PerfVBOLoad extends PerfModule {
                 gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices[j].getElementNumber());
 
                 if(numObjs>1) {
-                    // we need to re-enable the buffer,
-                    // incl. the vertex attribute refresh 
-                    // in case we switch to another buffer
                     vertices[j].enableBuffer(gl, false);
                     colors[j].enableBuffer(gl, false);
                 }
@@ -122,6 +124,11 @@ public class PerfVBOLoad extends PerfModule {
             tS[i] = System.currentTimeMillis();
         }
 
+        if(numObjs==1) {
+            vertices[0].enableBuffer(gl, false);
+            colors[0].enableBuffer(gl, false);
+        }
+
         int verticesElements = vertices[0].getElementNumber() * numObjs;
         int verticesBytes    = verticesElements * vertices[0].getComponentSize()* vertices[0].getComponentNumber();
         int colorsElements   = colors[0].getElementNumber()   * colors.length;
@@ -133,7 +140,7 @@ public class PerfVBOLoad extends PerfModule {
         }
 
         System.out.println("");
-        System.out.println("Loops "+loops+", objects "+numObjs+", type "+getTypeName(dataType)+
+        System.out.println("Loops "+loops+", useVBO "+useVBO+", objects "+numObjs+", type "+getTypeName(dataType)+
                            ", vertices p.o. "+vertices[0].getElementNumber()+
                            ", colors p.o. "+colors[0].getElementNumber()+
                            ",\n total elements "+(verticesElements+colorsElements)+
@@ -159,8 +166,17 @@ public class PerfVBOLoad extends PerfModule {
         }
         System.out.println("*****************************************************************");
 
-
         st.glUseProgram(gl, false);
+
+        for(int i=0; i<numObjs; i++) {
+            vertices[i].destroy(gl);
+            colors[i].destroy(gl);
+            vertices[i]=null;
+            colors[i]=null;
+        }
+        vertices=null;
+        colors=null;
+        System.gc();
 
         try {
             Thread.sleep(100);
@@ -168,15 +184,21 @@ public class PerfVBOLoad extends PerfModule {
     }
 
     protected void runOneSet(GLAutoDrawable drawable, int numObjs, int numVertices, int loops) {
-        runOneSet(drawable, GL.GL_UNSIGNED_BYTE, numObjs, numVertices, loops);
-        runOneSet(drawable, GL.GL_BYTE, numObjs, numVertices, loops);
-        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, numObjs, numVertices, loops);
-        runOneSet(drawable, GL.GL_SHORT, numObjs, numVertices, loops);
-        runOneSet(drawable, GL.GL_FLOAT, numObjs, numVertices, loops);
+        runOneSet(drawable, GL.GL_UNSIGNED_BYTE, numObjs, numVertices, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_BYTE, numObjs, numVertices, loops, false);
+        runOneSet(drawable, GL.GL_BYTE, numObjs, numVertices, loops, true);
+        runOneSet(drawable, GL.GL_BYTE, numObjs, numVertices, loops, false);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, numObjs, numVertices, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, numObjs, numVertices, loops, false);
+        runOneSet(drawable, GL.GL_SHORT, numObjs, numVertices, loops, true);
+        runOneSet(drawable, GL.GL_SHORT, numObjs, numVertices, loops, false);
+        runOneSet(drawable, GL.GL_FLOAT, numObjs, numVertices, loops, true);
+        runOneSet(drawable, GL.GL_FLOAT, numObjs, numVertices, loops, false);
 
         GL2ES2 gl = drawable.getGL().getGL2ES2();
         if(gl.isGLES2()) {
-            runOneSet(drawable, GL.GL_FIXED, numObjs, numVertices, loops);
+            runOneSet(drawable, GL.GL_FIXED, numObjs, numVertices, loops, true);
+            runOneSet(drawable, GL.GL_FIXED, numObjs, numVertices, loops, false);
         }
     }
 
@@ -192,6 +214,26 @@ public class PerfVBOLoad extends PerfModule {
 
         runOneSet(drawable, 1, 100000, loops);
         runOneSet(drawable, 3, 100000, loops);
+
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 10, 150, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 10, 150, loops, false);
+
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 20, 150, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 20, 150, loops, false);
+
+        /*
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 30, 150, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 30, 150, loops, false);
+
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 40, 150, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 40, 150, loops, false);
+
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 50, 150, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 50, 150, loops, false);
+
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 60, 150, loops, true);
+        runOneSet(drawable, GL.GL_UNSIGNED_SHORT, 60, 150, loops, false);
+        */
     }
 
 }

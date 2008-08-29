@@ -67,9 +67,15 @@ public class Main implements MouseListener {
                 AngelesES1 angel = new AngelesES1( 0 == (type&USE_NOBLEND) );
                 window.addGLEventListener(angel);
             } else {
-                System.out.println("Using: AngelesGL .. ");
-                AngelesGL angel = new AngelesGL( 0 == (type&USE_NOBLEND) );
-                window.addGLEventListener(angel);
+                if(0!=(type&USE_INTERLEAVE)) {
+                    System.out.println("Using: AngelesGLil .. ");
+                    AngelesGLil angel = new AngelesGLil( 0 == (type&USE_NOBLEND) );
+                    window.addGLEventListener(angel);
+                } else {
+                    System.out.println("Using: AngelesGL .. ");
+                    AngelesGL angel = new AngelesGL( 0 == (type&USE_NOBLEND) );
+                    window.addGLEventListener(angel);
+                }
             } 
 
             while (!quit && window.getDuration() < 215000) {
@@ -89,6 +95,7 @@ public class Main implements MouseListener {
     public static int USE_AWT       = 1 << 0;
     public static int USE_ANGELESF  = 1 << 1;
     public static int USE_NOBLEND   = 1 << 2;
+    public static int USE_INTERLEAVE= 1 << 3;
 
     public static void main(String[] args) {
         int type = USE_NEWT ;
@@ -99,6 +106,8 @@ public class Main implements MouseListener {
                 type |= USE_ANGELESF; 
             } else if(args[i].equals("-noblend")) {
                 type |= USE_NOBLEND; 
+            } else if(args[i].equals("-interleave")) {
+                type |= USE_INTERLEAVE; 
             }
         }
         new Main().run(type);
