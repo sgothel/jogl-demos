@@ -1,19 +1,19 @@
 package demos.es2.perftst;
 
 import java.nio.*;
+import java.io.*;
+import java.net.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glsl.*;
+import com.sun.opengl.util.texture.*;
+import com.sun.opengl.util.io.*;
 
 import com.sun.javafx.newt.*;
 
 public class PerfTextLoad extends PerfModule {
-    static final int MAX_ARRAYS = 12;
-    static final int MAX_ARRAY_ELEM = 16;
+    static final int MAX_TEXTURE_ENGINES = 8;
 
-    GLUniformData[] dummyA, dummyB, dummyC;
-    final int dataType=GL.GL_FLOAT;
-    
     public PerfTextLoad() {
     }
 
@@ -21,68 +21,77 @@ public class PerfTextLoad extends PerfModule {
         initShaderState(gl, "vbo-vert-text", "ftext");
     }
 
-    protected void runOneSet(GLAutoDrawable drawable, int numObjs, int numArrayElem, int loops) {
+    Texture[] textures = null;
+    TextureData[] textDatas = null;
+
+    protected void runOneSet(GLAutoDrawable drawable, String textBaseName, int numObjs, int numTextures, int loops) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
+
+        if(numTextures>MAX_TEXTURE_ENGINES) {
+            throw new GLException("numTextures must be within 1.."+MAX_TEXTURE_ENGINES);
+        }
+
+        String textName = null;
+        textDatas = new TextureData[numObjs];
+        textures = new Texture[numTextures];
+        try {
+            for(int i=0; i<numObjs; i++) {
+                textName = "data/"+textBaseName+"."+(i+1)+".tga";
+                URL urlText = Locator.getResource(Perftst.class, textName);
+                if(urlText==null) {
+                    throw new RuntimeException("couldn't fetch "+textName);
+                }
+                textDatas[i] = TextureIO.newTextureData(urlText.openStream(), false, TextureIO.TGA);
+            }
+            for(int i=0; i<numTextures; i++) {
+                gl.glActiveTexture(i);
+                textures[i] = new Texture(GL.GL_TEXTURE_2D);
+            }
+        } catch (IOException ioe) {
+            System.err.println("couldn't fetch "+textName);
+            throw new RuntimeException(ioe);
+        }
 
         // 
         // Vertices Data setup
         //
 
-        if(numObjs>MAX_ARRAYS) {
-            throw new GLException("numObjs must be within 0.."+MAX_ARRAYS);
-        }
-
-        if(numArrayElem>MAX_ARRAY_ELEM) {
-            throw new GLException("numArrayElem must be within 0.."+MAX_ARRAY_ELEM);
-        }
-
         st.glUseProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
-            vb.put(0f); vb.put(0f); vb.put(0f);
-            vb.put(1f); vb.put(0f); vb.put(0f);
-            vb.put(1f); vb.put(1f); vb.put(0f);
-            vb.put(1f); vb.put(1f); vb.put(0f);
+            vb.put(0f); vb.put(0f);
+            vb.put(1f); vb.put(0f);
+            vb.put(0f); vb.put(1f);
+            vb.put(1f); vb.put(1f);
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer colors = GLArrayDataServer.createGLSL("mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer texCoords = GLArrayDataServer.createGLSL("mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
-            FloatBuffer cb = (FloatBuffer)colors.getBuffer();
-            cb.put(0f); cb.put(0f); cb.put(0f); cb.put(1f);
-            cb.put(1f); cb.put(0f); cb.put(0f); cb.put(1f);
-            cb.put(0f); cb.put(1f); cb.put(0f); cb.put(1f);
-            cb.put(0f); cb.put(0f); cb.put(1f); cb.put(1f);
+            FloatBuffer cb = (FloatBuffer)texCoords.getBuffer();
+            cb.put(0f); cb.put(0f);
+            cb.put(1f); cb.put(0f);
+            cb.put(0f); cb.put(1f);
+            cb.put(1f); cb.put(1f);
         }
-        colors.seal(gl, true);
+        texCoords.seal(gl, true);
 
         //
-        // Uniform Data setup
+        // texture setup
         //
-
-        GLUniformData[] dummyUni = new GLUniformData[numObjs];
-
-        float x=0f, y=0f, z=0f, w=0f;
-
-        for(int i=0; i<numObjs; i++) {
-            FloatBuffer fb = BufferUtil.newFloatBuffer(4*numArrayElem);
-            for(int j=0; j<numArrayElem; j++) {
-                // Fill them up
-                fb.put(x);
-                fb.put(y);
-                fb.put(z);
-                fb.put(w);
-                if(x==0f) x=1f;
-                else if(x==1f) { x=0f; y+=0.01f; }
-                if(y>1f) { x=0f; y=0f; z+=0.01f; }
-            }
-            fb.flip();
-
-            dummyUni[i] = new GLUniformData("mgl_Dummy"+i, 4, fb);
+        long[] tU = new long[numObjs+1];
+        tU[0] = System.currentTimeMillis();
+        for(int j=0; j<numTextures; j++) {
+            gl.glActiveTexture(j);
+            textures[j].updateImage(textDatas[0]);
+            tU[j+1] = System.currentTimeMillis();
         }
 
+        GLUniformData activeTexture = new GLUniformData("mgl_ActiveTexture", 0);
+        st.glUniform(gl, activeTexture);
+    
         // 
         // run loops
         //
@@ -90,8 +99,9 @@ public class PerfTextLoad extends PerfModule {
         long dtC, dt, dt2, dt3, dtF, dtS, dtT;
         long[] tC = new long[loops];
         long[] t0 = new long[loops];
-        long[][] t1 = new long[loops][numObjs];
-        long[][] t2 = new long[loops][numObjs];
+        long[][][] t1 = new long[loops][numObjs][numTextures];
+        long[][][] t2 = new long[loops][numObjs][numTextures];
+        long[][][] t3 = new long[loops][numObjs][numTextures];
         long[] tF = new long[loops];
         long[] tS = new long[loops];
 
@@ -103,13 +113,21 @@ public class PerfTextLoad extends PerfModule {
             t0[i] = System.currentTimeMillis();
 
             for(int j=0; j<numObjs; j++) {
-                st.glUniform(gl, dummyUni[j]);
+                for(int k=0; k<numTextures; k++) {
+                    gl.glActiveTexture(GL.GL_TEXTURE0+k);
+                    textures[k].enable();
+                    textures[k].bind();
 
-                t1[i][j] = System.currentTimeMillis();
+                    t1[i][j][k] = System.currentTimeMillis();
 
-                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices.getElementNumber());
+                    textures[k].updateImage(textDatas[j]);
 
-                t2[i][j] = System.currentTimeMillis();
+                    t2[i][j][k] = System.currentTimeMillis();
+
+                    gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, vertices.getElementNumber());
+
+                    t3[i][j][k] = System.currentTimeMillis();
+                }
             }
 
             gl.glFinish();
@@ -119,10 +137,16 @@ public class PerfTextLoad extends PerfModule {
             drawable.swapBuffers();
 
             tS[i] = System.currentTimeMillis();
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {}
         }
 
-        int uniElements = numObjs * numArrayElem ;
-        int uniBytes    = uniElements * BufferUtil.SIZEOF_FLOAT;
+        int textBytes = 0;
+        for(int j=0; j<numObjs; j++) {
+            textBytes += textDatas[j].getEstimatedMemorySize();
+        }
+        textBytes*=numTextures;
 
         dt = 0;
         for(int i=1; i<loops; i++) {
@@ -130,16 +154,14 @@ public class PerfTextLoad extends PerfModule {
         }
 
         System.out.println("");
-        System.out.println("Loops "+loops+", uniform arrays "+dummyUni.length+", type FLOAT"+
-                           ", uniforms array size "+numArrayElem+
-                           ",\n total elements "+uniElements+
-                           ", total bytes "+uniBytes+", total time: "+dt +
+        System.out.println("Loops "+loops+", textures "+numTextures+", objects "+numObjs+
+                           ", total bytes "+textBytes+", total time: "+dt +
                            "ms, fps(-1): "+(((loops-1)*1000)/dt)+
-                           ",\n uni elem/s: " + ((double)(loops*uniElements)/((double)dt/1000.0)));
+                           ",\n text bytes /s: " + ((double)(loops*textBytes)/((double)dt/1000.0)));
 
         for(int i=0; i<loops; i++) {
             dtC= t0[i] - tC[i];
-            dtF= tF[i] - t2[i][dummyUni.length-1];
+            dtF= tF[i] - t3[i][numObjs-1][numTextures-1];
             dtS= tS[i] - tF[i];
             dtT= tS[i] - tC[i];
             if(dtT<=0) dtT=1;
@@ -148,41 +170,36 @@ public class PerfTextLoad extends PerfModule {
             for(int j=0; j<dummyUni.length; j++) {
                 dt = t1[i][j] - t0[i];
                 dt2= t2[i][j] - t1[i][j];
-                dtT= dt+dt2;
-                System.out.println("\t\tobj "+j+": uniform "+dt +"ms, draw "+dt2+"ms, total: "+ dtT);
+                dt3= t3[i][j] - t2[i][j];
+                dtT= dt+dt2+dt3;
+                System.out.println("\t\tobj "+j+": setup "+dt +"ms, update "+dt2 +"ms, draw "+dt3+"ms, total: "+ dtT);
             } */
         }
         System.out.println("*****************************************************************");
 
-
         st.glUseProgram(gl, false);
 
+        for(int i=0; i<numTextures; i++) {
+            textures[i].disable();
+            textures[i].dispose();
+            textures[i]=null;
+        }
+        for(int i=0; i<numObjs; i++) {
+            textDatas[i] = null;
+        }
+        textures=null;
+        textDatas=null;
+        System.gc();
         try {
             Thread.sleep(100);
         } catch (Exception e) {}
+        System.gc();
     }
 
     public void run(GLAutoDrawable drawable, int loops) {
-        runOneSet(drawable, 1,    1, loops);
-
-        runOneSet(drawable,  4,    1, loops);
-        runOneSet(drawable,  1,    4, loops);
-
-        runOneSet(drawable,  8,    1, loops);
-        runOneSet(drawable,  1,    8, loops);
-
-        if(MAX_ARRAYS>8) {
-            runOneSet(drawable, MAX_ARRAYS,         1, loops);
-            runOneSet(drawable, 1,         MAX_ARRAYS, loops);
-        }
-        runOneSet(drawable,  1,   16, loops);
-
-        runOneSet(drawable,  2,   16, loops);
-        runOneSet(drawable,  4,   16, loops);
-        runOneSet(drawable,  8,   16, loops);
-        if(MAX_ARRAYS>8) {
-            runOneSet(drawable, MAX_ARRAYS,   16, loops);
-        }
+        runOneSet(drawable, "bob2.64x64", 33, 1, loops);
+        //runOneSet(drawable, "bob2.128x128", 33, 1, loops);
+        //runOneSet(drawable, "bob2.256x256", 33, 1, loops);
     }
 
 }
