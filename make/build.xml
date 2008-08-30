@@ -176,6 +176,7 @@
             <pathelement location="${jogl.gles1.jar}" />
             <pathelement location="${jogl.gles1.dbg.jar}" />
             <pathelement location="${jogl.egl.jar}" />
+            <pathelement location="${jogl.util.jar}" />
             <pathelement location="${newt.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*, demos/es1/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
@@ -200,6 +201,7 @@
             <pathelement location="${jogl.gles2.jar}" />
             <pathelement location="${jogl.gles2.dbg.jar}" />
             <pathelement location="${jogl.egl.jar}" />
+            <pathelement location="${jogl.util.jar}" />
             <pathelement location="${newt.jar}" />
         </path>
         <javac destdir="${classes}" 
@@ -211,7 +213,7 @@
         </javac>
         <copy todir="${classes}">
             <fileset dir="${src}"
-                     includes="demos/es2/shader/**, demos/es2/perftst/shader/**" />
+                     includes="demos/es2/shader/**, demos/es2/perftst/shader/**, demos/es2/perftst/data/**" />
         </copy>
         <jar destfile="${jogl.demos.jar}">
             <fileset dir="${classes}">
