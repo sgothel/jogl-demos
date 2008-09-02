@@ -6,4 +6,4 @@ IF !"%JOGLDIR%"==""! GOTO YESPATH
 set JOGLDIR=..
 :YESPATH
    
-java -cp %JOGLDIR%\jogl.core.jar;%JOGLDIR%\jogl.gles2.jar;%JOGLDIR%\jogl.fixed.jar;%JOGLDIR%\jogl.sdk.jar javax.media.opengl.sdk.glsl.CompileShaderNVidia fcolor.fp vbo-vert-col.vp uni-vert-col.vp
+java -cp %JOGLDIR%\jogl.core.jar;%JOGLDIR%\jogl.gles2.jar;%JOGLDIR%\jogl.fixed.jar;%JOGLDIR%\jogl.sdk.jar javax.media.opengl.sdk.glsl.CompileShaderNVidia fcolor.fp vbo-vert-col.vp uni-vert-col.vp ftext.fp vbo-vert-text.vp

@@ -6,8 +6,8 @@ import java.net.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glsl.*;
+import com.sun.opengl.impl.io.*;
 import com.sun.opengl.util.texture.*;
-import com.sun.opengl.util.io.*;
 
 import com.sun.javafx.newt.*;
 
@@ -43,6 +43,7 @@ public class PerfTextLoad extends PerfModule {
                 }
                 textDatas[i] = TextureIO.newTextureData(urlText.openStream(), false, TextureIO.TGA);
             }
+
             for(int i=0; i<numTextures; i++) {
                 gl.glActiveTexture(i);
                 textures[i] = new Texture(GL.GL_TEXTURE_2D);
@@ -97,30 +98,32 @@ public class PerfTextLoad extends PerfModule {
         //
 
         long dtC, dt, dt2, dt3, dtF, dtS, dtT;
-        long[] tC = new long[loops];
-        long[] t0 = new long[loops];
+        long[][] tC = new long[loops][numObjs];
+        long[][] t0 = new long[loops][numObjs];
         long[][][] t1 = new long[loops][numObjs][numTextures];
         long[][][] t2 = new long[loops][numObjs][numTextures];
         long[][][] t3 = new long[loops][numObjs][numTextures];
-        long[] tF = new long[loops];
-        long[] tS = new long[loops];
+        long[][] tF = new long[loops][numObjs];
+        long[][] tS = new long[loops][numObjs];
 
         for(int i=0; i<loops; i++) {
-            tC[i] = System.currentTimeMillis();
-
-            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
-
-            t0[i] = System.currentTimeMillis();
-
             for(int j=0; j<numObjs; j++) {
+                tC[i][j] = System.currentTimeMillis();
+
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+
+                t0[i][j] = System.currentTimeMillis();
+
                 for(int k=0; k<numTextures; k++) {
                     gl.glActiveTexture(GL.GL_TEXTURE0+k);
                     textures[k].enable();
                     textures[k].bind();
+                    activeTexture.setData(k);
+                    st.glUniform(gl, activeTexture);
 
                     t1[i][j][k] = System.currentTimeMillis();
 
-                    textures[k].updateImage(textDatas[j]);
+                    textures[k].updateSubImage(textDatas[j], 0, 0, 0);
 
                     t2[i][j][k] = System.currentTimeMillis();
 
@@ -128,18 +131,19 @@ public class PerfTextLoad extends PerfModule {
 
                     t3[i][j][k] = System.currentTimeMillis();
                 }
+                gl.glFinish();
+
+                tF[i][j] = System.currentTimeMillis();
+
+                drawable.swapBuffers();
+
+                tS[i][j] = System.currentTimeMillis();
+
+                /*try {
+                    Thread.sleep(100);
+                } catch (Exception e) {} */
             }
 
-            gl.glFinish();
-
-            tF[i] = System.currentTimeMillis();
-
-            drawable.swapBuffers();
-
-            tS[i] = System.currentTimeMillis();
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {}
         }
 
         int textBytes = 0;
@@ -150,22 +154,30 @@ public class PerfTextLoad extends PerfModule {
 
         dt = 0;
         for(int i=1; i<loops; i++) {
-            dt += tS[i] - tC[i];
+            for(int j=0; j<numObjs; j++) {
+                dt += tS[i][j] - tC[i][j];
+            }
         }
 
         System.out.println("");
-        System.out.println("Loops "+loops+", textures "+numTextures+", objects "+numObjs+
+        System.out.println("Texture "+textBaseName+", loops "+loops+", textures "+numTextures+", objects "+numObjs+
                            ", total bytes "+textBytes+", total time: "+dt +
-                           "ms, fps(-1): "+(((loops-1)*1000)/dt)+
-                           ",\n text bytes /s: " + ((double)(loops*textBytes)/((double)dt/1000.0)));
+                           "ms, fps(-1): "+(((loops-1)*numObjs*1000)/dt)+
+                           ",\n text kB/s: " + ( ((double)(loops*textBytes)/1024.0) / ((double)dt/1000.0) ) );
 
         for(int i=0; i<loops; i++) {
-            dtC= t0[i] - tC[i];
-            dtF= tF[i] - t3[i][numObjs-1][numTextures-1];
-            dtS= tS[i] - tF[i];
-            dtT= tS[i] - tC[i];
+            dtC = 0;
+            dtF = 0;
+            dtS = 0;
+            dtT = 0;
+            for(int j=0; j<numObjs; j++) {
+                dtC += t0[i][j] - tC[i][j];
+                dtF += tF[i][j] - t3[i][j][numTextures-1];
+                dtS += tS[i][j] - tF[i][j];
+                dtT += tS[i][j] - tC[i][j];
+            }
             if(dtT<=0) dtT=1;
-            System.out.println("\tloop "+i+": clear "+dtC+"ms, finish "+dtF+", swap "+dtS+"ms, total: "+ dtT+"ms, fps "+1000/dtT);
+            System.out.println("\tloop "+i+": clear "+dtC+"ms, finish "+dtF+", swap "+dtS+"ms, total: "+ dtT+"ms, fps "+(numObjs*1000)/dtT);
             /*
             for(int j=0; j<dummyUni.length; j++) {
                 dt = t1[i][j] - t0[i];
@@ -198,8 +210,9 @@ public class PerfTextLoad extends PerfModule {
 
     public void run(GLAutoDrawable drawable, int loops) {
         runOneSet(drawable, "bob2.64x64", 33, 1, loops);
-        //runOneSet(drawable, "bob2.128x128", 33, 1, loops);
-        //runOneSet(drawable, "bob2.256x256", 33, 1, loops);
+        runOneSet(drawable, "bob2.128x128", 33, 1, loops);
+        runOneSet(drawable, "bob2.256x256", 33, 1, loops);
+        runOneSet(drawable, "bob2.512x512", 33, 1, loops);
     }
 
 }
