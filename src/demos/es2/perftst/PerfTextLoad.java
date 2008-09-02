@@ -42,6 +42,7 @@ public class PerfTextLoad extends PerfModule {
                     throw new RuntimeException("couldn't fetch "+textName);
                 }
                 textDatas[i] = TextureIO.newTextureData(urlText.openStream(), false, TextureIO.TGA);
+                System.out.println(textBaseName+": "+textDatas[i]);
             }
 
             for(int i=0; i<numTextures; i++) {
@@ -211,8 +212,9 @@ public class PerfTextLoad extends PerfModule {
     public void run(GLAutoDrawable drawable, int loops) {
         runOneSet(drawable, "bob2.64x64", 33, 1, loops);
         runOneSet(drawable, "bob2.128x128", 33, 1, loops);
-        runOneSet(drawable, "bob2.256x256", 33, 1, loops);
-        runOneSet(drawable, "bob2.512x512", 33, 1, loops);
+        runOneSet(drawable, "bob2.128x128",  4, 1, loops);
+        runOneSet(drawable, "bob2.256x256",  4, 1, loops);
+        runOneSet(drawable, "bob2.512x512",  4, 1, loops);
     }
 
 }
