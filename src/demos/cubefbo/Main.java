@@ -33,12 +33,14 @@
 
 package demos.cubefbo;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import java.nio.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.applet.*;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.FPSAnimator;
+
 
 public class Main 
 {
@@ -87,7 +89,7 @@ public class Main
         }
       });
 
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 }

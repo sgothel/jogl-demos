@@ -39,15 +39,20 @@
 
 package demos.util;
 
-import java.io.*;
+import com.sun.opengl.impl.io.FileUtil;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureData;
+import com.sun.opengl.util.texture.TextureIO;
+import java.io.IOException;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLException;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
+
 
 /** Helper class for loading cubemaps from a set of textures. */
 
 public class Cubemap {
+    
   private static final String[] suffixes = { "posx", "negx", "posy", "negy", "posz", "negz" };
   private static final int[] targets = { GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
                                          GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,

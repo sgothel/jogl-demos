@@ -39,23 +39,28 @@
 
 package demos.j2d;
 
+
+
+import demos.gears.Gears;
+import demos.util.*;
+import gleem.linalg.*;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.text.*;
-
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.*;
-
-import demos.gears.Gears;
-import demos.util.*;
-import gleem.linalg.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.text.DecimalFormat;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
 
 /** A simple test of the Overlay utility class. Draws gears underneath
     with moving Java 2D-rendered text on top. */
@@ -84,7 +89,7 @@ public class TestOverlay implements GLEventListener {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 

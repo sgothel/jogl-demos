@@ -33,24 +33,37 @@
 
 package demos.vertexProgRefract;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
-import java.nio.*;
-import java.util.*;
-import javax.imageio.*;
-import javax.imageio.stream.*;
-import javax.swing.*;
+import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import com.sun.opengl.util.texture.Texture;
+import demos.common.Demo;
+import demos.common.DemoListener;
+import demos.util.Bunny;
+import demos.util.Cubemap;
+import demos.util.SystemTime;
+import demos.util.Time;
+import gleem.BSphere;
+import gleem.BSphereProvider;
+import gleem.ExaminerViewer;
+import gleem.ManipManager;
+import gleem.MouseButtonHelper;
+import gleem.linalg.Rotf;
+import gleem.linalg.Vec3f;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import javax.swing.JOptionPane;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
-import demos.common.*;
-import demos.util.*;
-import gleem.*;
-import gleem.linalg.*;
+
 
 /**
   Wavelength-dependent refraction demo<br>
@@ -66,9 +79,16 @@ import gleem.linalg.*;
 
 public class VertexProgRefract extends Demo {
   public static void main(String[] args) {
+
     GLCanvas canvas = new GLCanvas();
-    VertexProgRefract demo = new VertexProgRefract();
+    final VertexProgRefract demo = new VertexProgRefract();
+
     canvas.addGLEventListener(demo);
+    canvas.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            demo.dispatchKey(e.getKeyChar());
+          }
+    });
 
     final Animator animator = new Animator(canvas);
     demo.setDemoListener(new DemoListener() {
@@ -83,7 +103,7 @@ public class VertexProgRefract extends Demo {
     canvas.setSize(512, 512);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
@@ -105,7 +125,7 @@ public class VertexProgRefract extends Demo {
   private int obj;
 
   private GLU  glu  = new GLU();
-  private GLUT glut = new GLUT();
+  private GLUTgl2 glut = new GLUTgl2();
 
   private GLAutoDrawable drawable;
   private ExaminerViewer viewer;
@@ -224,21 +244,24 @@ public class VertexProgRefract extends Demo {
 "END\n";
 
   public void init(GLAutoDrawable drawable) {
+
     initComplete = false;
-    GL gl = drawable.getGL();
+
+    GL2 gl = drawable.getGL().getGL2();
+
     float cc = 1.0f;
     gl.glClearColor(cc, cc, cc, 1);
     gl.glColor3f(1,1,1);
     gl.glEnable(GL.GL_DEPTH_TEST);
 
     try {
-      initExtension(gl, "GL_ARB_vertex_program");
+      initExtension(gl, "GL_vertex_program");
       initExtension(gl, "GL_VERSION_1_3"); // For multitexturing support
-      if (!gl.isExtensionAvailable("GL_ARB_fragment_program")) {
+      if (!gl.isExtensionAvailable("GL_fragment_program")) {
         if (gl.isExtensionAvailable("GL_NV_register_combiners")) {
           useRegisterCombiners = true;
         } else {
-          final String message = "This demo requires either the GL_ARB_fragment_program\n" +
+          final String message = "This demo requires either the GL_fragment_program\n" +
             "or GL_NV_register_combiners extension";
           new Thread(new Runnable() {
               public void run() {
@@ -257,17 +280,17 @@ public class VertexProgRefract extends Demo {
     b[' '] = true; // animate by default
 
     int[] vtxProgTmp = new int[1];
-    gl.glGenProgramsARB(1, vtxProgTmp, 0);
+    gl.glGenPrograms(1, vtxProgTmp, 0);
     vtxProg = vtxProgTmp[0];
-    gl.glBindProgramARB  (GL.GL_VERTEX_PROGRAM_ARB, vtxProg);
-    gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, transformRefract.length(), transformRefract);
+    gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vtxProg);
+    gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, transformRefract.length(), transformRefract);
 
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 0.0f, 1.0f);    // eye position
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 0.0f, 1.0f);    // eye position
 
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 1, fresnel, fresnel, fresnel, 1.0f);    // fresnel multiplier
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 1, fresnel, fresnel, fresnel, 1.0f);    // fresnel multiplier
 
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, -1.0f, 1.0f, 0.0f);   // texture scale
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 2, 1.0f, -1.0f, 1.0f, 0.0f);   // texture scale
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
 
     try {
       cubemap = Cubemap.loadFromStreams(getClass().getClassLoader(),
@@ -279,7 +302,7 @@ public class VertexProgRefract extends Demo {
       throw new RuntimeException(e);
     }
 
-    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 
     gl.glDisable(GL.GL_CULL_FACE);
 
@@ -301,12 +324,6 @@ public class VertexProgRefract extends Demo {
     // context is created
     if (firstRender) {
       firstRender = false;
-
-      drawable.addKeyListener(new KeyAdapter() {
-          public void keyTyped(KeyEvent e) {
-            dispatchKey(e.getKeyChar());
-          }
-        });
 
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
@@ -336,7 +353,7 @@ public class VertexProgRefract extends Demo {
 
     time.update();
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT|GL.GL_DEPTH_BUFFER_BIT);
 
     if (doViewAll) {
@@ -352,9 +369,9 @@ public class VertexProgRefract extends Demo {
       toggleWire = false;
       wire = !wire;
       if (wire) {
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
       } else {
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
       }
     }
 
@@ -369,10 +386,10 @@ public class VertexProgRefract extends Demo {
     ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
     ManipManager.getManipManager().render(drawable, gl);
 
-    gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, vtxProg);
+    gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vtxProg);
 
-    gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 62, fresnel, fresnel, fresnel, 1.0f);
+    gl.glEnable(GL2.GL_VERTEX_PROGRAM);
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 62, fresnel, fresnel, fresnel, 1.0f);
 
     // set texture transforms
     gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -390,10 +407,10 @@ public class VertexProgRefract extends Demo {
     viewer.updateInverseRotation(gl);
 
     if (useRegisterCombiners) {
-      gl.glEnable(GL.GL_REGISTER_COMBINERS_NV);
+      gl.glEnable(GL2.GL_REGISTER_COMBINERS_NV);
     } else {
-      gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
-      gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+      gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+      gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
     }
 
     gl.glColor3f(1.0f, 1.0f, 1.0f);
@@ -428,11 +445,11 @@ public class VertexProgRefract extends Demo {
     }
 
     if (useRegisterCombiners) {
-      gl.glDisable(GL.GL_REGISTER_COMBINERS_NV);
+      gl.glDisable(GL2.GL_REGISTER_COMBINERS_NV);
     } else {
-      gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
+      gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
     }
-    gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
+    gl.glDisable(GL2.GL_VERTEX_PROGRAM);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glPopMatrix();
@@ -540,9 +557,9 @@ public class VertexProgRefract extends Demo {
     gl.glFinalCombinerInputNV(GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
   }
 
-  private void initFragmentProgram(GL gl) {
+  private void initFragmentProgram(GL2 gl) {
     int[] fragProgTmp = new int[1];
-    gl.glGenProgramsARB(1, fragProgTmp, 0);
+    gl.glGenPrograms(1, fragProgTmp, 0);
     fragProg = fragProgTmp[0];
     String combineFragProg =
 "!!ARBfp1.0\n" +
@@ -559,14 +576,14 @@ public class VertexProgRefract extends Demo {
 "MOV result.color, texSamp0;\n" +
 "END";
 
-    gl.glBindProgramARB  (GL.GL_FRAGMENT_PROGRAM_ARB, fragProg);
-    gl.glProgramStringARB(GL.GL_FRAGMENT_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB,
+    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glProgramString(GL2.GL_FRAGMENT_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII,
                           combineFragProg.length(), combineFragProg);
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
+    gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
     if (errPos[0] >= 0) {
       System.out.println("Fragment program failed to load:");
-      String errMsg = gl.glGetString(GL.GL_PROGRAM_ERROR_STRING_ARB);
+      String errMsg = gl.glGetString(GL2.GL_PROGRAM_ERROR_STRING);
       if (errMsg == null) {
         System.out.println("[No error message available]");
       } else {
@@ -581,7 +598,7 @@ public class VertexProgRefract extends Demo {
     }
   }
 
-  private void drawSkyBox(GL gl) {
+  private void drawSkyBox(GL2 gl) {
     // Compensates for ExaminerViewer's modification of modelview matrix
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
@@ -599,15 +616,15 @@ public class VertexProgRefract extends Demo {
     // causes the normals to be sent down. Thanks to Ken Dyke.
     gl.glEnable(GL.GL_LIGHTING);
 
-    gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP);
-    gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP);
-    gl.glTexGeni(GL.GL_R, GL.GL_TEXTURE_GEN_MODE, GL.GL_NORMAL_MAP);
+    gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
+    gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
+    gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
 
-    gl.glEnable(GL.GL_TEXTURE_GEN_S);
-    gl.glEnable(GL.GL_TEXTURE_GEN_T);
-    gl.glEnable(GL.GL_TEXTURE_GEN_R);
+    gl.glEnable(GL2.GL_TEXTURE_GEN_S);
+    gl.glEnable(GL2.GL_TEXTURE_GEN_T);
+    gl.glEnable(GL2.GL_TEXTURE_GEN_R);
 
-    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glPushMatrix();
@@ -621,12 +638,12 @@ public class VertexProgRefract extends Demo {
     gl.glPopMatrix();
     gl.glMatrixMode(GL.GL_MODELVIEW);
 
-    gl.glDisable(GL.GL_TEXTURE_GEN_S);
-    gl.glDisable(GL.GL_TEXTURE_GEN_T);
-    gl.glDisable(GL.GL_TEXTURE_GEN_R);
+    gl.glDisable(GL2.GL_TEXTURE_GEN_S);
+    gl.glDisable(GL2.GL_TEXTURE_GEN_T);
+    gl.glDisable(GL2.GL_TEXTURE_GEN_R);
   }
 
-  private void drawObj(GL gl, int obj) {
+  private void drawObj(GL2 gl, int obj) {
     switch(obj) {
     case 0:
       gl.glCallList(bunnydl);
@@ -646,12 +663,12 @@ public class VertexProgRefract extends Demo {
     }
   }
 
-  private void setRefraction(GL gl, float index) {
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 4, index, index*index, 0.0f, 0.0f);
+  private void setRefraction(GL2 gl, float index) {
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 4, index, index*index, 0.0f, 0.0f);
   }
 
   // draw square subdivided into quad strips
-  private void drawPlane(GL gl, float w, float h, int rows, int cols) {
+  private void drawPlane(GL2 gl, float w, float h, int rows, int cols) {
     int x, y;
     float vx, vy, s, t;
     float ts, tt, tw, th;
@@ -665,7 +682,7 @@ public class VertexProgRefract extends Demo {
     gl.glNormal3f(0.0f, 0.0f, 1.0f);
 
     for(y=0; y<rows; y++) {
-      gl.glBegin(GL.GL_QUAD_STRIP);
+      gl.glBegin(GL2.GL_QUAD_STRIP);
       for(x=0; x<=cols; x++) {
         vx = tw * x -(w/2.0f);
         vy = th * y -(h/2.0f);

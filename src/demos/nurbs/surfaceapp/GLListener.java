@@ -5,7 +5,8 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.*;
 
-import com.sun.opengl.util.GLUT;
+import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import javax.media.opengl.GL2;
 
 /**
  * Listener reacting to events occuring on OpenGL canvas
@@ -18,7 +19,7 @@ public class GLListener implements GLEventListener {
    * Object realizing OpenGL functions 
    * objekt realizující základní OpenGL funkce
    */
-  private GL gl;
+  private GL2 gl;
 
   /**
    * GLU object
@@ -91,7 +92,7 @@ public class GLListener implements GLEventListener {
    * GLUT object
    * Objekt pro podporu funkcionality GL utility toolkit
    */
-  private GLUT glut;
+  private GLUTgl2 glut;
 	
 	
   /**
@@ -112,18 +113,18 @@ public class GLListener implements GLEventListener {
    * @see javax.media.opengl.GLEventListener#init(javax.media.opengl.GLAutoDrawable)
    */
   public void init(GLAutoDrawable drawable) {
-    this.gl = drawable.getGL();
+    this.gl = drawable.getGL().getGL2();
     this.glu = new GLU();
-    this.glut = new GLUT();
+    this.glut = new GLUTgl2();
 		
 		
     this.nurbs = glu.gluNewNurbsRenderer();
     //		gl.glClearColor(0, 0, 0, 0);
     gl.glClearColor(1, 1, 1, 0);
-    gl.glEnable(GL.GL_DEPTH_TEST); 
-    gl.glDepthFunc(GL.GL_LESS);
+    gl.glEnable(GL2.GL_DEPTH_TEST);
+    gl.glDepthFunc(GL2.GL_LESS);
     gl.glClearDepth(1000.0f);
-    gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+    gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
   }
 
   /* (non-Javadoc)
@@ -131,36 +132,35 @@ public class GLListener implements GLEventListener {
    */
   public void display(GLAutoDrawable drawable) {
 
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT| GL.GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL2.GL_COLOR_BUFFER_BIT| GL2.GL_DEPTH_BUFFER_BIT);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
 		
-    glu.gluLookAt(0,0,400,	0,0,0,	0,1,0);
+    glu.gluLookAt(0,0,400, 0,0,0, 0,1,0);
 		
-		
-		
+
     //		gl.glPushMatrix();
-    gl.glShadeModel(GL.GL_SMOOTH);                    
-    gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);        
-    gl.glPolygonMode(GL.GL_BACK, GL.GL_FILL); 
-    gl.glDisable(GL.GL_CULL_FACE);
+    gl.glShadeModel(GL2.GL_SMOOTH);
+    gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
+    gl.glPolygonMode(GL2.GL_BACK, GL2.GL_FILL);
+    gl.glDisable(GL2.GL_CULL_FACE);
 	    
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, materialDiffuse,0);
-    gl.glMaterialfv(GL.GL_BACK, GL.GL_DIFFUSE, materialDiffuse,0);
+    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, materialDiffuse,0);
+    gl.glMaterialfv(GL2.GL_BACK, GL2.GL_DIFFUSE, materialDiffuse,0);
 	    
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition,0);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, materialDiffuse,0);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient,0);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightAmbient,0);
+    gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPosition,0);
+    gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, materialDiffuse,0);
+    gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmbient,0);
+    gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightAmbient,0);
 	    
-    gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, lightPosition3,0);
-    gl.glLightfv(GL.GL_LIGHT2, GL.GL_DIFFUSE, lightDiffuse,0);
+    gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lightPosition3,0);
+    gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lightDiffuse,0);
 	    
-    if(app.isLightingEnabled())gl.glEnable(GL.GL_LIGHTING);
-    else gl.glDisable(GL.GL_LIGHTING);
-    gl.glEnable(GL.GL_LIGHT0);  
-    gl.glEnable(GL.GL_LIGHT2);
+    if(app.isLightingEnabled())gl.glEnable(GL2.GL_LIGHTING);
+    else gl.glDisable(GL2.GL_LIGHTING);
+    gl.glEnable(GL2.GL_LIGHT0);
+    gl.glEnable(GL2.GL_LIGHT2);
     //		gl.glPopMatrix();
 	    
 	    
@@ -179,14 +179,14 @@ public class GLListener implements GLEventListener {
 		
 		
 		
-    gl.glGetIntegerv(GL.GL_VIEWPORT,viewport,0);
-    gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX,mvmatrix,0);
-    gl.glGetDoublev(GL.GL_PROJECTION_MATRIX,projmatrix,0);
+    gl.glGetIntegerv(GL2.GL_VIEWPORT,viewport,0);
+    gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX,mvmatrix,0);
+    gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX,projmatrix,0);
 		
-    gl.glEnable(GL.GL_LINE_SMOOTH);
-    gl.glEnable(GL.GL_BLEND);
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-    gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE);
+    gl.glEnable(GL2.GL_LINE_SMOOTH);
+    gl.glEnable(GL2.GL_BLEND);
+    gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+    gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_DONT_CARE);
 	    
     gl.glLineWidth(3);
 		
@@ -203,16 +203,16 @@ public class GLListener implements GLEventListener {
                           ctrlpoints, 
                           Surface.getInstance().getOrderU(),
                           Surface.getInstance().getOrderV(),
-                          GL.GL_MAP2_VERTEX_4);
+                          GL2.GL_MAP2_VERTEX_4);
       glu.gluEndSurface(nurbs);
     }
 		
-    gl.glDisable(GL.GL_LIGHTING);
+    gl.glDisable(GL2.GL_LIGHTING);
 		
     //		gl.glColor3f(1,1,1);
     gl.glColor3f(0,0,0);
     gl.glPointSize(5);
-    gl.glBegin(GL.GL_POINTS);
+    gl.glBegin(GL2.GL_POINTS);
     for (int i = 0; i < ctrlpoints.length / 4; i++) {
       gl.glVertex3d(ctrlpoints[i * 4]/ctrlpoints[i * 4 + 3], ctrlpoints[i * 4 + 1]/ctrlpoints[i * 4 + 3],
                     ctrlpoints[i * 4 + 2]/ctrlpoints[i * 4 + 3]);
@@ -225,7 +225,7 @@ public class GLListener implements GLEventListener {
                        ctrlpoints[i * 4 + 2]/ctrlpoints[i * 4 + 3]);
       //gl.glRasterPos2f((int)coords[0], (int)(viewport[3]-coords[1]-1-5));
       //			gl.glRasterPos2d(20,20);
-      glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18,String.valueOf(i+1));
+      glut.glutBitmapString(GLUTgl2.BITMAP_HELVETICA_18,String.valueOf(i+1));
 
     }
 
@@ -234,7 +234,7 @@ public class GLListener implements GLEventListener {
     //TODO zobrazovat síť - musí to být pomocí dvou vnořených forcyklů
     //TODO draw mesh - it needs two nested for statements
     gl.glLineWidth(1);
-    //		gl.glBegin(GL.GL_LINE_STRIP);
+    //		gl.glBegin(GL2.GL_LINE_STRIP);
     int baseIndex=0	;
 		
 		
@@ -243,7 +243,7 @@ public class GLListener implements GLEventListener {
     //"příčná žebra"
     //"cross ribs"
     for(int i=0;i<Surface.getInstance().getPointsInU();i++){
-      gl.glBegin(GL.GL_LINE_STRIP);
+      gl.glBegin(GL2.GL_LINE_STRIP);
       for(int j=0;j<Surface.getInstance().getPointsInV();j++){
         baseIndex=i*Surface.getInstance().getPointsInV()*4+j*4;
         gl.glVertex3f(ctrlpoints[baseIndex+0]/ctrlpoints[baseIndex+3],
@@ -255,7 +255,7 @@ public class GLListener implements GLEventListener {
     //"podélná žebra"
     //"alongway ribs"
     for(int j=0;j<Surface.getInstance().getPointsInV();j++){
-      gl.glBegin(GL.GL_LINE_STRIP);
+      gl.glBegin(GL2.GL_LINE_STRIP);
       for(int i=0;i<Surface.getInstance().getPointsInU();i++){
         baseIndex=i*Surface.getInstance().getPointsInV()*4+j*4;
         gl.glVertex3f(ctrlpoints[baseIndex+0]/ctrlpoints[baseIndex+3],
@@ -268,7 +268,7 @@ public class GLListener implements GLEventListener {
     gl.glColor3f(0,0,1);
     if(Surface.getInstance().getBodIndex()>=0){
       gl.glPointSize(8);
-      gl.glBegin(GL.GL_POINTS);
+      gl.glBegin(GL2.GL_POINTS);
       int i=Surface.getInstance().getBodIndex();
       gl.glVertex3d(ctrlpoints[i * 4]/ctrlpoints[i * 4 + 3], ctrlpoints[i * 4 + 1]/ctrlpoints[i * 4 + 3],
                     ctrlpoints[i * 4 + 2]/ctrlpoints[i * 4 + 3]);
@@ -284,7 +284,7 @@ public class GLListener implements GLEventListener {
   public void reshape(GLAutoDrawable drawable, int x, int y, int width,
                       int height) {
     gl.glViewport(0, 0, width, height);
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluPerspective(65.0, (double) width / height, 0.1, 1000.0);
     //		gl.glScalef(1, -1, 1);

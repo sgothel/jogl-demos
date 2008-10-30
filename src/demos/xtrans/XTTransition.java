@@ -53,5 +53,5 @@ public interface XTTransition {
   public void update(float fraction);
 
   /** Draws this transition using the passed OpenGL object. */
-  public void draw(GL gl);
+  public void draw(GL2 gl);
 }

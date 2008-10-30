@@ -39,13 +39,28 @@
 
 package demos.testContextDestruction;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
+
 
 /** A simple demonstration exercising context creation and destruction
     as a GLCanvas is added to and removed from its parent container. */
@@ -88,9 +103,9 @@ public class TestContextDestruction {
     frame2ContainedComponent = emptyCanvas;
 
     frame1.pack();
-    frame1.show();
+    frame1.setVisible(true);
     frame2.pack();
-    frame2.show();
+    frame2.setVisible(true);
     frame2.setLocation(256 + BORDER_WIDTH, 0);
     
     JFrame uiFrame = new JFrame("Controls");
@@ -153,7 +168,7 @@ public class TestContextDestruction {
       });
     uiFrame.getContentPane().add(button);
     uiFrame.pack();
-    uiFrame.show();
+    uiFrame.setVisible(true);
     uiFrame.setLocation(512 + BORDER_WIDTH + BORDER_WIDTH, 0);
 
     final Animator animator = new Animator(canvas);
@@ -178,21 +193,24 @@ public class TestContextDestruction {
 
   class Listener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      System.out.println("Listener.init()");
-      drawable.setGL(new DebugGL(drawable.getGL()));
 
-      GL gl = drawable.getGL();
+      System.out.println("Listener.init()");
+
+      GL2 gl = drawable.getGL().getGL2();
+
+      drawable.setGL(new DebugGL2(gl));
+
 
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
-      gl.glEnable(GL.GL_CULL_FACE);
-      gl.glEnable(GL.GL_LIGHTING);
-      gl.glEnable(GL.GL_LIGHT0);
-      gl.glEnable(GL.GL_DEPTH_TEST);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
+      gl.glEnable(GL2.GL_CULL_FACE);
+      gl.glEnable(GL2.GL_LIGHTING);
+      gl.glEnable(GL2.GL_LIGHT0);
+      gl.glEnable(GL2.GL_DEPTH_TEST);
 
       initializeDisplayList(gl);
 
-      gl.glEnable(GL.GL_NORMALIZE);
+      gl.glEnable(GL2.GL_NORMALIZE);
 
       reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
     }
@@ -200,9 +218,9 @@ public class TestContextDestruction {
     public void display(GLAutoDrawable drawable) {
       angle += 2.0f;
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+      gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
       gl.glPushMatrix();
       gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
@@ -212,21 +230,21 @@ public class TestContextDestruction {
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
       System.out.println("Listener.reshape()");
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       float h = (float)height / (float)width;
             
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glMatrixMode(GL2.GL_PROJECTION);
       gl.glLoadIdentity();
       gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glMatrixMode(GL2.GL_MODELVIEW);
       gl.glLoadIdentity();
       gl.glTranslatef(0.0f, 0.0f, -40.0f);
     }
 
     public void destroy(GLAutoDrawable drawable) {
       System.out.println("Listener.destroy()");
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       gl.glDeleteLists(gearDisplayList, 1);
       gearDisplayList = 0;
     }
@@ -235,16 +253,16 @@ public class TestContextDestruction {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
-  private synchronized void initializeDisplayList(GL gl) {
+  private synchronized void initializeDisplayList(GL2 gl) {
     gearDisplayList = gl.glGenLists(1);
-    gl.glNewList(gearDisplayList, GL.GL_COMPILE);
+    gl.glNewList(gearDisplayList, GL2.GL_COMPILE);
     float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
+    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, red, 0);
     gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
     gl.glEndList();
   }
 
-  private void gear(GL gl,
+  private void gear(GL2 gl,
                     float inner_radius,
                     float outer_radius,
                     float width,
@@ -262,12 +280,12 @@ public class TestContextDestruction {
             
     da = 2.0f * (float) Math.PI / teeth / 4.0f;
             
-    gl.glShadeModel(GL.GL_FLAT);
+    gl.glShadeModel(GL2.GL_FLAT);
 
     gl.glNormal3f(0.0f, 0.0f, 1.0f);
 
     /* draw front face */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -282,7 +300,7 @@ public class TestContextDestruction {
     gl.glEnd();
 
     /* draw front sides of teeth */
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -294,7 +312,7 @@ public class TestContextDestruction {
     gl.glEnd();
     
     /* draw back face */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -306,7 +324,7 @@ public class TestContextDestruction {
     gl.glEnd();
     
     /* draw back sides of teeth */
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -318,7 +336,7 @@ public class TestContextDestruction {
     gl.glEnd();
     
     /* draw outward faces of teeth */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i < teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -346,10 +364,10 @@ public class TestContextDestruction {
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
     gl.glEnd();
     
-    gl.glShadeModel(GL.GL_SMOOTH);
+    gl.glShadeModel(GL2.GL_SMOOTH);
     
     /* draw inside radius cylinder */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;

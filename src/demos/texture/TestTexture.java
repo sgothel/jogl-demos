@@ -39,14 +39,34 @@
 
 package demos.texture;
 
-import java.awt.geom.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.texture.*;
+
 
 /** Demonstrates simple use of the TextureIO texture loader. */
 
@@ -109,7 +129,7 @@ public class TestTexture implements GLEventListener {
     frame.getContentPane().add(canvas);
     frame.setJMenuBar(menuBar);
     frame.setSize(800, 600);
-    frame.show();
+    frame.setVisible(true);
   }
 
   private boolean newTexture;
@@ -128,9 +148,10 @@ public class TestTexture implements GLEventListener {
   }
 
   public void init(GLAutoDrawable drawable) {
-    drawable.setGL(new DebugGL(drawable.getGL()));
 
     GL gl = drawable.getGL();
+    drawable.setGL(new DebugGL2(gl.getGL2()));
+
     gl.glClearColor(0, 0, 0, 0);
     gl.glEnable(GL.GL_DEPTH_TEST);
   }
@@ -145,7 +166,7 @@ public class TestTexture implements GLEventListener {
   }
 
   public void display(GLAutoDrawable drawable) {
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
     if (flushTexture) {
@@ -183,10 +204,10 @@ public class TestTexture implements GLEventListener {
     if (texture != null) {
       texture.enable();
       texture.bind();
-      gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+      gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
       TextureCoords coords = texture.getImageTexCoords();
 
-      gl.glBegin(GL.GL_QUADS);
+      gl.glBegin(GL2.GL_QUADS);
       gl.glTexCoord2f(coords.left(), coords.bottom());
       gl.glVertex3f(0, 0, 0);
       gl.glTexCoord2f(coords.right(), coords.bottom());

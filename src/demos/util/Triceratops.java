@@ -39,9 +39,15 @@
 
 package demos.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 
-import javax.media.opengl.*;
+
 
 /** Renders a triceratops. <P>
 
@@ -55,7 +61,7 @@ public class Triceratops {
 
   /** Draws the triceratops object. Callers should capture the result
       in a display list. */
-  public static void drawObject(GL gl) throws IOException {
+  public static void drawObject(GL2 gl) throws IOException {
     Reader reader = new BufferedReader(new InputStreamReader(
       Triceratops.class.getClassLoader().getResourceAsStream("demos/data/models/triceratops.txt")));
     StreamTokenizer tok = new StreamTokenizer(reader);
@@ -97,7 +103,7 @@ public class Triceratops {
     reader.close();
 
     float sf = 0.1f;
-    gl.glBegin(GL.GL_TRIANGLES);
+    gl.glBegin(GL2.GL_TRIANGLES);
     for (int i = 0; i < faceIndices.length; i += 9) {
       for (int j = 0; j < 3; j++) {
         int vi = faceIndices[i + j    ] & 0xFFFF;

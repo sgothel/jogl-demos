@@ -1,15 +1,15 @@
 package demos.applets;
 
-import java.applet.*;
-import java.awt.*;
-import java.io.*;
-import javax.swing.*;
-
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 import demos.gears.Gears;
-import demos.devmaster.lesson1.*;
-import net.java.games.joal.util.*;
+import java.applet.Applet;
+import java.awt.EventQueue;
+import java.awt.GridLayout;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.FPSAnimator;
+import javax.swing.JPanel;
+
+
 
 /** Shows how to deploy an applet using both JOGL and JOAL. This demo
     must be referenced from a web page via an &lt;applet&gt; tag. */

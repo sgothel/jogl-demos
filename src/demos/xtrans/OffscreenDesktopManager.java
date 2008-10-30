@@ -39,18 +39,31 @@
 
 package demos.xtrans;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.beans.*;
-import java.nio.*;
-import java.util.*;
-import javax.swing.*;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.image.VolatileImage;
+import java.beans.PropertyVetoException;
+import java.util.Map;
+import java.util.WeakHashMap;
+import javax.swing.DesktopManager;
+import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 // Internal JOGL API references
 import com.sun.opengl.impl.Debug;
 // FIXME: debugging only
-import com.sun.opengl.impl.Java2D;
+import com.sun.opengl.impl.awt.Java2D;
 
 // FIXME: we need a way to lock a portion of the off-screen back
 // buffer to be persistent for a while during component removals. It

@@ -3,10 +3,10 @@ package demos.fullscreen;
 import java.awt.*;
 import java.awt.event.*;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 import demos.gears.Gears;
 import demos.util.*;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
 
 /**
  * GearsFullscreen.java <BR>

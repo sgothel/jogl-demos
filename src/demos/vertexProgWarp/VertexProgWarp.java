@@ -33,20 +33,35 @@
 
 package demos.vertexProgWarp;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.nio.*;
-import java.util.*;
-import javax.swing.*;
+import demos.common.Demo;
+import demos.common.DemoListener;
+import demos.util.DurationTimer;
+import demos.util.SystemTime;
+import demos.util.Time;
+import demos.util.Triceratops;
+import gleem.BSphere;
+import gleem.BSphereProvider;
+import gleem.ExaminerViewer;
+import gleem.ManipManager;
+import gleem.MouseButtonHelper;
+import gleem.linalg.Vec3f;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+import javax.media.opengl.util.Animator;
+import javax.swing.JOptionPane;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import demos.common.*;
-import demos.util.*;
-import gleem.*;
-import gleem.linalg.*;
+
 
 /**
    Simple space-warp/distortion vertex program demo<br>
@@ -94,7 +109,7 @@ public class VertexProgWarp extends Demo {
     canvas.setSize(512, 512);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
@@ -144,7 +159,7 @@ public class VertexProgWarp extends Demo {
 
   public void init(GLAutoDrawable drawable) {
     initComplete = false;
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     float cc = 0.0f;
     gl.glClearColor(cc, cc, cc, 1);
@@ -154,45 +169,45 @@ public class VertexProgWarp extends Demo {
     gl.glDisable(GL.GL_CULL_FACE);
 
     try {
-      initExtension(gl, "GL_ARB_vertex_program");
+      initExtension(gl, "GL_vertex_program");
     } catch (RuntimeException e) {
       shutdownDemo();
       throw(e);
     }
 
     for(int i=0; i<NUM_OBJS; i++) {
-      gl.glNewList(i+1, GL.GL_COMPILE);
+      gl.glNewList(i+1, GL2.GL_COMPILE);
       drawObject(gl, i);
       gl.glEndList();
     }    
 
     for(int i=0; i<NUM_PROGS; i++) {
       int[] vtxProgTmp = new int[1];
-      gl.glGenProgramsARB(1, vtxProgTmp, 0);
+      gl.glGenPrograms(1, vtxProgTmp, 0);
       programs[i] = vtxProgTmp[0];
-      gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[i]);
-      gl.glProgramStringARB(GL.GL_VERTEX_PROGRAM_ARB, GL.GL_PROGRAM_FORMAT_ASCII_ARB, programTexts[i].length(), programTexts[i]);
+      gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[i]);
+      gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, programTexts[i].length(), programTexts[i]);
     }
 
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
 
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
 
     // sin Taylor series constants - 1, 1/3!, 1/5!, 1/7!
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
 
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
 
     // sin wave frequency, amplitude
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, 1.0f, 0.2f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 6, 1.0f, 0.2f, 0.0f, 0.0f);
 
     // phase animation
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 7, 0.0f, 0.0f, 0.0f, 0.0f);
 
     // fisheye sphere radius
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 8, 1.0f, 0.0f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 8, 1.0f, 0.0f, 0.0f, 0.0f);
 
     setWindowTitle();
 
@@ -245,16 +260,16 @@ public class VertexProgWarp extends Demo {
 
     time.update();
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
     if (toggleWire) {
       wire = !wire;
       if (wire)
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
       else
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
       toggleWire = false;
     }
 
@@ -273,21 +288,21 @@ public class VertexProgWarp extends Demo {
     ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
     ManipManager.getManipManager().render(drawable, gl);
 
-    gl.glBindProgramARB(GL.GL_VERTEX_PROGRAM_ARB, programs[program]);
-    gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 7, anim, 0.0f, 0.0f, 0.0f);
+    gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[program]);
+    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 7, anim, 0.0f, 0.0f, 0.0f);
 
     if (program==6)
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
+      gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
     else
-      gl.glProgramEnvParameter4fARB(GL.GL_VERTEX_PROGRAM_ARB, 6, freq, amp, d, d+1);
+      gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 6, freq, amp, d, d+1);
 
     if (b['p'])
-      gl.glEnable(GL.GL_VERTEX_PROGRAM_ARB);
+      gl.glEnable(GL2.GL_VERTEX_PROGRAM);
 
     gl.glDisable(GL.GL_TEXTURE_2D);
     gl.glCallList(obj+1);
 
-    gl.glDisable(GL.GL_VERTEX_PROGRAM_ARB);
+    gl.glDisable(GL2.GL_VERTEX_PROGRAM);
 
     gl.glPopMatrix();
   }
@@ -430,7 +445,7 @@ public class VertexProgWarp extends Demo {
     titleSetter.setTitle("SpaceWarp - " + programNames[program]);
   }
 
-  private void drawObject(GL gl, int which) {
+  private void drawObject(GL2 gl, int which) {
     switch(which) {
     case 0:
       drawSphere(gl, 0.5f, 100, 100);
@@ -459,16 +474,19 @@ public class VertexProgWarp extends Demo {
     }
   }
 
-  private void drawSphere(GL gl, float radius, int slices, int stacks) {
+  private void drawSphere(GL2 gl, float radius, int slices, int stacks) {
+
     int J = stacks;
     int I = slices;
+
     for(int j = 0; j < J; j++) {
       float v = j/(float) J;
       float phi = (float) (v * 2 * Math.PI);
       float v2 = (j+1)/(float) J;
       float phi2 = (float) (v2 * 2 * Math.PI);
 
-      gl.glBegin(GL.GL_QUAD_STRIP);
+      gl.glBegin(GL2.GL_QUAD_STRIP);
+
       for(int i = 0; i < I; i++) {	
         float u = i/(I-1.0f);
         float theta = (float) (u * Math.PI);
@@ -500,16 +518,20 @@ public class VertexProgWarp extends Demo {
     }
   }
 
-  private void drawTorus(GL gl, float meridian_radius, float core_radius, 
+  private void drawTorus(GL2 gl, float meridian_radius, float core_radius,
                          int meridian_slices, int core_slices) {
+
     int J = meridian_slices;
     int I = core_slices;
+
     for(int j = 0; j < J-1; j++) {
+
       float v = j/(J-1.0f);
       float rho = (float) (v * 2.0f * Math.PI);
       float v2 = (j+1)/(J-1.0f);
       float rho2 = (float) (v2 * 2.0f * Math.PI);
-      gl.glBegin(GL.GL_QUAD_STRIP);
+      gl.glBegin(GL2.GL_QUAD_STRIP);
+
       for(int i = 0; i < I; i++) {	
         float u = i/(I-1.0f);
         float theta = (float) (u * 2.0f * Math.PI);
@@ -541,7 +563,7 @@ public class VertexProgWarp extends Demo {
     }
   }
 
-  private void drawCube(GL gl) {
+  private void drawCube(GL2 gl) {
     int cr = 40;
     float scaleFactor = 0.5f;
 
@@ -576,7 +598,7 @@ public class VertexProgWarp extends Demo {
     drawGrid(gl, cr, cr, scaleFactor, -1.0f, 1.0f, -1.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f);
   }
 
-  private void drawGrid(GL gl, int rows, int cols,
+  private void drawGrid(GL2 gl, int rows, int cols,
                         float scaleFactor,
                         float sx, float sy, float sz,
                         float ux, float uy, float uz,
@@ -584,7 +606,7 @@ public class VertexProgWarp extends Demo {
     int x, y;
 
     for(y=0; y<rows; y++) {
-      gl.glBegin(GL.GL_QUAD_STRIP);
+      gl.glBegin(GL2.GL_QUAD_STRIP);
       for(x=0; x<=cols; x++) {
         float u = x / (float) cols;
         float v = y / (float) rows;

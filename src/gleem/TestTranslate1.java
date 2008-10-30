@@ -39,11 +39,18 @@
 
 package gleem;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import gleem.linalg.*;
+import gleem.linalg.Vec3f;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+
+
 
 /** Tests the Translate1 Manip. */
 
@@ -138,6 +145,6 @@ public class TestTranslate1 {
     canvas.addGLEventListener(new Listener());
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
   }
 }

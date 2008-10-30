@@ -88,7 +88,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
 
     // and all the rest happens in the display function...

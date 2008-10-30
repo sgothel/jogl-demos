@@ -33,28 +33,46 @@
 
 package demos.jrefract;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
-
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.*;
-import demos.common.*;
+import demos.common.Demo;
+import demos.common.DemoListener;
 import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
 import demos.j2d.FlyingText;
 import demos.jgears.JGears;
 import demos.proceduralTexturePhysics.ProceduralTexturePhysics;
-import demos.util.*;
 import demos.vertexBufferObject.VertexBufferObject;
 import demos.vertexProgRefract.VertexProgRefract;
 import demos.vertexProgWarp.VertexProgWarp;
+import demos.xtrans.XTDesktopPane;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.awt.gl2.GL2JPanel;
+import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.FPSAnimator;
+import javax.swing.JCheckBox;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
-import demos.xtrans.*;
 
 /**
   Wavelength-dependent refraction demo<br>
@@ -120,10 +138,10 @@ public class JRefract {
     if (which == INFINITE) {
       caps.setStencilBits(16);
     }
-    final GLJPanel canvas =
+    final GL2JPanel canvas =
       (which == GEARS) ?
       new JGears() :
-      new GLJPanel(caps);
+      new GL2JPanel(caps);
     final DemoListener demoListener = new DemoListener() {
         public void shutdownDemo() {
           removeJPanel(canvas);
@@ -402,11 +420,11 @@ public class JRefract {
       }).start();
   }
 
-  private synchronized void addJPanel(GLJPanel panel) {
+  private synchronized void addJPanel(GL2JPanel panel) {
     animator.add(panel);
   }
 
-  private synchronized void removeJPanel(GLJPanel panel) {
+  private synchronized void removeJPanel(GL2JPanel panel) {
     animator.remove(panel);
   }
 

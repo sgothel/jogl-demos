@@ -39,20 +39,25 @@
 
 package demos.j2d;
 
+import demos.gears.Gears;
+import demos.util.FPSCounter;
+import demos.util.SystemTime;
+import demos.util.Time;
+import gleem.linalg.Vec2f;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.text.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import sun.java2d.pipe.TextRenderer;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.*;
 
-import demos.gears.Gears;
-import demos.util.*;
-import gleem.linalg.*;
 
 /** A simple test of the TextRenderer class. Draws gears underneath
     with moving Java 2D-rendered text on top. */
@@ -82,7 +87,7 @@ public class TestTextRenderer implements GLEventListener {
         }
       });
 
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 

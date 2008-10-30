@@ -14,10 +14,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.Canvas.*;
 import java.nio.*;
-import java.util.*;
 import javax.media.opengl.*;
+import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
+import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.BufferUtil;
 
 public class Picking
 {
@@ -32,7 +33,10 @@ public class Picking
     GLDrawableFactory factory = GLDrawableFactory.getFactory();
     GLCapabilities capabilities = new GLCapabilities();
     GLCanvas drawable = new GLCanvas(capabilities);
-    drawable.addGLEventListener(new Renderer());
+    final Renderer renderer = new Renderer();
+    drawable.addGLEventListener(renderer);
+    drawable.addMouseListener(renderer);
+    drawable.addMouseMotionListener(renderer);
     frame.add(drawable);
     frame.setSize(400, 400);
     final Animator animator = new Animator(drawable);
@@ -44,7 +48,7 @@ public class Picking
           System.exit(0);
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();	
   }
 
@@ -61,12 +65,10 @@ public class Picking
     {
       GL gl = drawable.getGL();
       this.gldrawable = drawable;
-      gl.glEnable(GL.GL_CULL_FACE);
-      gl.glEnable(GL.GL_DEPTH_TEST);
-      gl.glEnable(GL.GL_NORMALIZE);
+      gl.glEnable(GL2.GL_CULL_FACE);
+      gl.glEnable(GL2.GL_DEPTH_TEST);
+      gl.glEnable(GL2.GL_NORMALIZE);
       gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-      drawable.addMouseListener(this);
-      drawable.addMouseMotionListener(this);
     }
     	
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) 
@@ -74,14 +76,14 @@ public class Picking
       GL gl = drawable.getGL();
       float h = (float) height / (float) width;
       gl.glViewport(0, 0, width, height);
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glMatrixMode(GL2.GL_PROJECTION);
       gl.glLoadIdentity();
       glu.gluOrtho2D(0.0f,1.0f,0.0f,1.0f);
     }
 
     public void display(GLAutoDrawable drawable) 
     {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       switch(cmd)
         {
         case UPDATE:
@@ -93,20 +95,20 @@ public class Picking
           int[] viewPort = new int[4];
           IntBuffer selectBuffer = BufferUtil.newIntBuffer(buffsize);
           int hits = 0;
-          gl.glGetIntegerv(GL.GL_VIEWPORT, viewPort, 0);
+          gl.glGetIntegerv(GL2.GL_VIEWPORT, viewPort, 0);
           gl.glSelectBuffer(buffsize, selectBuffer);
-          gl.glRenderMode(GL.GL_SELECT);
+          gl.glRenderMode(GL2.GL_SELECT);
           gl.glInitNames();
-          gl.glMatrixMode(GL.GL_PROJECTION);
+          gl.glMatrixMode(GL2.GL_PROJECTION);
           gl.glPushMatrix();
           gl.glLoadIdentity();
           glu.gluPickMatrix(x, (double) viewPort[3] - y, 5.0d, 5.0d, viewPort, 0);
           glu.gluOrtho2D(0.0d, 1.0d, 0.0d, 1.0d);
           drawScene(gl);
-          gl.glMatrixMode(GL.GL_PROJECTION);
+          gl.glMatrixMode(GL2.GL_PROJECTION);
           gl.glPopMatrix();
           gl.glFlush();
-          hits = gl.glRenderMode(GL.GL_RENDER);
+          hits = gl.glRenderMode(GL2.GL_RENDER);
           processHits(hits, selectBuffer);
           cmd = UPDATE;
           break;
@@ -149,20 +151,20 @@ public class Picking
     public int viewPortWidth(GL gl)
     {
       int[] viewPort = new int[4];
-      gl.glGetIntegerv(GL.GL_VIEWPORT, viewPort, 0);
+      gl.glGetIntegerv(GL2.GL_VIEWPORT, viewPort, 0);
       return viewPort[2];
     }
 
     public int viewPortHeight(GL gl)
     {
       int[] viewPort = new int[4];
-      gl.glGetIntegerv(GL.GL_VIEWPORT, viewPort, 0);
+      gl.glGetIntegerv(GL2.GL_VIEWPORT, viewPort, 0);
       return viewPort[3];
     }
 
-    public void drawScene(GL gl)
+    public void drawScene(GL2 gl)
     {
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+      gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
       // Colors
       float red[] =   {1.0f,0.0f,0.0f,1.0f};
@@ -227,9 +229,9 @@ public class Picking
       float[] c;
       int id = 0;
       boolean outline = false;
-      GL gl;
+      GL2 gl;
       GLU glu;
-      public GLEntity(GL gl, GLU glu)
+      public GLEntity(GL2 gl, GLU glu)
       {
         this.gl = gl;
         this.glu = glu;
@@ -246,19 +248,19 @@ public class Picking
     {
       float w = 0.1f;
       float h = 0.1f;
-      public GLRectangleEntity(GL gl, GLU glu)
+      public GLRectangleEntity(GL2 gl, GLU glu)
       {
         super(gl, glu);
       }
       public void _draw()
       {
         if (outline)
-          gl.glPolygonMode(GL.GL_FRONT, GL.GL_LINE);
+          gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_LINE);
         else
-          gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
+          gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
 
         gl.glColor4fv(c, 0);
-        gl.glBegin(GL.GL_POLYGON);
+        gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3f(x, y, z);
         gl.glVertex3f(x + w, y, z);
         gl.glVertex3f(x + w, y + h, z);

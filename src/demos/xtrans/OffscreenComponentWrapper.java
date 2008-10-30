@@ -39,13 +39,16 @@
 
 package demos.xtrans;
 
-import java.awt.*;
-import javax.swing.*;
+
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import javax.swing.JComponent;
 
 // Internal JOGL API references
 import com.sun.opengl.impl.Debug;
 // FIXME: debugging only
-import com.sun.opengl.impl.Java2D;
+import com.sun.opengl.impl.awt.Java2D;
 
 /** Provides an interposition point where we can install a new
  * Graphics object in the rendering pipeline. Because lightweight

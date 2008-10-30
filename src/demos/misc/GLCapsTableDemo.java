@@ -1,16 +1,30 @@
 package demos.misc;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import javax.swing.*;
-import com.sun.opengl.util.FPSAnimator;
+
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 
 import demos.gears.Gears;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.media.opengl.DefaultGLCapabilitiesChooser;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLCapabilitiesChooser;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.FPSAnimator;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
 
 /*******************************************************************************
  * @file GLCapsTableDemo.java

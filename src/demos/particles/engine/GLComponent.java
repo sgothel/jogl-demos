@@ -38,9 +38,9 @@ package demos.particles.engine;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
+import javax.media.opengl.awt.*;
 
-import java.io.*;
+import javax.media.opengl.util.FPSAnimator;
 
 public class GLComponent extends GLCanvas implements GLEventListener {
     
@@ -70,7 +70,7 @@ public class GLComponent extends GLCanvas implements GLEventListener {
     }
     
     public void display(GLAutoDrawable drawable) {
-        final GL gl = drawable.getGL(); 
+        final GL2 gl = drawable.getGL().getGL2();
         engine.draw(gl);
     }
     
@@ -94,9 +94,9 @@ public class GLComponent extends GLCanvas implements GLEventListener {
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
         // Get nice perspective calculations. 
-        gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
         // Nice point smoothing.
-        gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+        gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL2.GL_NICEST);
         // Enable texture mapping.
         gl.glEnable(GL.GL_TEXTURE_2D);
         

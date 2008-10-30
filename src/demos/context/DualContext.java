@@ -39,13 +39,24 @@
 
 package demos.context;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawable;
+import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.awt.AWTGraphicsConfiguration;
+import javax.media.opengl.glu.GLU;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
+
 
 /** This demo illustrates the use of the GLDrawable and GLContext APIs
     to create two OpenGL contexts for the same Canvas. The red and
@@ -58,7 +69,7 @@ public class DualContext extends Canvas {
   private GLContext  context1;
   private GLContext  context2;
   private GLU        glu;
-  private GLUT       glut;
+  private GLUTgl2    glut;
   private int        repaintNum;
 
   public DualContext(GLCapabilities capabilities) {

@@ -101,7 +101,7 @@ public class DxTex {
     desktop = new JDesktopPane();
     frame.getContentPane().add(desktop);
     frame.setSize(640, 480);
-    frame.show();
+    frame.setVisible(true);
 
     frameListener = new InternalFrameAdapter() {
         public void internalFrameActivated(InternalFrameEvent e) {
@@ -219,7 +219,7 @@ public class DxTex {
     try {
       ImageFrame fr = new ImageFrame(filename, image, mipMapLevel);
       desktop.add(fr);
-      fr.show();
+      fr.setVisible(true);
     } catch (Exception e) {
       showMessageDialog("Error while loading file:" + endl +
                         exceptionToString(e),

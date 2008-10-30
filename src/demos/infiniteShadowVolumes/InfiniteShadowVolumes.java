@@ -33,22 +33,37 @@
 
 package demos.infiniteShadowVolumes;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
-import java.nio.*;
-import java.util.*;
-import javax.imageio.*;
-import javax.imageio.stream.*;
+import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import demos.common.Demo;
+import demos.common.DemoListener;
+import demos.util.MD2;
+import gleem.BSphere;
+import gleem.BSphereProvider;
+import gleem.CameraParameters;
+import gleem.ExaminerViewer;
+import gleem.HandleBoxManip;
+import gleem.ManipManager;
+import gleem.MouseButtonHelper;
+import gleem.linalg.Mat4f;
+import gleem.linalg.Rotf;
+import gleem.linalg.Vec3f;
+import gleem.linalg.Vec4f;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import demos.common.*;
-import demos.util.*;
-import gleem.*;
-import gleem.linalg.*;
+
 
 /**
   Infinite shadow volumes are described in the paper 
@@ -89,7 +104,7 @@ public class InfiniteShadowVolumes extends Demo {
     canvas.setSize(512, 512);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
@@ -148,7 +163,7 @@ public class InfiniteShadowVolumes extends Demo {
   private int curr_view  = CAMERA_VIEW;
 
   private GLU  glu  = new GLU();
-  private GLUT glut = new GLUT();
+  private GLUTgl2 glut = new GLUTgl2();
 
   private GLAutoDrawable drawable;
   private ExaminerViewer viewer;
@@ -177,28 +192,28 @@ public class InfiniteShadowVolumes extends Demo {
   private boolean toggleWireframe;
 
   public void init(GLAutoDrawable drawable) {
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     gl.glClearStencil(128);
-    //glEnable(GL.GL_DEPTH_CLAMP_NV);
-    gl.glEnable(GL.GL_DEPTH_TEST);
-    gl.glDepthFunc(GL.GL_LESS);
-    gl.glEnable(GL.GL_NORMALIZE);
-    gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_FALSE);
+    //glEnable(GL2.GL_DEPTH_CLAMP_NV);
+    gl.glEnable(GL2.GL_DEPTH_TEST);
+    gl.glDepthFunc(GL2.GL_LESS);
+    gl.glEnable(GL2.GL_NORMALIZE);
+    gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_FALSE);
     float[] ambient = new float[] {0.3f, 0.3f, 0.3f, 1};
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient, 0);
+    gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambient, 0);
     faceDisplayList = gl.glGenLists(1);
-    gl.glNewList(faceDisplayList, GL.GL_COMPILE);
+    gl.glNewList(faceDisplayList, GL2.GL_COMPILE);
     drawMesh(gl, 20, 40);
     gl.glEndList();
 
     int[] tmp = new int[1];
     gl.glGenTextures(1, tmp, 0);
     wallTexObject = tmp[0];
-    gl.glBindTexture(GL.GL_TEXTURE_2D, wallTexObject);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+    gl.glBindTexture(GL2.GL_TEXTURE_2D, wallTexObject);
+    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_GENERATE_MIPMAP, GL2.GL_TRUE);
+    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
+    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
 
     float[] tex = new float[32*32];
     for(int i=0; i < 32; i++) {
@@ -209,7 +224,7 @@ public class InfiniteShadowVolumes extends Demo {
           tex[i+j*32] = .9f;
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, 32, 32, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(tex));
+    gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGBA, 32, 32, 0, GL2.GL_LUMINANCE, GL2.GL_FLOAT, FloatBuffer.wrap(tex));
       
     initModel();
     
@@ -220,12 +235,13 @@ public class InfiniteShadowVolumes extends Demo {
 
     doViewAll = true;
 
-    drawable.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-          dispatchKey(e.getKeyChar());
-          demoListener.repaint();
-        }
-      });
+    //TODO drawable has no addKeyListener
+//    drawable.addKeyListener(new KeyAdapter() {
+//        public void keyTyped(KeyEvent e) {
+//          dispatchKey(e.getKeyChar());
+//          demoListener.repaint();
+//        }
+//      });
 
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
@@ -300,9 +316,9 @@ public class InfiniteShadowVolumes extends Demo {
   }
 
   public void display(GLAutoDrawable drawable) {
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
 
     if (doViewAll) {
@@ -313,14 +329,15 @@ public class InfiniteShadowVolumes extends Demo {
     objectManipXform = objectManip.getTransform();
     lightManipXform  = lightManip.getTransform();
 
-    if (toggleDepthClampNV) {
-      if (enableDepthClampNV) {
-        gl.glEnable(GL.GL_DEPTH_CLAMP_NV);
-      } else {
-        gl.glDisable(GL.GL_DEPTH_CLAMP_NV);
-      }
-      toggleDepthClampNV = false;
-    }
+    // TODO GL_DEPTH_CLAMP_NV not available
+//    if (toggleDepthClampNV) {
+//      if (enableDepthClampNV) {
+//        gl.glEnable(GL2.GL_DEPTH_CLAMP_NV);
+//      } else {
+//        gl.glDisable(GL2.GL_DEPTH_CLAMP_NV);
+//      }
+//      toggleDepthClampNV = false;
+//    }
 
     if (b[' ']) {
       animateForward = true;
@@ -345,7 +362,7 @@ public class InfiniteShadowVolumes extends Demo {
     }
 
     if (hideCurrentModel) {
-      gl.glNewList(faceDisplayList, GL.GL_COMPILE);
+      gl.glNewList(faceDisplayList, GL2.GL_COMPILE);
       drawMesh(gl, 20, 40);
       gl.glEndList();
       hideCurrentModel = false;
@@ -353,9 +370,9 @@ public class InfiniteShadowVolumes extends Demo {
 
     if (toggleWireframe) {
       if(b['w'])
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
       else
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
     }
 
     if(b['I']) {
@@ -364,7 +381,7 @@ public class InfiniteShadowVolumes extends Demo {
       case CAMERA_VIEW:
         viewer.update(gl);
         // Undo perspective effects of ExaminerViewer
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
         applyInfinitePerspective(gl, viewer);
         break;
@@ -412,7 +429,7 @@ public class InfiniteShadowVolumes extends Demo {
       }
     }
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
 
     // FIXME
     if (b['X']) {
@@ -430,18 +447,18 @@ public class InfiniteShadowVolumes extends Demo {
       double[] neg_y = new double[] { 0, 1, 0, 1};
       double[] pos_z = new double[] { 0, 0,-1, 1};
       double[] neg_z = new double[] { 0, 0, 1, 1};
-      gl.glClipPlane(GL.GL_CLIP_PLANE0, pos_x, 0);
-      gl.glClipPlane(GL.GL_CLIP_PLANE1, neg_x, 0);
-      gl.glClipPlane(GL.GL_CLIP_PLANE2, pos_y, 0);
-      gl.glClipPlane(GL.GL_CLIP_PLANE3, neg_y, 0);
-      gl.glClipPlane(GL.GL_CLIP_PLANE4, pos_z, 0);
-      gl.glClipPlane(GL.GL_CLIP_PLANE5, neg_z, 0);
-      gl.glEnable(GL.GL_CLIP_PLANE0);
-      gl.glEnable(GL.GL_CLIP_PLANE1);
-      gl.glEnable(GL.GL_CLIP_PLANE2);
-      gl.glEnable(GL.GL_CLIP_PLANE3);
-      gl.glEnable(GL.GL_CLIP_PLANE4);
-      gl.glEnable(GL.GL_CLIP_PLANE5);
+      gl.glClipPlane(GL2.GL_CLIP_PLANE0, pos_x, 0);
+      gl.glClipPlane(GL2.GL_CLIP_PLANE1, neg_x, 0);
+      gl.glClipPlane(GL2.GL_CLIP_PLANE2, pos_y, 0);
+      gl.glClipPlane(GL2.GL_CLIP_PLANE3, neg_y, 0);
+      gl.glClipPlane(GL2.GL_CLIP_PLANE4, pos_z, 0);
+      gl.glClipPlane(GL2.GL_CLIP_PLANE5, neg_z, 0);
+      gl.glEnable(GL2.GL_CLIP_PLANE0);
+      gl.glEnable(GL2.GL_CLIP_PLANE1);
+      gl.glEnable(GL2.GL_CLIP_PLANE2);
+      gl.glEnable(GL2.GL_CLIP_PLANE3);
+      gl.glEnable(GL2.GL_CLIP_PLANE4);
+      gl.glEnable(GL2.GL_CLIP_PLANE5);
       gl.glLoadIdentity();
     }
 
@@ -450,16 +467,16 @@ public class InfiniteShadowVolumes extends Demo {
     //      camera.apply_inverse_transform();
     //      light.apply_transform();
     gl.glMultMatrixf(getData(lightManipXform), 0);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, getData(light_position), 0);
+    gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, getData(light_position), 0);
     gl.glPopMatrix();
-    gl.glEnable(GL.GL_LIGHT0);
+    gl.glEnable(GL2.GL_LIGHT0);
 
     // FIXME
     gl.glPushMatrix();
     //      gl.glLoadIdentity();
     //      camera.apply_inverse_transform();
 
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
+    gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
     ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
     ManipManager.getManipManager().render(drawable, gl);
@@ -475,12 +492,12 @@ public class InfiniteShadowVolumes extends Demo {
     }
 
     if (b['X']) {
-      gl.glDisable(GL.GL_CLIP_PLANE0);
-      gl.glDisable(GL.GL_CLIP_PLANE1);
-      gl.glDisable(GL.GL_CLIP_PLANE2);
-      gl.glDisable(GL.GL_CLIP_PLANE3);
-      gl.glDisable(GL.GL_CLIP_PLANE4);
-      gl.glDisable(GL.GL_CLIP_PLANE5);
+      gl.glDisable(GL2.GL_CLIP_PLANE0);
+      gl.glDisable(GL2.GL_CLIP_PLANE1);
+      gl.glDisable(GL2.GL_CLIP_PLANE2);
+      gl.glDisable(GL2.GL_CLIP_PLANE3);
+      gl.glDisable(GL2.GL_CLIP_PLANE4);
+      gl.glDisable(GL2.GL_CLIP_PLANE5);
     }
 
     if (!b['s']) {
@@ -492,12 +509,12 @@ public class InfiniteShadowVolumes extends Demo {
     // Be aware that this can cause some multipass artifacts
     // due to invariance issues.
     if (b['X']) {
-      gl.glEnable(GL.GL_CLIP_PLANE0);
-      gl.glEnable(GL.GL_CLIP_PLANE1);
-      gl.glEnable(GL.GL_CLIP_PLANE2);
-      gl.glEnable(GL.GL_CLIP_PLANE3);
-      gl.glEnable(GL.GL_CLIP_PLANE4);
-      gl.glEnable(GL.GL_CLIP_PLANE5);
+      gl.glEnable(GL2.GL_CLIP_PLANE0);
+      gl.glEnable(GL2.GL_CLIP_PLANE1);
+      gl.glEnable(GL2.GL_CLIP_PLANE2);
+      gl.glEnable(GL2.GL_CLIP_PLANE3);
+      gl.glEnable(GL2.GL_CLIP_PLANE4);
+      gl.glEnable(GL2.GL_CLIP_PLANE5);
     }
     if (!b['d']) {
       if (!b['R'])
@@ -523,12 +540,12 @@ public class InfiniteShadowVolumes extends Demo {
     // Be aware that this can cause some multipass artifacts
     // due to invariance issues.
     if (b['X']) {
-      gl.glDisable(GL.GL_CLIP_PLANE0);
-      gl.glDisable(GL.GL_CLIP_PLANE1);
-      gl.glDisable(GL.GL_CLIP_PLANE2);
-      gl.glDisable(GL.GL_CLIP_PLANE3);
-      gl.glDisable(GL.GL_CLIP_PLANE4);
-      gl.glDisable(GL.GL_CLIP_PLANE5);
+      gl.glDisable(GL2.GL_CLIP_PLANE0);
+      gl.glDisable(GL2.GL_CLIP_PLANE1);
+      gl.glDisable(GL2.GL_CLIP_PLANE2);
+      gl.glDisable(GL2.GL_CLIP_PLANE3);
+      gl.glDisable(GL2.GL_CLIP_PLANE4);
+      gl.glDisable(GL2.GL_CLIP_PLANE5);
     }
 
     drawLight(gl);
@@ -795,7 +812,7 @@ public class InfiniteShadowVolumes extends Demo {
 
   // This routine draws the end caps (both local and infinite) for an
   // occluder.  These caps are required for the zfail approach to work.
-  private void drawShadowVolumeEndCaps(GL gl, int mindex) {
+  private void drawShadowVolumeEndCaps(GL2 gl, int mindex) {
     Vec4f olight = new Vec4f();
 
     Mat4f ml = new Mat4f(objectManipXform);
@@ -807,7 +824,7 @@ public class InfiniteShadowVolumes extends Demo {
 
     gl.glPushMatrix();
     gl.glMultMatrixf(getData(objectManipXform), 0);
-    gl.glBegin(GL.GL_TRIANGLES);
+    gl.glBegin(GL2.GL_TRIANGLES);
     for (int i = 0; i < m[mindex].mod.tri.length; i++) {
       if (m[mindex].mod.tri[i].kill)
         continue;
@@ -833,38 +850,38 @@ public class InfiniteShadowVolumes extends Demo {
     gl.glPopMatrix();
   }
 
-  private void drawModel(GL gl, int mindex, boolean do_diffuse) {
+  private void drawModel(GL2 gl, int mindex, boolean do_diffuse) {
     MD2.PositionNormal[] vpn = m[mindex].interp_frame.pn;
 
     float[] zero = new float[] {  0,  0,  0,  0};
     float[] dim  = new float[] {.2f,.2f,.2f,.2f};
     float[] diffuse = new float[4];
     float[] specular = new float[4];
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, getData(m[mindex].ambient), 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, getData(m[mindex].diffuse), 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, getData(m[mindex].specular), 0);
-    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, m[mindex].shininess);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, getData(m[mindex].ambient), 0);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, getData(m[mindex].diffuse), 0);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, getData(m[mindex].specular), 0);
+    gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, m[mindex].shininess);
     if (!do_diffuse) {
-      gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, dim, 0);
-      gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero, 0);
+      gl.glGetLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, dim, 0);
+      gl.glGetLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specular, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, zero, 0);
     } else {
-      gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
-      gl.glEnable(GL.GL_BLEND);
-      gl.glStencilFunc(GL.GL_EQUAL, 128, ~0);
-      gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
-      gl.glEnable(GL.GL_STENCIL_TEST);
-      gl.glDepthFunc(GL.GL_EQUAL);
+      gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
+      gl.glEnable(GL2.GL_BLEND);
+      gl.glStencilFunc(GL2.GL_EQUAL, 128, ~0);
+      gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
+      gl.glEnable(GL2.GL_STENCIL_TEST);
+      gl.glDepthFunc(GL2.GL_EQUAL);
     }
     gl.glPushMatrix();
     gl.glMultMatrixf(getData(objectManipXform), 0);
-    gl.glEnable(GL.GL_LIGHTING);
+    gl.glEnable(GL2.GL_LIGHTING);
 
     gl.glPolygonOffset(0,-2);
-    gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+    gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
 
-    gl.glBegin(GL.GL_TRIANGLES);
+    gl.glBegin(GL2.GL_TRIANGLES);
     {
       for (int i = 0; i < m[mindex].mod.tri.length; i++) {
         for(int j=0; j < 3; j++) {
@@ -876,28 +893,28 @@ public class InfiniteShadowVolumes extends Demo {
     }
     gl.glEnd();
 
-    gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+    gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
 
-    gl.glDisable(GL.GL_LIGHTING);
+    gl.glDisable(GL2.GL_LIGHTING);
     gl.glPopMatrix();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,  new float[] { 0.8f, 0.8f, 0.8f, 1}, 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 0.3f, 0.3f, 0.3f, 1}, 0);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,  new float[] { 0.8f, 0.8f, 0.8f, 1}, 0);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.3f, 0.3f, 0.3f, 1}, 0);
 
     if (!do_diffuse) {
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specular, 0);
     } else {
-      gl.glDisable(GL.GL_BLEND);
-      //glDisable(GL.GL_STENCIL_TEST);
-      gl.glStencilFunc(GL.GL_ALWAYS, 128, ~0);
-      gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
+      gl.glDisable(GL2.GL_BLEND);
+      //glDisable(GL2.GL_STENCIL_TEST);
+      gl.glStencilFunc(GL2.GL_ALWAYS, 128, ~0);
+      gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
 
-      gl.glDepthFunc(GL.GL_LESS);
+      gl.glDepthFunc(GL2.GL_LESS);
     }
   }
 
   // This is for drawing the walls of the room.
-  private void drawMesh(GL gl, float size, int tess) {
+  private void drawMesh(GL2 gl, float size, int tess) {
     float hsize = size/2;
     float delta = size/(tess-1);
 
@@ -909,7 +926,7 @@ public class InfiniteShadowVolumes extends Demo {
     float x = 0;
     for(int i=0; i < tess-1; i++) {
       float y = 0;
-      gl.glBegin(GL.GL_QUAD_STRIP);
+      gl.glBegin(GL2.GL_QUAD_STRIP);
       for(int j=0; j < tess; j++) {
         gl.glTexCoord2f(      x, y);
         gl.glVertex2f  (      x, y);
@@ -923,9 +940,9 @@ public class InfiniteShadowVolumes extends Demo {
     gl.glPopMatrix();
   }
 
-  private void drawCube(GL gl) {
-    gl.glBindTexture(GL.GL_TEXTURE_2D, wallTexObject);
-    gl.glEnable(GL.GL_TEXTURE_2D);
+  private void drawCube(GL2 gl) {
+    gl.glBindTexture(GL2.GL_TEXTURE_2D, wallTexObject);
+    gl.glEnable(GL2.GL_TEXTURE_2D);
     gl.glPushMatrix();
     // FIXME
     //      room.apply_transform();
@@ -942,10 +959,10 @@ public class InfiniteShadowVolumes extends Demo {
     gl.glRotatef(180, 0, 1, 0);
     gl.glCallList(faceDisplayList);
     gl.glPopMatrix();
-    gl.glDisable(GL.GL_TEXTURE_2D);
+    gl.glDisable(GL2.GL_TEXTURE_2D);
   }
 
-  private void drawRoom(GL gl, boolean do_diffuse) {
+  private void drawRoom(GL2 gl, boolean do_diffuse) {
     float[] zero = new float[] {0,0,0,0};
     float[] a = new float[4];
     a[0] = room_ambient;
@@ -961,53 +978,53 @@ public class InfiniteShadowVolumes extends Demo {
     float[] diffuse  = new float[4];
     float[] specular = new float[4];
 
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, a, 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE,  new float[] {0.8f, 0.8f, 0.8f, 1}, 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {0.4f, 0.4f, 0.4f, 1}, 0);
-    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 64.0f);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, a, 0);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,  new float[] {0.8f, 0.8f, 0.8f, 1}, 0);
+    gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] {0.4f, 0.4f, 0.4f, 1}, 0);
+    gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 64.0f);
 
     if (!do_diffuse) {
-      gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, d1, 0);
-      gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero, 0);
-      gl.glStencilFunc(GL.GL_ALWAYS, 128, ~0);
+      gl.glGetLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, d1, 0);
+      gl.glGetLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specular, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, zero, 0);
+      gl.glStencilFunc(GL2.GL_ALWAYS, 128, ~0);
     } else {
-      gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, emission, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, zero, 0);
-      gl.glGetLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, zero, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, d2, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, s, 0);
+      gl.glGetLightfv(GL2.GL_LIGHT0, GL2.GL_EMISSION, emission, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_EMISSION, zero, 0);
+      gl.glGetLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambient, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, zero, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, d2, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, s, 0);
 
-      gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
-      gl.glEnable(GL.GL_BLEND);
-      gl.glStencilFunc(GL.GL_EQUAL, 128, ~0);
-      gl.glDepthFunc(GL.GL_EQUAL);
+      gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
+      gl.glEnable(GL2.GL_BLEND);
+      gl.glStencilFunc(GL2.GL_EQUAL, 128, ~0);
+      gl.glDepthFunc(GL2.GL_EQUAL);
     }
     gl.glPushMatrix();
     gl.glTranslatef(0,9,0);
-    gl.glEnable(GL.GL_LIGHTING);
-    gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
-    gl.glEnable(GL.GL_STENCIL_TEST);
+    gl.glEnable(GL2.GL_LIGHTING);
+    gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
+    gl.glEnable(GL2.GL_STENCIL_TEST);
 
     drawCube(gl);
 
-    gl.glStencilFunc(GL.GL_ALWAYS, 128, ~0);
-    gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
+    gl.glStencilFunc(GL2.GL_ALWAYS, 128, ~0);
+    gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
 
-    gl.glDisable(GL.GL_LIGHTING);
+    gl.glDisable(GL2.GL_LIGHTING);
     gl.glPopMatrix();
     
     if (!do_diffuse) {
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, diffuse, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, specular, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specular, 0);
     } else {
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_EMISSION, emission, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, ambient, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_EMISSION, emission, 0);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambient, 0);
 
-      gl.glDisable(GL.GL_BLEND);
-      gl.glDepthFunc(GL.GL_LESS);
+      gl.glDisable(GL2.GL_BLEND);
+      gl.glDepthFunc(GL2.GL_LESS);
     }
   }
     
@@ -1021,7 +1038,7 @@ public class InfiniteShadowVolumes extends Demo {
 
   // This routine also doubles as the routine for drawing the local and ininite
   // silhouette edges (when prim == GL_LINES).
-  private void drawShadowVolumeEdges(GL gl,
+  private void drawShadowVolumeEdges(GL2 gl,
                                      int mindex,
                                      int prim,
                                      boolean local,
@@ -1076,12 +1093,12 @@ public class InfiniteShadowVolumes extends Demo {
       MD2.PositionNormal pn0 = f.pn[edge[0]];
       MD2.PositionNormal pn1 = f.pn[edge[1]];
 
-      if(prim == GL.GL_QUADS || local) {
+      if(prim == GL2.GL_QUADS || local) {
         // local segment
         gl.glVertex4f(pn0.x, pn0.y, pn0.z, 1);
         gl.glVertex4f(pn1.x, pn1.y, pn1.z, 1);
       }
-      if(prim == GL.GL_QUADS || infinity) {
+      if(prim == GL2.GL_QUADS || infinity) {
         // segment projected to infinity
         gl.glVertex4f(pn1.x*olight.get(3) - olight.get(0),
                       pn1.y*olight.get(3) - olight.get(1),
@@ -1097,56 +1114,56 @@ public class InfiniteShadowVolumes extends Demo {
     gl.glPopMatrix();
   }
 
-  private void drawShadowVolumeExtrudedEdges(GL gl, int mindex) {
-    drawShadowVolumeEdges(gl, mindex, GL.GL_QUADS, true, true);
+  private void drawShadowVolumeExtrudedEdges(GL2 gl, int mindex) {
+    drawShadowVolumeEdges(gl, mindex, GL2.GL_QUADS, true, true);
   }
 
-  private void drawPossibleSilhouette(GL gl, int mindex) {
+  private void drawPossibleSilhouette(GL2 gl, int mindex) {
     gl.glLineWidth(3);
     gl.glColor3f(1,1,1);
-    drawShadowVolumeEdges(gl, mindex, GL.GL_LINES, true, !b['-']);
+    drawShadowVolumeEdges(gl, mindex, GL2.GL_LINES, true, !b['-']);
     gl.glLineWidth(1);
   }
 
   // Draw the shadow volume into the stencil buffer.
-  private void drawShadowVolumeToStencil(GL gl, int mindex) {
-    gl.glDepthFunc(GL.GL_LESS);
+  private void drawShadowVolumeToStencil(GL2 gl, int mindex) {
+    gl.glDepthFunc(GL2.GL_LESS);
     gl.glDepthMask(false);
 
-    gl.glStencilFunc(GL.GL_ALWAYS, 128, ~0);
-    gl.glEnable(GL.GL_STENCIL_TEST);
+    gl.glStencilFunc(GL2.GL_ALWAYS, 128, ~0);
+    gl.glEnable(GL2.GL_STENCIL_TEST);
 
-    gl.glEnable(GL.GL_CULL_FACE);
-    gl.glCullFace(GL.GL_FRONT);
-    gl.glStencilOp(GL.GL_KEEP, GL.GL_INCR, GL.GL_KEEP);
+    gl.glEnable(GL2.GL_CULL_FACE);
+    gl.glCullFace(GL2.GL_FRONT);
+    gl.glStencilOp(GL2.GL_KEEP, GL2.GL_INCR, GL2.GL_KEEP);
     gl.glColorMask(false, false, false, false);
 
     drawShadowVolumeExtrudedEdges(gl, mindex);
     drawShadowVolumeEndCaps(gl, mindex);
 
-    gl.glCullFace(GL.GL_BACK);
-    gl.glStencilOp(GL.GL_KEEP, GL.GL_DECR, GL.GL_KEEP);
+    gl.glCullFace(GL2.GL_BACK);
+    gl.glStencilOp(GL2.GL_KEEP, GL2.GL_DECR, GL2.GL_KEEP);
 
     drawShadowVolumeExtrudedEdges(gl, mindex);
     drawShadowVolumeEndCaps(gl, mindex);
 
     gl.glColorMask(true, true, true, true);
-    gl.glDisable(GL.GL_CULL_FACE);
+    gl.glDisable(GL2.GL_CULL_FACE);
 
-    gl.glStencilFunc(GL.GL_ALWAYS, 128, ~0);
-    gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
+    gl.glStencilFunc(GL2.GL_ALWAYS, 128, ~0);
+    gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
 
     gl.glDepthMask(true);
-    gl.glDepthFunc(GL.GL_LESS);
+    gl.glDepthFunc(GL2.GL_LESS);
   }
 
   // Draw the shadow volume into the color buffer.
-  private void drawShadowVolumeToColor(GL gl, int mindex) {
-    gl.glDepthFunc(GL.GL_LESS);
+  private void drawShadowVolumeToColor(GL2 gl, int mindex) {
+    gl.glDepthFunc(GL2.GL_LESS);
     gl.glDepthMask(false);
 
-    gl.glEnable(GL.GL_BLEND);
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+    gl.glEnable(GL2.GL_BLEND);
+    gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
     gl.glColor4f(1,1,1,.7f * volume_alpha);
     drawShadowVolumeEndCaps(gl, mindex);
@@ -1154,13 +1171,13 @@ public class InfiniteShadowVolumes extends Demo {
     drawShadowVolumeExtrudedEdges(gl, mindex);
 
     gl.glDepthMask(true);
-    gl.glDepthFunc(GL.GL_LESS);
-    gl.glDisable(GL.GL_BLEND);
+    gl.glDepthFunc(GL2.GL_LESS);
+    gl.glDisable(GL2.GL_BLEND);
   }
 
   // Draw an icon to show where the local light is
   // or in what direction the infinite light is pointing. 
-  private void drawLight(GL gl) {
+  private void drawLight(GL2 gl) {
     gl.glColor3f(1,1,0);
     gl.glPushMatrix();
     gl.glMultMatrixf(getData(lightManipXform), 0);

@@ -39,20 +39,41 @@
 
 package demos.texture;
 
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureData;
+import com.sun.opengl.util.texture.TextureIO;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.*;
-import java.awt.image.*;
-import javax.swing.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.texture.*;
+
 
 /** Demonstrates and tests updates of sub-rectangles of a Texture
     generated from a BufferedImage. Draws a cursor in texel space
@@ -87,7 +108,7 @@ public class TestSubImage {
     }
 
     public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
       if (convertedImage == null) {
@@ -165,9 +186,9 @@ public class TestSubImage {
       // Now draw one quad with the texture
       texture.enable();
       texture.bind();
-      gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+      gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
       TextureCoords coords = texture.getImageTexCoords();
-      gl.glBegin(GL.GL_QUADS);
+      gl.glBegin(GL2.GL_QUADS);
       gl.glTexCoord2f(coords.left(), coords.bottom());
       gl.glVertex3f(0, 0, 0);
       gl.glTexCoord2f(coords.right(), coords.bottom());

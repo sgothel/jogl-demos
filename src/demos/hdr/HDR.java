@@ -1,19 +1,45 @@
 package demos.hdr;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.nio.*;
-import java.util.*;
-import javax.swing.*;
+import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import demos.common.Demo;
+import demos.common.DemoListener;
+import demos.util.DurationTimer;
+import demos.util.ObjReader;
+import demos.util.SystemTime;
+import demos.util.Time;
+import gleem.BSphere;
+import gleem.BSphereProvider;
+import gleem.CameraParameters;
+import gleem.ExaminerViewer;
+import gleem.ManipManager;
+import gleem.MouseButtonHelper;
+import gleem.linalg.Mat4f;
+import gleem.linalg.Rotf;
+import gleem.linalg.Vec3f;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
+import javax.media.opengl.GLPbuffer;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import javax.swing.JOptionPane;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import demos.common.*;
-import demos.util.*;
-import gleem.*;
-import gleem.linalg.*;
 
 /** HDR demo by NVidia Corporation - Simon Green, sgreen@nvidia.com <P>
 
@@ -38,7 +64,7 @@ public class HDR extends Demo {
   private ObjReader model;
   private Pipeline pipeline;
 
-  private GLUT glut = new GLUT();
+  private GLUTgl2 glut = new GLUTgl2();
 
   private boolean[] b = new boolean[256];
   
@@ -124,7 +150,7 @@ public class HDR extends Demo {
     
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
@@ -405,16 +431,16 @@ public class HDR extends Demo {
     tonemap_pbuffer.display();
 
     // display in window
-    gl.glEnable(GL.GL_TEXTURE_RECTANGLE_NV);
-    gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, tonemap_pbuffer_tex);
+    gl.glEnable(GL2.GL_TEXTURE_RECTANGLE);
+    gl.glActiveTexture(GL2.GL_TEXTURE0);
+    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE, tonemap_pbuffer_tex);
     if (b['n']) {
-      gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+      gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
     } else {
-      gl.glTexParameteri( GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+      gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
     }
     drawQuadRect4(gl, win_w, win_h, pbuffer_w, pbuffer_h);
-    gl.glDisable(GL.GL_TEXTURE_RECTANGLE_NV);
+    gl.glDisable(GL2.GL_TEXTURE_RECTANGLE);
 
     // Try to avoid swamping the CPU on Linux
     Thread.yield();
@@ -498,13 +524,13 @@ public class HDR extends Demo {
     gl.glGenTextures(1, tmp, 0);
     int texid = tmp[0];
 
-    int target = GL.GL_TEXTURE_1D;
+    int target = GL2.GL_TEXTURE_1D;
     gl.glBindTexture(target, texid);
-    gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-    gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+    gl.glTexParameteri(target, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameteri(target, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameteri(target, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
 
-    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+    gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT, 1);
 
     float[] img = new float [size];
 
@@ -513,7 +539,7 @@ public class HDR extends Demo {
       img[i] = (float) Math.pow(x, gamma);
     }
 
-    gl.glTexImage1D(target, 0, GL.GL_LUMINANCE, size, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(img));
+    gl.glTexImage1D(target, 0, GL2.GL_LUMINANCE, size, 0, GL2.GL_LUMINANCE, GL2.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -525,13 +551,13 @@ public class HDR extends Demo {
     gl.glGenTextures(1, tmp, 0);
     int texid = tmp[0];
       
-    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, texid);
-    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-    gl.glTexParameteri(GL.GL_TEXTURE_RECTANGLE_NV, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, texid);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
 
-    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+    gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT, 1);
 
     float[] img = new float [xsiz*ysiz];
 
@@ -553,7 +579,7 @@ public class HDR extends Demo {
       }
     }
 
-    gl.glTexImage2D(GL.GL_TEXTURE_RECTANGLE_NV, 0, GL.GL_LUMINANCE, xsiz, ysiz, 0, GL.GL_LUMINANCE, GL.GL_FLOAT, FloatBuffer.wrap(img));
+    gl.glTexImage2D(GL2.GL_TEXTURE_RECTANGLE_NV, 0, GL2.GL_LUMINANCE, xsiz, ysiz, 0, GL2.GL_LUMINANCE, GL2.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -569,7 +595,7 @@ public class HDR extends Demo {
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
       GL gl = drawable.getGL();
-      gl.glEnable(GL.GL_DEPTH_TEST);
+      gl.glEnable(GL2.GL_DEPTH_TEST);
 
       // FIXME: what about the ExaminerViewer?
       setPerspectiveProjection(gl, pbuffer_w, pbuffer_h);
@@ -582,18 +608,18 @@ public class HDR extends Demo {
           System.err.println("Creating HILO cubemap");
           hdr_tex  = hdr.createCubemapHILO(gl, true);
           hdr_tex2 = hdr.createCubemapHILO(gl, false);
-          texmode = GL.GL_FLOAT_RGBA16_NV;
+          texmode = GL2.GL_FLOAT_RGBA16_NV;
           hilo = true;
           break;
         case GLPbuffer.APPLE_FLOAT:
           System.err.println("Creating FLOAT16_APPLE cubemap");
-          hdr_tex = hdr.createCubemap(gl, GL.GL_RGB_FLOAT16_APPLE);
-          texmode = GL.GL_RGBA_FLOAT16_APPLE;
+          hdr_tex = hdr.createCubemap(gl, GL2.GL_RGB_FLOAT16_APPLE);
+          texmode = GL2.GL_RGBA_FLOAT16_APPLE;
           break;
         case GLPbuffer.ATI_FLOAT:
           System.err.println("Creating FLOAT16_ATI cubemap");
-          hdr_tex = hdr.createCubemap(gl, GL.GL_RGB_FLOAT16_ATI);
-          texmode = GL.GL_RGBA_FLOAT16_ATI;
+          hdr_tex = hdr.createCubemap(gl, GL2.GL_RGB_FLOAT16_ATI);
+          texmode = GL2.GL_RGBA_FLOAT16_ATI;
           break;
         default:
           throw new RuntimeException("Unexpected floating-point mode " + fpmode);
@@ -630,42 +656,42 @@ public class HDR extends Demo {
 
     // render scene to float pbuffer
     private void renderScene(GL gl) {
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+      gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
       if (doViewAll) {
         viewer.viewAll(gl);
       }
 
       if (b['w'])
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
       else
-        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 
       if (b['m']) {
-        gl.glEnable(GL.GL_MULTISAMPLE);
-        gl.glHint(GL.GL_MULTISAMPLE_FILTER_HINT_NV, GL.GL_NICEST);
+        gl.glEnable(GL2.GL_MULTISAMPLE);
+        gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, GL2.GL_NICEST);
       } else {
-        gl.glDisable(GL.GL_MULTISAMPLE);
+        gl.glDisable(GL2.GL_MULTISAMPLE);
       }
   
       if (!b['e']) {
         // draw background
         pipeline.enableFragmentProgram(gl, skybox_fprog);
-        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL2.GL_DEPTH_TEST);
         drawSkyBox(gl);
-        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL2.GL_DEPTH_TEST);
       }
 
       // draw object
       pipeline.enableVertexProgram(gl, object_vprog);
       pipeline.enableFragmentProgram(gl, object_fprog);
 
-      gl.glMatrixMode(GL.GL_TEXTURE);
+      gl.glMatrixMode(GL2.GL_TEXTURE);
       gl.glLoadIdentity();
       viewer.update();
       viewer.updateInverseRotation(gl);
 
-      gl.glMatrixMode( GL.GL_MODELVIEW );
+      gl.glMatrixMode( GL2.GL_MODELVIEW );
       gl.glLoadIdentity();
       CameraParameters params = viewer.getCameraParameters();
       Mat4f view = params.getModelviewMatrix();
@@ -684,36 +710,36 @@ public class HDR extends Demo {
       view.xformPt(eyePos_eye, eyePos_model);
       pipeline.setVertexProgramParameter3f(gl, eyePos_param, eyePos_model.x(), eyePos_model.y(), eyePos_model.z());
 
-      gl.glActiveTexture(GL.GL_TEXTURE0);
-      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex);
-      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+      gl.glActiveTexture(GL2.GL_TEXTURE0);
+      gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, hdr_tex);
+      gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
 
       boolean linear = b['l'];
       if (linear) {
-        gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+        gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
+        gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
       } else {
-        //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        //    glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST_MIPMAP_NEAREST);
+        gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+        gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
       }
 
       if (hilo) {
-        gl.glActiveTexture(GL.GL_TEXTURE1);
-        gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex2);
-        gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+        gl.glActiveTexture(GL2.GL_TEXTURE1);
+        gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, hdr_tex2);
+        gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
 
         if (linear) {
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+          gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
+          gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
         } else {
-          //    glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST_MIPMAP_NEAREST);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-          gl.glTexParameteri( GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+          //    glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST_MIPMAP_NEAREST);
+          gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+          gl.glTexParameteri( GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
         }
       }
 
-      gl.glEnable(GL.GL_CULL_FACE);
+      gl.glEnable(GL2.GL_CULL_FACE);
 
       switch(modelno) {
         case 0:
@@ -733,21 +759,21 @@ public class HDR extends Demo {
           //          glut.glutSolidTeapot(gl, 1.0f);
           break;
         case 5:
-          gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-          gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-          gl.glVertexPointer(3, GL.GL_FLOAT, 0, model.getVertices());
-          gl.glNormalPointer(GL.GL_FLOAT, 0, model.getVertexNormals());
+          gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+          gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+          gl.glVertexPointer(3, GL2.GL_FLOAT, 0, model.getVertices());
+          gl.glNormalPointer(GL2.GL_FLOAT, 0, model.getVertexNormals());
           int[] indices = model.getFaceIndices();
-          gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, IntBuffer.wrap(indices));
-          gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-          gl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+          gl.glDrawElements(GL2.GL_TRIANGLES, indices.length, GL2.GL_UNSIGNED_INT, IntBuffer.wrap(indices));
+          gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+          gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
           break;
       }
 
-      gl.glDisable(GL.GL_CULL_FACE);
+      gl.glDisable(GL2.GL_CULL_FACE);
       pipeline.disableVertexProgram(gl);
       pipeline.disableFragmentProgram(gl);
-      gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+      gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
     }
   }
 
@@ -771,8 +797,8 @@ public class HDR extends Demo {
       GL gl = drawable.getGL();
 
       // horizontal blur
-      gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, blurh_fprog);
-      gl.glActiveTexture(GL.GL_TEXTURE0);
+      gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, blurh_fprog);
+      gl.glActiveTexture(GL2.GL_TEXTURE0);
       pipeline.bindTexture(gl, blur2_pbuffer_tex);
       glowPass(gl);
 
@@ -803,20 +829,20 @@ public class HDR extends Demo {
       GL gl = drawable.getGL();
 
       if (blur2Pass == BLUR2_SHRINK_PASS) {
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
         pipeline.enableFragmentProgram(gl, shrink_fprog);
         setOrthoProjection(gl, 0, 0, blur_w, blur_h);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
+        gl.glActiveTexture(GL2.GL_TEXTURE0);
+        gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
         drawQuadRect2(gl, blur_w, blur_h, pbuffer_w, pbuffer_h);
         pipeline.disableFragmentProgram(gl);
 
       } else if (blur2Pass == BLUR2_VERT_BLUR_PASS) {
 
         // vertical blur
-        gl.glBindProgramARB(GL.GL_FRAGMENT_PROGRAM_ARB, blurv_fprog);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, blurv_fprog);
+        gl.glActiveTexture(GL2.GL_TEXTURE0);
         pipeline.bindTexture(gl, blur_pbuffer_tex);
         glowPass(gl);
         
@@ -859,48 +885,48 @@ public class HDR extends Demo {
   //
 
   private void setOrthoProjection(GL gl, int x, int y, int w, int h) {
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     gl.glOrtho(0, w, 0, h, -1.0, 1.0);
-    gl.glMatrixMode(GL.GL_TEXTURE);
+    gl.glMatrixMode(GL2.GL_TEXTURE);
     gl.glLoadIdentity();
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
     gl.glViewport(x, y, w, h);
   }
     
   private void setPerspectiveProjection(GL gl, int w, int h) {
     // FIXME: what about ExaminerViewer?
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluPerspective(60.0, (float) w / (float) h, 0.1, 10.0);
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
     gl.glViewport(0, 0, w, h);
   }
 
   // blur floating point image
   private void glowPass(GL gl) {
-    gl.glDisable(GL.GL_DEPTH_TEST);
-    gl.glEnable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glDisable(GL2.GL_DEPTH_TEST);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     setOrthoProjection(gl, 0, 0, blur_w, blur_h);
     drawQuadRect(gl, blur_w, blur_h);
 
-    gl.glDisable(GL.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
   }
 
   private void drawQuadRect(GL gl, int w, int h) {
-    gl.glBegin(GL.GL_QUADS);
-    gl.glTexCoord2f(0, h); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
-    gl.glTexCoord2f(w, h); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
-    gl.glTexCoord2f(w, 0); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, w / blur_scale, 0); gl.glVertex3f(w, 0, 0);
-    gl.glTexCoord2f(0, 0); gl.glMultiTexCoord2f(GL.GL_TEXTURE1, 0, 0); gl.glVertex3f(0, 0, 0);
+    gl.glBegin(GL2.GL_QUADS);
+    gl.glTexCoord2f(0, h); gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
+    gl.glTexCoord2f(w, h); gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
+    gl.glTexCoord2f(w, 0); gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, w / blur_scale, 0); gl.glVertex3f(w, 0, 0);
+    gl.glTexCoord2f(0, 0); gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, 0); gl.glVertex3f(0, 0, 0);
     gl.glEnd();
   }
 
   private void drawQuadRect2(GL gl, int w, int h, int tw, int th) {
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(0, th); gl.glVertex3f(0, h, 0);
     gl.glTexCoord2f(tw, th); gl.glVertex3f(w, h, 0);
     gl.glTexCoord2f(tw, 0); gl.glVertex3f(w, 0, 0);
@@ -910,7 +936,7 @@ public class HDR extends Demo {
 
   private void drawQuadRect4(GL gl, int w, int h, int tw, int th) {
     float offset = 0.5f;
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(offset, th - offset); gl.glVertex3f(0, h, 0);
     gl.glTexCoord2f(tw - offset, th - offset); gl.glVertex3f(w, h, 0);
     gl.glTexCoord2f(tw - offset, offset); gl.glVertex3f(w, 0, 0);
@@ -919,65 +945,65 @@ public class HDR extends Demo {
   }
 
   private void disableTexGen(GL gl) {
-    gl.glDisable(GL.GL_TEXTURE_GEN_S);
-    gl.glDisable(GL.GL_TEXTURE_GEN_T);
-    gl.glDisable(GL.GL_TEXTURE_GEN_R);
+    gl.glDisable(GL2.GL_TEXTURE_GEN_S);
+    gl.glDisable(GL2.GL_TEXTURE_GEN_T);
+    gl.glDisable(GL2.GL_TEXTURE_GEN_R);
   }
 
   private void enableTexGen(GL gl) {
-    gl.glEnable(GL.GL_TEXTURE_GEN_S);
-    gl.glEnable(GL.GL_TEXTURE_GEN_T);
-    gl.glEnable(GL.GL_TEXTURE_GEN_R);
+    gl.glEnable(GL2.GL_TEXTURE_GEN_S);
+    gl.glEnable(GL2.GL_TEXTURE_GEN_T);
+    gl.glEnable(GL2.GL_TEXTURE_GEN_R);
   }
 
   // draw cubemap background
   private void drawSkyBox(GL gl) {
-    gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex);
-    gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+    gl.glActiveTexture(GL2.GL_TEXTURE0);
+    gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, hdr_tex);
+    gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
 
     if (hilo) {
-      gl.glActiveTexture(GL.GL_TEXTURE1);
-      gl.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, hdr_tex2);
-      gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
+      gl.glActiveTexture(GL2.GL_TEXTURE1);
+      gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, hdr_tex2);
+      gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
     }
 
     // initialize object linear texgen
-    gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glActiveTexture(GL2.GL_TEXTURE0);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glLoadIdentity();
     float[] s_plane = { 1.0f, 0.0f, 0.0f, 0.0f };
     float[] t_plane = { 0.0f, 1.0f, 0.0f, 0.0f };
     float[] r_plane = { 0.0f, 0.0f, 1.0f, 0.0f };
-    gl.glTexGenfv(GL.GL_S, GL.GL_OBJECT_PLANE, s_plane, 0);
-    gl.glTexGenfv(GL.GL_T, GL.GL_OBJECT_PLANE, t_plane, 0);
-    gl.glTexGenfv(GL.GL_R, GL.GL_OBJECT_PLANE, r_plane, 0);
+    gl.glTexGenfv(GL2.GL_S, GL2.GL_OBJECT_PLANE, s_plane, 0);
+    gl.glTexGenfv(GL2.GL_T, GL2.GL_OBJECT_PLANE, t_plane, 0);
+    gl.glTexGenfv(GL2.GL_R, GL2.GL_OBJECT_PLANE, r_plane, 0);
     gl.glPopMatrix();
-    gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
-    gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
-    gl.glTexGeni(GL.GL_R, GL.GL_TEXTURE_GEN_MODE, GL.GL_OBJECT_LINEAR);
+    gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_OBJECT_LINEAR);
+    gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_OBJECT_LINEAR);
+    gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_OBJECT_LINEAR);
     enableTexGen(gl);
 
-    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
 
-    gl.glMatrixMode(GL.GL_TEXTURE);
+    gl.glMatrixMode(GL2.GL_TEXTURE);
     gl.glPushMatrix();
     gl.glLoadIdentity();
     viewer.updateInverseRotation(gl);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glLoadIdentity();
     gl.glScalef(10.0f, 10.0f, 10.0f);
     glut.glutSolidCube(1.0f);
     gl.glPopMatrix();
 
-    gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
+    gl.glDisable(GL2.GL_TEXTURE_CUBE_MAP);
 
-    gl.glMatrixMode(GL.GL_TEXTURE);
+    gl.glMatrixMode(GL2.GL_TEXTURE);
     gl.glPopMatrix();
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
 
     disableTexGen(gl);
   }
@@ -986,18 +1012,18 @@ public class HDR extends Demo {
   private void toneMappingPass(GL gl) {
     gl.glFinish();
 
-    gl.glActiveTexture(GL.GL_TEXTURE0);
-    gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
+    gl.glActiveTexture(GL2.GL_TEXTURE0);
+    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
 
-    gl.glActiveTexture(GL.GL_TEXTURE1);
+    gl.glActiveTexture(GL2.GL_TEXTURE1);
     if (blur2_pbuffer != null) {
-      gl.glBindTexture(GL.GL_TEXTURE_RECTANGLE_NV, blur2_pbuffer_tex);
+      gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, blur2_pbuffer_tex);
     }
 
-    gl.glActiveTexture(GL.GL_TEXTURE2);
-    gl.glBindTexture(GL.GL_TEXTURE_1D, gamma_tex);
+    gl.glActiveTexture(GL2.GL_TEXTURE2);
+    gl.glBindTexture(GL2.GL_TEXTURE_1D, gamma_tex);
 
-    gl.glActiveTexture(GL.GL_TEXTURE3);
+    gl.glActiveTexture(GL2.GL_TEXTURE3);
     pipeline.bindTexture(gl, vignette_tex);
 
     pipeline.enableFragmentProgram(gl, tonemap_fprog);
@@ -1087,11 +1113,11 @@ public class HDR extends Demo {
   private void initBlurCode(GL gl, int blurWidth) {
     // generate blur code
     String blurCode = generateBlurCodeFP2(blurWidth, false);
-    blurh_fprog = loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, blurCode);
+    blurh_fprog = loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, blurCode);
     //  printf("%s\n", blurCode);
 
     blurCode = generateBlurCodeFP2(blurWidth, true);
-    blurv_fprog = loadProgram(gl, GL.GL_FRAGMENT_PROGRAM_ARB, blurCode);
+    blurv_fprog = loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, blurCode);
     //  printf("%s\n", blurCode);
   }
 
@@ -1102,18 +1128,18 @@ public class HDR extends Demo {
     prog_id = tmp[0];
     gl.glBindProgramARB(target, prog_id);
     int size = code.length();
-    gl.glProgramStringARB(target, GL.GL_PROGRAM_FORMAT_ASCII_ARB, code.length(), code);
+    gl.glProgramStringARB(target, GL2.GL_PROGRAM_FORMAT_ASCII_ARB, code.length(), code);
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
+    gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
     if (errPos[0] >= 0) {
       String kind = "Program";
-      if (target == GL.GL_VERTEX_PROGRAM_ARB) {
+      if (target == GL2.GL_VERTEX_PROGRAM_ARB) {
         kind = "Vertex program";
-      } else if (target == GL.GL_FRAGMENT_PROGRAM_ARB) {
+      } else if (target == GL2.GL_FRAGMENT_PROGRAM_ARB) {
         kind = "Fragment program";
       }
       System.out.println(kind + " failed to load:");
-      String errMsg = gl.glGetString(GL.GL_PROGRAM_ERROR_STRING_ARB);
+      String errMsg = gl.glGetString(GL2.GL_PROGRAM_ERROR_STRING_ARB);
       if (errMsg == null) {
         System.out.println("[No error message available]");
       } else {
@@ -1127,10 +1153,10 @@ public class HDR extends Demo {
       System.out.println(code.substring(errPos[0], endPos));
       throw new GLException("Error loading " + kind);
     } else {
-      if (target == GL.GL_FRAGMENT_PROGRAM_ARB) {
+      if (target == GL2.GL_FRAGMENT_PROGRAM_ARB) {
         int[] isNative = new int[1];
-        gl.glGetProgramivARB(GL.GL_FRAGMENT_PROGRAM_ARB,
-                             GL.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
+        gl.glGetProgramivARB(GL2.GL_FRAGMENT_PROGRAM_ARB,
+                             GL2.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
                              isNative, 0);
         if (isNative[0] != 1) {
           System.out.println("WARNING: fragment program is over native resource limits");

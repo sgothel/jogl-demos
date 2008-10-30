@@ -5,8 +5,13 @@
 
 package demos.printext;
 
-import java.awt.*;
-import javax.media.opengl.*;
+import java.awt.Frame;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+
+
 
 public class PrintExt {
   public static void main(String[] args) {

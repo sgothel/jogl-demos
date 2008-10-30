@@ -39,6 +39,14 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+import demos.common.Demo;
+import demos.util.FPSCounter;
+import demos.util.SystemTime;
+import demos.util.Time;
+import gleem.linalg.Vec2f;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -47,24 +55,29 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.awt.image.*;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import sun.java2d.pipe.TextRenderer;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.*;
-import com.sun.opengl.util.texture.*;
-
-import demos.common.*;
-import demos.util.*;
-import gleem.linalg.*;
 
 /** Illustrates more advanced use of the TextRenderer class; shows how
     to do text filled with a linear Java 2D gradient. */
@@ -101,7 +114,7 @@ public class CustomText extends Demo {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 
@@ -263,7 +276,7 @@ public class CustomText extends Demo {
       }
     }
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -279,8 +292,8 @@ public class CustomText extends Demo {
     int h = drawable.getHeight();
     float fw = w / 100.0f;
     float fh = h / 100.0f;
-    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
-    gl.glBegin(GL.GL_QUADS);
+    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(fw * coords.left(), fh * coords.bottom());
     gl.glVertex3f(0, 0, 0);
     gl.glTexCoord2f(fw * coords.right(), fh * coords.bottom());

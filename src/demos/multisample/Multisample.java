@@ -42,6 +42,7 @@ package demos.multisample;
 import java.awt.*;
 import java.awt.event.*;
 import javax.media.opengl.*;
+import javax.media.opengl.awt.GLCanvas;
 
 public class Multisample {
   private GLCanvas canvas;
@@ -89,7 +90,7 @@ public class Multisample {
     canvas.setSize(512, 512);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     frame.setLocation(0, 0);
     canvas.requestFocus();
 
@@ -109,7 +110,7 @@ public class Multisample {
     canvas.setSize(512, 512);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     frame.setLocation(512, 0);
     canvas.requestFocus();
 
@@ -122,7 +123,7 @@ public class Multisample {
 
   class Listener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       gl.glClearColor(0, 0, 0, 0);
       //      gl.glEnable(GL.GL_DEPTH_TEST);
@@ -136,7 +137,7 @@ public class Multisample {
     }
 
     public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 

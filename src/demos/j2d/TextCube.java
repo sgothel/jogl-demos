@@ -39,20 +39,25 @@
 
 package demos.j2d;
 
+import demos.common.Demo;
+import demos.util.FPSCounter;
+import demos.util.SystemTime;
+import demos.util.Time;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.event.*;
-import java.awt.geom.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import sun.java2d.pipe.TextRenderer;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.*;
 
-import demos.common.*;
-import demos.util.*;
 
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
@@ -90,14 +95,14 @@ public class TextCube extends Demo {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 
   public void init(GLAutoDrawable drawable) {
     renderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 72));
     GL gl = drawable.getGL();
-    gl.glEnable(GL.GL_DEPTH_TEST);
+    gl.glEnable(GL2.GL_DEPTH_TEST);
 
     // Compute the scale factor of the largest string which will make
     // them all fit on the faces of the cube
@@ -113,10 +118,10 @@ public class TextCube extends Demo {
   }
 
   public void display(GLAutoDrawable drawable) {
-    GL gl = drawable.getGL();
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    GL2 gl = drawable.getGL().getGL2();
+    gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
     glu.gluLookAt(0, 0, 10,
                   0, 0, 0,
@@ -160,14 +165,14 @@ public class TextCube extends Demo {
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     GL gl = drawable.getGL();
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluPerspective(15, (float) width / (float) height, 5, 15);
   }
 
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-  private void drawFace(GL gl,
+  private void drawFace(GL2 gl,
                         float faceSize,
                         float r, float g, float b,
                         String text) {
@@ -175,7 +180,7 @@ public class TextCube extends Demo {
     // Face is centered around the local coordinate system's z axis,
     // at a z depth of faceSize / 2
     gl.glColor3f(r, g, b);
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glVertex3f(-halfFaceSize, -halfFaceSize, halfFaceSize);
     gl.glVertex3f( halfFaceSize, -halfFaceSize, halfFaceSize);
     gl.glVertex3f( halfFaceSize,  halfFaceSize, halfFaceSize);
@@ -191,8 +196,8 @@ public class TextCube extends Demo {
     // internally we don't have to reset the depth test or cull face
     // bits after we're done.
     renderer.begin3DRendering();
-    gl.glDisable(GL.GL_DEPTH_TEST);
-    gl.glEnable(GL.GL_CULL_FACE);
+    gl.glDisable(GL2.GL_DEPTH_TEST);
+    gl.glEnable(GL2.GL_CULL_FACE);
     // Note that the defaults for glCullFace and glFrontFace are
     // GL_BACK and GL_CCW, which match the TextRenderer's definition
     // of front-facing text.

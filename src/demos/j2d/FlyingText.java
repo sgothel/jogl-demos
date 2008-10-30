@@ -39,6 +39,14 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+import demos.common.Demo;
+import demos.util.FPSCounter;
+import demos.util.SystemTime;
+import demos.util.Time;
+import gleem.linalg.Vec2f;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -46,22 +54,30 @@ import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import sun.java2d.pipe.TextRenderer;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.*;
-import com.sun.opengl.util.texture.*;
 
-import demos.common.*;
-import demos.util.*;
-import gleem.linalg.*;
 
 /** Illustrates more advanced use of the TextRenderer class; shows how
     to do animated translated and rotated text as well as a drop
@@ -99,7 +115,7 @@ public class FlyingText extends Demo {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 
@@ -223,10 +239,10 @@ public class FlyingText extends Demo {
     g.dispose();
     backgroundTexture = TextureIO.newTexture(bgImage, false);
     backgroundTexture.bind();
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_WRAP_S,     GL.GL_REPEAT);
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_WRAP_T,     GL.GL_REPEAT);
+    backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+    backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+    backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_WRAP_S,     GL2.GL_REPEAT);
+    backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_WRAP_T,     GL2.GL_REPEAT);
 
     // Create the text renderer
     renderer = new TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true);
@@ -253,7 +269,7 @@ public class FlyingText extends Demo {
 
     // Set up properties; note we don't need the depth buffer in this demo
     GL gl = drawable.getGL();
-    gl.glDisable(GL.GL_DEPTH_TEST);
+    gl.glDisable(GL2.GL_DEPTH_TEST);
     // Turn off vsync if we can
     gl.setSwapInterval(0);
   }
@@ -311,12 +327,12 @@ public class FlyingText extends Demo {
       }
     }
 
-    GL gl = drawable.getGL();
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    GL2 gl = drawable.getGL().getGL2();
+    gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+    gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluOrtho2D(0, drawable.getWidth(), 0, drawable.getHeight());
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
 
     // Draw the background texture
@@ -327,8 +343,8 @@ public class FlyingText extends Demo {
     int h = drawable.getHeight();
     float fw = w / 100.0f;
     float fh = h / 100.0f;
-    gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
-    gl.glBegin(GL.GL_QUADS);
+    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(fw * coords.left(), fh * coords.bottom());
     gl.glVertex3f(0, 0, 0);
     gl.glTexCoord2f(fw * coords.right(), fh * coords.bottom());
@@ -347,7 +363,7 @@ public class FlyingText extends Demo {
     // We tell the text renderer to render the text at the origin, and
     // manipulate the modelview matrix to put the text where we want.
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2.GL_MODELVIEW);
 
     // First render drop shadows
     renderer.setColor(0, 0, 0, 0.5f);

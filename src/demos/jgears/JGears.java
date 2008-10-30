@@ -1,17 +1,29 @@
 package demos.jgears;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.io.*;
-import java.text.*;
-import javax.imageio.*;
-import javax.swing.*;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 import demos.gears.Gears;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import javax.imageio.ImageIO;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.awt.gl2.GL2JPanel;
+import javax.media.opengl.util.Animator;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * JGears.java <BR>
@@ -20,7 +32,7 @@ import demos.gears.Gears;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 
-public class JGears extends GLJPanel {
+public class JGears extends GL2JPanel {
   private static GLCapabilities caps;
   private long startTime;
   private int frameCount;
@@ -107,7 +119,7 @@ public class JGears extends GLJPanel {
   public static void main(String[] args) {
     JFrame frame = new JFrame("Gear Demo");
     frame.getContentPane().setLayout(new BorderLayout());
-    final GLJPanel drawable = new JGears();
+    final GL2JPanel drawable = new JGears();
     drawable.setOpaque(false);
 
     JPanel gradientPanel = createGradientPanel();
@@ -137,7 +149,7 @@ public class JGears extends GLJPanel {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 }

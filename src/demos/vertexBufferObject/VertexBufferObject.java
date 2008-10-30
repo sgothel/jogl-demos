@@ -33,17 +33,29 @@
 
 package demos.vertexBufferObject;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.nio.*;
-import java.util.*;
-import javax.swing.*;
+import demos.common.Demo;
+import demos.common.DemoListener;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.BufferUtil;
+import javax.swing.JOptionPane;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import demos.common.*;
-import demos.util.*;
+
 
 /** <P> A port of NVidia's [tm] Vertex Array Range demonstration to
     OpenGL[tm] for Java[tm], the Java programming language, and the
@@ -55,7 +67,7 @@ import demos.util.*;
 
     <ul>
     <li> A JDK 1.4 implementation
-    <li> A card supporting the GL_ARB_vertex_buffer_object extension
+    <li> A card supporting the GL_vertex_buffer_object extension
          (only in recent drivers)
     </ul>
 
@@ -64,12 +76,14 @@ import demos.util.*;
     <P> This demonstration illustrates the use of the java.nio direct
     buffer classes in JDK 1.4 to access memory outside of the Java
     garbage-collected heap, in particular that returned from the call
-    glMapBufferARB, to achieve higher performance than accessing the
+    glMapBuffer, to achieve higher performance than accessing the
     same data in system memory allows. </P>
 */
 
 public class VertexBufferObject extends Demo {
+
   public static void main(String[] args) {
+
     boolean vboEnabled = true;
 
     if (args.length > 1) {
@@ -85,9 +99,15 @@ public class VertexBufferObject extends Demo {
     }
 
     GLCanvas canvas = new GLCanvas();
-    VertexBufferObject demo = new VertexBufferObject();
+    final VertexBufferObject demo = new VertexBufferObject();
     demo.vboEnabled = vboEnabled;
     canvas.addGLEventListener(demo);
+
+    canvas.addKeyListener(new KeyAdapter() {
+        public void keyTyped(KeyEvent e) {
+          demo.dispatchKey(e.getKeyChar());
+        }
+    });
 
     final Animator animator = new Animator(canvas);
     animator.setRunAsFastAsPossible(true);
@@ -108,7 +128,7 @@ public class VertexBufferObject extends Demo {
     canvas.setSize(800, 800);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     canvas.requestFocus();
 
     animator.start();
@@ -164,7 +184,7 @@ public class VertexBufferObject extends Demo {
   private float[] cosArray;
 
   // Primitive: GL_QUAD_STRIP, GL_LINE_STRIP, or GL_POINTS
-  private int primitive = GL.GL_QUAD_STRIP;
+  private int primitive = GL2.GL_QUAD_STRIP;
 
   // Animation parameters
   private float hicoef = .06f;
@@ -187,7 +207,6 @@ public class VertexBufferObject extends Demo {
   private volatile boolean toggleLighting      = false;
   private volatile boolean toggleLightingModel = false;
   private volatile boolean recomputeElements   = false;
-  private volatile boolean quit                = false;
 
   // Frames-per-second computation
   private boolean firstProfiledFrame;
@@ -275,13 +294,13 @@ public class VertexBufferObject extends Demo {
     //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
     //    drawable.setGL(new DebugGL(drawable.getGL()));
 
-    GL  gl  = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     // Try and disable synch-to-retrace for fastest framerate
     gl.setSwapInterval(0);
 
     try {
-      initExtension(gl, "GL_ARB_vertex_buffer_object");
+      initExtension(gl, "GL_vertex_buffer_object");
     } catch (RuntimeException e) {
       throw (e);
     }      
@@ -299,7 +318,7 @@ public class VertexBufferObject extends Demo {
     gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 128.f);
 
     gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
-    gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+    gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
 
     // NOTE: it looks like GLUT (or something else) sets up the
     // projection matrix in the C version of this demo.
@@ -331,11 +350,6 @@ public class VertexBufferObject extends Demo {
 
     computeElements(gl);
 
-    drawable.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-          dispatchKey(e.getKeyChar());
-        }
-      });
     initComplete = true;
   }
 
@@ -378,7 +392,7 @@ public class VertexBufferObject extends Demo {
       if (getFlag(k)) {
         primitive = GL.GL_LINE_STRIP;
       } else {
-        primitive = GL.GL_QUAD_STRIP;
+        primitive = GL2.GL_QUAD_STRIP;
       }
     }
 
@@ -386,7 +400,7 @@ public class VertexBufferObject extends Demo {
       if (getFlag(k)) {
         primitive = GL.GL_POINTS;
       } else {
-        primitive = GL.GL_QUAD_STRIP;
+        primitive = GL2.GL_QUAD_STRIP;
       }
     }
 
@@ -449,7 +463,7 @@ public class VertexBufferObject extends Demo {
       return;
     }
 
-    GL  gl  = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     // Check to see whether to animate
     if (getFlag(' ')) {
@@ -494,10 +508,10 @@ public class VertexBufferObject extends Demo {
       if(getFlag('i')) {
         // infinite light
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+        gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
       } else {
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f,1 }, 0);
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+        gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
       }
       toggleLightingModel = false;
     }
@@ -527,16 +541,16 @@ public class VertexBufferObject extends Demo {
     int numSlabs = tileSize / STRIP_SIZE;
 
     if (vboEnabled) {
-      gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, bigBufferObject);
+      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bigBufferObject);
     } else {
-      gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, 0);
+      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     }
 
     for(int slab = numSlabs; --slab>=0; ) {
       cur = slab % numBuffers;
 
       if (vboEnabled) {
-        ByteBuffer tmp = gl.glMapBufferARB(GL.GL_ARRAY_BUFFER_ARB, GL.GL_WRITE_ONLY_ARB);
+        ByteBuffer tmp = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_WRITE_ONLY);
         if (tmp == null) {
           throw new RuntimeException("Unable to map vertex buffer object");
         }
@@ -618,27 +632,27 @@ public class VertexBufferObject extends Demo {
       hiX.reset();
 
       if (vboEnabled) {
-        gl.glUnmapBufferARB(GL.GL_ARRAY_BUFFER_ARB);
+        gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
       }
 
       if (getFlag('m')) {
         // Elements merged into buffer object (doesn't seem to improve performance)
 
         int len = tileSize - 1;
-        gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
         for (int i = 0; i < len; i++) {
           ++numDrawElementsCalls;
-          gl.glDrawElements(primitive, 2 * STRIP_SIZE, GL.GL_UNSIGNED_INT,
+          gl.glDrawElements(primitive, 2 * STRIP_SIZE, GL2.GL_UNSIGNED_INT,
                             i * 2 * STRIP_SIZE * BufferUtil.SIZEOF_INT);
           if(getFlag('f')) {
             gl.glFlush();
           }
         }
-        gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
       } else {
         for (int i = 0; i < elements.length; i++) {
           ++numDrawElementsCalls;
-          gl.glDrawElements(primitive, elements[i].remaining(), GL.GL_UNSIGNED_INT, elements[i]);
+          gl.glDrawElements(primitive, elements[i].remaining(), GL2.GL_UNSIGNED_INT, elements[i]);
           if(getFlag('f')) {
             gl.glFlush();
           }
@@ -674,20 +688,20 @@ public class VertexBufferObject extends Demo {
   // Unused routines
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-  private void allocateBigArray(GL gl) {
+  private void allocateBigArray(GL2 gl) {
     bigArraySystem = setupBuffer(ByteBuffer.allocateDirect(bufferSize));
 
     int[] tmp = new int[1];
-    gl.glGenBuffersARB(1, tmp, 0);
+    gl.glGenBuffers(1, tmp, 0);
     bigBufferObject = tmp[0];
-    gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, bigBufferObject);
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bigBufferObject);
     // Initialize data store of buffer object
-    gl.glBufferDataARB(GL.GL_ARRAY_BUFFER_ARB, bufferSize, (Buffer) null, GL.GL_DYNAMIC_DRAW_ARB);
-    bigArrayVBOBytes = gl.glMapBufferARB(GL.GL_ARRAY_BUFFER_ARB, GL.GL_WRITE_ONLY_ARB);
+    gl.glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, (Buffer) null, GL.GL_DYNAMIC_DRAW);
+    bigArrayVBOBytes = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_WRITE_ONLY);
     bigArrayVBO = setupBuffer(bigArrayVBOBytes);
-    gl.glUnmapBufferARB(GL.GL_ARRAY_BUFFER_ARB);
+    gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
     // Unbind buffer; will be bound again in main loop
-    gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, 0);
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
     float megabytes = (bufferSize / 1000000.f);
     System.err.println("Allocated " + megabytes + " megabytes of fast memory");
@@ -707,7 +721,7 @@ public class VertexBufferObject extends Demo {
     return ret;
   }
 
-  private void computeElements(GL gl) {
+  private void computeElements(GL2 gl) {
     xyArray = new float[tileSize];
     for (int i = 0; i < tileSize; i++) {
       xyArray[i] = i / (tileSize - 1.0f) - 0.5f;
@@ -732,14 +746,14 @@ public class VertexBufferObject extends Demo {
       }
     }
     int[] tmp = new int[1];
-    gl.glGenBuffersARB(1, tmp, 0);
+    gl.glGenBuffers(1, tmp, 0);
     elementBufferObject = tmp[0];
-    gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, elementBufferObject);
-    gl.glBufferDataARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB,
+    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+    gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,
                        linearElements.remaining() * BufferUtil.SIZEOF_INT,
                        linearElements,
-                       GL.GL_STATIC_DRAW_ARB);
-    gl.glBindBufferARB(GL.GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+                       GL.GL_STATIC_DRAW);
+    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
 
   private static void runExit(final Animator animator) {

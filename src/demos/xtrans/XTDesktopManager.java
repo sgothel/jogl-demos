@@ -39,16 +39,19 @@
 
 package demos.xtrans;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.beans.*;
-import java.nio.*;
-import java.util.*;
-import javax.swing.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.impl.*;
+import com.sun.opengl.impl.awt.Java2D;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawableFactory;
+import javax.swing.JDesktopPane;
+
 
 /** A desktop manager implementation supporting accelerated
  * transitions of the components on the desktop via OpenGL. This class
@@ -94,10 +97,12 @@ public class XTDesktopManager extends OffscreenDesktopManager {
       the rendering results available to OpenGL in the form of a
       texture object. */
   public void updateOffscreenBuffer(OffscreenDesktopPane parent) {
+
     boolean needsCopy = needsCopyBack();
     boolean hadPrevBackBuffer = false;
     super.updateOffscreenBuffer(parent);
     Image img = getOffscreenBackBuffer();
+
     final boolean mustResizeOGLTexture = ((oglTextureId == 0) ||
                                           (img == null) ||
                                           (prevBackBufferWidth  != img.getWidth(null)) ||
@@ -111,13 +116,13 @@ public class XTDesktopManager extends OffscreenDesktopManager {
             if (j2dContext == null ||
                 j2dContextSurfaceIdentifier != Java2D.getOGLSurfaceIdentifier(g)) {
               j2dContext = GLDrawableFactory.getFactory().createExternalGLContext();
-              j2dContext.setGL(new DebugGL(j2dContext.getGL()));
+              j2dContext.setGL(new DebugGL2(j2dContext.getGL().getGL2()));
               j2dContextSurfaceIdentifier = Java2D.getOGLSurfaceIdentifier(g);
             }
 
             j2dContext.makeCurrent(); // No-op
             try {
-              GL gl = j2dContext.getGL();
+              GL2 gl = j2dContext.getGL().getGL2();
 
               if (oglTextureId == 0) {
                 // Set up and initialize texture
@@ -155,26 +160,26 @@ public class XTDesktopManager extends OffscreenDesktopManager {
               // NOTE: assumes read buffer is set up
               // FIXME: could be more efficient by copying only bounding rectangle
 
-              gl.glPixelStorei(GL.GL_UNPACK_SWAP_BYTES, GL.GL_FALSE);
-              gl.glPixelStorei(GL.GL_PACK_SWAP_BYTES, GL.GL_FALSE);
-              gl.glPixelStorei(GL.GL_UNPACK_LSB_FIRST, GL.GL_FALSE);
-              gl.glPixelStorei(GL.GL_PACK_LSB_FIRST, GL.GL_FALSE);
-              gl.glPixelStorei(GL.GL_UNPACK_ROW_LENGTH, 0);
-              gl.glPixelStorei(GL.GL_PACK_ROW_LENGTH, 0);
-              gl.glPixelStorei(GL.GL_UNPACK_SKIP_ROWS, 0);
-              gl.glPixelStorei(GL.GL_PACK_SKIP_ROWS, 0);
-              gl.glPixelStorei(GL.GL_UNPACK_SKIP_PIXELS, 0);
-              gl.glPixelStorei(GL.GL_PACK_SKIP_PIXELS, 0);
-              gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-              gl.glPixelStorei(GL.GL_PACK_ALIGNMENT, 1);
-              gl.glPixelTransferf(GL.GL_RED_SCALE, 1);
-              gl.glPixelTransferf(GL.GL_GREEN_SCALE, 1);
-              gl.glPixelTransferf(GL.GL_BLUE_SCALE, 1);
-              gl.glPixelTransferf(GL.GL_ALPHA_SCALE, 1);
-              gl.glPixelTransferf(GL.GL_RED_BIAS, 0);
-              gl.glPixelTransferf(GL.GL_GREEN_BIAS, 0);
-              gl.glPixelTransferf(GL.GL_BLUE_BIAS, 0);
-              gl.glPixelTransferf(GL.GL_ALPHA_BIAS, 0);
+              gl.glPixelStorei(GL2.GL_UNPACK_SWAP_BYTES, GL.GL_FALSE);
+              gl.glPixelStorei(GL2.GL_PACK_SWAP_BYTES, GL.GL_FALSE);
+              gl.glPixelStorei(GL2.GL_UNPACK_LSB_FIRST, GL.GL_FALSE);
+              gl.glPixelStorei(GL2.GL_PACK_LSB_FIRST, GL.GL_FALSE);
+              gl.glPixelStorei(GL2.GL_UNPACK_ROW_LENGTH, 0);
+              gl.glPixelStorei(GL2.GL_PACK_ROW_LENGTH, 0);
+              gl.glPixelStorei(GL2.GL_UNPACK_SKIP_ROWS, 0);
+              gl.glPixelStorei(GL2.GL_PACK_SKIP_ROWS, 0);
+              gl.glPixelStorei(GL2.GL_UNPACK_SKIP_PIXELS, 0);
+              gl.glPixelStorei(GL2.GL_PACK_SKIP_PIXELS, 0);
+              gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT, 1);
+              gl.glPixelStorei(GL2.GL_PACK_ALIGNMENT, 1);
+              gl.glPixelTransferf(GL2.GL_RED_SCALE, 1);
+              gl.glPixelTransferf(GL2.GL_GREEN_SCALE, 1);
+              gl.glPixelTransferf(GL2.GL_BLUE_SCALE, 1);
+              gl.glPixelTransferf(GL2.GL_ALPHA_SCALE, 1);
+              gl.glPixelTransferf(GL2.GL_RED_BIAS, 0);
+              gl.glPixelTransferf(GL2.GL_GREEN_BIAS, 0);
+              gl.glPixelTransferf(GL2.GL_BLUE_BIAS, 0);
+              gl.glPixelTransferf(GL2.GL_ALPHA_BIAS, 0);
 
               // long start = System.currentTimeMillis();
               gl.glCopyTexSubImage2D(textureTarget,

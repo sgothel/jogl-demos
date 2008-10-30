@@ -39,12 +39,18 @@
 
 package demos.texture;
 
-import java.io.*;
+import com.sun.opengl.impl.io.FileUtil;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureData;
+import com.sun.opengl.util.texture.TextureIO;
+import java.io.File;
+import java.io.IOException;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.GLPbuffer;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
+
 
 /** Demonstrates how the TextureIO subsystem may be used to convert
     textures between multiple file formats, including texture

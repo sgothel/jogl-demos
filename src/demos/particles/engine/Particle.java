@@ -56,12 +56,12 @@ public class Particle {
                            (float)Math.random());
   }
     
-  public void draw(GL gl, Texture texture, RGBA tendToColor) {
+  public void draw(GL2 gl, Texture texture, RGBA tendToColor) {
     adjust(tendToColor);
     texture.bind();
     gl.glColor4f(rgba.r,rgba.g,rgba.b,rgba.a);
         
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(currentPos.x, currentPos.y-2, currentPos.z);
     gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(currentPos.x+2, currentPos.y-2, currentPos.z);
     gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(currentPos.x+2, currentPos.y, currentPos.z);

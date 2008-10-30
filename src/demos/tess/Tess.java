@@ -42,6 +42,17 @@
 
 package demos.tess;
 
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUtessellator;
+
 /**
  *  tess.java
  *  This program demonstrates polygon tessellation.
@@ -58,13 +69,7 @@ package demos.tess;
  * @author Ported by Nathan Parker Burg, July 2003
  */
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
 
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class Tess {
     public static void main(String[] args) {
@@ -87,21 +92,22 @@ public class Tess {
                     }).start();
                 }
             });
-            frame.show();
+            frame.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static class TessRenderer implements GLEventListener {
-        private GL gl;
+        private GL2 gl;
         private GLU glu = new GLU();
         private int startList;
 
         public void init(GLAutoDrawable drawable) {
-            drawable.setGL(new DebugGL(drawable.getGL()));
 
-            gl = drawable.getGL();
+            gl = drawable.getGL().getGL2();
+
+            drawable.setGL(new DebugGL2(gl));
 
             double[][] rect = new double[][]{{50.0, 50.0, 0.0},
                                              {200.0, 50.0, 0.0},
@@ -128,8 +134,8 @@ public class Tess {
             glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
             glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
 
-            gl.glNewList(startList, GL.GL_COMPILE);
-            gl.glShadeModel(GL.GL_FLAT);
+            gl.glNewList(startList, GL2.GL_COMPILE);
+            gl.glShadeModel(GL2.GL_FLAT);
             glu.gluTessBeginPolygon(tobj, null);
             glu.gluTessBeginContour(tobj);
             glu.gluTessVertex(tobj, rect[0], 0, rect[0]);
@@ -151,8 +157,8 @@ public class Tess {
             glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
             glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
 
-            gl.glNewList(startList + 1, GL.GL_COMPILE);
-            gl.glShadeModel(GL.GL_SMOOTH);
+            gl.glNewList(startList + 1, GL2.GL_COMPILE);
+            gl.glShadeModel(GL2.GL_SMOOTH);
             glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_POSITIVE);
             glu.gluTessBeginPolygon(tobj, null);
             glu.gluTessBeginContour(tobj);
@@ -169,10 +175,10 @@ public class Tess {
 
 
         public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-            gl.glMatrixMode(GL.GL_PROJECTION);
+            gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glLoadIdentity();
             gl.glOrtho( 0, 450, 0, 250, -1, 1 );
-            gl.glMatrixMode(GL.GL_MODELVIEW);
+            gl.glMatrixMode(GL2.GL_MODELVIEW);
             gl.glLoadIdentity();
         }
 
@@ -180,7 +186,7 @@ public class Tess {
         }
 
         public void display(GLAutoDrawable drawable) {
-            gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+            gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             gl.glColor3d(1.0, 1.0, 1.0);
             gl.glCallList(startList);
             gl.glCallList(startList + 1);
@@ -191,10 +197,10 @@ public class Tess {
 
 
     public static class TessCallback extends javax.media.opengl.glu.GLUtessellatorCallbackAdapter {
-        GL gl;
+        GL2 gl;
         GLU glu;
 
-        public TessCallback(GL gl, GLU glu) {
+        public TessCallback(GL2 gl, GLU glu) {
             this.gl = gl;
             this.glu = glu;
         };

@@ -6,8 +6,9 @@ import java.nio.*;
 import javax.imageio.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
+import com.sun.opengl.util.awt.*;
 
+import com.sun.opengl.util.io.TGAWriter;
 import demos.gears.Gears;
 
 /** Demonstrates the TileRenderer class by rendering a large version
@@ -74,7 +75,7 @@ public class TiledRendering {
       System.exit(1);
     }
     
-    GL gl = pbuffer.getGL();
+    GL2 gl = pbuffer.getGL().getGL2();
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
     gl.glTranslatef(0.0f, 0.0f, -40.0f);
@@ -98,7 +99,7 @@ public class TiledRendering {
     }
   }
 
-  private static void drawGears(GL gl) {
+  private static void drawGears(GL2 gl) {
     float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
     float angle = 0.0f;
     float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };

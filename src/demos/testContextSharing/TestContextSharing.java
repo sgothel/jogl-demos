@@ -39,10 +39,16 @@
 
 package demos.testContextSharing;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.util.Random;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
 
-import javax.media.opengl.*;
+
 
 /** A simple demonstration of sharing of display lists between drawables. */
 
@@ -80,7 +86,7 @@ public class TestContextSharing {
     }
     System.err.println("Showing first frame");
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     new Thread(new Runnable() {
         public void run() {
           try {
@@ -89,48 +95,50 @@ public class TestContextSharing {
           }
           System.err.println("Showing other frame");
           delayedFrame.pack();
-          delayedFrame.show();
+          delayedFrame.setVisible(true);
           delayedFrame.setLocation(256, 0);
         }
       }).start();
   }
 
   class Listener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
-      drawable.setGL(new DebugGL(drawable.getGL()));
 
-      GL gl = drawable.getGL();
+    public void init(GLAutoDrawable drawable) {
+
+      GL2 gl = drawable.getGL().getGL2();
+
+      drawable.setGL(new DebugGL2(gl));
 
       float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
-      gl.glEnable(GL.GL_CULL_FACE);
-      gl.glEnable(GL.GL_LIGHTING);
-      gl.glEnable(GL.GL_LIGHT0);
-      gl.glEnable(GL.GL_DEPTH_TEST);
+      gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
+      gl.glEnable(GL2.GL_CULL_FACE);
+      gl.glEnable(GL2.GL_LIGHTING);
+      gl.glEnable(GL2.GL_LIGHT0);
+      gl.glEnable(GL2.GL_DEPTH_TEST);
 
       initializeDisplayList(gl);
 
-      gl.glEnable(GL.GL_NORMALIZE);
+      gl.glEnable(GL2.GL_NORMALIZE);
     }
 
     public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+      gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
       System.err.println("Drawing display list " + gearDisplayList);
       gl.glCallList(gearDisplayList);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       float h = (float)height / (float)width;
             
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glMatrixMode(GL2.GL_PROJECTION);
       gl.glLoadIdentity();
       gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glMatrixMode(GL2.GL_MODELVIEW);
       gl.glLoadIdentity();
       gl.glTranslatef(0.0f, 0.0f, -40.0f);
     }
@@ -139,20 +147,20 @@ public class TestContextSharing {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
-  private synchronized void initializeDisplayList(GL gl) {
+  private synchronized void initializeDisplayList(GL2 gl) {
     if (gearDisplayList != 0) {
       return;
     }
 
     gearDisplayList = gl.glGenLists(1);
-    gl.glNewList(gearDisplayList, GL.GL_COMPILE);
+    gl.glNewList(gearDisplayList, GL2.GL_COMPILE);
     float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
+    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, red, 0);
     gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
     gl.glEndList();
   }
 
-  private void gear(GL gl,
+  private void gear(GL2 gl,
                     float inner_radius,
                     float outer_radius,
                     float width,
@@ -170,12 +178,12 @@ public class TestContextSharing {
             
     da = 2.0f * (float) Math.PI / teeth / 4.0f;
             
-    gl.glShadeModel(GL.GL_FLAT);
+    gl.glShadeModel(GL2.GL_FLAT);
 
     gl.glNormal3f(0.0f, 0.0f, 1.0f);
 
     /* draw front face */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -190,7 +198,7 @@ public class TestContextSharing {
     gl.glEnd();
 
     /* draw front sides of teeth */
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -202,7 +210,7 @@ public class TestContextSharing {
     gl.glEnd();
     
     /* draw back face */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -214,7 +222,7 @@ public class TestContextSharing {
     gl.glEnd();
     
     /* draw back sides of teeth */
-    gl.glBegin(GL.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -226,7 +234,7 @@ public class TestContextSharing {
     gl.glEnd();
     
     /* draw outward faces of teeth */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i < teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;
@@ -254,10 +262,10 @@ public class TestContextSharing {
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
     gl.glEnd();
     
-    gl.glShadeModel(GL.GL_SMOOTH);
+    gl.glShadeModel(GL2.GL_SMOOTH);
     
     /* draw inside radius cylinder */
-    gl.glBegin(GL.GL_QUAD_STRIP);
+    gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
       {
         angle = i * 2.0f * (float) Math.PI / teeth;

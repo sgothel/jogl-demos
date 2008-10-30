@@ -284,6 +284,6 @@ public class cgGL_vertex_example implements GLEventListener
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
   }
 }   

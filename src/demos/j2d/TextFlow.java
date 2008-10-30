@@ -39,21 +39,29 @@
 
 package demos.j2d;
 
+import demos.common.Demo;
+import demos.util.SystemTime;
+import demos.util.Time;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.text.*;
-import java.util.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import sun.java2d.pipe.TextRenderer;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.*;
-
-import demos.common.*;
-import demos.util.*;
 
 /** Illustrates both the TextRenderer's capability for handling
     relatively large amounts of text (more than drawn on the screen --
@@ -88,7 +96,7 @@ public class TextFlow extends Demo {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
   }
 

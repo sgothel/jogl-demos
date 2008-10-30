@@ -33,18 +33,27 @@
 
 package demos.vertexArrayRange;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.nio.*;
-import java.util.*;
-import javax.swing.*;
+import demos.common.Demo;
+import demos.common.DemoListener;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.Animator;
+import javax.swing.JOptionPane;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.*;
-import demos.common.*;
-import demos.util.*;
+
 
 /** <P> A port of NVidia's [tm] Vertex Array Range demonstration to
     OpenGL[tm] for Java[tm] and the Java programming language. The
@@ -119,7 +128,7 @@ public class VertexArrayRange extends Demo {
     canvas.setSize(800, 800);
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
     canvas.requestFocus();
 
     animator.start();
@@ -168,7 +177,7 @@ public class VertexArrayRange extends Demo {
   private float[] cosArray;
 
   // Primitive: GL_QUAD_STRIP, GL_LINE_STRIP, or GL_POINTS
-  private int primitive = GL.GL_QUAD_STRIP;
+  private int primitive = GL2.GL_QUAD_STRIP;
 
   // Animation parameters
   private float hicoef = .06f;
@@ -273,7 +282,7 @@ public class VertexArrayRange extends Demo {
     //    drawable.setGL(new TraceGL(drawable.getGL(), System.err));
     //    drawable.setGL(new DebugGL(drawable.getGL()));
 
-    GL  gl  = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     // Try and disable synch-to-retrace for fastest framerate
     gl.setSwapInterval(0);
@@ -303,7 +312,7 @@ public class VertexArrayRange extends Demo {
     gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 128.f);
 
     gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
-    gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+    gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
 
     // NOTE: it looks like GLUT (or something else) sets up the
     // projection matrix in the C version of this demo.
@@ -325,7 +334,7 @@ public class VertexArrayRange extends Demo {
     }
 
     if (getFlag('v')) {
-      gl.glEnableClientState(GL.GL_VERTEX_ARRAY_RANGE_NV);
+      gl.glEnableClientState(GL2.GL_VERTEX_ARRAY_RANGE_NV);
       gl.glVertexArrayRangeNV(bufferSize, bigArrayVar);
       bigArray = bigArrayVar;
     } else {
@@ -382,17 +391,17 @@ public class VertexArrayRange extends Demo {
 
     if (k == 'w') {
       if (getFlag(k)) {
-        primitive = GL.GL_LINE_STRIP;
+        primitive = GL2.GL_LINE_STRIP;
       } else {
-        primitive = GL.GL_QUAD_STRIP;
+        primitive = GL2.GL_QUAD_STRIP;
       }
     }
 
     if (k == 'p') {
       if (getFlag(k)) {
-        primitive = GL.GL_POINTS;
+        primitive = GL2.GL_POINTS;
       } else {
-        primitive = GL.GL_QUAD_STRIP;
+        primitive = GL2.GL_QUAD_STRIP;
       }
     }
 
@@ -451,7 +460,7 @@ public class VertexArrayRange extends Demo {
   }
 
   public void display(GLAutoDrawable drawable) {
-    GL  gl  = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     // Check to see whether to animate
     if (getFlag(' ')) {
@@ -500,10 +509,10 @@ public class VertexArrayRange extends Demo {
       if(getFlag('i')) {
         // infinite light
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+        gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
       } else {
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f, 1 }, 0);
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+        gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
       }
       toggleLightingModel = false;
     }

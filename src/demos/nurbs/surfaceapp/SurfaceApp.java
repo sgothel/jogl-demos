@@ -9,10 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.media.opengl.GLCanvas;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -33,6 +31,7 @@ import javax.swing.ToolTipManager;
 
 import demos.nurbs.icons.*;
 import demos.nurbs.knotslidercomponent.JKnotSlider;
+import javax.media.opengl.awt.GLCanvas;
 
 /**
  * Main class for application demostrating capabilitues of JOGL library extend by NURBS surface functionalities

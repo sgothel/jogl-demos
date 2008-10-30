@@ -1,13 +1,21 @@
 package demos.fullscreen;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 import demos.gears.Gears;
-import demos.util.*;
+import demos.util.ScreenResSelector;
+import java.awt.BorderLayout;
+import java.awt.DisplayMode;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.ToolTipManager;
+
 
 /**
  * GearsFullscreen2.java <BR>

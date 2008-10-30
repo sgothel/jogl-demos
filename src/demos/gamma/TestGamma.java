@@ -39,13 +39,15 @@
 
 package demos.gamma;
 
-import java.awt.*;
-import java.awt.event.*;
+import demos.gears.Gears;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.Gamma;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
 
-import demos.gears.*;
 
 public class TestGamma {
   private static void usage() {
@@ -89,7 +91,7 @@ public class TestGamma {
             }).start();
         }
       });
-    frame.show();
+    frame.setVisible(true);
     animator.start();
     
     if (!Gamma.setDisplayGamma(gamma, brightness, contrast)) {

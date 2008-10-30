@@ -39,13 +39,22 @@
 
 package demos.xtrans;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.util.*;
-import javax.swing.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import com.sun.opengl.impl.*;
+import com.sun.opengl.impl.awt.Java2D;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.glu.GLU;
+
+
 
 /** A JDesktopPane subclass supporting Accelerated Transitions (XT) of
  * the components contained within.
@@ -54,6 +63,7 @@ import com.sun.opengl.impl.*;
  */
 
 public class XTDesktopPane extends OffscreenDesktopPane {
+
   private GLContext j2dContext;
   private Object    j2dContextSurfaceIdentifier;
 
@@ -177,13 +187,13 @@ public class XTDesktopPane extends OffscreenDesktopPane {
           if (j2dContext == null ||
               j2dContextSurfaceIdentifier != Java2D.getOGLSurfaceIdentifier(g)) {
             j2dContext = GLDrawableFactory.getFactory().createExternalGLContext();
-            j2dContext.setGL(new DebugGL(j2dContext.getGL()));
+            j2dContext.setGL(new DebugGL2(j2dContext.getGL().getGL2()));
             j2dContextSurfaceIdentifier = Java2D.getOGLSurfaceIdentifier(g);
           }
 
           j2dContext.makeCurrent(); // No-op
           try {
-            GL gl = j2dContext.getGL();
+            GL2 gl = j2dContext.getGL().getGL2();
 
             // Figure out where JDesktopPane is on the Swing back buffer
             Rectangle oglRect = Java2D.getOGLViewport(g, getWidth(), getHeight());
@@ -264,13 +274,13 @@ public class XTDesktopPane extends OffscreenDesktopPane {
             gl.glBindTexture(textureTarget, getXTDesktopManager().getOpenGLTextureObject());
 
             gl.glEnable(textureTarget);
-            gl.glTexParameteri(textureTarget, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
-            gl.glTexParameteri(textureTarget, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+            gl.glTexParameteri(textureTarget, GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+            gl.glTexParameteri(textureTarget, GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
             gl.glTexParameteri(textureTarget, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
             gl.glTexParameteri(textureTarget, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 
             gl.glEnable(GL.GL_BLEND);
-            gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+            gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
             // Iterate down children in z order bottom-to-top
@@ -352,7 +362,7 @@ public class XTDesktopPane extends OffscreenDesktopPane {
             gl.glDisable(textureTarget);
             gl.glDisable(GL.GL_BLEND);
 
-            gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+            gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
             gl.glMatrixMode(GL.GL_PROJECTION);
             gl.glPopMatrix();
             gl.glMatrixMode(GL.GL_TEXTURE);

@@ -39,8 +39,10 @@
 
 package demos.xtrans;
 
-import javax.media.opengl.*;
-import gleem.linalg.*;
+import gleem.linalg.Vec3f;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+
 
 /** A basic transition supporting animated translation, rotation about
  * a pivot point, scrolling and fading effects.
@@ -67,7 +69,7 @@ public class XTBasicTransition implements XTTransition {
     this.percentage = percentage;
   }
 
-  public void draw(GL gl) {
+  public void draw(GL2 gl) {
     float  percent = percentage;
     Quad3f vts     = vertices.getCurrent(percent);
     Quad2f tex     = texcoords.getCurrent(percent);

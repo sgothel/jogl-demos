@@ -57,7 +57,7 @@ import javax.media.opengl.*;
 public class Bunny {
 
   /** Generates and returns a display list for the bunny model. */
-  public static int gen3DObjectList(GL gl) throws IOException {
+  public static int gen3DObjectList(GL2 gl) throws IOException {
     StreamTokenizer tok = new StreamTokenizer(new BufferedReader(new InputStreamReader(
       Bunny.class.getClassLoader().getResourceAsStream("demos/data/models/bunny.txt"))));
     // Reset tokenizer's syntax so numbers are not parsed
@@ -96,7 +96,7 @@ public class Bunny {
     }
 
     int lid = gl.glGenLists(1);
-    gl.glNewList(lid, GL.GL_COMPILE);
+    gl.glNewList(lid, GL2.GL_COMPILE);
 
     gl.glBegin(GL.GL_TRIANGLES);
     for (int i = 0; i < faceIndices.length; i += 6) {

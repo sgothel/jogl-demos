@@ -68,7 +68,7 @@ public class Engine {
       particles.remove(particles.size()-1);
   }
     
-  public void draw(GL gl) {
+  public void draw(GL2 gl) {
         
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     gl.glLoadIdentity();      
