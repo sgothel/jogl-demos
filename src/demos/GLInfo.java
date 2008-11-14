@@ -59,6 +59,17 @@ public class GLInfo implements GLEventListener {
         System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
         System.err.println("GL_EXTENSIONS: ");
         System.err.println("  " + gl.glGetString(GL.GL_EXTENSIONS));
+        System.err.println("Platform EXTENSIONS: ");
+        System.err.println("  " + gl.getContext().getPlatformExtensionsString());
+        System.err.println("Availability Tests: ");
+        System.err.println("  Fixed: glBegin: "+gl.isFunctionAvailable("glBegin"));
+        System.err.println("  ES1  : glClearColorx: "+gl.isFunctionAvailable("glClearColorx"));
+        System.err.println("  GLSL : glUseProgram: "+gl.isFunctionAvailable("glUseProgram"));
+        System.err.println("  EGL  : eglCreateContext: "+gl.isFunctionAvailable("eglCreateContext"));
+        System.err.println("  EGLEx: eglCreateImage: "+gl.isFunctionAvailable("eglCreateImage"));
+        System.err.println("  GLX  : glXCreateWindow: "+gl.isFunctionAvailable("glXCreateWindow"));
+        System.err.println("  WGL  : wglCreateContext: "+gl.isFunctionAvailable("wglCreateContext"));
+        System.err.println("  CGL  : CGLCreateContext: "+gl.isFunctionAvailable("CGLCreateContext"));
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
