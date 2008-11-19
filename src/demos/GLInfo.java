@@ -31,6 +31,7 @@ public class GLInfo implements GLEventListener {
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
+            System.err.println("GLCapabilities PRE : "+caps);
             window = GLWindow.create(nWindow, caps);
 
             window.addGLEventListener(this);
@@ -54,6 +55,7 @@ public class GLInfo implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
+        System.err.println("GLCapabilities POST: "+drawable.getChosenGLCapabilities());
         System.err.println("GL Profile: "+GLProfile.getProfile());
         System.err.println("GL:" + gl);
         System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
