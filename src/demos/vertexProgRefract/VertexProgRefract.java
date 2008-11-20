@@ -115,7 +115,7 @@ public class VertexProgRefract extends Demo {
     animator.start();
   }
 
-  private boolean useRegisterCombiners;
+//  private boolean useRegisterCombiners;
   private boolean initComplete;
   private boolean firstRender = true;
   private int vtxProg;
@@ -258,11 +258,11 @@ public class VertexProgRefract extends Demo {
       initExtension(gl, "GL_vertex_program");
       initExtension(gl, "GL_VERSION_1_3"); // For multitexturing support
       if (!gl.isExtensionAvailable("GL_fragment_program")) {
-        if (gl.isExtensionAvailable("GL_NV_register_combiners")) {
-          useRegisterCombiners = true;
-        } else {
-          final String message = "This demo requires either the GL_fragment_program\n" +
-            "or GL_NV_register_combiners extension";
+//        if (gl.isExtensionAvailable("GL_NV_register_combiners")) {
+//          useRegisterCombiners = true;
+//        } else {
+          final String message = "This demo requires either the GL_fragment_program";
+//                  +  "or GL_NV_register_combiners extension";
           new Thread(new Runnable() {
               public void run() {
                 JOptionPane.showMessageDialog(null, message, "Unavailable extension", JOptionPane.ERROR_MESSAGE);
@@ -270,7 +270,7 @@ public class VertexProgRefract extends Demo {
               }
             }).start();
           throw new RuntimeException(message);
-        }
+//        }
       }
     } catch (RuntimeException e) {
       shutdownDemo();
@@ -306,11 +306,11 @@ public class VertexProgRefract extends Demo {
 
     gl.glDisable(GL.GL_CULL_FACE);
 
-    if (useRegisterCombiners) {
-      initCombiners(gl);
-    } else {
+//    if (useRegisterCombiners) {
+//      initCombiners(gl);
+//    } else {
       initFragmentProgram(gl);
-    }
+//    }
 
     try {
       bunnydl = Bunny.gen3DObjectList(gl);
@@ -406,12 +406,12 @@ public class VertexProgRefract extends Demo {
     gl.glLoadIdentity();
     viewer.updateInverseRotation(gl);
 
-    if (useRegisterCombiners) {
-      gl.glEnable(GL2.GL_REGISTER_COMBINERS_NV);
-    } else {
+//    if (useRegisterCombiners) {
+//      gl.glEnable(GL2.GL_REGISTER_COMBINERS_NV);
+//    } else {
       gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
       gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
-    }
+//    }
 
     gl.glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -444,11 +444,11 @@ public class VertexProgRefract extends Demo {
       gl.glColorMask(true, true, true, false);
     }
 
-    if (useRegisterCombiners) {
-      gl.glDisable(GL2.GL_REGISTER_COMBINERS_NV);
-    } else {
+//    if (useRegisterCombiners) {
+//      gl.glDisable(GL2.GL_REGISTER_COMBINERS_NV);
+//    } else {
       gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
-    }
+//    }
     gl.glDisable(GL2.GL_VERTEX_PROGRAM);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -534,28 +534,28 @@ public class VertexProgRefract extends Demo {
 
   // initalize texture combiners to compute:
   // refraction*(1-fresnel) + reflection*fresnel
-  private void initCombiners(GL gl) {
-    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 1);
-      
-    // combiner 0
-    // a*b+c*d
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_PRIMARY_COLOR_NV, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_PRIMARY_COLOR_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-
-    // output:
-    // (stage, portion, abOutput, cdOutput, sumOutput, scale, bias, abDotProduct, cdDotProduct, muxSum)
-    gl.glCombinerOutputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
-      
-    // final combiner
-    // output: Frgb = A*B + (1-A)*C + D
-    // (variable, input, mapping, componentUsage);
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
-  }
+//  private void initCombiners(GL gl) {
+//    gl.glCombinerParameteriNV(GL.GL_NUM_GENERAL_COMBINERS_NV, 1);
+//
+//    // combiner 0
+//    // a*b+c*d
+//    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_A_NV, GL.GL_TEXTURE0, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+//    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_B_NV, GL.GL_PRIMARY_COLOR_NV, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
+//    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_C_NV, GL.GL_TEXTURE1, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+//    gl.glCombinerInputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_VARIABLE_D_NV, GL.GL_PRIMARY_COLOR_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+//
+//    // output:
+//    // (stage, portion, abOutput, cdOutput, sumOutput, scale, bias, abDotProduct, cdDotProduct, muxSum)
+//    gl.glCombinerOutputNV(GL.GL_COMBINER0_NV, GL.GL_RGB, GL.GL_DISCARD_NV, GL.GL_DISCARD_NV, GL.GL_SPARE0_NV, GL.GL_NONE, GL.GL_NONE, false, false, false);
+//
+//    // final combiner
+//    // output: Frgb = A*B + (1-A)*C + D
+//    // (variable, input, mapping, componentUsage);
+//    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_A_NV, GL.GL_SPARE0_NV, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+//    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_B_NV, GL.GL_ZERO, GL.GL_UNSIGNED_INVERT_NV, GL.GL_RGB);
+//    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_C_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+//    gl.glFinalCombinerInputNV(GL.GL_VARIABLE_D_NV, GL.GL_ZERO, GL.GL_UNSIGNED_IDENTITY_NV, GL.GL_RGB);
+//  }
 
   private void initFragmentProgram(GL2 gl) {
     int[] fragProgTmp = new int[1];

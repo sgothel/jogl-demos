@@ -39,8 +39,6 @@
 
 package gleem;
 
-import java.util.*;
-
 import gleem.linalg.*;
 
 /** Piece of geometry defining a two-way arrow, used in Translate1 and

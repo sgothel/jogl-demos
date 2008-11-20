@@ -39,6 +39,7 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureIO;
@@ -76,7 +77,6 @@ import javax.media.opengl.util.Animator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import sun.java2d.pipe.TextRenderer;
 
 
 /** Illustrates more advanced use of the TextRenderer class; shows how
@@ -137,7 +137,7 @@ public class CustomText extends Demo {
   private List/*<TextInfo>*/ textInfo = new ArrayList/*<TextInfo>*/();
   private Time time;
   private Texture backgroundTexture;
-  private TextRenderer renderer;
+  private GL2TextRenderer renderer;
   private Random random = new Random();
   private GLU glu = new GLU();
   private int width;
@@ -205,7 +205,7 @@ public class CustomText extends Demo {
     backgroundTexture.setTexParameteri(GL.GL_TEXTURE_WRAP_T,     GL.GL_REPEAT);
 
     // Create the text renderer
-    renderer = new TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true,
+    renderer = new GL2TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true,
                                 new CustomRenderDelegate(52, 10, Color.BLUE, Color.CYAN));
 
     // Create the FPS counter
@@ -380,7 +380,8 @@ public class CustomText extends Demo {
   }
 
   private static final Color DROP_SHADOW_COLOR = new Color(0, 0, 0, 0.5f);
-  class CustomRenderDelegate implements TextRenderer.RenderDelegate {
+
+  class CustomRenderDelegate implements GL2TextRenderer.RenderDelegate {
     private float gradientSize;
     private int dropShadowDepth;
     private Color color1;

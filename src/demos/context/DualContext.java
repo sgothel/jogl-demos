@@ -65,6 +65,7 @@ import javax.swing.JFrame;
     using the GLDrawable.swapBuffers() API. */
 
 public class DualContext extends Canvas {
+
   private GLDrawable drawable;
   private GLContext  context1;
   private GLContext  context2;
@@ -75,11 +76,11 @@ public class DualContext extends Canvas {
   public DualContext(GLCapabilities capabilities) {
     super(unwrap((AWTGraphicsConfiguration)
                  GLDrawableFactory.getFactory().chooseGraphicsConfiguration(capabilities, null, null)));
-    drawable = GLDrawableFactory.getFactory().getGLDrawable(this, capabilities, null);
+    drawable = GLDrawableFactory.getFactory().createGLDrawable(this, capabilities, null);
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
     glu = new GLU();
-    glut = new GLUT();
+    glut = new GLUTgl2();
   }
 
   public void addNotify() {
@@ -131,12 +132,12 @@ public class DualContext extends Canvas {
     gl.glEnable(GL.GL_SCISSOR_TEST);
     gl.glClearColor(br, bg, bb, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    float length = glut.glutStrokeLengthf(GLUT.STROKE_ROMAN, str);
+    float length = glut.glutStrokeLengthf(GLUTgl2.STROKE_ROMAN, str);
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluOrtho2D(x, x + width, y, y + height);
     gl.glTranslatef(x + (width - length) / 2, y + height / 2, 0);
-    glut.glutStrokeString(GLUT.STROKE_ROMAN, str);
+    glut.glutStrokeString(GLUTgl2.STROKE_ROMAN, str);
   }
 
   public static void main(String[] args) {

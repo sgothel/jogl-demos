@@ -116,5 +116,5 @@ public abstract class Manip {
 
   /** Render this Manipulator now using the given OpenGL routines and
       assuming an OpenGL context is current. */
-  public abstract void render(GL gl);
+  public abstract void render(GL2 gl);
 }

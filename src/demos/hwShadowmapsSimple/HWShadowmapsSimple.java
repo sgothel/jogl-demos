@@ -428,8 +428,8 @@ public class HWShadowmapsSimple extends Demo {
       int[] depth_bits = new int[1];
       gl.glGetIntegerv(GL2.GL_DEPTH_BITS, depth_bits, 0);
         
-      if (depth_bits[0] == 16)  depth_format = GL2.GL_DEPTH_COMPONENT16_ARB;
-      else                      depth_format = GL2.GL_DEPTH_COMPONENT24_ARB;
+      if (depth_bits[0] == 16)  depth_format = GL2.GL_DEPTH_COMPONENT16;
+      else                      depth_format = GL2.GL_DEPTH_COMPONENT24;
 
       light_view_depth = genTexture(gl);
       gl.glBindTexture(GL2.GL_TEXTURE_2D, light_view_depth);

@@ -39,6 +39,7 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
 import demos.gears.Gears;
 import demos.util.FPSCounter;
 import demos.util.SystemTime;
@@ -55,7 +56,6 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.util.Animator;
-import sun.java2d.pipe.TextRenderer;
 
 
 
@@ -63,6 +63,7 @@ import sun.java2d.pipe.TextRenderer;
     with moving Java 2D-rendered text on top. */
 
 public class TestTextRenderer implements GLEventListener {
+
   public static void main(String[] args) {
     Frame frame = new Frame("Text Renderer Test");
     GLCapabilities caps = new GLCapabilities();
@@ -91,7 +92,7 @@ public class TestTextRenderer implements GLEventListener {
     animator.start();
   }
 
-  private TextRenderer renderer;
+  private GL2TextRenderer renderer;
   private Time time;
   private Font font;
   private Vec2f velocity = new Vec2f(100.0f, 150.0f);
@@ -110,7 +111,7 @@ public class TestTextRenderer implements GLEventListener {
     // Gears demo)
     gl.setSwapInterval(0);
 
-    renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+    renderer = new GL2TextRenderer(new Font("SansSerif", Font.BOLD, 36));
     time = new SystemTime();
     ((SystemTime) time).rebase();
 

@@ -163,7 +163,7 @@ public class Translate1Manip extends Manip {
     parts.clearHighlight();
   }
   
-  public void render(GL gl) {
+  public void render(GL2 gl) {
     parts.render(gl);
   }
 

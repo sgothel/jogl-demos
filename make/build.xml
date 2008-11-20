@@ -34,17 +34,8 @@
     <target name="setup.gles">
         <condition property="isGLES">
           <or>
-            <isset property="jogl.es1" />
-            <isset property="jogl.es2" />
+            <isset property="jogl.es" />
           </or>
-        </condition>
-
-        <condition property="isGLES1">
-            <isset property="jogl.es1" />
-        </condition>
-
-        <condition property="isGLES2">
-            <isset property="jogl.es2" />
         </condition>
     </target>
 
@@ -59,8 +50,8 @@
     <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes">
         <property name="jogl.core.jar"       value="../../jogl/build/jogl.core.jar" />
         <property name="jogl.oswin.jar"      value="../../jogl/build/jogl.oswin.jar" />
-        <property name="jogl.gles1.jar"      value="../../jogl/build/jogl.gles1.jar" />
-        <property name="jogl.gles1.dbg.jar"  value="../../jogl/build/jogl.gles1.dbg.jar" />
+        <property name="jogl.gles12.jar"     value="../../jogl/build/jogl.gles12.jar" />
+        <property name="jogl.gles12.dbg.jar" value="../../jogl/build/jogl.gles12.dbg.jar" />
         <property name="jogl.gles2.jar"      value="../../jogl/build/jogl.gles2.jar" />
         <property name="jogl.gles2.dbg.jar"  value="../../jogl/build/jogl.gles2.dbg.jar" />
         <property name="jogl.egl.jar"        value="../../jogl/build/jogl.egl.jar" />
@@ -124,7 +115,7 @@
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${simple-xml.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,demos/es1/**,demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,jbullet/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -141,6 +132,10 @@
                 <include name="demos/hdr/shaders/**/*.cg" />
                 <include name="demos/hdr/shaders/**/*.arbvp1" />
                 <include name="demos/hdr/shaders/**/*.arbfp1" />
+                <include name="demos/es1/bump/*.brs" />
+                <include name="demos/es2/shader/**" />
+                <include name="demos/es2/perftst/shader/**" />
+                <include name="demos/es2/perftst/data/**" />
             </fileset>
             <!-- Avoid requiring dependence on huge jogl-demos-data.jar for
                  particle engine demo -->
@@ -168,18 +163,17 @@
 	     />
     </target>
 
-    <target name="all-gles1" if="isGLES1">
+    <target name="all-gles" if="isGLES">
         <echo message="classes destdir ${classes}" />
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
             <pathelement location="${jogl.core.jar}" />
-            <pathelement location="${jogl.gles1.jar}" />
-            <pathelement location="${jogl.gles1.dbg.jar}" />
+            <pathelement location="${jogl.gles2.jar}" />
             <pathelement location="${jogl.egl.jar}" />
             <pathelement location="${jogl.util.jar}" />
             <pathelement location="${newt.jar}" />
         </path>
-        <javac destdir="${classes}" includes="demos/GLInfo*, demos/es1/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+        <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
                bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
@@ -190,39 +184,14 @@
             </fileset>
             <fileset dir="${src}">
                 <include name="demos/es1/bump/*.brs" />
+                <include name="demos/es2/shader/**" />
+                <include name="demos/es2/perftst/shader/**" />
+                <include name="demos/es2/perftst/data/**" />
             </fileset>
         </jar>
     </target>
 
-    <target name="all-gles2" if="isGLES2">
-        <mkdir dir="${classes}" />
-        <path id="jogl-demos.classpath">
-            <pathelement location="${jogl.core.jar}" />
-            <pathelement location="${jogl.gles2.jar}" />
-            <pathelement location="${jogl.gles2.dbg.jar}" />
-            <pathelement location="${jogl.egl.jar}" />
-            <pathelement location="${jogl.util.jar}" />
-            <pathelement location="${newt.jar}" />
-        </path>
-        <javac destdir="${classes}" 
-               includes="demos/GLInfo*, demos/es2/**" 
-               source="1.4" target="1.4" debug="true" debuglevel="source,lines"
-               bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
-            <src path="${src}" />
-            <classpath refid="jogl-demos.classpath" />
-        </javac>
-        <copy todir="${classes}">
-            <fileset dir="${src}"
-                     includes="demos/es2/shader/**, demos/es2/perftst/shader/**, demos/es2/perftst/data/**" />
-        </copy>
-        <jar destfile="${jogl.demos.jar}">
-            <fileset dir="${classes}">
-                <include name="**" />
-            </fileset>
-        </jar>
-    </target>
-
-    <target name="all" depends="init, all-desktop, all-gles1, all-gles2" />
+    <target name="all" depends="init, all-desktop, all-gles" />
 
     <target name="javadoc" depends="init">
         <mkdir dir="${javadoc}" />

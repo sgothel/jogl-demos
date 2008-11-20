@@ -42,38 +42,22 @@ import javax.media.opengl.util.Animator;
 import javax.media.opengl.util.FPSAnimator;
 
 
-public class Main 
-{
-
-  private Animator animator;
-
-/**
-  public void init() {
-    setLayout(new BorderLayout());
-    GLCanvas canvas = new GLCanvas();
-    canvas.addGLEventListener(new FBCubes());
-    canvas.setSize(getSize());
-    add(canvas, BorderLayout.CENTER);
-    animator = new FPSAnimator(canvas, 30);
-  }
-
-  public void start() {
-    animator.start();
-  }
-
-  public void stop() {
-    // FIXME: do I need to do anything else here?
-    animator.stop();
-  }
-  */
+public class Main {
 
   public static void main(String[] args) {
-    Frame frame = new Frame("FBCubes Demo ES 1.1");
+
     GLCapabilities caps = new GLCapabilities();
     GLCanvas canvas = new GLCanvas(caps);
-    canvas.addGLEventListener(new FBCubes());
+    
+    FBCubes cubes = new FBCubes();
+    canvas.addMouseListener(cubes);
+    canvas.addMouseMotionListener(cubes);
+    canvas.addGLEventListener(cubes);
+
+    Frame frame = new Frame("FBCubes Demo ES 1.1");
     frame.add(canvas);
     frame.setSize(800, 480);
+
     final Animator animator = new FPSAnimator(canvas, 60);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {

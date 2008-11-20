@@ -33,9 +33,11 @@
 
 package demos.cubefbo;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.util.BufferUtil;
 
 class CubeObject {
     public CubeObject (boolean useTexCoords) {
@@ -63,7 +65,7 @@ class CubeObject {
         }
     }
 
-    private void perspective(GL gl, float fovy, float aspect, float zNear, float zFar) {
+    private void perspective(GL2 gl, float fovy, float aspect, float zNear, float zFar) {
         float xmin;
         float xmax;
         float ymin;
@@ -83,7 +85,7 @@ class CubeObject {
     static final float[] material_spec = { 1.0f, 1.0f, 1.0f, 0.f };
     static final float[] zero_vec4 = { 0.0f, 0.0f, 0.0f, 0.f };
 
-    public void reshape(GL gl, int x, int y, int width, int height) {
+    public void reshape(GL2 gl, int x, int y, int width, int height) {
         float aspect = (height != 0) ? ((float)width / (float)height) : 1.0f;
 
         gl.glViewport(0, 0, width, height);
@@ -104,7 +106,7 @@ class CubeObject {
         gl.glEnable(GL.GL_COLOR_MATERIAL);
         gl.glEnable(GL.GL_CULL_FACE);
 
-        gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
         gl.glShadeModel(GL.GL_SMOOTH);
         gl.glDisable(GL.GL_DITHER);
@@ -127,7 +129,7 @@ class CubeObject {
         gl.glCullFace(GL.GL_BACK);
     }
 
-    public void display(GL gl, float xRot, float yRot) {
+    public void display(GL2 gl, float xRot, float yRot) {
         //        System.out.println("CubeObject .. p1: "+this);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -150,7 +152,7 @@ class CubeObject {
         gl.glNormalPointer(GL.GL_BYTE, 0, cubeNormals);
         if (cubeTexCoords != null) {
             gl.glTexCoordPointer(2, GL.GL_SHORT, 0, cubeTexCoords);
-            gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+            gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
         }
 
         //        System.out.println("CubeObject .. p8: "+this);

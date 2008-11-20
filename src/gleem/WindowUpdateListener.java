@@ -39,8 +39,8 @@
 
 package gleem;
 
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
+import javax.media.opengl.GLAutoDrawable;
+
 
 /** A WindowUpdateListener is used by the ManipManager to transmit
     repaint() notifications to windows containing Manips. When a Manip

@@ -52,6 +52,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 import javax.media.opengl.awt.GLCanvas;
@@ -73,7 +74,7 @@ import javax.swing.JOptionPane;
  */
 public class ProceduralTexturePhysics extends Demo {
 
-    private ProceduralTexturePhysics() {
+    public ProceduralTexturePhysics() {
 
         GLCanvas canvas = new GLCanvas();
         ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
@@ -225,7 +226,7 @@ public class ProceduralTexturePhysics extends Demo {
             frameCount = 0;
         }
 
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
 
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 

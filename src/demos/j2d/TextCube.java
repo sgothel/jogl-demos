@@ -39,6 +39,7 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
 import demos.common.Demo;
 import demos.util.FPSCounter;
 import demos.util.SystemTime;
@@ -52,10 +53,10 @@ import java.awt.geom.Rectangle2D;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.util.Animator;
-import sun.java2d.pipe.TextRenderer;
 
 
 
@@ -66,7 +67,7 @@ public class TextCube extends Demo {
   private float yAng;
   private GLU glu = new GLU();
   private Time time;
-  private TextRenderer renderer;
+  private GL2TextRenderer renderer;
   private FPSCounter fps;
   private float textScaleFactor;
 
@@ -74,6 +75,7 @@ public class TextCube extends Demo {
     Frame frame = new Frame("Text Cube");
     frame.setLayout(new BorderLayout());
 
+    GLProfile.setProfile("GL2");
     GLCanvas canvas = new GLCanvas();
     final TextCube demo = new TextCube();
 
@@ -100,7 +102,7 @@ public class TextCube extends Demo {
   }
 
   public void init(GLAutoDrawable drawable) {
-    renderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 72));
+    renderer = new GL2TextRenderer(new Font("SansSerif", Font.PLAIN, 72));
     GL gl = drawable.getGL();
     gl.glEnable(GL2.GL_DEPTH_TEST);
 
@@ -114,7 +116,7 @@ public class TextCube extends Demo {
 
     time = new SystemTime();
     ((SystemTime) time).rebase();
-    gl.setSwapInterval(0);
+//    gl.setSwapInterval(0);
   }
 
   public void display(GLAutoDrawable drawable) {

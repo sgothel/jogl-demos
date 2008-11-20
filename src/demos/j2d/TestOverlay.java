@@ -41,6 +41,7 @@ package demos.j2d;
 
 
 
+import com.sun.opengl.util.awt.gl2.GL2Overlay;
 import demos.gears.Gears;
 import demos.util.*;
 import gleem.linalg.*;
@@ -93,7 +94,7 @@ public class TestOverlay implements GLEventListener {
     animator.start();
   }
 
-  private Overlay overlay;
+  private GL2Overlay overlay;
   private Time time;
   private Font font;
   private Color TRANSPARENT_BLACK = new Color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -114,7 +115,7 @@ public class TestOverlay implements GLEventListener {
     GL gl = drawable.getGL();
     gl.setSwapInterval(0);
 
-    overlay = new Overlay(drawable);
+    overlay = new GL2Overlay(drawable);
     time = new SystemTime();
     ((SystemTime) time).rebase();
 

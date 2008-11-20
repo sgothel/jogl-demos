@@ -39,6 +39,7 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.awt.gl2.GL2TextureRenderer;
 import demos.gears.Gears;
 import demos.util.SystemTime;
 import demos.util.Time;
@@ -58,6 +59,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.util.Animator;
@@ -68,10 +70,14 @@ import javax.media.opengl.util.Animator;
     underneath with moving Java 2D-rendered text on top. */
 
 public class TestTextureRenderer implements GLEventListener {
+
   public static void main(String[] args) {
+
     Frame frame = new Frame("Java 2D Renderer Test");
     GLCapabilities caps = new GLCapabilities();
     caps.setAlphaBits(8);
+
+    GLProfile.setProfile("GL2");
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());
     canvas.addGLEventListener(new TestTextureRenderer());
@@ -95,7 +101,7 @@ public class TestTextureRenderer implements GLEventListener {
     animator.start();
   }
 
-  private TextureRenderer renderer;
+  private GL2TextureRenderer renderer;
   private Time time;
   private Font font;
   private Color TRANSPARENT_BLACK = new Color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -113,7 +119,7 @@ public class TestTextureRenderer implements GLEventListener {
     GL gl = drawable.getGL();
     gl.setSwapInterval(0);
 
-    renderer = new TextureRenderer(256, 256, true);
+    renderer = new GL2TextureRenderer(256, 256, true);
     time = new SystemTime();
     ((SystemTime) time).rebase();
 

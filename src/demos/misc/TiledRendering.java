@@ -1,21 +1,31 @@
 package demos.misc;
 
-import java.awt.image.*;
-import java.io.*;
-import java.nio.*;
-import javax.imageio.*;
-
-import javax.media.opengl.*;
-import com.sun.opengl.util.awt.*;
-
+import com.sun.opengl.impl.io.FileUtil;
+import com.sun.opengl.util.awt.ImageUtil;
+import com.sun.opengl.util.gl2.GL2TileRenderer;
 import com.sun.opengl.util.io.TGAWriter;
 import demos.gears.Gears;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import javax.imageio.ImageIO;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.GLPbuffer;
 
 /** Demonstrates the TileRenderer class by rendering a large version
     of the Gears demo to the specified file. */
 
 public class TiledRendering {
+
   public static void main(String[] args) throws IOException {
+      
     if (args.length != 1) {
       System.out.println("Usage: java TiledRendering [output file name]");
       System.out.println("Writes output (a large version of the Gears demo) to");
@@ -63,10 +73,10 @@ public class TiledRendering {
     }
 
     // Initialize the tile rendering library
-    TileRenderer renderer = new TileRenderer();
+    GL2TileRenderer renderer = new GL2TileRenderer();
     renderer.setTileSize(tileWidth, tileHeight, 0);
     renderer.setImageSize(imageWidth, imageHeight);
-    renderer.setImageBuffer(GL.GL_BGR, GL.GL_UNSIGNED_BYTE, buf);
+    renderer.setImageBuffer(GL2.GL_BGR, GL.GL_UNSIGNED_BYTE, buf);
     renderer.trPerspective(20.0f, (float) imageWidth / (float) imageHeight, 5.0f, 60.0f);
 
     GLContext context = pbuffer.getContext();

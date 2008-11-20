@@ -125,7 +125,7 @@ public class ManipPartGroup extends ManipPart {
     return visible;
   }
 
-  public void render(GL gl) {
+  public void render(GL2 gl) {
     for (Iterator iter = children.iterator(); iter.hasNext(); ) {
       ((ManipPart) iter.next()).render(gl);
     }

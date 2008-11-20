@@ -99,7 +99,7 @@ public class HDR extends Demo {
   private int gamma_tex;
   private int vignette_tex;
 
-  private int textureTarget; // Either GL_TEXTURE_RECTANGLE_NV or GL_TEXTURE_RECTANGLE_EXT/ARB
+  private int textureTarget; // Either GL_TEXTURE_RECTANGLE or GL_TEXTURE_RECTANGLE_EXT/ARB
 
   private GLPbuffer pbuffer;
   private GLPbuffer blur_pbuffer;
@@ -131,9 +131,17 @@ public class HDR extends Demo {
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
   public static void main(String[] args) {
+
     GLCanvas canvas = new GLCanvas();
-    HDR demo = new HDR();
+    final HDR demo = new HDR();
+
     canvas.addGLEventListener(demo);
+
+    canvas.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          demo.dispatchKey(e.getKeyCode(), e.getKeyChar());
+        }
+      });
 
     final Animator animator = new Animator(canvas);
     demo.setDemoListener(new DemoListener() {
@@ -268,23 +276,23 @@ public class HDR extends Demo {
     initComplete = false;
     //      printThreadName("init for Listener");
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
-    checkExtension(gl, "GL_ARB_pbuffer");
-    checkExtension(gl, "GL_ARB_vertex_program");
-    checkExtension(gl, "GL_ARB_fragment_program");
-    if (!gl.isExtensionAvailable("GL_NV_texture_rectangle") &&
+    checkExtension(gl, "GL_pbuffer");
+    checkExtension(gl, "GL_vertex_program");
+    checkExtension(gl, "GL_fragment_program");
+    if (!gl.isExtensionAvailable("GL_texture_rectangle") &&
         !gl.isExtensionAvailable("GL_EXT_texture_rectangle") &&
-        !gl.isExtensionAvailable("GL_ARB_texture_rectangle")) {
+        !gl.isExtensionAvailable("GL_texture_rectangle")) {
       // NOTE: it turns out the constants associated with these extensions are all identical
-      unavailableExtension("Texture rectangle extension not available (need one of GL_NV_texture_rectangle, GL_EXT_texture_rectangle or GL_ARB_texture_rectangle");
+      unavailableExtension("Texture rectangle extension not available (need one of GL_texture_rectangle, GL_EXT_texture_rectangle or GL_texture_rectangle");
     }
 
-    if (!gl.isExtensionAvailable("GL_NV_float_buffer") &&
+    if (!gl.isExtensionAvailable("GL_float_buffer") &&
         !gl.isExtensionAvailable("GL_ATI_texture_float") &&
         !gl.isExtensionAvailable("GL_APPLE_float_pixels")) {
-      unavailableExtension("Floating-point textures not available (need one of GL_NV_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
+      unavailableExtension("Floating-point textures not available (need one of GL_float_buffer, GL_ATI_texture_float, or GL_APPLE_float_pixels");
     }
 
     setOrthoProjection(gl, 0, 0, win_w, win_h);
@@ -350,12 +358,6 @@ public class HDR extends Demo {
     gl.glGenTextures(1, tmp, 0);
     tonemap_pbuffer_tex = tmp[0];
       
-    drawable.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          dispatchKey(e.getKeyCode(), e.getKeyChar());
-        }
-      });
-
     doViewAll = true;
 
     // Register the window with the ManipManager
@@ -398,7 +400,7 @@ public class HDR extends Demo {
 
     time.update();
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     // OK, ready to go
     if (b[' ']) {
@@ -447,7 +449,7 @@ public class HDR extends Demo {
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    setOrthoProjection(drawable.getGL(), x, y, width, height);
+    setOrthoProjection(drawable.getGL().getGL2(), x, y, width, height);
     win_w = width;
     win_h = height;
   }
@@ -519,7 +521,7 @@ public class HDR extends Demo {
   }
 
   // create gamma lookup table texture
-  private int createGammaTexture(GL gl, int size, float gamma) {
+  private int createGammaTexture(GL2 gl, int size, float gamma) {
     int[] tmp = new int[1];
     gl.glGenTextures(1, tmp, 0);
     int texid = tmp[0];
@@ -551,11 +553,11 @@ public class HDR extends Demo {
     gl.glGenTextures(1, tmp, 0);
     int texid = tmp[0];
       
-    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, texid);
-    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
-    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
-    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
-    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_NV, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
+    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE, texid);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
+    gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
 
     gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT, 1);
 
@@ -579,7 +581,7 @@ public class HDR extends Demo {
       }
     }
 
-    gl.glTexImage2D(GL2.GL_TEXTURE_RECTANGLE_NV, 0, GL2.GL_LUMINANCE, xsiz, ysiz, 0, GL2.GL_LUMINANCE, GL2.GL_FLOAT, FloatBuffer.wrap(img));
+    gl.glTexImage2D(GL2.GL_TEXTURE_RECTANGLE, 0, GL2.GL_LUMINANCE, xsiz, ysiz, 0, GL2.GL_LUMINANCE, GL2.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -594,7 +596,7 @@ public class HDR extends Demo {
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       gl.glEnable(GL2.GL_DEPTH_TEST);
 
       // FIXME: what about the ExaminerViewer?
@@ -608,7 +610,7 @@ public class HDR extends Demo {
           System.err.println("Creating HILO cubemap");
           hdr_tex  = hdr.createCubemapHILO(gl, true);
           hdr_tex2 = hdr.createCubemapHILO(gl, false);
-          texmode = GL2.GL_FLOAT_RGBA16_NV;
+          texmode = GL2.GL_FLOAT_RGBA16;
           hilo = true;
           break;
         case GLPbuffer.APPLE_FLOAT:
@@ -638,7 +640,7 @@ public class HDR extends Demo {
     public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for PbufferListener");
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       renderScene(gl);
 
@@ -655,7 +657,7 @@ public class HDR extends Demo {
     //
 
     // render scene to float pbuffer
-    private void renderScene(GL gl) {
+    private void renderScene(GL2 gl) {
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
       if (doViewAll) {
@@ -669,7 +671,7 @@ public class HDR extends Demo {
 
       if (b['m']) {
         gl.glEnable(GL2.GL_MULTISAMPLE);
-        gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, GL2.GL_NICEST);
+        gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT, GL2.GL_NICEST);
       } else {
         gl.glDisable(GL2.GL_MULTISAMPLE);
       }
@@ -783,7 +785,7 @@ public class HDR extends Demo {
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       // FIXME: what about the ExaminerViewer?
       setOrthoProjection(gl, 0, 0, blur_w, blur_h);
@@ -794,10 +796,10 @@ public class HDR extends Demo {
     public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for BlurPbufferListener");
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       // horizontal blur
-      gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, blurh_fprog);
+      gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, blurh_fprog);
       gl.glActiveTexture(GL2.GL_TEXTURE0);
       pipeline.bindTexture(gl, blur2_pbuffer_tex);
       glowPass(gl);
@@ -816,7 +818,7 @@ public class HDR extends Demo {
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       // FIXME: what about the ExaminerViewer?
       setOrthoProjection(gl, 0, 0, blur_w, blur_h);
 
@@ -826,7 +828,7 @@ public class HDR extends Demo {
     public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for Blur2PbufferListener");
 
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       if (blur2Pass == BLUR2_SHRINK_PASS) {
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
@@ -834,14 +836,14 @@ public class HDR extends Demo {
         pipeline.enableFragmentProgram(gl, shrink_fprog);
         setOrthoProjection(gl, 0, 0, blur_w, blur_h);
         gl.glActiveTexture(GL2.GL_TEXTURE0);
-        gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
+        gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE, pbuffer_tex);
         drawQuadRect2(gl, blur_w, blur_h, pbuffer_w, pbuffer_h);
         pipeline.disableFragmentProgram(gl);
 
       } else if (blur2Pass == BLUR2_VERT_BLUR_PASS) {
 
         // vertical blur
-        gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, blurv_fprog);
+        gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, blurv_fprog);
         gl.glActiveTexture(GL2.GL_TEXTURE0);
         pipeline.bindTexture(gl, blur_pbuffer_tex);
         glowPass(gl);
@@ -860,7 +862,7 @@ public class HDR extends Demo {
 
   class TonemapPbufferListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       setOrthoProjection(gl, 0, 0, pbuffer_w, pbuffer_h);
 
@@ -868,7 +870,7 @@ public class HDR extends Demo {
     }
 
     public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       toneMappingPass(gl);
 
@@ -884,7 +886,7 @@ public class HDR extends Demo {
   // Rendering routines
   //
 
-  private void setOrthoProjection(GL gl, int x, int y, int w, int h) {
+  private void setOrthoProjection(GL2 gl, int x, int y, int w, int h) {
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     gl.glOrtho(0, w, 0, h, -1.0, 1.0);
@@ -895,7 +897,7 @@ public class HDR extends Demo {
     gl.glViewport(x, y, w, h);
   }
     
-  private void setPerspectiveProjection(GL gl, int w, int h) {
+  private void setPerspectiveProjection(GL2 gl, int w, int h) {
     // FIXME: what about ExaminerViewer?
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -906,17 +908,17 @@ public class HDR extends Demo {
   }
 
   // blur floating point image
-  private void glowPass(GL gl) {
+  private void glowPass(GL2 gl) {
     gl.glDisable(GL2.GL_DEPTH_TEST);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
 
     setOrthoProjection(gl, 0, 0, blur_w, blur_h);
     drawQuadRect(gl, blur_w, blur_h);
 
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
   }
 
-  private void drawQuadRect(GL gl, int w, int h) {
+  private void drawQuadRect(GL2 gl, int w, int h) {
     gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(0, h); gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, h / blur_scale); gl.glVertex3f(0, h, 0);
     gl.glTexCoord2f(w, h); gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, w / blur_scale, h / blur_scale); gl.glVertex3f(w, h, 0);
@@ -925,7 +927,7 @@ public class HDR extends Demo {
     gl.glEnd();
   }
 
-  private void drawQuadRect2(GL gl, int w, int h, int tw, int th) {
+  private void drawQuadRect2(GL2 gl, int w, int h, int tw, int th) {
     gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(0, th); gl.glVertex3f(0, h, 0);
     gl.glTexCoord2f(tw, th); gl.glVertex3f(w, h, 0);
@@ -934,7 +936,7 @@ public class HDR extends Demo {
     gl.glEnd();
   }
 
-  private void drawQuadRect4(GL gl, int w, int h, int tw, int th) {
+  private void drawQuadRect4(GL2 gl, int w, int h, int tw, int th) {
     float offset = 0.5f;
     gl.glBegin(GL2.GL_QUADS);
     gl.glTexCoord2f(offset, th - offset); gl.glVertex3f(0, h, 0);
@@ -957,7 +959,7 @@ public class HDR extends Demo {
   }
 
   // draw cubemap background
-  private void drawSkyBox(GL gl) {
+  private void drawSkyBox(GL2 gl) {
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, hdr_tex);
     gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
@@ -1009,15 +1011,15 @@ public class HDR extends Demo {
   }
 
   // read from float texture, apply tone mapping, render to regular 8/8/8 display
-  private void toneMappingPass(GL gl) {
+  private void toneMappingPass(GL2 gl) {
     gl.glFinish();
 
     gl.glActiveTexture(GL2.GL_TEXTURE0);
-    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, pbuffer_tex);
+    gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE, pbuffer_tex);
 
     gl.glActiveTexture(GL2.GL_TEXTURE1);
     if (blur2_pbuffer != null) {
-      gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_NV, blur2_pbuffer_tex);
+      gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE, blur2_pbuffer_tex);
     }
 
     gl.glActiveTexture(GL2.GL_TEXTURE2);
@@ -1042,7 +1044,7 @@ public class HDR extends Demo {
   //
 
   private String shaderRoot = "demos/hdr/shaders/";
-  private void initCg(GL gl) {
+  private void initCg(GL2 gl) {
     // NOTE: need to instantiate CgPipeline reflectively to avoid
     // compile-time dependence (since Cg support might not be present)
     try {
@@ -1078,7 +1080,7 @@ public class HDR extends Demo {
     }
   }
 
-  private void initARBFP(GL gl, int texmode) {
+  private void initARBFP(GL2 gl, int texmode) {
     pipeline = new ARBFPPipeline(texmode);
     pipeline.init();
 
@@ -1110,36 +1112,36 @@ public class HDR extends Demo {
     }
   }
 
-  private void initBlurCode(GL gl, int blurWidth) {
+  private void initBlurCode(GL2 gl, int blurWidth) {
     // generate blur code
     String blurCode = generateBlurCodeFP2(blurWidth, false);
-    blurh_fprog = loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, blurCode);
+    blurh_fprog = loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, blurCode);
     //  printf("%s\n", blurCode);
 
     blurCode = generateBlurCodeFP2(blurWidth, true);
-    blurv_fprog = loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, blurCode);
+    blurv_fprog = loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, blurCode);
     //  printf("%s\n", blurCode);
   }
 
-  private int loadProgram(GL gl, int target, String code) {
+  private int loadProgram(GL2 gl, int target, String code) {
     int prog_id;
     int[] tmp = new int[1];
-    gl.glGenProgramsARB(1, tmp, 0);
+    gl.glGenPrograms(1, tmp, 0);
     prog_id = tmp[0];
-    gl.glBindProgramARB(target, prog_id);
+    gl.glBindProgram(target, prog_id);
     int size = code.length();
-    gl.glProgramStringARB(target, GL2.GL_PROGRAM_FORMAT_ASCII_ARB, code.length(), code);
+    gl.glProgramString(target, GL2.GL_PROGRAM_FORMAT_ASCII, code.length(), code);
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
+    gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
     if (errPos[0] >= 0) {
       String kind = "Program";
-      if (target == GL2.GL_VERTEX_PROGRAM_ARB) {
+      if (target == GL2.GL_VERTEX_PROGRAM) {
         kind = "Vertex program";
-      } else if (target == GL2.GL_FRAGMENT_PROGRAM_ARB) {
+      } else if (target == GL2.GL_FRAGMENT_PROGRAM) {
         kind = "Fragment program";
       }
       System.out.println(kind + " failed to load:");
-      String errMsg = gl.glGetString(GL2.GL_PROGRAM_ERROR_STRING_ARB);
+      String errMsg = gl.glGetString(GL2.GL_PROGRAM_ERROR_STRING);
       if (errMsg == null) {
         System.out.println("[No error message available]");
       } else {
@@ -1153,11 +1155,11 @@ public class HDR extends Demo {
       System.out.println(code.substring(errPos[0], endPos));
       throw new GLException("Error loading " + kind);
     } else {
-      if (target == GL2.GL_FRAGMENT_PROGRAM_ARB) {
+      if (target == GL2.GL_FRAGMENT_PROGRAM) {
         int[] isNative = new int[1];
-        gl.glGetProgramivARB(GL2.GL_FRAGMENT_PROGRAM_ARB,
-                             GL2.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
-                             isNative, 0);
+        gl.glGetProgramiv( GL2.GL_FRAGMENT_PROGRAM,
+                           GL2.GL_PROGRAM_UNDER_NATIVE_LIMITS,
+                           isNative, 0 );
         if (isNative[0] != 1) {
           System.out.println("WARNING: fragment program is over native resource limits");
           Thread.dumpStack();

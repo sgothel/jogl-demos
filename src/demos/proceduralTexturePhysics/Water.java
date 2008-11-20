@@ -41,6 +41,7 @@ import demos.util.Cubemap;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,6 +54,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.util.BufferUtil;
 
 
 
@@ -985,7 +987,6 @@ public class Water {
   }
 
   private void drawInteriorBoundaryObjects(GL2 gl) {
-    gl.glDisable(GL2.GL_REGISTER_COMBINERS_NV);
     
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     initialMapTex.bind();
@@ -1815,7 +1816,10 @@ public class Water {
   private void loadProgram(GL2 gl,
                            int target,
                            String programBuffer) {
-    gl.glProgramString(target, GL2.GL_PROGRAM_FORMAT_ASCII, programBuffer.length(), programBuffer);
+
+    ByteBuffer bb = BufferUtil.newByteBuffer(programBuffer.getBytes());
+    gl.glProgramString(target, GL2.GL_PROGRAM_FORMAT_ASCII, programBuffer.length(), bb);
+
     int[] errPos = new int[1];
     gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
     if (errPos[0] >= 0) {

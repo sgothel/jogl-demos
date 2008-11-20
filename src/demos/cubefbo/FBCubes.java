@@ -33,12 +33,20 @@
 
 package demos.cubefbo;
 
-import java.awt.event.*;
-import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import java.nio.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.GLCanvas;
+
+
 
 class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
+
     private static final int FBO_SIZE = 128;
 
     public FBCubes () {
@@ -50,12 +58,10 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        drawable.setGL(new DebugGL(drawable.getGL()));
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
+        drawable.setGL(new DebugGL2(gl));
         fbo1.init(gl);
         fbo2.init(gl);
-        drawable.addMouseListener(this);
-        drawable.addMouseMotionListener(this);
     }
 
     int x, y, width, height;
@@ -67,13 +73,13 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         this.y = y;
         this.width = width;
         this.height = height;
-        cubeOuter.reshape(drawable.getGL(), x, y, width, height);
+        cubeOuter.reshape(drawable.getGL().getGL2(), x, y, width, height);
         motionIncr = 180.f / Math.max(width, height);
     }
 
     public void display(GLAutoDrawable drawable) {
         //        System.out.println("display");
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
 
         fbo1.bind(gl);
         cubeInner.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);

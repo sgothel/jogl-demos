@@ -262,7 +262,7 @@ public class HandleBoxManip extends Manip {
     dest.mul(tmp1, tmp2);
   }
 
-  public void render(GL gl) {
+  public void render(GL2 gl) {
     int i;
     for (i = 0; i < 12; i++)
       lineSegs[i].render(gl);

@@ -87,9 +87,16 @@ public class VertexProgWarp extends Demo {
   }
 
   public void run(String[] args) {
-    GLCanvas canvas = new GLCanvas();
+
     VertexProgWarp demo = new VertexProgWarp();
+    GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(demo);
+
+    canvas.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          dispatchKey(e.getKeyCode(), e.getKeyChar());
+        }
+      });
 
     final Animator animator = new Animator(canvas);
     demo.setDemoListener(new DemoListener() {
@@ -215,12 +222,6 @@ public class VertexProgWarp extends Demo {
 
     b['p'] = true;
       
-    drawable.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          dispatchKey(e.getKeyCode(), e.getKeyChar());
-        }
-      });
-
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
     manager.registerWindow(drawable);

@@ -1,31 +1,28 @@
 package demos.hdr;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import javax.media.opengl.GL2;
 
-import javax.media.opengl.*;
-import com.sun.opengl.cg.*;
-import demos.util.*;
 
 public interface Pipeline {
   public void init();
-  public void initFloatingPointTexture      (GL gl, int textureObject, int w, int h);
-  public void initTexture                   (GL gl, int textureObject, int w, int h);
-  public void copyToTexture                 (GL gl, int textureObject, int w, int h);
-  public void bindTexture                   (GL gl, int textureObject);
-  public int  loadVertexProgram             (GL gl, String filename) throws IOException;
-  public int  loadFragmentProgram           (GL gl, String filename) throws IOException;
-  public void enableVertexProgram           (GL gl, int program);
-  public void enableFragmentProgram         (GL gl, int program);
-  public void disableVertexProgram          (GL gl);
-  public void disableFragmentProgram        (GL gl);
+  public void initFloatingPointTexture      (GL2 gl, int textureObject, int w, int h);
+  public void initTexture                   (GL2 gl, int textureObject, int w, int h);
+  public void copyToTexture                 (GL2 gl, int textureObject, int w, int h);
+  public void bindTexture                   (GL2 gl, int textureObject);
+  public int  loadVertexProgram             (GL2 gl, String filename) throws IOException;
+  public int  loadFragmentProgram           (GL2 gl, String filename) throws IOException;
+  public void enableVertexProgram           (GL2 gl, int program);
+  public void enableFragmentProgram         (GL2 gl, int program);
+  public void disableVertexProgram          (GL2 gl);
+  public void disableFragmentProgram        (GL2 gl);
   public int  getNamedParameter             (int program, String name);
-  public void setVertexProgramParameter1f   (GL gl, int param, float val);
-  public void setVertexProgramParameter3f   (GL gl, int param, float x, float y, float z);
-  public void setVertexProgramParameter4f   (GL gl, int param, float x, float y, float z, float w);
-  public void setFragmentProgramParameter1f (GL gl, int param, float val);
-  public void setFragmentProgramParameter3f (GL gl, int param, float x, float y, float z);
-  public void setFragmentProgramParameter4f (GL gl, int param, float x, float y, float z, float w);
-  public void trackModelViewProjectionMatrix(GL gl, int param);
-  public void setMatrixParameterfc          (GL gl, int param, float[] matrix);
+  public void setVertexProgramParameter1f   (GL2 gl, int param, float val);
+  public void setVertexProgramParameter3f   (GL2 gl, int param, float x, float y, float z);
+  public void setVertexProgramParameter4f   (GL2 gl, int param, float x, float y, float z, float w);
+  public void setFragmentProgramParameter1f (GL2 gl, int param, float val);
+  public void setFragmentProgramParameter3f (GL2 gl, int param, float x, float y, float z);
+  public void setFragmentProgramParameter4f (GL2 gl, int param, float x, float y, float z, float w);
+  public void trackModelViewProjectionMatrix(GL2 gl, int param);
+  public void setMatrixParameterfc          (GL2 gl, int param, float[] matrix);
 }

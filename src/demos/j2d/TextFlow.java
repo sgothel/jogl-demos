@@ -39,6 +39,7 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
 import demos.common.Demo;
 import demos.util.SystemTime;
 import demos.util.Time;
@@ -58,9 +59,9 @@ import java.util.List;
 import java.util.Map;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.util.Animator;
-import sun.java2d.pipe.TextRenderer;
 
 
 /** Illustrates both the TextRenderer's capability for handling
@@ -71,10 +72,13 @@ import sun.java2d.pipe.TextRenderer;
     screen. */
 
 public class TextFlow extends Demo {
+
   public static void main(String[] args) {
+
     Frame frame = new Frame("Text Flow");
     frame.setLayout(new BorderLayout());
 
+    GLProfile.setProfile("GL2");
     GLCanvas canvas = new GLCanvas();
     final TextFlow demo = new TextFlow();
 
@@ -102,7 +106,7 @@ public class TextFlow extends Demo {
 
   private List/*<String>*/ lines = new ArrayList();
   private Time time;
-  private TextRenderer renderer;
+  private GL2TextRenderer renderer;
   private int curParagraph;
   private float x = 30;
   private float y;
@@ -139,7 +143,7 @@ public class TextFlow extends Demo {
   }
   
   public void init(GLAutoDrawable drawable) {
-    renderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 36));
+    renderer = new GL2TextRenderer(new Font("SansSerif", Font.PLAIN, 36), true, false);
     time = new SystemTime();
     ((SystemTime) time).rebase();
   }

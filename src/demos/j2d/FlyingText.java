@@ -39,6 +39,7 @@
 
 package demos.j2d;
 
+import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureIO;
@@ -75,7 +76,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import sun.java2d.pipe.TextRenderer;
 
 
 
@@ -84,6 +84,7 @@ import sun.java2d.pipe.TextRenderer;
     shadow effect. */
 
 public class FlyingText extends Demo {
+
   public static void main(String[] args) {
     JFrame frame = new JFrame("Flying Text");
     frame.getContentPane().setLayout(new BorderLayout());
@@ -151,7 +152,7 @@ public class FlyingText extends Demo {
   private int dropShadowDistance = DEFAULT_DROP_SHADOW_DIST;
   private Time time;
   private Texture backgroundTexture;
-  private TextRenderer renderer;
+  private GL2TextRenderer renderer;
   private Random random = new Random();
   private GLU glu = new GLU();
   private int width;
@@ -245,7 +246,7 @@ public class FlyingText extends Demo {
     backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_WRAP_T,     GL2.GL_REPEAT);
 
     // Create the text renderer
-    renderer = new TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true);
+    renderer = new GL2TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true);
 
     // Create the FPS counter
     fps = new FPSCounter(drawable, 36);

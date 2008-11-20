@@ -165,7 +165,7 @@ public class ManipPartTriBased extends ManipPart {
     return visible;
   }
 
-  public void render(GL gl) {
+  public void render(GL2 gl) {
     if (!visible)
       return;
     boolean lightingOn = true;

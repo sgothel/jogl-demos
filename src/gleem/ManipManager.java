@@ -201,7 +201,7 @@ public class ManipManager {
       drawing occurs immediately; this routine must be called when an
       OpenGL context is valid, i.e., from within the display() method
       of a GLEventListener. */
-  public synchronized void render(GLAutoDrawable window, GL gl) {
+  public synchronized void render(GLAutoDrawable window, GL2 gl) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info == null) {
       throw new RuntimeException("Window not registered");
