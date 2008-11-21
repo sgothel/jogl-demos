@@ -43,6 +43,7 @@ import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureIO;
+import com.sun.opengl.util.texture.awt.AWTTextureIO;
 import demos.common.Demo;
 import demos.util.FPSCounter;
 import demos.util.SystemTime;
@@ -238,7 +239,7 @@ public class FlyingText extends Demo {
     g.fillRect(0, 0, 1, 1);
     g.fillRect(1, 1, 1, 1);
     g.dispose();
-    backgroundTexture = TextureIO.newTexture(bgImage, false);
+    backgroundTexture = AWTTextureIO.newTexture(bgImage, false);
     backgroundTexture.bind();
     backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
     backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);

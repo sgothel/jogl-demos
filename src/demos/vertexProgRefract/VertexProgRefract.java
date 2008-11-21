@@ -58,9 +58,11 @@ import java.io.IOException;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 
@@ -283,7 +285,8 @@ public class VertexProgRefract extends Demo {
     gl.glGenPrograms(1, vtxProgTmp, 0);
     vtxProg = vtxProgTmp[0];
     gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vtxProg);
-    gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, transformRefract.length(), transformRefract);
+    gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, transformRefract.length(),
+                       BufferUtil.newByteBuffer(transformRefract.getBytes()));
 
     gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 0.0f, 1.0f);    // eye position
 
@@ -327,13 +330,13 @@ public class VertexProgRefract extends Demo {
 
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
+      manager.registerWindow((AWTGLAutoDrawable) drawable);
       this.drawable = drawable;
 
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
       viewer.setNoAltKeyMode(true);
       viewer.setAutoRedrawMode(false);
-      viewer.attach(drawable, new BSphereProvider() {
+      viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
           public BSphere getBoundingSphere() {
             return new BSphere(new Vec3f(0, 0, 0), 1.0f);
           }
@@ -383,8 +386,8 @@ public class VertexProgRefract extends Demo {
     gl.glPushMatrix();
 
     viewer.update(gl);
-    ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-    ManipManager.getManipManager().render(drawable, gl);
+    ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, viewer.getCameraParameters());
+    ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
 
     gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vtxProg);
 
@@ -465,7 +468,7 @@ public class VertexProgRefract extends Demo {
   public void shutdownDemo() {
     if (drawable != null) {
       viewer.detach();
-      ManipManager.getManipManager().unregisterWindow(drawable);
+      ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
       drawable.removeGLEventListener(this);
     }
     super.shutdownDemo();
@@ -578,7 +581,7 @@ public class VertexProgRefract extends Demo {
 
     gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
     gl.glProgramString(GL2.GL_FRAGMENT_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII,
-                          combineFragProg.length(), combineFragProg);
+                       combineFragProg.length(), BufferUtil.newByteBuffer(combineFragProg.getBytes()));
     int[] errPos = new int[1];
     gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
     if (errPos[0] >= 0) {

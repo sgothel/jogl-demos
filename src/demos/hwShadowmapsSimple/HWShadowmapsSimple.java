@@ -64,6 +64,7 @@ import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLPbuffer;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JOptionPane;
@@ -120,7 +121,7 @@ public class HWShadowmapsSimple extends Demo {
   //
 
   public void shutdownDemo() {
-    ManipManager.getManipManager().unregisterWindow(drawable);
+    ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
     drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
@@ -285,22 +286,22 @@ public class HWShadowmapsSimple extends Demo {
 
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
-    manager.registerWindow(drawable);
+    manager.registerWindow((AWTGLAutoDrawable) drawable);
     this.drawable = drawable;
 
     object = new HandleBoxManip();
     object.setTranslation(new Vec3f(0, 0.7f, 1.8f));
     object.setGeometryScale(new Vec3f(0.7f, 0.7f, 0.7f));
-    manager.showManipInWindow(object, drawable);
+    manager.showManipInWindow(object, (AWTGLAutoDrawable) drawable);
 
     spotlight = new HandleBoxManip();
     spotlight.setScale(new Vec3f(0.5f, 0.5f, 0.5f));
     spotlight.setTranslation(new Vec3f(-0.25f, 2.35f, 5.0f));
     spotlight.setRotation(new Rotf(Vec3f.X_AXIS, (float) Math.toRadians(-30.0f)));
-    manager.showManipInWindow(spotlight, drawable);
+    manager.showManipInWindow(spotlight, (AWTGLAutoDrawable) drawable);
 
     viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-    viewer.attach(drawable, new BSphereProvider() {
+    viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
         public BSphere getBoundingSphere() {
           return new BSphere(object.getTranslation(), 2.0f);
         }
@@ -589,8 +590,8 @@ public class HWShadowmapsSimple extends Demo {
     applyTransform(gl, inverseView);
 
     if (params != null) {
-      ManipManager.getManipManager().updateCameraParameters(drawable, params);
-      ManipManager.getManipManager().render(drawable, gl);
+      ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, params);
+      ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
     }
 
     gl.glPopMatrix();

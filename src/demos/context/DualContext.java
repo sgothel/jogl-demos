@@ -46,12 +46,8 @@ import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.media.opengl.GL;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.awt.AWTGraphicsConfiguration;
+import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -76,7 +72,8 @@ public class DualContext extends Canvas {
   public DualContext(GLCapabilities capabilities) {
     super(unwrap((AWTGraphicsConfiguration)
                  GLDrawableFactory.getFactory().chooseGraphicsConfiguration(capabilities, null, null)));
-    drawable = GLDrawableFactory.getFactory().createGLDrawable(this, capabilities, null);
+    NativeWindow win = NativeWindowFactory.getNativeWindow(this);
+    drawable = GLDrawableFactory.getFactory().createGLDrawable(win, capabilities, null);
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
     glu = new GLU();

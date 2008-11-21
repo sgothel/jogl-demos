@@ -39,7 +39,7 @@
 
 package gleem;
 
-import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 
 
 /** A WindowUpdateListener is used by the ManipManager to transmit
@@ -48,5 +48,5 @@ import javax.media.opengl.GLAutoDrawable;
     GLAutoDrawables in which that Manip is shown. */
 
 public interface WindowUpdateListener {
-  public void update(GLAutoDrawable window);
+  public void update(AWTGLAutoDrawable window);
 }

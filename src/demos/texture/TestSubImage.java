@@ -43,6 +43,7 @@ import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
+import com.sun.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -134,7 +135,7 @@ public class TestSubImage {
         g.dispose();
 
         // Create a TextureData and Texture from it
-        textureData = TextureIO.newTextureData(convertedImage, false);
+        textureData = AWTTextureIO.newTextureData(convertedImage, false);
         texture = TextureIO.newTexture(textureData);
       }
 

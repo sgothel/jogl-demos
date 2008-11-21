@@ -60,6 +60,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 
@@ -119,7 +120,7 @@ public class InfiniteShadowVolumes extends Demo {
   //
 
   public void shutdownDemo() {
-    ManipManager.getManipManager().unregisterWindow(drawable);
+    ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
     drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
@@ -245,21 +246,21 @@ public class InfiniteShadowVolumes extends Demo {
 
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
-    manager.registerWindow(drawable);
+    manager.registerWindow((AWTGLAutoDrawable) drawable);
     this.drawable = drawable;
 
     objectManip = new HandleBoxManip();
-    manager.showManipInWindow(objectManip, drawable);
+    manager.showManipInWindow(objectManip, (AWTGLAutoDrawable) drawable);
     objectManip.setTranslation(new Vec3f(0, 0, -2));
     objectManip.setRotation(new Rotf(new Vec3f(1, 0, 0), (float) Math.toRadians(-90)));
 
     lightManip = new HandleBoxManip();
-    manager.showManipInWindow(lightManip, drawable);
+    manager.showManipInWindow(lightManip, (AWTGLAutoDrawable) drawable);
     lightManip.setTranslation(new Vec3f(0.5f, 0.5f, -1));
     lightManip.setGeometryScale(new Vec3f(0.1f, 0.1f, 0.1f));
 
     viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-    viewer.attach(drawable, new BSphereProvider() {
+    viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
         public BSphere getBoundingSphere() {
           return new BSphere(objectManip.getTranslation(), 1.0f);
         }
@@ -478,8 +479,8 @@ public class InfiniteShadowVolumes extends Demo {
 
     gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
-    ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-    ManipManager.getManipManager().render(drawable, gl);
+    ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, viewer.getCameraParameters());
+    ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
 
     if (!b['R']) {
       drawRoom(gl, false);

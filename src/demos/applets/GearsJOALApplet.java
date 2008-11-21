@@ -8,8 +8,8 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.util.Animator;
 import javax.media.opengl.util.FPSAnimator;
 import javax.swing.JPanel;
-
-
+import net.java.games.joal.util.ALut;
+import demos.devmaster.lesson1.SingleStaticSource;
 
 /** Shows how to deploy an applet using both JOGL and JOAL. This demo
     must be referenced from a web page via an &lt;applet&gt; tag. */

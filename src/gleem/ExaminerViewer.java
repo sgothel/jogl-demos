@@ -45,6 +45,7 @@ import java.util.*;
 
 import gleem.linalg.*;
 import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 
 /** <P> This is an application-level class, not part of the
     manipulator hierarchy. It is an example of how you might integrate
@@ -71,7 +72,7 @@ import javax.media.opengl.*;
     button. </P> */
 
 public class ExaminerViewer {
-  private GLAutoDrawable window;
+  private AWTGLAutoDrawable window;
   /** Simple state machine for figuring out whether we are grabbing
       events */
   private boolean interactionUnderway;
@@ -151,7 +152,7 @@ public class ExaminerViewer {
       <P> In order for the viewer to do anything useful, you need to
       provide a BSphereProvider to it to allow "view all"
       functionality. </P> */
-  public void attach(GLAutoDrawable window, BSphereProvider provider) {
+  public void attach(AWTGLAutoDrawable window, BSphereProvider provider) {
     this.window = window;
     this.provider = provider;
     init();

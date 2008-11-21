@@ -55,6 +55,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.util.Animator;
 import javax.swing.JOptionPane;
@@ -142,7 +143,7 @@ public class ProceduralTexturePhysics extends Demo {
 
     public void shutdownDemo() {
         viewer.detach();
-        ManipManager.getManipManager().unregisterWindow(drawable);
+        ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
         drawable.removeGLEventListener(this);
         super.shutdownDemo();
     }
@@ -198,12 +199,12 @@ public class ProceduralTexturePhysics extends Demo {
 
             // Register the window with the ManipManager
             ManipManager manager = ManipManager.getManipManager();
-            manager.registerWindow(drawable);
+            manager.registerWindow((AWTGLAutoDrawable) drawable);
             this.drawable = drawable;
 
             viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
             viewer.setAutoRedrawMode(false);
-            viewer.attach(drawable, new BSphereProvider() {
+            viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
 
                 public BSphere getBoundingSphere() {
                     return new BSphere(new Vec3f(0, 0, 0), 1.2f);
@@ -236,8 +237,8 @@ public class ProceduralTexturePhysics extends Demo {
         }
 
         viewer.update(gl);
-        ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-        ManipManager.getManipManager().render(drawable, gl);
+        ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, viewer.getCameraParameters());
+        ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
 
         if (drawing) {
             int w = drawable.getWidth();

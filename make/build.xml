@@ -115,7 +115,9 @@
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${simple-xml.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,jbullet/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
+        <!-- For the time being we exclude the VertexArrayRange and HDR demos, which rely on NVIDIA-specific extensions,
+             as well as the JRefract demo, which pulls in all of the others -->
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,jbullet/**,demos/hdr/**,demos/vertexArrayRange/**,demos/jrefract/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>

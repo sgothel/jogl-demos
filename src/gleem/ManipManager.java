@@ -45,6 +45,7 @@ import java.util.*;
 import gleem.linalg.*;
 
 import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 
 /** The ManipManager handles making manipulators visible in a
     window. */
@@ -55,7 +56,7 @@ public class ManipManager {
   private static ManipManager soleInstance;
   // Maps GLDrawables to WindowInfos
   private Map windowToInfoMap = new HashMap();
-  // Maps Manips to Set<GLAutoDrawable>
+  // Maps Manips to Set<AWTGLAutoDrawable>
   private Map manipToWindowMap = new HashMap();
 
   // MouseAdapter for this
@@ -78,7 +79,7 @@ public class ManipManager {
       }
     };
   private WindowUpdateListener defaultWindowListener = new WindowUpdateListener() {
-      public void update(GLAutoDrawable window) {
+      public void update(AWTGLAutoDrawable window) {
         window.repaint();
       }
     };
@@ -108,14 +109,14 @@ public class ManipManager {
   /** Make the ManipManager aware of the existence of a given
       window. This causes mouse and mouse motion listeners to be
       installed on this window; see setupMouseListeners, below. */
-  public synchronized void registerWindow(GLAutoDrawable window) {
+  public synchronized void registerWindow(AWTGLAutoDrawable window) {
     windowToInfoMap.put(window, new WindowInfo());
     setupMouseListeners(window);
   }
 
   /** Remove all references to a given window, including removing all
       manipulators from it. */
-  public synchronized void unregisterWindow(GLAutoDrawable window) {
+  public synchronized void unregisterWindow(AWTGLAutoDrawable window) {
     if (window == null) {
       return;
     }
@@ -132,7 +133,7 @@ public class ManipManager {
 
   /** Make a given manipulator visible and active in a given
       window. The window must be registered. */
-  public synchronized void showManipInWindow(Manip manip, GLAutoDrawable window) {
+  public synchronized void showManipInWindow(Manip manip, AWTGLAutoDrawable window) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info == null) {
       throw new RuntimeException("Window not registered");
@@ -148,7 +149,7 @@ public class ManipManager {
 
   /** Remove a given manipulator from a given window. The window must
       be registered. */
-  public synchronized void removeManipFromWindow(Manip manip, GLAutoDrawable window) {
+  public synchronized void removeManipFromWindow(Manip manip, AWTGLAutoDrawable window) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info == null) {
       throw new RuntimeException("Window not registered");
@@ -163,7 +164,7 @@ public class ManipManager {
 
   /** This must be called for a registered window every time the
       camera parameters of the window change. */
-  public synchronized void updateCameraParameters(GLAutoDrawable window, CameraParameters params) {
+  public synchronized void updateCameraParameters(AWTGLAutoDrawable window, CameraParameters params) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info == null) {
       throw new RuntimeException("Window not registered");
@@ -186,7 +187,7 @@ public class ManipManager {
       repainting of windows in which manipulators have moved. The
       default implementation, which can be restored by passing a null
       listener argument to this method, calls repaint() on the
-      GLAutoDrawable if it is not a GLRunnable instance (i.e., a
+      AWTGLAutoDrawable if it is not a GLRunnable instance (i.e., a
       GLAnimCanvas or GLAnimJPanel, which redraw themselves
       automatically). */
   public synchronized void setWindowUpdateListener(WindowUpdateListener listener) {
@@ -201,7 +202,7 @@ public class ManipManager {
       drawing occurs immediately; this routine must be called when an
       OpenGL context is valid, i.e., from within the display() method
       of a GLEventListener. */
-  public synchronized void render(GLAutoDrawable window, GL2 gl) {
+  public synchronized void render(AWTGLAutoDrawable window, GL2 gl) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info == null) {
       throw new RuntimeException("Window not registered");
@@ -218,7 +219,7 @@ public class ManipManager {
       listeners for the canvas (see the ExaminerViewer class), the
       setupMouseListeners and removeMouseListeners routines, as well
       as the appropriate delegate routines, are made public here. */
-  public synchronized void setupMouseListeners(GLAutoDrawable window) {
+  public synchronized void setupMouseListeners(AWTGLAutoDrawable window) {
     window.addMouseMotionListener(mouseMotionListener);
     window.addMouseListener(mouseListener);
   }
@@ -226,7 +227,7 @@ public class ManipManager {
   /** Removes the automatically-installed mouse listeners for the
       given window. This allows application code to determine the
       policy for intercepting mouse events. */
-  public synchronized void removeMouseListeners(GLAutoDrawable window) {
+  public synchronized void removeMouseListeners(AWTGLAutoDrawable window) {
     window.removeMouseMotionListener(mouseMotionListener);
     window.removeMouseListener(mouseListener);
   }
@@ -236,7 +237,7 @@ public class ManipManager {
       are exposed so application-level code can intercept events when
       certain modifier keys are depressed. */
   public synchronized void mouseMoved(MouseEvent e) {
-    passiveMotionMethod((GLAutoDrawable) e.getComponent(), e.getX(), e.getY());
+    passiveMotionMethod((AWTGLAutoDrawable) e.getComponent(), e.getX(), e.getY());
   }
 
   /** The ManipManager watches for the following events: mouseMoved,
@@ -244,7 +245,7 @@ public class ManipManager {
       are exposed so application-level code can intercept events when
       certain modifier keys are depressed. */
   public synchronized void mouseDragged(MouseEvent e) {
-    motionMethod((GLAutoDrawable) e.getComponent(), e.getX(), e.getY());
+    motionMethod((AWTGLAutoDrawable) e.getComponent(), e.getX(), e.getY());
   }
 
   /** The ManipManager watches for the following events: mouseMoved,
@@ -252,7 +253,7 @@ public class ManipManager {
       are exposed so application-level code can intercept events when
       certain modifier keys are depressed. */
   public synchronized void mousePressed(MouseEvent e) {
-    mouseMethod((GLAutoDrawable) e.getComponent(), e.getModifiers(),
+    mouseMethod((AWTGLAutoDrawable) e.getComponent(), e.getModifiers(),
                 true, e.getX(), e.getY());
   }
 
@@ -261,7 +262,7 @@ public class ManipManager {
       are exposed so application-level code can intercept events when
       certain modifier keys are depressed. */
   public synchronized void mouseReleased(MouseEvent e) {
-    mouseMethod((GLAutoDrawable) e.getComponent(), e.getModifiers(),
+    mouseMethod((AWTGLAutoDrawable) e.getComponent(), e.getModifiers(),
                 false, e.getX(), e.getY());
   }
 
@@ -274,7 +275,7 @@ public class ManipManager {
     setWindowUpdateListener(null);
   }
 
-  private void motionMethod(GLAutoDrawable window, int x, int y) {
+  private void motionMethod(AWTGLAutoDrawable window, int x, int y) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     if (info.dragging) {
       // Compute ray in 3D
@@ -286,7 +287,7 @@ public class ManipManager {
     }
   }
 
-  private void passiveMotionMethod(GLAutoDrawable window, int x, int y) {
+  private void passiveMotionMethod(AWTGLAutoDrawable window, int x, int y) {
     WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
     // Compute ray in 3D
     Vec3f rayStart     = new Vec3f();
@@ -326,7 +327,7 @@ public class ManipManager {
     }
   }
 
-  private void mouseMethod(GLAutoDrawable window, int modifiers,
+  private void mouseMethod(AWTGLAutoDrawable window, int modifiers,
                            boolean isPress, int x, int y) {
     if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
       WindowInfo info = (WindowInfo) windowToInfoMap.get(window);
@@ -402,7 +403,7 @@ public class ManipManager {
     Set windows = (Set) manipToWindowMap.get(manip);
     assert windows != null;
     for (Iterator iter = windows.iterator(); iter.hasNext(); ) {
-      windowListener.update((GLAutoDrawable) iter.next());
+      windowListener.update((AWTGLAutoDrawable) iter.next());
     }
   }
 }

@@ -45,8 +45,10 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 
@@ -93,19 +95,19 @@ public class TestHandleBox {
 
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
+      manager.registerWindow((AWTGLAutoDrawable) drawable);
 
       // Instantiate a HandleBoxManip
       HandleBoxManip manip = new HandleBoxManip();
       manip.setTranslation(new Vec3f(0, 0, -10));
-      manager.showManipInWindow(manip, drawable);
+      manager.showManipInWindow(manip, (AWTGLAutoDrawable) drawable);
     }
 
     public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-      ManipManager.getManipManager().updateCameraParameters(drawable, params);
-      ManipManager.getManipManager().render(drawable, gl);
+      ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, params);
+      ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {

@@ -46,8 +46,10 @@ import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 
@@ -118,22 +120,22 @@ public class TestMultiWin {
 
       // Register the window with the ManipManager
       ManipManager manager = ManipManager.getManipManager();
-      manager.registerWindow(drawable);
+      manager.registerWindow((AWTGLAutoDrawable) drawable);
 
-      manager.showManipInWindow(manip, drawable);
+      manager.showManipInWindow(manip, (AWTGLAutoDrawable) drawable);
 
       // Instantiate ExaminerViewer
       viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
-      viewer.attach(drawable, new HandleBoxManipBSphereProvider(manip));
+      viewer.attach((AWTGLAutoDrawable) drawable, new HandleBoxManipBSphereProvider(manip));
       viewer.viewAll(gl);
     }
 
     public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
       viewer.update(gl);
-      ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-      ManipManager.getManipManager().render(drawable, gl);
+      ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, viewer.getCameraParameters());
+      ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
     }
 
     // Unused routines

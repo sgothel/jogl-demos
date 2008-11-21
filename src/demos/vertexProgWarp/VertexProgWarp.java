@@ -55,10 +55,12 @@ import java.io.IOException;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.util.Animator;
+import javax.media.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 
@@ -193,7 +195,8 @@ public class VertexProgWarp extends Demo {
       gl.glGenPrograms(1, vtxProgTmp, 0);
       programs[i] = vtxProgTmp[0];
       gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[i]);
-      gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, programTexts[i].length(), programTexts[i]);
+      gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, programTexts[i].length(),
+                         BufferUtil.newByteBuffer(programTexts[i].getBytes()));
     }
 
     gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
@@ -224,13 +227,13 @@ public class VertexProgWarp extends Demo {
       
     // Register the window with the ManipManager
     ManipManager manager = ManipManager.getManipManager();
-    manager.registerWindow(drawable);
+    manager.registerWindow((AWTGLAutoDrawable) drawable);
     this.drawable = drawable;
 
     viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
     viewer.setNoAltKeyMode(true);
     viewer.setAutoRedrawMode(false);
-    viewer.attach(drawable, new BSphereProvider() {
+    viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
         public BSphere getBoundingSphere() {
           return new BSphere(new Vec3f(0, 0, 0), 1.0f);
         }
@@ -286,8 +289,8 @@ public class VertexProgWarp extends Demo {
     }
 
     viewer.update(gl);
-    ManipManager.getManipManager().updateCameraParameters(drawable, viewer.getCameraParameters());
-    ManipManager.getManipManager().render(drawable, gl);
+    ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, viewer.getCameraParameters());
+    ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
 
     gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[program]);
     gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 7, anim, 0.0f, 0.0f, 0.0f);
@@ -316,7 +319,7 @@ public class VertexProgWarp extends Demo {
   // Internals only below this point
   //
   public void shutdownDemo() {
-    ManipManager.getManipManager().unregisterWindow(drawable);
+    ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
     drawable.removeGLEventListener(this);
     super.shutdownDemo();
   }
