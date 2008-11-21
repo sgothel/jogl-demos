@@ -1,1 +1,1 @@
-01#"\Storage Card\bin\cvm.exe" -f "\Storage Card\perftst-vbo-args.txt"
+01#"\Storage Card\bin\cvm.exe" -f "\Storage Card\jogl_demos\perftst-vbo-args.txt"

@@ -1,1 +1,1 @@
-01#"\Storage Card\bin\cvm.exe" -f "\Storage Card\bump-args.txt"
+01#"\Storage Card\bin\cvm.exe" -f "\Storage Card\jogl_demos\bump-args.txt"

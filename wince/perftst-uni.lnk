@@ -1,1 +1,1 @@
-01#"\Storage Card\bin\cvm.exe" -f "\Storage Card\perftst-uni-args.txt"
+01#"\Storage Card\bin\cvm.exe" -f "\Storage Card\jogl_demos\perftst-uni-args.txt"
