@@ -35,7 +35,8 @@ package demos.jrefract;
 
 import demos.common.Demo;
 import demos.common.DemoListener;
-import demos.hdr.HDR;
+// FIXME: commenting out demos that don't compile right now
+//import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
 import demos.j2d.FlyingText;
@@ -97,7 +98,7 @@ public class JRefract {
   }
 
   private static final int GEARS     = 1;
-  private static final int HDR       = 2;
+  //  private static final int HDR       = 2;
   private static final int HWSHADOWS = 3;
   private static final int INFINITE  = 4;
   private static final int REFRACT   = 5;
@@ -121,7 +122,7 @@ public class JRefract {
     String str = "";
     switch (which) {
     case GEARS:     str = "Gears Demo"; break;
-    case HDR:       str = "High Dynamic Range Rendering Demo"; break;
+    //    case HDR:       str = "High Dynamic Range Rendering Demo"; break;
     case HWSHADOWS: str = "ARB_shadow Shadows"; break;
     case INFINITE:  str = "Infinite Shadow Volumes"; break;
     case REFRACT:   str = "Refraction Using Vertex Programs"; break;
@@ -164,12 +165,14 @@ public class JRefract {
         break;
       }
 
+      /*
       case HDR: {
         demo = new HDR();
         ((HDR) demo).setup(null);
         inner.setSize(((HDR) demo).getPreferredWidth(), ((HDR) demo).getPreferredHeight());
         break;
       }
+      */
 
       case HWSHADOWS: {
         demo = new HWShadowmapsSimple();
@@ -266,9 +269,9 @@ public class JRefract {
       inner.getContentPane().add(canvas, BorderLayout.CENTER);
     }
 
-    if (which != HDR) {
-      inner.setSize(512, 512);
-    }
+    // if (which != HDR) {
+    inner.setSize(512, 512);
+    // }
     desktop.add(inner);
 
     return inner;
@@ -310,13 +313,13 @@ public class JRefract {
       });
     menu.add(item);
 
-    item = new JMenuItem("High Dynamic Range");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          addWindow(HDR);
-        }
-      });
-    menu.add(item);
+    //    item = new JMenuItem("High Dynamic Range");
+    //    item.addActionListener(new ActionListener() {
+    //        public void actionPerformed(ActionEvent e) {
+    //          addWindow(HDR);
+    //        }
+    //      });
+    //    menu.add(item);
 
     item = new JMenuItem("Hardware Shadow Maps");
     item.addActionListener(new ActionListener() {
