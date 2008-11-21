@@ -55,11 +55,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.awt.AWTGLAutoDrawable;
-import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.util.Animator;
 import javax.media.opengl.util.BufferUtil;
@@ -247,6 +244,8 @@ public class VertexProgRefract extends Demo {
 
   public void init(GLAutoDrawable drawable) {
 
+    drawable.setGL(new DebugGL2(drawable.getGL().getGL2()));
+
     initComplete = false;
 
     GL2 gl = drawable.getGL().getGL2();
@@ -257,13 +256,13 @@ public class VertexProgRefract extends Demo {
     gl.glEnable(GL.GL_DEPTH_TEST);
 
     try {
-      initExtension(gl, "GL_vertex_program");
+      initExtension(gl, "GL_ARB_vertex_program");
       initExtension(gl, "GL_VERSION_1_3"); // For multitexturing support
-      if (!gl.isExtensionAvailable("GL_fragment_program")) {
+      if (!gl.isExtensionAvailable("GL_ARB_fragment_program")) {
 //        if (gl.isExtensionAvailable("GL_NV_register_combiners")) {
 //          useRegisterCombiners = true;
 //        } else {
-          final String message = "This demo requires either the GL_fragment_program";
+          final String message = "This demo requires the GL_ARB_fragment_program extension";
 //                  +  "or GL_NV_register_combiners extension";
           new Thread(new Runnable() {
               public void run() {
