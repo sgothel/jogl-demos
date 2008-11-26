@@ -42,19 +42,19 @@ public class Perftst implements MouseListener, GLEventListener {
         System.err.println("Perftst.run()");
         GLProfile.setProfileGL2ES2();
         try {
-            Window nWindow = null;
-            if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, 0); // dummy VisualID
-            }
-
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
+
+            Window nWindow = null;
+            if(0!=(type&USE_AWT)) {
+                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, caps);
+            }
             window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);

@@ -17,14 +17,6 @@ public class GLInfo implements GLEventListener {
         System.err.println("GLInfo.run()");
         GLProfile.setProfileGLAny();
         try {
-            Window nWindow = null;
-            if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, 0); // dummy VisualID
-                //nWindow.setVisible(true);
-            }
-
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
@@ -32,6 +24,14 @@ public class GLInfo implements GLEventListener {
             caps.setBlueBits(5);
             caps.setDepthBits(16);
             System.err.println("GLCapabilities PRE : "+caps);
+
+            Window nWindow = null;
+            if(0!=(type&USE_AWT)) {
+                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, caps);
+                //nWindow.setVisible(true);
+            }
             window = GLWindow.create(nWindow, caps);
 
             window.addGLEventListener(this);

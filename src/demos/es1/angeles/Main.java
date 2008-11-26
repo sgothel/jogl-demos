@@ -32,13 +32,6 @@ public class Main implements MouseListener {
         //GLProfile.setProfileGL2ES1();
         GLProfile.setProfileGLAny();
         try {
-            Window nWindow = null;
-            if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, 0); // dummy VisualID
-            }
-
             // Hook this into EGL
             GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
@@ -52,6 +45,13 @@ public class Main implements MouseListener {
             caps.setAlphaBits(8);
             */
             caps.setDepthBits(16);
+
+            Window nWindow = null;
+            if(0!=(type&USE_AWT)) {
+                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, caps);
+            }
             window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);
