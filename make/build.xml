@@ -137,6 +137,7 @@
                 <include name="demos/es2/shader/**" />
                 <include name="demos/es2/perftst/shader/**" />
                 <include name="demos/es2/perftst/data/**" />
+                <include name="demos/es2/openmax/shader/**" />
             </fileset>
             <!-- Avoid requiring dependence on huge jogl-demos-data.jar for
                  particle engine demo -->
@@ -188,6 +189,7 @@
                 <include name="demos/es2/shader/**" />
                 <include name="demos/es2/perftst/shader/**" />
                 <include name="demos/es2/perftst/data/**" />
+                <include name="demos/es2/openmax/shader/**" />
             </fileset>
         </jar>
     </target>
