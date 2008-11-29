@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package demos.es1.cube;
+package demos.es2.openmax;
 
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
@@ -64,7 +64,23 @@ public class Cube implements GLEventListener {
         cubeIndices.flip();
         
         if (useTexCoords) {
-            this.cubeTexCoords = BufferUtil.newShortBuffer(s_cubeTexCoords.length);
+            float aspect = 16.0f/9.0f;
+            float ss=1f, ts=1f; // scale tex-coord
+
+            ss =     1f/aspect; // b > h, crop width
+            for(int i=0; i<s_cubeTexCoords.length; i++) {
+                if(s_cubeTexCoords[i]>0) {
+                    if ( (i+1) % 2 == 0 ) {
+                        // y
+                        s_cubeTexCoords[i] *= ts;
+                    } else {
+                        // x
+                        s_cubeTexCoords[i] *= ss;
+                    }
+                }
+            }
+
+            this.cubeTexCoords = BufferUtil.newFloatBuffer(s_cubeTexCoords.length);
             cubeTexCoords.put(s_cubeTexCoords);
             cubeTexCoords.flip();
         }
@@ -145,16 +161,18 @@ public class Cube implements GLEventListener {
         gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeNormals.limit() * BufferUtil.SIZEOF_BYTE, cubeNormals, GL.GL_STATIC_DRAW);
         gl.glNormalPointer(gl.GL_BYTE, 0, 0);
 
-        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[2]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeColors.limit() * BufferUtil.SIZEOF_FLOAT, cubeColors, GL.GL_STATIC_DRAW);
-        gl.glColorPointer(4, gl.GL_FLOAT, 0, 0);
+        if (cubeColors != null) {
+            gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[2]);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeColors.limit() * BufferUtil.SIZEOF_FLOAT, cubeColors, GL.GL_STATIC_DRAW);
+            gl.glColorPointer(4, gl.GL_FLOAT, 0, 0);
+        }
 
         if (cubeTexCoords != null) {
             gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[3]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_SHORT, cubeTexCoords, GL.GL_STATIC_DRAW);
-            gl.glTexCoordPointer(2, gl.GL_SHORT, 0, 0);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_FLOAT, cubeTexCoords, GL.GL_STATIC_DRAW);
+            gl.glTexCoordPointer(2, gl.GL_FLOAT, 0, 0);
             if(null!=glF) {
                 glF.glTexEnvi(glF.GL_TEXTURE_ENV, glF.GL_TEXTURE_ENV_MODE, glF.GL_INCR);
             }
@@ -209,7 +227,7 @@ public class Cube implements GLEventListener {
     boolean initialized = false;
     float time = 0.0f;
     ShortBuffer cubeVertices;
-    ShortBuffer cubeTexCoords;
+    FloatBuffer cubeTexCoords;
     FloatBuffer cubeColors;
     ByteBuffer cubeNormals;
     ByteBuffer cubeIndices;
@@ -229,19 +247,19 @@ public class Cube implements GLEventListener {
             
             -10, -10, 10, -10, 10, -10, -10, 10, 10, -10, -10, -10
         };
-    private static final short[] s_cubeTexCoords =
+    private static final float[] s_cubeTexCoords =
         {
-            0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
+            0, 1f, 1f, 0, 1f, 1f, 0, 0,
 
-            0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
+            0, 1f, 1f, 0, 1f, 1f, 0, 0,
 
-            0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
+            0, 1f, 1f, 0, 1f, 1f, 0, 0,
 
-            0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
+            0, 1f, 1f, 0, 1f, 1f, 0, 0,
 
-            0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
+            0, 1f, 1f, 0, 1f, 1f, 0, 0,
 
-            0, (short) 0xffff, (short) 0xffff, 0, (short) 0xffff, (short) 0xffff, 0, 0,
+            0, 1f, 1f, 0, 1f, 1f, 0, 0,
         };
 
     private static final float[] s_cubeColors =

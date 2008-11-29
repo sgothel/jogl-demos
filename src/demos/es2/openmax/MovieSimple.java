@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ * 
+ * - Redistribution of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * 
+ * - Redistribution in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
+ * 
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ * 
+ * This software is provided "AS IS," without a warranty of any kind. ALL
+ * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
+ * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN
+ * MICROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL NOT BE LIABLE FOR
+ * ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR
+ * DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR
+ * ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR
+ * DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE
+ * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
+ * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
+ * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ * 
+ */
+
 
 package demos.es2.openmax;
 
@@ -125,13 +158,6 @@ public class MovieSimple implements MouseListener, GLEventListener {
         System.err.println("GL_EXTENSIONS:");
         System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
 
-        try {
-            movie = new OMXMoviePlayerImpl(new URL(stream));
-        } catch (MalformedURLException mue) { mue.printStackTrace(); }
-        if(null!=movie) {
-            movie.play();
-        }
-
         if(gl.isGLES2()) {
             pmvMatrix = gl.getGLES2().getPMVMatrix();
         } else {
@@ -164,8 +190,8 @@ public class MovieSimple implements MouseListener, GLEventListener {
             xs = aspect; // b > h
             ys =     1f; // b > h
         } else {
-            ss =     1f;        // b > h
-            ts =     1f/aspect; // b > h
+            ss =     1f/aspect; // b > h, crop width
+            ts =     1f;        // b > h
         }
 
         // Allocate vertex array
@@ -211,6 +237,13 @@ public class MovieSimple implements MouseListener, GLEventListener {
 
         // Let's show the completed shader state ..
         System.out.println(st);
+
+        try {
+            movie = new OMXMoviePlayerImpl(new URL(stream));
+        } catch (MalformedURLException mue) { mue.printStackTrace(); }
+        if(null!=movie) {
+            movie.play();
+        }
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -281,7 +314,6 @@ public class MovieSimple implements MouseListener, GLEventListener {
         gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
 
         if(null!=tex) {
-            gl.glFinish(); // fake sync
             tex.disable();
             movie.unlockTexture();
         }
