@@ -38,14 +38,14 @@ import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glsl.*;
 
-import com.sun.javafx.media.video.openmax.*;
+import com.sun.openmax.*;
 
 import java.nio.*;
 import java.net.*;
 
 import com.sun.javafx.newt.*;
 
-public class MovieSimple implements MouseListener, GLEventListener {
+public class MovieSimple implements MouseListener, GLEventListener, OMXEventListener {
 
     private GLWindow window;
     private boolean quit = false;
@@ -55,6 +55,10 @@ public class MovieSimple implements MouseListener, GLEventListener {
     private long startTime;
     private long curTime;
     private String stream;
+
+    public void changedAttributes(OMXInstance omx, int event_mask) {
+        System.out.println("changed stream attr ("+event_mask+"): "+omx);
+    }
 
     public void mouseClicked(MouseEvent e) {
         switch(e.getClickCount()) {
@@ -113,7 +117,7 @@ public class MovieSimple implements MouseListener, GLEventListener {
 
             // Shut things down cooperatively
             if(null!=movie) {
-                movie.dispose();
+                movie.dispose(null);
                 movie=null;
             }
             window.close();
@@ -149,7 +153,7 @@ public class MovieSimple implements MouseListener, GLEventListener {
         st.attachShaderProgram(gl, sp);
     }
 
-    OMXMoviePlayerImpl movie=null;
+    OMXInstance movie=null;
 
     public void init(GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
@@ -239,9 +243,15 @@ public class MovieSimple implements MouseListener, GLEventListener {
         System.out.println(st);
 
         try {
-            movie = new OMXMoviePlayerImpl(new URL(stream));
+            movie = new OMXInstance();
+            movie.addEventListener(this);
+            movie.setStream(4, new URL(stream));
+            System.out.println("p0 "+movie);
         } catch (MalformedURLException mue) { mue.printStackTrace(); }
         if(null!=movie) {
+            //movie.setStreamAllEGLImageTexture2D(gl);
+            //movie.activateStream();
+            //System.out.println("p1 "+movie);
             movie.play();
         }
     }
@@ -303,7 +313,7 @@ public class MovieSimple implements MouseListener, GLEventListener {
 
         com.sun.opengl.util.texture.Texture tex = null;
         if(null!=movie) {
-            tex=movie.lockTexture();
+            tex=movie.getNextTextureID();
             if(null!=tex) {
                 tex.enable();
                 tex.bind();
@@ -315,7 +325,6 @@ public class MovieSimple implements MouseListener, GLEventListener {
 
         if(null!=tex) {
             tex.disable();
-            movie.unlockTexture();
         }
 
         st.glUseProgram(gl, false);

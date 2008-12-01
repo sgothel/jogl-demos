@@ -38,19 +38,23 @@ package demos.es2.openmax;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 
-import com.sun.javafx.media.video.openmax.*;
+import com.sun.openmax.*;
 
 import java.nio.*;
 import java.net.*;
 
 import com.sun.javafx.newt.*;
 
-public class MovieCube implements MouseListener, GLEventListener {
+public class MovieCube implements MouseListener, GLEventListener, OMXEventListener {
     GLWindow window;
     boolean quit = false;
     Cube cube=null;
     String stream;
-    OMXMoviePlayerImpl movie=null;
+    OMXInstance movie=null;
+
+    public void changedAttributes(OMXInstance omx, int event_mask) {
+        System.out.println("changed stream attr ("+event_mask+"): "+omx);
+    }
 
     public void mouseClicked(MouseEvent e) {
         switch(e.getClickCount()) {
@@ -105,7 +109,7 @@ public class MovieCube implements MouseListener, GLEventListener {
 
             // Shut things down cooperatively
             if(null!=movie) {
-                movie.dispose();
+                movie.dispose(null);
                 movie=null;
             }
             window.close();
@@ -129,9 +133,15 @@ public class MovieCube implements MouseListener, GLEventListener {
         gl.glActiveTexture(GL.GL_TEXTURE0);
 
         try {
-            movie = new OMXMoviePlayerImpl(new URL(stream));
+            movie = new OMXInstance();
+            movie.addEventListener(this);
+            movie.setStream(4, new URL(stream));
+            System.out.println("p0 "+movie);
         } catch (MalformedURLException mue) { mue.printStackTrace(); }
         if(null!=movie) {
+            movie.setStreamAllEGLImageTexture2D(gl);
+            movie.activateStream();
+            System.out.println("p1 "+movie);
             movie.play();
         }
 
@@ -160,19 +170,12 @@ public class MovieCube implements MouseListener, GLEventListener {
         System.out.println("reshape "+width+"x"+height);
     }
 
-    public void dispose() {
-        if(null!=movie) {
-            movie.dispose();
-            movie=null;
-        }
-    }
-
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
         com.sun.opengl.util.texture.Texture tex = null;
         if(null!=movie) {
-            tex=movie.lockTexture();
+            tex=movie.getNextTextureID();
             if(null!=tex) {
                 System.out.println("Use: "+tex);
                 tex.enable();
@@ -182,7 +185,6 @@ public class MovieCube implements MouseListener, GLEventListener {
         cube.display(drawable);
         if(null!=tex) {
             tex.disable();
-            movie.unlockTexture();
         }
     }
 
