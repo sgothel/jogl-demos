@@ -11,6 +11,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.awt.gl2.GL2JPanel;
 import javax.media.opengl.util.Animator;
@@ -28,8 +29,6 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     GLCanvas canvas = new GLCanvas();
 
     final Gears gears = new Gears();
-    canvas.addMouseListener(gears);
-    canvas.addMouseMotionListener(gears);
     canvas.addGLEventListener(gears);
 
     frame.add(canvas);
@@ -103,6 +102,11 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
             
     gl.glEnable(GL2.GL_NORMALIZE);
                 
+    if (drawable instanceof AWTGLAutoDrawable) {
+        AWTGLAutoDrawable awtDrawable = (AWTGLAutoDrawable) drawable;
+        awtDrawable.addMouseListener(this);
+        awtDrawable.addMouseMotionListener(this);
+    }
   }
     
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -328,4 +332,3 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     
   public void mouseMoved(MouseEvent e) {}
 }
-
