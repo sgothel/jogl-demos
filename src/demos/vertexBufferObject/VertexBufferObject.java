@@ -68,7 +68,7 @@ import javax.swing.JOptionPane;
 
     <ul>
     <li> A JDK 1.4 implementation
-    <li> A card supporting the GL_vertex_buffer_object extension
+    <li> A card supporting the GL_ARB_vertex_buffer_object extension
          (only in recent drivers)
     </ul>
 
@@ -301,7 +301,7 @@ public class VertexBufferObject extends Demo {
     gl.setSwapInterval(0);
 
     try {
-      initExtension(gl, "GL_vertex_buffer_object");
+      initExtension(gl, "GL_ARB_vertex_buffer_object");
     } catch (RuntimeException e) {
       throw (e);
     }      
