@@ -13,7 +13,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.awt.gl2.GL2JPanel;
+import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.util.Animator;
 
 /**
@@ -135,9 +135,9 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
 
     // Special handling for the case where the GLJPanel is translucent
     // and wants to be composited with other Java 2D content
-    if ((drawable instanceof GL2JPanel) &&
-        !((GL2JPanel) drawable).isOpaque() &&
-        ((GL2JPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
+    if ((drawable instanceof GLJPanel) &&
+        !((GLJPanel) drawable).isOpaque() &&
+        ((GLJPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
       gl.glClear(GL2.GL_DEPTH_BUFFER_BIT);
     } else {
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);

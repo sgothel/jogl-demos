@@ -57,7 +57,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.awt.gl2.GL2JPanel;
+import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.util.Animator;
 import javax.media.opengl.util.FPSAnimator;
 import javax.swing.JCheckBox;
@@ -139,10 +139,10 @@ public class JRefract {
     if (which == INFINITE) {
       caps.setStencilBits(16);
     }
-    final GL2JPanel canvas =
+    final GLJPanel canvas =
       (which == GEARS) ?
       new JGears() :
-      new GL2JPanel(caps);
+      new GLJPanel(caps);
     final DemoListener demoListener = new DemoListener() {
         public void shutdownDemo() {
           removeJPanel(canvas);
@@ -423,11 +423,11 @@ public class JRefract {
       }).start();
   }
 
-  private synchronized void addJPanel(GL2JPanel panel) {
+  private synchronized void addJPanel(GLJPanel panel) {
     animator.add(panel);
   }
 
-  private synchronized void removeJPanel(GL2JPanel panel) {
+  private synchronized void removeJPanel(GLJPanel panel) {
     animator.remove(panel);
   }
 

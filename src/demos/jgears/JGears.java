@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.awt.gl2.GL2JPanel;
+import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.util.Animator;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -32,7 +32,7 @@ import javax.swing.JPanel;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 
-public class JGears extends GL2JPanel {
+public class JGears extends GLJPanel {
   private static GLCapabilities caps;
   private long startTime;
   private int frameCount;
@@ -119,7 +119,7 @@ public class JGears extends GL2JPanel {
   public static void main(String[] args) {
     JFrame frame = new JFrame("Gear Demo");
     frame.getContentPane().setLayout(new BorderLayout());
-    final GL2JPanel drawable = new JGears();
+    final GLJPanel drawable = new JGears();
     drawable.setOpaque(false);
 
     JPanel gradientPanel = createGradientPanel();

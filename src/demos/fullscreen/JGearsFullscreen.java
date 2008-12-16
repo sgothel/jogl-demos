@@ -10,7 +10,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.awt.gl2.GL2JPanel;
+import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.util.Animator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
