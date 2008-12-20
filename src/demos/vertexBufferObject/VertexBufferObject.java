@@ -50,6 +50,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.util.Animator;
@@ -100,15 +101,9 @@ public class VertexBufferObject extends Demo {
     }
     GLProfile.setProfile("GL2");
     GLCanvas canvas = new GLCanvas();
-    final VertexBufferObject demo = new VertexBufferObject();
+    VertexBufferObject demo = new VertexBufferObject();
     demo.vboEnabled = vboEnabled;
     canvas.addGLEventListener(demo);
-
-    canvas.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-          demo.dispatchKey(e.getKeyChar());
-        }
-    });
 
     final Animator animator = new Animator(canvas);
     animator.setRunAsFastAsPossible(true);
@@ -350,6 +345,14 @@ public class VertexBufferObject extends Demo {
     gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
 
     computeElements(gl);
+
+    if (drawable instanceof AWTGLAutoDrawable) {
+        ((AWTGLAutoDrawable) drawable).addKeyListener(new KeyAdapter() {
+                public void keyTyped(KeyEvent e) {
+                    dispatchKey(e.getKeyChar());
+                }
+            });
+    }
 
     initComplete = true;
   }
