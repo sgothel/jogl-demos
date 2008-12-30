@@ -33,7 +33,7 @@
 
 package demos.infiniteShadowVolumes;
 
-import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import com.sun.opengl.util.gl2.GLUT;
 import demos.common.Demo;
 import demos.common.DemoListener;
 import demos.util.MD2;
@@ -164,7 +164,7 @@ public class InfiniteShadowVolumes extends Demo {
   private int curr_view  = CAMERA_VIEW;
 
   private GLU  glu  = new GLU();
-  private GLUTgl2 glut = new GLUTgl2();
+  private GLUT glut = new GLUT();
 
   private GLAutoDrawable drawable;
   private ExaminerViewer viewer;

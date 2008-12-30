@@ -39,7 +39,7 @@
 
 package demos.context;
 
-import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import com.sun.opengl.util.gl2.GLUT;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -66,7 +66,7 @@ public class DualContext extends Canvas {
   private GLContext  context1;
   private GLContext  context2;
   private GLU        glu;
-  private GLUTgl2    glut;
+  private GLUT       glut;
   private int        repaintNum;
 
   public DualContext(GLCapabilities capabilities) {
@@ -77,7 +77,7 @@ public class DualContext extends Canvas {
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
     glu = new GLU();
-    glut = new GLUTgl2();
+    glut = new GLUT();
   }
 
   public void addNotify() {
@@ -129,12 +129,12 @@ public class DualContext extends Canvas {
     gl.glEnable(GL.GL_SCISSOR_TEST);
     gl.glClearColor(br, bg, bb, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    float length = glut.glutStrokeLengthf(GLUTgl2.STROKE_ROMAN, str);
+    float length = glut.glutStrokeLengthf(GLUT.STROKE_ROMAN, str);
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluOrtho2D(x, x + width, y, y + height);
     gl.glTranslatef(x + (width - length) / 2, y + height / 2, 0);
-    glut.glutStrokeString(GLUTgl2.STROKE_ROMAN, str);
+    glut.glutStrokeString(GLUT.STROKE_ROMAN, str);
   }
 
   public static void main(String[] args) {

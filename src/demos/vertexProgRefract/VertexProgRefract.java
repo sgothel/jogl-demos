@@ -33,7 +33,7 @@
 
 package demos.vertexProgRefract;
 
-import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import com.sun.opengl.util.gl2.GLUT;
 import com.sun.opengl.util.texture.Texture;
 import demos.common.Demo;
 import demos.common.DemoListener;
@@ -124,7 +124,7 @@ public class VertexProgRefract extends Demo {
   private int obj;
 
   private GLU  glu  = new GLU();
-  private GLUTgl2 glut = new GLUTgl2();
+  private GLUT glut = new GLUT();
 
   private GLAutoDrawable drawable;
   private ExaminerViewer viewer;

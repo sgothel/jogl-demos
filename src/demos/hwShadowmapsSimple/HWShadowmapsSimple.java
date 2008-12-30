@@ -33,7 +33,7 @@
 
 package demos.hwShadowmapsSimple;
 
-import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import com.sun.opengl.util.gl2.GLUT;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 import demos.common.Demo;
@@ -129,7 +129,7 @@ public class HWShadowmapsSimple extends Demo {
   private GLPbuffer pbuffer;
 
   private GLU  glu;
-  private GLUTgl2 glut;
+  private GLUT glut;
 
   private float[] light_ambient   = { 0, 0, 0, 0 };
   private float[] light_intensity = { 1, 1, 1, 1 };
@@ -206,7 +206,7 @@ public class HWShadowmapsSimple extends Demo {
 
     GL2 gl = drawable.getGL().getGL2();
     glu = new GLU();
-    glut = new GLUTgl2();
+    glut = new GLUT();
 
     try {
       checkExtension(gl, "GL_VERSION_1_3"); // For multitexture
