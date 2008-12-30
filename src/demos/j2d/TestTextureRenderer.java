@@ -62,7 +62,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import javax.media.opengl.util.Animator;
+import com.sun.opengl.util.Animator;
 
 
 

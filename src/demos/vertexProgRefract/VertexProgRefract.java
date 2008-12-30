@@ -58,7 +58,7 @@ import java.io.IOException;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.GLU;
-import javax.media.opengl.util.Animator;
+import com.sun.opengl.util.Animator;
 import javax.media.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 

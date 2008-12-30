@@ -55,7 +55,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.util.Animator;
+import com.sun.opengl.util.Animator;
 
 
 

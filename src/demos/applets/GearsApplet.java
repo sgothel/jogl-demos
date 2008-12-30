@@ -4,8 +4,8 @@ import java.applet.*;
 import java.awt.*;
 import demos.gears.Gears;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.util.Animator;
-import javax.media.opengl.util.FPSAnimator;
+import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.FPSAnimator;
 
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */

@@ -44,7 +44,7 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.util.Animator;
+import com.sun.opengl.util.Animator;
 import javax.media.opengl.util.Gamma;
 
 

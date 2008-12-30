@@ -20,7 +20,7 @@ import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.util.Animator;
+import com.sun.opengl.util.Animator;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;

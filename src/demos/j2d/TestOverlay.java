@@ -59,7 +59,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.util.Animator;
+import com.sun.opengl.util.Animator;
 
 /** A simple test of the Overlay utility class. Draws gears underneath
     with moving Java 2D-rendered text on top. */
