@@ -33,7 +33,7 @@
 
 package demos.proceduralTexturePhysics;
 
-import com.sun.opengl.impl.io.FileUtil;
+import com.sun.opengl.util.FileUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;

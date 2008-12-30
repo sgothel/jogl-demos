@@ -1,9 +1,9 @@
 package demos.misc;
 
-import com.sun.opengl.impl.io.FileUtil;
+import com.sun.opengl.util.FileUtil;
+import com.sun.opengl.util.TGAWriter;
 import com.sun.opengl.util.awt.ImageUtil;
 import com.sun.opengl.util.gl2.TileRenderer;
-import com.sun.opengl.util.io.TGAWriter;
 import demos.gears.Gears;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
