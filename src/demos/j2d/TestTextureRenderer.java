@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.gl2.GL2TextureRenderer;
+import com.sun.opengl.util.awt.TextureRenderer;
 import demos.gears.Gears;
 import demos.util.SystemTime;
 import demos.util.Time;
@@ -101,7 +101,7 @@ public class TestTextureRenderer implements GLEventListener {
     animator.start();
   }
 
-  private GL2TextureRenderer renderer;
+  private TextureRenderer renderer;
   private Time time;
   private Font font;
   private Color TRANSPARENT_BLACK = new Color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -119,7 +119,7 @@ public class TestTextureRenderer implements GLEventListener {
     GL gl = drawable.getGL();
     gl.setSwapInterval(0);
 
-    renderer = new GL2TextureRenderer(256, 256, true);
+    renderer = new TextureRenderer(256, 256, true);
     time = new SystemTime();
     ((SystemTime) time).rebase();
 

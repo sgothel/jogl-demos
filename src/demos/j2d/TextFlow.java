@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
+import com.sun.opengl.util.awt.TextRenderer;
 import demos.common.Demo;
 import demos.util.SystemTime;
 import demos.util.Time;
@@ -106,7 +106,7 @@ public class TextFlow extends Demo {
 
   private List/*<String>*/ lines = new ArrayList();
   private Time time;
-  private GL2TextRenderer renderer;
+  private TextRenderer renderer;
   private int curParagraph;
   private float x = 30;
   private float y;
@@ -143,7 +143,7 @@ public class TextFlow extends Demo {
   }
   
   public void init(GLAutoDrawable drawable) {
-    renderer = new GL2TextRenderer(new Font("SansSerif", Font.PLAIN, 36), true, false);
+    renderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 36), true, false);
     time = new SystemTime();
     ((SystemTime) time).rebase();
   }

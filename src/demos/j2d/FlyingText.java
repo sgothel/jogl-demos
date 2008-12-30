@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
+import com.sun.opengl.util.awt.TextRenderer;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureIO;
@@ -153,7 +153,7 @@ public class FlyingText extends Demo {
   private int dropShadowDistance = DEFAULT_DROP_SHADOW_DIST;
   private Time time;
   private Texture backgroundTexture;
-  private GL2TextRenderer renderer;
+  private TextRenderer renderer;
   private Random random = new Random();
   private GLU glu = new GLU();
   private int width;
@@ -247,7 +247,7 @@ public class FlyingText extends Demo {
     backgroundTexture.setTexParameteri(GL2.GL_TEXTURE_WRAP_T,     GL2.GL_REPEAT);
 
     // Create the text renderer
-    renderer = new GL2TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true);
+    renderer = new TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true);
 
     // Create the FPS counter
     fps = new FPSCounter(drawable, 36);

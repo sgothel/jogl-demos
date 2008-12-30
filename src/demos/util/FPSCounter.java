@@ -39,7 +39,7 @@
 
 package demos.util;
 
-import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
+import com.sun.opengl.util.awt.TextRenderer;
 import com.sun.opengl.util.texture.Texture;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
@@ -61,7 +61,7 @@ public class FPSCounter {
 
   private int textLocation = LOWER_RIGHT;
   private GLDrawable drawable;
-  private GL2TextRenderer renderer;
+  private TextRenderer renderer;
   private DecimalFormat format = new DecimalFormat("####.00");
   private int frameCount;
   private long startTime;
@@ -108,7 +108,7 @@ public class FPSCounter {
                     boolean antialiased,
                     boolean useFractionalMetrics) throws GLException {
     this.drawable = drawable;
-    renderer = new GL2TextRenderer(font, antialiased, useFractionalMetrics);
+    renderer = new TextRenderer(font, antialiased, useFractionalMetrics);
   }
 
   /** Gets the relative location where the text of this FPSCounter

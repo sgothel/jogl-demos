@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.gl2.GL2TextRenderer;
+import com.sun.opengl.util.awt.TextRenderer;
 import demos.gears.Gears;
 import demos.util.FPSCounter;
 import demos.util.SystemTime;
@@ -92,7 +92,7 @@ public class TestTextRenderer implements GLEventListener {
     animator.start();
   }
 
-  private GL2TextRenderer renderer;
+  private TextRenderer renderer;
   private Time time;
   private Font font;
   private Vec2f velocity = new Vec2f(100.0f, 150.0f);
@@ -111,7 +111,7 @@ public class TestTextRenderer implements GLEventListener {
     // Gears demo)
     gl.setSwapInterval(0);
 
-    renderer = new GL2TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+    renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
     time = new SystemTime();
     ((SystemTime) time).rebase();
 
