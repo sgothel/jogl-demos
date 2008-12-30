@@ -2,7 +2,7 @@ package demos.misc;
 
 import com.sun.opengl.impl.io.FileUtil;
 import com.sun.opengl.util.awt.ImageUtil;
-import com.sun.opengl.util.gl2.GL2TileRenderer;
+import com.sun.opengl.util.gl2.TileRenderer;
 import com.sun.opengl.util.io.TGAWriter;
 import demos.gears.Gears;
 import java.awt.image.BufferedImage;
@@ -73,7 +73,7 @@ public class TiledRendering {
     }
 
     // Initialize the tile rendering library
-    GL2TileRenderer renderer = new GL2TileRenderer();
+    TileRenderer renderer = new TileRenderer();
     renderer.setTileSize(tileWidth, tileHeight, 0);
     renderer.setImageSize(imageWidth, imageHeight);
     renderer.setImageBuffer(GL2.GL_BGR, GL.GL_UNSIGNED_BYTE, buf);
