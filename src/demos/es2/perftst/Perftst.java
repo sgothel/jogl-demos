@@ -3,7 +3,8 @@ package demos.es2.perftst;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
-import javax.media.opengl.glsl.*;
+
+import com.sun.opengl.util.glsl.*;
 
 import com.sun.opengl.impl.GLReflection;
 

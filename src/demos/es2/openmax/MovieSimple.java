@@ -36,7 +36,8 @@ package demos.es2.openmax;
 
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
-import javax.media.opengl.glsl.*;
+
+import com.sun.opengl.util.glsl.*;
 
 import com.sun.openmax.*;
 
