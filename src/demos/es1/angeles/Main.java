@@ -10,7 +10,9 @@ public class Main implements MouseListener {
     public GLWindow window = null;
 
     public void mouseClicked(MouseEvent e) {
-        quit=true;
+        if (e.getClickCount() > 1) {
+            quit=true;
+        }
     }
     public void mouseEntered(MouseEvent e) {
     }
