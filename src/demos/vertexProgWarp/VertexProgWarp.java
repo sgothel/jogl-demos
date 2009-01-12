@@ -196,7 +196,7 @@ public class VertexProgWarp extends Demo {
       programs[i] = vtxProgTmp[0];
       gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[i]);
       gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, programTexts[i].length(),
-                         BufferUtil.newByteBuffer(programTexts[i].getBytes()));
+                         programTexts[i]);
     }
 
     gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction

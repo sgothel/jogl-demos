@@ -285,7 +285,7 @@ public class VertexProgRefract extends Demo {
     vtxProg = vtxProgTmp[0];
     gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vtxProg);
     gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, transformRefract.length(),
-                       BufferUtil.newByteBuffer(transformRefract.getBytes()));
+                       transformRefract);
 
     gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 0.0f, 1.0f);    // eye position
 
@@ -580,7 +580,7 @@ public class VertexProgRefract extends Demo {
 
     gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
     gl.glProgramString(GL2.GL_FRAGMENT_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII,
-                       combineFragProg.length(), BufferUtil.newByteBuffer(combineFragProg.getBytes()));
+                       combineFragProg.length(), combineFragProg);
     int[] errPos = new int[1];
     gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
     if (errPos[0] >= 0) {

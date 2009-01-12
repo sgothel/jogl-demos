@@ -1817,8 +1817,7 @@ public class Water {
                            int target,
                            String programBuffer) {
 
-    ByteBuffer bb = BufferUtil.newByteBuffer(programBuffer.getBytes());
-    gl.glProgramString(target, GL2.GL_PROGRAM_FORMAT_ASCII, programBuffer.length(), bb);
+    gl.glProgramString(target, GL2.GL_PROGRAM_FORMAT_ASCII, programBuffer.length(), programBuffer);
 
     int[] errPos = new int[1];
     gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
