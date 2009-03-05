@@ -2,6 +2,7 @@ package demos.es2;
 
 import java.nio.*;
 import javax.media.opengl.*;
+import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 
@@ -119,20 +120,16 @@ public class RedSquare implements MouseListener, GLEventListener {
         System.err.println("GL_EXTENSIONS:");
         System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
 
-        if(gl.isGLES2()) {
-            pmvMatrix = gl.getGLES2().getPMVMatrix();
-        } else {
-            pmvMatrix = new PMVMatrix();
-        }
+        pmvMatrix = new PMVMatrix();
 
         initShader(gl);
 
         // Push the 1st uniform down the path 
         st.glUseProgram(gl, true);
 
-        pmvMatrix.glMatrixMode(gl.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
         if(!st.glUniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
@@ -177,7 +174,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         st.glUseProgram(gl, true);
 
         // Set location in front of camera
-        pmvMatrix.glMatrixMode(GL2ES2.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         //pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
@@ -199,7 +196,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
         // One rotation every four seconds
-        pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
         float ang = ((float) (curTime - startTime) * 360.0f) / 4000.0f;

@@ -453,7 +453,7 @@ public class VertexProgRefract extends Demo {
 //    }
     gl.glDisable(GL2.GL_VERTEX_PROGRAM);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glPopMatrix();
   }
 
@@ -602,7 +602,7 @@ public class VertexProgRefract extends Demo {
 
   private void drawSkyBox(GL2 gl) {
     // Compensates for ExaminerViewer's modification of modelview matrix
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
@@ -616,7 +616,7 @@ public class VertexProgRefract extends Demo {
     // normals are not being sent down to the hardware in
     // GL_NORMAL_MAP texgen mode. Temporarily enabling lighting
     // causes the normals to be sent down. Thanks to Ken Dyke.
-    gl.glEnable(GL.GL_LIGHTING);
+    gl.glEnable(GL2ES1.GL_LIGHTING);
 
     gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
     gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_NORMAL_MAP);
@@ -635,10 +635,10 @@ public class VertexProgRefract extends Demo {
     
     glut.glutSolidSphere(5.0, 40, 20);
 
-    gl.glDisable(GL.GL_LIGHTING);
+    gl.glDisable(GL2ES1.GL_LIGHTING);
 
     gl.glPopMatrix();
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 
     gl.glDisable(GL2.GL_TEXTURE_GEN_S);
     gl.glDisable(GL2.GL_TEXTURE_GEN_T);

@@ -13,6 +13,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
@@ -86,7 +87,7 @@ public class TiledRendering {
     }
     
     GL2 gl = pbuffer.getGL().getGL2();
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
     gl.glTranslatef(0.0f, 0.0f, -40.0f);
     // Tile renderer will set up projection matrix    
@@ -119,12 +120,12 @@ public class TiledRendering {
 
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);
+    gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, pos, 0);
     gl.glEnable(GL.GL_CULL_FACE);
-    gl.glEnable(GL.GL_LIGHTING);
-    gl.glEnable(GL.GL_LIGHT0);
+    gl.glEnable(GL2ES1.GL_LIGHTING);
+    gl.glEnable(GL2ES1.GL_LIGHT0);
     gl.glEnable(GL.GL_DEPTH_TEST);
-    gl.glEnable(GL.GL_NORMALIZE);
+    gl.glEnable(GL2ES1.GL_NORMALIZE);
 
     gl.glPushMatrix();
     gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
@@ -134,21 +135,21 @@ public class TiledRendering {
     gl.glPushMatrix();
     gl.glTranslatef(-3.0f, -2.0f, 0.0f);
     gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
+    gl.glMaterialfv(GL.GL_FRONT, GL2ES1.GL_AMBIENT_AND_DIFFUSE, red, 0);
     Gears.gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
     gl.glPopMatrix();
             
     gl.glPushMatrix();
     gl.glTranslatef(3.1f, -2.0f, 0.0f);
     gl.glRotatef(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green, 0);
+    gl.glMaterialfv(GL.GL_FRONT, GL2ES1.GL_AMBIENT_AND_DIFFUSE, green, 0);
     Gears.gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
     gl.glPopMatrix();
             
     gl.glPushMatrix();
     gl.glTranslatef(-3.1f, 4.2f, 0.0f);
     gl.glRotatef(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
-    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue, 0);
+    gl.glMaterialfv(GL.GL_FRONT, GL2ES1.GL_AMBIENT_AND_DIFFUSE, blue, 0);
     Gears.gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
     gl.glPopMatrix();
             

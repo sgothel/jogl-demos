@@ -47,6 +47,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;

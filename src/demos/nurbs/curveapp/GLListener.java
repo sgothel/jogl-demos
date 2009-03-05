@@ -59,7 +59,7 @@ public class GLListener implements GLEventListener {
 
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
 
     float[] knots = Curve.getInstance().getKnots();
@@ -125,7 +125,7 @@ public class GLListener implements GLEventListener {
    */
   public void reshape(GLAutoDrawable drawable, int x, int y, int width,
                       int height) {
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     gl.glLoadIdentity();
     gl.glOrtho(0, drawable.getWidth(), 0, drawable.getHeight(), -1, 1);
     gl.glScalef(1, -1, 1);

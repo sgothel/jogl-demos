@@ -36,6 +36,7 @@ package demos.cubefbo;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.util.BufferUtil;
 
@@ -91,38 +92,38 @@ class CubeObject {
         gl.glViewport(0, 0, width, height);
         gl.glScissor(0, 0, width, height);
 
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, light_ambient, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, light_diffuse, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, zero_vec4, 0);
-        gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, material_spec, 0);
+        gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, light_position, 0);
+        gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_AMBIENT, light_ambient, 0);
+        gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_DIFFUSE, light_diffuse, 0);
+        gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_SPECULAR, zero_vec4, 0);
+        gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2ES1.GL_SPECULAR, material_spec, 0);
 
-        gl.glEnable(GL.GL_NORMALIZE);
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glEnable(GL.GL_LIGHT0);
-        gl.glEnable(GL.GL_COLOR_MATERIAL);
+        gl.glEnable(GL2ES1.GL_NORMALIZE);
+        gl.glEnable(GL2ES1.GL_LIGHTING);
+        gl.glEnable(GL2ES1.GL_LIGHT0);
+        gl.glEnable(GL2ES1.GL_COLOR_MATERIAL);
         gl.glEnable(GL.GL_CULL_FACE);
 
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
-        gl.glShadeModel(GL.GL_SMOOTH);
+        gl.glShadeModel(GL2ES1.GL_SMOOTH);
         gl.glDisable(GL.GL_DITHER);
 
         gl.glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
 
-        gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-        gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+        gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GL2ES1.GL_NORMAL_ARRAY);
+        gl.glEnableClientState(GL2ES1.GL_COLOR_ARRAY);
         if (cubeTexCoords != null) {
-            gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+            gl.glEnableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
         } else {
-            gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+            gl.glDisableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
         }
 
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(GL2ES1.GL_PROJECTION);
         gl.glLoadIdentity();
 
         perspective(gl, 55.f, aspect, 0.1f, 100.f);
@@ -137,7 +138,7 @@ class CubeObject {
         //g.setColor(0, 255, 0);
         //g.fillRect(20, 20, width - 40, height - 40);
 
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
         gl.glLoadIdentity();
 
         gl.glTranslatef(0.f, 0.f, -30.f);

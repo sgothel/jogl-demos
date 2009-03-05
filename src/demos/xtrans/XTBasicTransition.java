@@ -41,6 +41,7 @@ package demos.xtrans;
 
 import gleem.linalg.Vec3f;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 
 

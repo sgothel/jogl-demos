@@ -11,6 +11,13 @@
    - built into its build directory.
    -->
 <project name="JOGL.demos" default="all">
+
+    <condition property="rootrel.build" value="build">
+      <not>
+          <isset property="rootrel.build"/>
+      </not>
+    </condition>
+
     <!-- 
        - Make sure that jogl-demos.jar is not on the CLASSPATH; this can
        - cause builds to fail since if this Java process has the jar file
@@ -48,32 +55,32 @@
     </target>
 
     <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes">
-        <property name="jogl.core.jar"       value="../../jogl/build/jogl.core.jar" />
-        <property name="jogl.oswin.jar"      value="../../jogl/build/jogl.oswin.jar" />
-        <property name="jogl.gles12.jar"     value="../../jogl/build/jogl.gles12.jar" />
-        <property name="jogl.gles12.dbg.jar" value="../../jogl/build/jogl.gles12.dbg.jar" />
-        <property name="jogl.gles2.jar"      value="../../jogl/build/jogl.gles2.jar" />
-        <property name="jogl.gles2.dbg.jar"  value="../../jogl/build/jogl.gles2.dbg.jar" />
-        <property name="jogl.egl.jar"        value="../../jogl/build/jogl.egl.jar" />
-        <property name="jogl.gl2.jar"        value="../../jogl/build/jogl.gl2.jar" />
-        <property name="jogl.gl2.dbg.jar"    value="../../jogl/build/jogl.gl2.dbg.jar" />
-        <property name="jogl.awt.jar"        value="../../jogl/build/jogl.awt.jar" />
-        <property name="jogl.util.jar"       value="../../jogl/build/jogl.util.jar" />
-        <property name="jogl.util.awt.jar"   value="../../jogl/build/jogl.util.awt.jar" />
-        <property name="jogl.util.gl2.jar"   value="../../jogl/build/jogl.util.gl2.jar" />
-        <property name="newt.jar"            value="../../jogl/build/newt.jar" />
+        <property name="jogl.core.jar"       value="../../jogl/${rootrel.build}/jogl.core.jar" />
+        <property name="jogl.oswin.jar"      value="../../jogl/${rootrel.build}/jogl.oswin.jar" />
+        <property name="jogl.gles12.jar"     value="../../jogl/${rootrel.build}/jogl.gles12.jar" />
+        <property name="jogl.gles12.dbg.jar" value="../../jogl/${rootrel.build}/jogl.gles12.dbg.jar" />
+        <property name="jogl.gles2.jar"      value="../../jogl/${rootrel.build}/jogl.gles2.jar" />
+        <property name="jogl.gles2.dbg.jar"  value="../../jogl/${rootrel.build}/jogl.gles2.dbg.jar" />
+        <property name="jogl.egl.jar"        value="../../jogl/${rootrel.build}/jogl.egl.jar" />
+        <property name="jogl.gl2.jar"        value="../../jogl/${rootrel.build}/jogl.gl2.jar" />
+        <property name="jogl.gl2.dbg.jar"    value="../../jogl/${rootrel.build}/jogl.gl2.dbg.jar" />
+        <property name="jogl.awt.jar"        value="../../jogl/${rootrel.build}/jogl.awt.jar" />
+        <property name="jogl.util.jar"       value="../../jogl/${rootrel.build}/jogl.util.jar" />
+        <property name="jogl.util.awt.jar"   value="../../jogl/${rootrel.build}/jogl.util.awt.jar" />
+        <property name="jogl.util.gl2.jar"   value="../../jogl/${rootrel.build}/jogl.util.gl2.jar" />
+        <property name="newt.jar"            value="../../jogl/${rootrel.build}/newt.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
         <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
-        <property name="classes"             value="../build/classes" />
+        <property name="classes"             value="../${rootrel.build}/classes" />
         <property name="src"                 value="../src" />
         <property name="javadoc"             value="../javadoc" />
         <property name="javadoc.link"        value="http://java.sun.com/j2se/1.4.2/docs/api/" />
         <property name="javadoc.link.jogl"   value="../../jogl/javadoc-public/" />
-        <property name="jogl.demos.jar"      value="../build/jogl-demos.jar" />
-        <property name="jogl.demos.util.jar" value="../build/jogl-demos-util.jar" />
-        <property name="jogl.demos.data.jar" value="../build/jogl-demos-data.jar" />
-        <property name="jogl.demos.src.zip"  value="../build/jogl-demos-src.zip" />
+        <property name="jogl.demos.jar"      value="../${rootrel.build}/jogl-demos.jar" />
+        <property name="jogl.demos.util.jar" value="../${rootrel.build}/jogl-demos-util.jar" />
+        <property name="jogl.demos.data.jar" value="../${rootrel.build}/jogl-demos-data.jar" />
+        <property name="jogl.demos.src.zip"  value="../${rootrel.build}/jogl-demos-src.zip" />
     </target>
 
     <target name="nurbs" if="jogl.nurbs">
@@ -83,15 +90,15 @@
             <classpath refid="jogl-demos.classpath" />
         </javac>
 	<!-- Copy icons to output dir -->
-        <copy todir="../build">
+        <copy todir="../${rootrel.build}">
             <fileset dir="${src}">
                 <include name="demos/nurbs/icons/*.png" />
             </fileset>
         </copy>
 	<!-- Copy dependent libraries to output dir -->
-        <copy file="../lib/simple-xml-1.1.1.jar" todir="../build" />
-        <copy file="../lib/stax-api-1.0.1.jar" todir="../build" />
-        <copy file="../lib/stax-1.2.0.jar" todir="../build" />
+        <copy file="../lib/simple-xml-1.1.1.jar" todir="../${rootrel.build}" />
+        <copy file="../lib/stax-api-1.0.1.jar" todir="../${rootrel.build}" />
+        <copy file="../lib/stax-1.2.0.jar" todir="../${rootrel.build}" />
     </target>
 
     <target name="all-desktop" unless="isGLES">
@@ -211,7 +218,7 @@
 
     <target name="clean" depends="init">
         <delete includeEmptyDirs="true" quiet="true">
-            <fileset dir="../build" />
+            <fileset dir="../${rootrel.build}" />
             <fileset dir="../javadoc" />
         </delete>
     </target>

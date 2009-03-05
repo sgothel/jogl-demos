@@ -33,6 +33,7 @@
 
 package demos.cubefbo;
 
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 
 

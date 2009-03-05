@@ -70,6 +70,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
@@ -279,10 +280,10 @@ public class CustomText extends Demo {
 
     GL2 gl = drawable.getGL().getGL2();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluOrtho2D(0, drawable.getWidth(), 0, drawable.getHeight());
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
 
     // Draw the background texture
@@ -313,7 +314,7 @@ public class CustomText extends Demo {
     // We tell the text renderer to render the text at the origin, and
     // manipulate the modelview matrix to put the text where we want.
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 
     for (Iterator iter = textInfo.iterator(); iter.hasNext(); ) {
       TextInfo info = (TextInfo) iter.next();

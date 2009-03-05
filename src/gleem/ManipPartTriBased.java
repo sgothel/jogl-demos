@@ -170,12 +170,12 @@ public class ManipPartTriBased extends ManipPart {
       return;
     boolean lightingOn = true;
     // FIXME: this is too expensive; figure out another way
-    //  if (glIsEnabled(GL.GL_LIGHTING))
+    //  if (glIsEnabled(GL2ES1.GL_LIGHTING))
     //    lightingOn = true;
 
     if (lightingOn) {
-      gl.glEnable(GL.GL_COLOR_MATERIAL);
-      gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+      gl.glEnable(GL2ES1.GL_COLOR_MATERIAL);
+      gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL2ES1.GL_AMBIENT_AND_DIFFUSE);
     }
     gl.glBegin(GL.GL_TRIANGLES);
     if (highlighted)
@@ -204,7 +204,7 @@ public class ManipPartTriBased extends ManipPart {
     }
     gl.glEnd();
     if (lightingOn)
-      gl.glDisable(GL.GL_COLOR_MATERIAL);
+      gl.glDisable(GL2ES1.GL_COLOR_MATERIAL);
   }
 
   //----------------------------------------------------------------------

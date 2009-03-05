@@ -229,24 +229,24 @@ public class cgGL_vertex_example implements GLEventListener
     InitializeCube(CubeVertices);
 
     /* Enable a single OpenGL light. */
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, LightDiffuse, 0);
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, LightPosition, 0);
-    gl.glEnable(GL.GL_LIGHT0);
+    gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_DIFFUSE, LightDiffuse, 0);
+    gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, LightPosition, 0);
+    gl.glEnable(GL2ES1.GL_LIGHT0);
     if (false) { // #if 0
-      gl.glEnable(GL.GL_LIGHTING);
+      gl.glEnable(GL2ES1.GL_LIGHTING);
     } else {     // #else
-      gl.glDisable(GL.GL_LIGHTING);
+      gl.glDisable(GL2ES1.GL_LIGHTING);
     }            // #endif
 
     /* Use depth buffering for hidden surface elimination. */
     gl.glEnable(GL.GL_DEPTH_TEST);
 
     /* Setup the view of the cube. */
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     glu.gluPerspective( /* field of view in degree */ 40.0f,
                     /* aspect ratio */ 1.0f,
                     /* Z near */ 1.0f, /* Z far */ 10.0f);
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     glu.gluLookAt(0.0f, 0.0f, 5.0f,  /* eye is at (0,0,5) */
               0.0f, 0.0f, 0.0f,  /* center is at (0,0,0) */
               0.0f, 1.0f, 0.);  /* up is in positive Y direction */

@@ -47,6 +47,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLProfile;
@@ -305,23 +306,23 @@ public class VertexBufferObject extends Demo {
 
     gl.glClearColor(0, 0, 0, 0);
 
-    gl.glEnable(GL.GL_LIGHT0);
-    gl.glEnable(GL.GL_LIGHTING);
-    gl.glEnable(GL.GL_NORMALIZE);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[]  {.1f, .1f,    0, 1}, 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[]  {.6f, .6f,  .1f, 1}, 0);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] { 1,    1, .75f, 1}, 0);
-    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 128.f);
+    gl.glEnable(GL2ES1.GL_LIGHT0);
+    gl.glEnable(GL2ES1.GL_LIGHTING);
+    gl.glEnable(GL2ES1.GL_NORMALIZE);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2ES1.GL_AMBIENT, new float[]  {.1f, .1f,    0, 1}, 0);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2ES1.GL_DIFFUSE, new float[]  {.6f, .6f,  .1f, 1}, 0);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2ES1.GL_SPECULAR, new float[] { 1,    1, .75f, 1}, 0);
+    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2ES1.GL_SHININESS, 128.f);
 
-    gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
+    gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, new float[] { .5f, 0, .5f, 0}, 0);
     gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
 
     // NOTE: it looks like GLUT (or something else) sets up the
     // projection matrix in the C version of this demo.
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluPerspective(60, 1.0, 0.1, 100);
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 
     allocateBigArray(gl);
     allocateBuffers(gl);
@@ -341,8 +342,8 @@ public class VertexBufferObject extends Demo {
       bigArray = bigArraySystem;
     }
     setupBuffers();
-    gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-    gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+    gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY);
+    gl.glEnableClientState(GL2ES1.GL_NORMAL_ARRAY);
 
     computeElements(gl);
 
@@ -501,9 +502,9 @@ public class VertexBufferObject extends Demo {
 
     if (toggleLighting) {
       if (getFlag('d')) {
-        gl.glDisable(GL.GL_LIGHTING);
+        gl.glDisable(GL2ES1.GL_LIGHTING);
       } else {
-        gl.glEnable(GL.GL_LIGHTING);
+        gl.glEnable(GL2ES1.GL_LIGHTING);
       }
       toggleLighting = false;
     }
@@ -511,10 +512,10 @@ public class VertexBufferObject extends Demo {
     if (toggleLightingModel) {
       if(getFlag('i')) {
         // infinite light
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
+        gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, new float[] { .5f, 0, .5f, 0 }, 0);
         gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
       } else {
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, new float[] { .5f, 0, -.5f,1 }, 0);
+        gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, new float[] { .5f, 0, -.5f,1 }, 0);
         gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
       }
       toggleLightingModel = false;

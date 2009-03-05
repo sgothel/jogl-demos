@@ -1,6 +1,7 @@
 package demos.hdr;
 
 import java.io.IOException;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 
 

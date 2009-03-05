@@ -127,8 +127,8 @@ public class ManipPartLineSeg extends ManipPart {
     if (!visible)
       return;
     // FIXME: probably too slow
-    boolean reenable = gl.glIsEnabled(GL.GL_LIGHTING);
-    gl.glDisable(GL.GL_LIGHTING);
+    boolean reenable = gl.glIsEnabled(GL2ES1.GL_LIGHTING);
+    gl.glDisable(GL2ES1.GL_LIGHTING);
     gl.glBegin(GL.GL_LINES);
     if (highlighted)
       gl.glColor3f(highlightColor.x(), highlightColor.y(), highlightColor.z());
@@ -140,7 +140,7 @@ public class ManipPartLineSeg extends ManipPart {
     }
     gl.glEnd();
     if (reenable)
-      gl.glEnable(GL.GL_LIGHTING);
+      gl.glEnable(GL2ES1.GL_LIGHTING);
   }
 
   //----------------------------------------------------------------------

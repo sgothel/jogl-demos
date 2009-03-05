@@ -51,6 +51,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLProfile;
@@ -103,7 +104,7 @@ public class TextCube extends Demo {
 
   public void init(GLAutoDrawable drawable) {
     renderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 72));
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     gl.glEnable(GL2.GL_DEPTH_TEST);
 
     // Compute the scale factor of the largest string which will make
@@ -166,7 +167,7 @@ public class TextCube extends Demo {
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluPerspective(15, (float) width / (float) height, 5, 15);

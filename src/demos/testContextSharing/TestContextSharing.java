@@ -43,6 +43,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.util.Random;
 import javax.media.opengl.DebugGL2;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;

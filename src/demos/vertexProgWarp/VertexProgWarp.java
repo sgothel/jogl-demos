@@ -53,6 +53,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
@@ -324,7 +325,7 @@ public class VertexProgWarp extends Demo {
     super.shutdownDemo();
   }
 
-  private void initExtension(GL gl, String glExtensionName) {
+  private void initExtension(GL2 gl, String glExtensionName) {
     if (!gl.isExtensionAvailable(glExtensionName)) {
       final String message = "OpenGL extension \"" + glExtensionName + "\" not available";
       new Thread(new Runnable() {
@@ -630,7 +631,7 @@ public class VertexProgWarp extends Demo {
     }
   }
 
-  private void drawCylinder(GL gl) {
+  private void drawCylinder(GL2 gl) {
     GLUquadric quad;
 
     quad = glu.gluNewQuadric();
@@ -639,7 +640,7 @@ public class VertexProgWarp extends Demo {
     glu.gluQuadricNormals    (quad, GLU.GLU_SMOOTH);
     glu.gluQuadricTexture    (quad, true);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glPushMatrix();
     gl.glTranslatef(-1.0f, 0.0f, 0.0f);
     gl.glRotatef   (90.0f, 0.0f, 1.0f, 0.0f);

@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -100,11 +101,11 @@ public class TestSubImage {
     public void init(GLAutoDrawable drawable) {}
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-      GL gl = drawable.getGL();
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      GL2 gl = drawable.getGL().getGL2();
+      gl.glMatrixMode(GL2ES1.GL_PROJECTION);
       gl.glLoadIdentity();
       glu.gluOrtho2D(0, 1, 0, 1);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
       gl.glLoadIdentity();
     }
 

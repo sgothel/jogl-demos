@@ -2,8 +2,11 @@ package demos.es1;
 
 import java.nio.*;
 import javax.media.opengl.*;
+import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
+import com.sun.opengl.util.glsl.fixed.*;
+import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 
 import com.sun.javafx.newt.*;
 
@@ -93,8 +96,21 @@ public class RedSquare implements MouseListener, GLEventListener {
     private FloatBuffer vertices;
 
     public void init(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
-        glu = GLU.createGLU();
+        GLFixedFuncIf gl;
+        {
+            GL _gl = drawable.getGL();
+            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
+                if(_gl.isGLES2()) {
+                    gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
+                } else {
+                    gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
+                }
+                _gl.getContext().setGL(gl);
+            } else {
+                gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
+            }
+        }
+
         System.err.println("Entering initialization");
         System.err.println("GL Profile: "+GLProfile.getProfile());
         System.err.println("GL:" + gl);
@@ -102,10 +118,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         System.err.println("GL_EXTENSIONS:");
         System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
 
-        if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("RedSquare Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
-        }
+        glu = GLU.createGLU();
 
         // Allocate vertex arrays
         colors   = BufferUtil.newFloatBuffer(16);
@@ -122,16 +135,16 @@ public class RedSquare implements MouseListener, GLEventListener {
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
-        gl.glVertexPointer(3, gl.GL_FLOAT, 0, vertices);
-        gl.glColorPointer(4, gl.GL_FLOAT, 0, colors);
+        gl.glVertexPointer(3, GL.GL_FLOAT, 0, vertices);
+        gl.glColorPointer(4, GL.GL_FLOAT, 0, colors);
 
         // OpenGL Render Settings
         gl.glClearColor(0, 0, 0, 1);
-        gl.glEnable(gl.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_DEPTH_TEST);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL gl = drawable.getGL();
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
         // Set location in front of camera
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
@@ -141,8 +154,8 @@ public class RedSquare implements MouseListener, GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // One rotation every four seconds
         gl.glMatrixMode(gl.GL_MODELVIEW);
@@ -154,7 +167,7 @@ public class RedSquare implements MouseListener, GLEventListener {
 
 
         // Draw a square
-        gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
+        gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {

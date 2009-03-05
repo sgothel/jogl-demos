@@ -32,8 +32,11 @@
 package demos.es2.openmax;
 
 import javax.media.opengl.*;
+import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
+import com.sun.opengl.util.glsl.fixed.*;
+import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 import java.nio.*;
 
 import com.sun.javafx.newt.*;
@@ -87,12 +90,22 @@ public class Cube implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
-        glu = GLU.createGLU();
-        if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("Cubes Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+        GLFixedFuncIf gl;
+        {
+            GL _gl = drawable.getGL();
+            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
+                if(_gl.isGLES2()) {
+                    gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
+                } else {
+                    gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
+                }
+                _gl.getContext().setGL(gl);
+            } else {
+                gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
+            }
         }
+
+        glu = GLU.createGLU();
 
         gl.glGenBuffers(4, vboNames, 0);
 
@@ -103,16 +116,17 @@ public class Cube implements GLEventListener {
             System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
             System.err.println("GL_EXTENSIONS:");
             System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+            System.err.println("GLF:" + gl);
         }
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         float aspect = (height != 0) ? ((float)width / (float)height) : 1.0f;
 
-        GL gl = drawable.getGL();
-        GL2ES1 glF=null;
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        GL2ES1 gl2es1=null;
         if(gl.isGL2ES1()) {
-            glF = drawable.getGL().getGL2ES1();
+            gl2es1 = drawable.getGL().getGL2ES1();
         }
 
         gl.glViewport(0, 0, width, height);
@@ -144,11 +158,11 @@ public class Cube implements GLEventListener {
             gl.glDisable(gl.GL_LIGHT0);
         }
         gl.glEnable(gl.GL_CULL_FACE);
-        if(null!=glF) {
+        if(null!=gl2es1) {
             gl.glEnable(gl.GL_NORMALIZE);
 
             gl.glShadeModel(gl.GL_SMOOTH);
-            gl.glDisable(gl.GL_DITHER);
+            gl.glDisable(GL.GL_DITHER);
         }
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
@@ -161,6 +175,7 @@ public class Cube implements GLEventListener {
         gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeNormals.limit() * BufferUtil.SIZEOF_BYTE, cubeNormals, GL.GL_STATIC_DRAW);
         gl.glNormalPointer(gl.GL_BYTE, 0, 0);
 
+        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
         if (cubeColors != null) {
             gl.glEnableClientState(gl.GL_COLOR_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[2]);
@@ -171,18 +186,18 @@ public class Cube implements GLEventListener {
         if (cubeTexCoords != null) {
             gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[3]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_FLOAT, cubeTexCoords, GL.GL_STATIC_DRAW);
-            gl.glTexCoordPointer(2, gl.GL_FLOAT, 0, 0);
-            if(null!=glF) {
-                glF.glTexEnvi(glF.GL_TEXTURE_ENV, glF.GL_TEXTURE_ENV_MODE, glF.GL_INCR);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_SHORT, cubeTexCoords, GL.GL_STATIC_DRAW);
+            gl.glTexCoordPointer(2, gl.GL_SHORT, 0, 0);
+            if(null!=gl2es1) {
+                gl2es1.glTexEnvi(gl2es1.GL_TEXTURE_ENV, gl2es1.GL_TEXTURE_ENV_MODE, gl2es1.GL_INCR);
             }
         } else {
             gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         }
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
-        if(null!=glF) {
-            glF.glHint(glF.GL_PERSPECTIVE_CORRECTION_HINT, glF.GL_FASTEST);
+        if(null!=gl2es1) {
+            gl2es1.glHint(gl2es1.GL_PERSPECTIVE_CORRECTION_HINT, gl2es1.GL_FASTEST);
         }
 
         gl.glMatrixMode(gl.GL_PROJECTION);
@@ -197,7 +212,7 @@ public class Cube implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 

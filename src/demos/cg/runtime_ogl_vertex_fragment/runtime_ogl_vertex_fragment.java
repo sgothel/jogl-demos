@@ -137,11 +137,11 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     gl.glClearColor(.25f, .25f, .25f, 1.0f);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluPerspective(30.0f, 1.0f, .1f, 100);
 
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
     glu.gluLookAt(4, 4, -4, 0, 0, 0, 0, 1, 0);
 

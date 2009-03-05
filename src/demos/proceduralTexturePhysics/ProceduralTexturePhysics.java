@@ -52,6 +52,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
@@ -188,7 +189,7 @@ public class ProceduralTexturePhysics extends Demo {
         }
 
         gl.glClearColor(0, 0.2f, 0.5f, 0);
-        gl.glDisable(GL.GL_LIGHTING);
+        gl.glDisable(GL2ES1.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glDisable(GL.GL_CULL_FACE);
 

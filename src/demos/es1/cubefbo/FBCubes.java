@@ -35,7 +35,11 @@ package demos.es1.cubefbo;
 
 import demos.es1.cube.Cube;
 import javax.media.opengl.*;
+import javax.media.opengl.util.*;
+import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.FBObject;
+import com.sun.opengl.util.glsl.fixed.*;
+import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 import java.nio.*;
 
 class FBCubes implements GLEventListener {
@@ -52,12 +56,21 @@ class FBCubes implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
-
-        if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("FBCubes Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+        GLFixedFuncIf gl;
+        {
+            GL _gl = drawable.getGL();
+            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
+                if(_gl.isGLES2()) {
+                    gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
+                } else {
+                    gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
+                }
+                _gl.getContext().setGL(gl);
+            } else {
+                gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
+            }
         }
+        System.out.println(gl);
 
         gl.glGetError(); // flush error ..
         /*
@@ -98,7 +111,7 @@ class FBCubes implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
 
         fbo1.bind(gl);
         cubeInner.reshape(drawable, 0, 0, FBO_SIZE, FBO_SIZE);

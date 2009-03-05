@@ -81,9 +81,9 @@ public class GLComponent extends GLCanvas implements GLEventListener {
     }
     
     public void init(GLAutoDrawable drawable) {
-        final GL gl = drawable.getGL();        
+        final GL2 gl = drawable.getGL().getGL2();        
 
-        gl.glShadeModel(GL.GL_SMOOTH);
+        gl.glShadeModel(GL2ES1.GL_SMOOTH);
         // Set the background / clear color.
         gl.glClearColor(background.r, background.g, background.b, background.a);
         // Clear the depth
@@ -107,12 +107,12 @@ public class GLComponent extends GLCanvas implements GLEventListener {
     }    
     
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
         // the size of openGL
         gl.glViewport(0,0, width, height);
         
         // perspective view (smaller for further behind)
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(GL2ES1.GL_PROJECTION);
         gl.glLoadIdentity();
         
         // perspective
@@ -121,7 +121,7 @@ public class GLComponent extends GLCanvas implements GLEventListener {
         glu.gluPerspective(45.0, ratio, 0.0,  1.0);
         
         // draw into the model matrix now
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
     

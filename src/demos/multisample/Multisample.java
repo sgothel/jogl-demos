@@ -129,9 +129,9 @@ public class Multisample {
       //      gl.glEnable(GL.GL_DEPTH_TEST);
       //      gl.glDepthFunc(GL.GL_LESS);
 
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
       gl.glLoadIdentity();
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glMatrixMode(GL2ES1.GL_PROJECTION);
       gl.glLoadIdentity();
       gl.glOrtho(-1, 1, -1, 1, -1, 1);
     }

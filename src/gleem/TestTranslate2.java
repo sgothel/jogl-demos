@@ -45,6 +45,7 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -65,18 +66,18 @@ public class TestTranslate2 {
     private CameraParameters params = new CameraParameters();
 
     public void init(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
 
       gl.glClearColor(0, 0, 0, 0);
       float[] lightPosition = new float[] {1, 1, 1, 0};
       float[] ambient       = new float[] { 0.0f, 0.0f, 0.0f, 1.0f };
       float[] diffuse       = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT,  ambient, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE,  diffuse, 0);
-      gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
+      gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_AMBIENT,  ambient, 0);
+      gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_DIFFUSE,  diffuse, 0);
+      gl.glLightfv(GL2ES1.GL_LIGHT0, GL2ES1.GL_POSITION, lightPosition, 0);
 
-      gl.glEnable(GL.GL_LIGHTING);
-      gl.glEnable(GL.GL_LIGHT0);
+      gl.glEnable(GL2ES1.GL_LIGHTING);
+      gl.glEnable(GL2ES1.GL_LIGHT0);
       gl.glEnable(GL.GL_DEPTH_TEST);
 
       params.setPosition(new Vec3f(0, 0, 0));
@@ -87,10 +88,10 @@ public class TestTranslate2 {
       params.xSize = X_SIZE;
       params.ySize = Y_SIZE;
 
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glMatrixMode(GL2ES1.GL_PROJECTION);
       gl.glLoadIdentity();
       glu.gluPerspective(45, 1, 1, 100);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
       gl.glLoadIdentity();
 
       // Register the window with the ManipManager
@@ -112,7 +113,7 @@ public class TestTranslate2 {
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       float aspect, theta;
       aspect = (float) w / (float) h;
       if (w >= h)
@@ -123,10 +124,10 @@ public class TestTranslate2 {
       params.setImagePlaneAspectRatio(aspect);
       params.setXSize(w);
       params.setYSize(h);
-      gl.glMatrixMode(GL.GL_PROJECTION);
+      gl.glMatrixMode(GL2ES1.GL_PROJECTION);
       gl.glLoadIdentity();
       glu.gluPerspective(theta, aspect, 1, 100);
-      gl.glMatrixMode(GL.GL_MODELVIEW);
+      gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
       gl.glLoadIdentity();
     }
 

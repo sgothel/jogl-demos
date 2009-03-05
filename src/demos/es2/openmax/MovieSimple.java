@@ -163,20 +163,16 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         System.err.println("GL_EXTENSIONS:");
         System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
 
-        if(gl.isGLES2()) {
-            pmvMatrix = gl.getGLES2().getPMVMatrix();
-        } else {
-            pmvMatrix = new PMVMatrix();
-        }
+        pmvMatrix = new PMVMatrix();
 
         initShader(gl);
 
         // Push the 1st uniform down the path 
         st.glUseProgram(gl, true);
 
-        pmvMatrix.glMatrixMode(gl.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
         if(!st.glUniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
@@ -263,12 +259,12 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         st.glUseProgram(gl, true);
 
         // Set location in front of camera
-        pmvMatrix.glMatrixMode(GL2ES2.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         //pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
 
-        pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, zoom);
 
@@ -294,7 +290,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         }
 
         if(rotate || zoom!=0f) {
-            pmvMatrix.glMatrixMode(gl.GL_MODELVIEW);
+            pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
             pmvMatrix.glLoadIdentity();
             pmvMatrix.glTranslatef(0, 0, zoom);
             pmvMatrix.glRotatef(ang, 0, 0, 1);

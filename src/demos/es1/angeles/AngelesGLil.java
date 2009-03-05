@@ -25,8 +25,12 @@
 package demos.es1.angeles;
 
 import javax.media.opengl.*;
+import javax.media.opengl.sub.*;
+import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
+import com.sun.opengl.util.glsl.fixed.*;
+import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 import java.nio.*;
 
 public class AngelesGLil implements GLEventListener {
@@ -79,25 +83,33 @@ public class AngelesGLil implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         // FIXME: gl.setSwapInterval(1);
 
-        this.gl = drawable.getGL();
-        this.glu = GLU.createGLU();
-        if(gl.isGLES2()) {
-            gl.getGLES2().enableFixedFunctionEmulationMode(GLES2.FIXED_EMULATION_VERTEXCOLORTEXTURE);
-            System.err.println("AngelesGLil Fixed emu: FIXED_EMULATION_VERTEXCOLORTEXTURE");
+        {
+            GL _gl = drawable.getGL();
+            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
+                if(_gl.isGLES2()) {
+                    this.gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
+                } else {
+                    this.gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
+                }
+                _gl.getContext().setGL(this.gl);
+            } else {
+                this.gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
+            }
+            System.err.println("AngelesGL: "+this.gl);
         }
-
+        this.glu = GLU.createGLU();
         cComps = gl.isGLES1() ? 4: 3;
 
         gl.glEnable(GL2ES1.GL_NORMALIZE);
-        gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glDisable(gl.GL_CULL_FACE);
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_CULL_FACE);
         gl.glCullFace(GL.GL_BACK);
         gl.glShadeModel(gl.GL_FLAT);
 
         gl.glEnable(gl.GL_LIGHTING);
         gl.glEnable(gl.GL_LIGHT0);
         gl.glEnable(gl.GL_LIGHT1);
-        gl.glEnable(gl.GL_LIGHT2);
+        gl.glEnable(gl.GL_LIGHT2); 
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
@@ -139,7 +151,7 @@ public class AngelesGLil implements GLEventListener {
             TraceGL2 gltrace = new TraceGL2(gl2, System.err);
             gl2.getContext().setGL(gltrace);
             gl2 = gltrace;
-        }*/
+        } */
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -148,7 +160,7 @@ public class AngelesGLil implements GLEventListener {
         this.x = x;
         this.y = y;
 
-        this.gl = drawable.getGL();
+        this.gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -157,9 +169,9 @@ public class AngelesGLil implements GLEventListener {
 
         // JAU gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
-        //gl.glShadeModel(GL.GL_SMOOTH);
+        //gl.glShadeModel(gl.GL_SMOOTH);
         gl.glShadeModel(gl.GL_FLAT);
-        gl.glDisable(gl.GL_DITHER);
+        gl.glDisable(GL.GL_DITHER);
 
         //gl.glMatrixMode(gl.GL_PROJECTION);
         //gl.glLoadIdentity();
@@ -174,7 +186,7 @@ public class AngelesGLil implements GLEventListener {
         if (gAppAlive==0)
             return;
 
-        this.gl = drawable.getGL();
+        this.gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
 
         // Actual tick value is "blurred" a little bit.
         sTick = (sTick + tick - sStartTick) >> 1;
@@ -186,7 +198,7 @@ public class AngelesGLil implements GLEventListener {
             return;
         }
 
-        gl.glClear(gl.GL_DEPTH_BUFFER_BIT | gl.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
@@ -199,7 +211,7 @@ public class AngelesGLil implements GLEventListener {
         configureLightAndMaterial();
 
         if(blendingEnabled) {
-            gl.glEnable(gl.GL_CULL_FACE);
+            gl.glEnable(GL.GL_CULL_FACE);
             // Draw the reflection by drawing models with negated Z-axis.
             gl.glPushMatrix();
             drawModels(-1);
@@ -210,7 +222,7 @@ public class AngelesGLil implements GLEventListener {
         drawGroundPlane(); 
 
         if(blendingEnabled) {
-            gl.glDisable(gl.GL_CULL_FACE);
+            gl.glDisable(GL.GL_CULL_FACE);
         }
 
         // Draw all the models normally.
@@ -229,7 +241,7 @@ public class AngelesGLil implements GLEventListener {
     }
 
  private boolean blendingEnabled = true;
- private GL gl;
+ private GLFixedFuncIf gl; // temp cache
  private GLU glu;
 
  // Total run length is 20 * camera track base unit length (see cams.h).
@@ -249,20 +261,19 @@ int randomUInt()
     return Math.abs((int) (sRandomSeed >> 16));
 }
 
-
 private int cComps;
 
 // Definition of one GL object in this demo.
-public class GLObject {
+public class GLSpatial {
     /* Vertex array and color array are enabled for all objects, so their
      * pointers must always be valid and non-null. Normal array is not
      * used by the ground plane, so when its pointer is null then normal
      * array usage is disabled.
      *
-     * Vertex array is supposed to use gl.GL_FLOAT datatype and stride 0
+     * Vertex array is supposed to use GL.GL_FLOAT datatype and stride 0
      * (i.e. tightly packed array). Color array is supposed to have 4
-     * components per color with gl.GL_UNSIGNED_BYTE datatype and stride 0.
-     * Normal array is supposed to use gl.GL_FLOAT datatype and stride 0.
+     * components per color with GL.GL_UNSIGNED_BYTE datatype and stride 0.
+     * Normal array is supposed to use GL.GL_FLOAT datatype and stride 0.
      */
     protected int vboName, count;
     protected int vComps, nComps;
@@ -270,7 +281,7 @@ public class GLObject {
     protected FloatBuffer interlArray;
     protected GLArrayDataWrapper vArrayData, cArrayData, nArrayData=null;
 
-    public GLObject(int vertices, int vertexComponents,
+    public GLSpatial(int vertices, int vertexComponents,
                     boolean useNormalArray) {
         count = vertices;
         vComps= vertexComponents;
@@ -297,12 +308,12 @@ public class GLObject {
         interlArray.position(count*(vComps+cComps+nComps));
         interlArray.flip();
 
-        vArrayData = GLArrayDataWrapper.createFixed(GL.GL_VERTEX_ARRAY, vComps, GL.GL_FLOAT, false,
+        vArrayData = GLArrayDataWrapper.createFixed(gl.GL_VERTEX_ARRAY, vComps, GL.GL_FLOAT, false,
                                                     bStride, pBuffer, vboName, vOffset);
-        cArrayData = GLArrayDataWrapper.createFixed(GL.GL_COLOR_ARRAY, cComps, GL.GL_FLOAT, false,
+        cArrayData = GLArrayDataWrapper.createFixed(gl.GL_COLOR_ARRAY, cComps, GL.GL_FLOAT, false,
                                                     bStride, pBuffer, vboName, cOffset);
         if(useNormalArray) {
-            nArrayData = GLArrayDataWrapper.createFixed(GL.GL_NORMAL_ARRAY, nComps, GL.GL_FLOAT, false,
+            nArrayData = GLArrayDataWrapper.createFixed(gl.GL_NORMAL_ARRAY, nComps, GL.GL_FLOAT, false,
                                                         bStride, pBuffer, vboName, nOffset);
         }
     }
@@ -342,7 +353,8 @@ public class GLObject {
             gl.glNormalPointer(nArrayData);
         }
 
-        gl.glDrawArrays(gl.GL_TRIANGLES, 0, count);
+
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, count);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
@@ -359,8 +371,8 @@ int sCurrentCamTrack = 0;
 long sCurrentCamTrackStartTick = 0;
 long sNextCamTrackStartTick = 0x7fffffff;
 
-GLObject sSuperShapeObjects[] = new GLObject[SuperShape.COUNT];
-GLObject sGroundPlane;
+GLSpatial sSuperShapeObjects[] = new GLSpatial[SuperShape.COUNT];
+GLSpatial sGroundPlane;
 
 
 public class VECTOR3 {
@@ -410,7 +422,7 @@ float ssFunc(final float t, final float p[], int pOff)
 // Creates and returns a supershape object.
 // Based on Paul Bourke's POV-Ray implementation.
 // http://astronomy.swin.edu.au/~pbourke/povray/supershape/
-GLObject createSuperShape(final float params[])
+GLSpatial createSuperShape(final float params[])
 {
     final int resol1 = (int)params[SuperShape.PARAMS - 3];
     final int resol2 = (int)params[SuperShape.PARAMS - 2];
@@ -422,19 +434,18 @@ GLObject createSuperShape(final float params[])
     final int latitudeCount = latitudeEnd - latitudeBegin;
     final int triangleCount = longitudeCount * latitudeCount * 2;
     final int vertices = triangleCount * 3;
-    GLObject result;
+    GLSpatial result;
     float baseColor[] = new float[3];
     float color[] = new float[3];
     int a, longitude, latitude;
     int currentIndex, currentQuad;
 
-    result = new GLObject(vertices, 3, true);
+    result = new GLSpatial(vertices, 3, true);
     if (result == null)
         return null;
 
-    for (a = 0; a < 3; ++a) {
+    for (a = 0; a < 3; ++a)
         baseColor[a] = ((randomUInt() % 155) + 100) / 255.f;
-    }
 
     currentQuad = 0;
     currentIndex = 0;
@@ -489,7 +500,7 @@ GLObject createSuperShape(final float params[])
 
                 /* Pre-normalization of the normals is disabled here because
                  * they will be normalized anyway later due to automatic
-                 * normalization (gl.GL_NORMALIZE). It is enabled because the
+                 * normalization (GL2ES1.GL_NORMALIZE). It is enabled because the
                  * objects are scaled with glScale.
                  */
                 /*
@@ -607,19 +618,20 @@ GLObject createSuperShape(final float params[])
     return result;
 }
 
-GLObject createGroundPlane()
+
+GLSpatial createGroundPlane()
 {
     final  int scale = 4;
     final  int yBegin = -15, yEnd = 15;    // ends are non-inclusive
     final  int xBegin = -15, xEnd = 15;
     final  int triangleCount = (yEnd - yBegin) * (xEnd - xBegin) * 2;
     final  int vertices = triangleCount * 3;
-    GLObject result;
+    GLSpatial result;
     int x, y;
     int currentIndex, currentQuad;
     final int vcomps = 2;
 
-    result = new GLObject(vertices, vcomps, false);
+    result = new GLSpatial(vertices, vcomps, false);
     if (result == null)
         return null;
 
@@ -665,18 +677,18 @@ GLObject createGroundPlane()
 void drawGroundPlane()
 {
     gl.glDisable(gl.GL_LIGHTING);
-    gl.glDisable(gl.GL_DEPTH_TEST);
+    gl.glDisable(GL.GL_DEPTH_TEST);
     if(blendingEnabled) {
-        gl.glEnable(gl.GL_BLEND);
-        gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
     }
 
     sGroundPlane.draw();
 
     if(blendingEnabled) {
-        gl.glDisable(gl.GL_BLEND);
+        gl.glDisable(GL.GL_BLEND);
     }
-    gl.glEnable(gl.GL_DEPTH_TEST);
+    gl.glEnable(GL.GL_DEPTH_TEST);
     gl.glEnable(gl.GL_LIGHTING);
 }
 
@@ -691,9 +703,9 @@ void drawFadeQuad()
         final float fadeColor = FixedPoint.toFloat(minFade << 7);
         gl.glColor4f(fadeColor, fadeColor, fadeColor, 0f);
 
-        gl.glDisable(gl.GL_DEPTH_TEST);
-        gl.glEnable(gl.GL_BLEND);
-        gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
         gl.glDisable(gl.GL_LIGHTING);
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
@@ -706,15 +718,15 @@ void drawFadeQuad()
         gl.glDisableClientState(gl.GL_COLOR_ARRAY);
         gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
-        gl.glVertexPointer(2, gl.GL_FLOAT, 0, quadVertices);
-        gl.glDrawArrays(gl.GL_TRIANGLES, 0, 6);
+        gl.glVertexPointer(2, GL.GL_FLOAT, 0, quadVertices);
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, 6);
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
 
         gl.glEnable(gl.GL_LIGHTING);
-        gl.glDisable(gl.GL_BLEND);
-        gl.glEnable(gl.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_DEPTH_TEST);
     }
 }
 
@@ -735,9 +747,9 @@ void configureLightAndMaterial()
     gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light1Diffuse);
     gl.glLightfv(gl.GL_LIGHT2, gl.GL_POSITION, light2Position);
     gl.glLightfv(gl.GL_LIGHT2, gl.GL_DIFFUSE, light2Diffuse);
-    gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, materialSpecular);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, gl.GL_SPECULAR, materialSpecular);
 
-    gl.glMaterialf(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, 60.0f);
+    gl.glMaterialf(GL.GL_FRONT_AND_BACK, gl.GL_SHININESS, 60.0f);
     gl.glEnable(gl.GL_COLOR_MATERIAL);
 }
 

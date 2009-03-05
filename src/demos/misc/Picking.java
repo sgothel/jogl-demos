@@ -63,7 +63,7 @@ public class Picking
 		
     public void init(GLAutoDrawable drawable) 
     {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       this.gldrawable = drawable;
       gl.glEnable(GL2.GL_CULL_FACE);
       gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -73,7 +73,7 @@ public class Picking
     	
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) 
     {
-      GL gl = drawable.getGL();
+      GL2 gl = drawable.getGL().getGL2();
       float h = (float) height / (float) width;
       gl.glViewport(0, 0, width, height);
       gl.glMatrixMode(GL2.GL_PROJECTION);
@@ -148,14 +148,14 @@ public class Picking
       System.out.println("---------------------------------");
     }
 		
-    public int viewPortWidth(GL gl)
+    public int viewPortWidth(GL2 gl)
     {
       int[] viewPort = new int[4];
       gl.glGetIntegerv(GL2.GL_VIEWPORT, viewPort, 0);
       return viewPort[2];
     }
 
-    public int viewPortHeight(GL gl)
+    public int viewPortHeight(GL2 gl)
     {
       int[] viewPort = new int[4];
       gl.glGetIntegerv(GL2.GL_VIEWPORT, viewPort, 0);

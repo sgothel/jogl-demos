@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -149,7 +150,7 @@ public class TestTexture implements GLEventListener {
 
   public void init(GLAutoDrawable drawable) {
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     drawable.setGL(new DebugGL2(gl.getGL2()));
 
     gl.glClearColor(0, 0, 0, 0);
@@ -157,11 +158,11 @@ public class TestTexture implements GLEventListener {
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    GL gl = drawable.getGL();
-    gl.glMatrixMode(GL.GL_PROJECTION);
+    GL2 gl = drawable.getGL().getGL2();
+    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluOrtho2D(0, 1, 0, 1);
-    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
   }
 

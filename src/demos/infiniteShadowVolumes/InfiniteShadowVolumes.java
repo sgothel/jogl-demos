@@ -57,6 +57,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -1264,13 +1265,13 @@ public class InfiniteShadowVolumes extends Demo {
     return infiniteFrustumInverse(-x, x, -y, y, zNear);
   }
 
-  private void applyInfinitePerspective(GL gl, ExaminerViewer v) {
+  private void applyInfinitePerspective(GL2 gl, ExaminerViewer v) {
     CameraParameters parms = v.getCameraParameters();
     float aspect = parms.getImagePlaneAspectRatio();
     gl.glMultMatrixf(getData(infinitePerspective(parms.getVertFOV(), aspect, v.getZNear())), 0);
   }
 
-  private void applyInfinitePerspectiveInverse(GL gl, ExaminerViewer v) {
+  private void applyInfinitePerspectiveInverse(GL2 gl, ExaminerViewer v) {
     CameraParameters parms = v.getCameraParameters();
     float aspect = parms.getImagePlaneAspectRatio();
     gl.glMultMatrixf(getData(infinitePerspectiveInverse(parms.getVertFOV(), aspect, v.getZNear())), 0);

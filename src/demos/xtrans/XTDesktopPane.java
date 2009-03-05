@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
@@ -217,14 +218,14 @@ public class XTDesktopPane extends OffscreenDesktopPane {
             double near = d - (h / 2);
             double far  = d + (h / 2);
             gl.glViewport(oglRect.x, oglRect.y, oglRect.width, oglRect.height);
-            gl.glMatrixMode(GL.GL_PROJECTION);
+            gl.glMatrixMode(GL2ES1.GL_PROJECTION);
             gl.glPushMatrix();
             gl.glLoadIdentity();
             glu.gluPerspective(fovy, (w / h), near, far);
             gl.glMatrixMode(GL.GL_TEXTURE);
             gl.glPushMatrix();
             gl.glLoadIdentity();
-            gl.glMatrixMode(GL.GL_MODELVIEW);
+            gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
             gl.glPushMatrix();
             gl.glLoadIdentity();
             double eyeX = w / 2;
@@ -250,7 +251,7 @@ public class XTDesktopPane extends OffscreenDesktopPane {
             // Orthographic projection for debugging
             gl.glViewport(oglRect.x, oglRect.y, oglRect.width, oglRect.height);
             // Set up coordinate system for easy access
-            gl.glMatrixMode(GL.GL_PROJECTION);
+            gl.glMatrixMode(GL2ES1.GL_PROJECTION);
             //          System.err.println("oglRect x = " + oglRect.getX());
             //          System.err.println("oglRect y = " + oglRect.getY());
             //          System.err.println("oglRect w = " + oglRect.getWidth());
@@ -264,7 +265,7 @@ public class XTDesktopPane extends OffscreenDesktopPane {
             gl.glMatrixMode(GL.GL_TEXTURE);
             gl.glPushMatrix();
             gl.glLoadIdentity();
-            gl.glMatrixMode(GL.GL_MODELVIEW);
+            gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
             gl.glPushMatrix();
             gl.glLoadIdentity();
 
@@ -363,11 +364,11 @@ public class XTDesktopPane extends OffscreenDesktopPane {
             gl.glDisable(GL.GL_BLEND);
 
             gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-            gl.glMatrixMode(GL.GL_PROJECTION);
+            gl.glMatrixMode(GL2ES1.GL_PROJECTION);
             gl.glPopMatrix();
             gl.glMatrixMode(GL.GL_TEXTURE);
             gl.glPopMatrix();
-            gl.glMatrixMode(GL.GL_MODELVIEW);
+            gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
             gl.glPopMatrix();
             gl.glFinish();
           } finally {

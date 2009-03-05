@@ -57,6 +57,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -202,7 +203,7 @@ public class HWShadowmapsSimple extends Demo {
 
   public void init(GLAutoDrawable drawable) {
     // Use debug pipeline
-    // drawable.setGL(new DebugGL(drawable.getGL()));
+    // drawable.setGL(new DebugGL(drawable.getGL().getGL2()));
 
     GL2 gl = drawable.getGL().getGL2();
     glu = new GLU();
@@ -381,7 +382,7 @@ public class HWShadowmapsSimple extends Demo {
   }
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-  private void checkExtension(GL gl, String extensionName) {
+  private void checkExtension(GL2 gl, String extensionName) {
     if (!gl.isExtensionAvailable(extensionName)) {
       String message = "Unable to initialize " + extensionName + " OpenGL extension";
       unavailableExtension(message);
@@ -465,7 +466,7 @@ public class HWShadowmapsSimple extends Demo {
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
-  private void set_light_view_texture_parameters(GL gl) {
+  private void set_light_view_texture_parameters(GL2 gl) {
     gl.glBindTexture(GL2.GL_TEXTURE_2D, light_view_depth);
     gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
     gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
@@ -475,7 +476,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_COMPARE_FUNC, GL2.GL_LEQUAL);
   }
 
-  private int genTexture(GL gl) {
+  private int genTexture(GL2 gl) {
     int[] tmp = new int[1];
     gl.glGenTextures(1, tmp, 0);
     return tmp[0];
@@ -512,7 +513,7 @@ public class HWShadowmapsSimple extends Demo {
     }
   }
 
-  private void texgen(GL gl, boolean enable) {
+  private void texgen(GL2 gl, boolean enable) {
     if(enable) {
       gl.glEnable(GL2.GL_TEXTURE_GEN_S);
       gl.glEnable(GL2.GL_TEXTURE_GEN_T);
@@ -715,7 +716,7 @@ public class HWShadowmapsSimple extends Demo {
     render_light_frustum(gl);
   }
 
-  private void largest_square_power_of_two_viewport(GL gl, GLAutoDrawable drawable, int viewportX, int viewportY) {
+  private void largest_square_power_of_two_viewport(GL2 gl, GLAutoDrawable drawable, int viewportX, int viewportY) {
     float min = Math.min(drawable.getWidth(), drawable.getHeight());
     float log2min = (float) Math.log(min) / (float) Math.log(2.0);
     float pow2 = (float) Math.floor(log2min);
@@ -772,7 +773,7 @@ public class HWShadowmapsSimple extends Demo {
     out[3] = m.get(row, 3);
   }
 
-  private static void applyTransform(GL gl, Mat4f xform) {
+  private static void applyTransform(GL2 gl, Mat4f xform) {
     float[] data = new float[16];
     xform.getColumnMajorData(data);
     gl.glMultMatrixf(data, 0);

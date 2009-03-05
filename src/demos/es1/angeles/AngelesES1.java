@@ -125,7 +125,7 @@ public class AngelesES1 implements GLEventListener {
 
         gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
-        //gl.glShadeModel(GL.GL_SMOOTH);
+        //gl.glShadeModel(GL2ES1.GL_SMOOTH);
         gl.glShadeModel(gl.GL_FLAT);
         gl.glDisable(gl.GL_DITHER);
 
