@@ -13,9 +13,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.media.opengl.DefaultGLCapabilitiesChooser;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLCapabilitiesChooser;
+import javax.media.nwi.DefaultNWCapabilitiesChooser;
+import javax.media.nwi.NWCapabilities;
+import javax.media.nwi.NWCapabilitiesChooser;
 import javax.media.opengl.awt.GLCanvas;
 import com.sun.opengl.util.FPSAnimator;
 import javax.swing.BorderFactory;
@@ -28,7 +28,7 @@ import javax.swing.JTable;
 
 /*******************************************************************************
  * @file GLCapsTableDemo.java
- * @desc Demonstrate use of GLCapabilitiesChooser and DefaultGLCapabilities.
+ * @desc Demonstrate use of NWCapabilitiesChooser and DefaultNWCapabilities.
  *       Demo tabulates the available capabilities array and put the data into a
  *       table. Pressing respawn button displays a canvas created with the
  *       currently selected index corresponding to the available array. There
@@ -47,7 +47,7 @@ import javax.swing.JTable;
 public class GLCapsTableDemo
   extends JFrame
   implements
-    GLCapabilitiesChooser
+    NWCapabilitiesChooser
 {
   private String[] colNames =
   {"Pfd", "H/W", "DblBfr", "Stereo", // index, hwaccel, double, stereo
@@ -55,7 +55,7 @@ public class GLCapsTableDemo
    "ABits", "aR", "aG", "aB", "aA", // accum bits
    "Z", "S", "AA|AAS", "PBuf(Float|RTT|RTTRec)"}; // depth, stencil, n
   // samples, pbuffer
-  private ArrayList/*<GLCapabilities>*/ available = new ArrayList/*<GLCapabilities>*/();
+  private ArrayList/*<NWCapabilities>*/ available = new ArrayList/*<NWCapabilities>*/();
   private ArrayList/*<Integer>*/ indices = new ArrayList/*<Integer>*/();
   private Object[][] data;
   private JTable capsTable;
@@ -63,18 +63,18 @@ public class GLCapsTableDemo
   private int selected = desiredCapIndex;
   protected JPanel pane, pane2;
   private boolean updateLR;// leftright
-  private DefaultGLCapabilitiesChooser choiceExaminer = //
-    new DefaultGLCapabilitiesChooser()
+  private DefaultNWCapabilitiesChooser choiceExaminer = //
+    new DefaultNWCapabilitiesChooser()
     {
-      public int chooseCapabilities(GLCapabilities desired,
-                                    GLCapabilities[] available,
+      public int chooseCapabilities(NWCapabilities desired,
+                                    NWCapabilities[] available,
                                     int windowSystemRecommendedChoice)
       {
         if ( available != null )
           for (int i = 0; i < available.length; i++) {
-            GLCapabilities c = available[i];
+            NWCapabilities c = available[i];
             if (c != null) {
-              GLCapsTableDemo.this.available.add((GLCapabilities) c.clone());
+              GLCapsTableDemo.this.available.add((NWCapabilities) c.clone());
               GLCapsTableDemo.this.indices.add(new Integer(i));
             }
           }
@@ -109,7 +109,7 @@ public class GLCapsTableDemo
   private Dimension defdim = new Dimension(512, 256);
   private String visTip = "If no gears are visible, it may be that the "
     + "current desktop color resolution doesn't match "
-    + "the GLCapabilities chosen. Check CBits column.";
+    + "the NWCapabilities chosen. Check CBits column.";
 
   /**
 	 
@@ -123,11 +123,11 @@ public class GLCapsTableDemo
   /**
    * (non-Javadoc)
    * 
-   * @see javax.media.opengl.GLCapabilitiesChooser#chooseCapabilities(javax.media.opengl.GLCapabilities,
-   *      javax.media.opengl.GLCapabilities[], int)
+   * @see javax.media.opengl.NWCapabilitiesChooser#chooseCapabilities(javax.media.opengl.NWCapabilities,
+   *      javax.media.opengl.NWCapabilities[], int)
    */
-  public int chooseCapabilities(GLCapabilities desired,
-                                GLCapabilities[] available,
+  public int chooseCapabilities(NWCapabilities desired,
+                                NWCapabilities[] available,
                                 int windowSystemRecommendedChoice)
   {
     int row = capsTable.getSelectedRow();
@@ -171,7 +171,7 @@ public class GLCapsTableDemo
   private void initComponents()
   {
     // Hack: use multisampled capabilities to pick up more detailed information on Windows
-    GLCapabilities multisampledCaps = new GLCapabilities();
+    NWCapabilities multisampledCaps = new NWCapabilities();
     multisampledCaps.setSampleBuffers(true);
     canvas = new GLCanvas(multisampledCaps, choiceExaminer, null, device);
 
@@ -201,7 +201,7 @@ public class GLCapsTableDemo
     getContentPane().add(buildControls(), BorderLayout.NORTH);
   }
 
-  private JTable tabulateTable(ArrayList/*<GLCapabilities>*/ capabilities,
+  private JTable tabulateTable(ArrayList/*<NWCapabilities>*/ capabilities,
                                ArrayList/*<Integer>*/ indices)
   {
     capabilities.trimToSize();
@@ -210,7 +210,7 @@ public class GLCapsTableDemo
     for (int pfd = 0; pfd < capabilities.size(); pfd++)
       {
         data[ pfd ][ 0 ] = indices.get(pfd);
-        GLCapabilities cap = (GLCapabilities) capabilities.get(pfd);
+        NWCapabilities cap = (NWCapabilities) capabilities.get(pfd);
         data[ pfd ][ 1 ] = "" + (cap.getHardwareAccelerated() ? f : f);
         data[ pfd ][ 2 ] = "" + (cap.getDoubleBuffered() ? t : f);
         data[ pfd ][ 3 ] = "" + (cap.getStereo() ? t : f);

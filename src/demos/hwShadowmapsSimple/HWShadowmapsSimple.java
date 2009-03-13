@@ -60,7 +60,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
+import javax.media.nwi.NWCapabilities;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
@@ -270,7 +270,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glEnable(GL2.GL_DEPTH_TEST);
 
     // init pbuffer
-    GLCapabilities caps = new GLCapabilities();
+    NWCapabilities caps = new NWCapabilities();
     caps.setDoubleBuffered(false);
       
     if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {

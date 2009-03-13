@@ -36,7 +36,7 @@ package demos.cubefbo;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.GLCapabilities;
+import javax.media.nwi.NWCapabilities;
 import javax.media.opengl.awt.GLCanvas;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.FPSAnimator;
@@ -46,7 +46,7 @@ public class Main {
 
   public static void main(String[] args) {
 
-    GLCapabilities caps = new GLCapabilities();
+    NWCapabilities caps = new NWCapabilities();
     GLCanvas canvas = new GLCanvas(caps);
     
     FBCubes cubes = new FBCubes();

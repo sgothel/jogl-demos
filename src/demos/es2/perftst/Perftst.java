@@ -1,6 +1,7 @@
 package demos.es2.perftst;
 
 import java.nio.*;
+import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 
@@ -43,7 +44,7 @@ public class Perftst implements MouseListener, GLEventListener {
         System.err.println("Perftst.run()");
         GLProfile.setProfileGL2ES2();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            NWCapabilities caps = new NWCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

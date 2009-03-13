@@ -60,7 +60,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
+import javax.media.nwi.NWCapabilities;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
@@ -86,7 +86,7 @@ import javax.media.opengl.glu.GLU;
 
 public class InfiniteShadowVolumes extends Demo {
   public static void main(String[] args) {
-    GLCapabilities caps = new GLCapabilities();
+    NWCapabilities caps = new NWCapabilities();
     caps.setStencilBits(16);
     final GLCanvas canvas = new GLCanvas(caps);
     InfiniteShadowVolumes demo = new InfiniteShadowVolumes();

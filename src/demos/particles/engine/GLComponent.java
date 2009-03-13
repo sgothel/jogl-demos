@@ -36,6 +36,7 @@
 
 package demos.particles.engine;
 
+import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.opengl.awt.*;
@@ -62,8 +63,8 @@ public class GLComponent extends GLCanvas implements GLEventListener {
         animator = new FPSAnimator(this, fps);
     }
     
-    private static GLCapabilities getCapabilities() {
-        GLCapabilities caps = new GLCapabilities();
+    private static NWCapabilities getCapabilities() {
+        NWCapabilities caps = new NWCapabilities();
         caps.setDoubleBuffered(true);
         caps.setHardwareAccelerated(true);
         return caps;

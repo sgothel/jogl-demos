@@ -1,6 +1,7 @@
 package demos.es1;
 
 import java.nio.*;
+import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
@@ -10,11 +11,21 @@ import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 
 import com.sun.javafx.newt.*;
 
-public class RedSquare implements MouseListener, GLEventListener {
+public class RedSquare implements KeyListener, MouseListener, GLEventListener {
 
     private GLWindow window;
     private GLU glu;
     private boolean quit = false;
+
+    public void keyPressed(KeyEvent e) { 
+        System.out.println(e);
+    }
+    public void keyReleased(KeyEvent e) { 
+        System.out.println(e);
+    }
+    public void keyTyped(KeyEvent e) { 
+        System.out.println(e);
+    }
 
     public void mouseClicked(MouseEvent e) {
         System.out.println("mouseevent: "+e);
@@ -46,7 +57,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         System.err.println("RedSquare.run()");
         GLProfile.setProfileGLAny();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            NWCapabilities caps = new NWCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -62,6 +73,7 @@ public class RedSquare implements MouseListener, GLEventListener {
             window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);
+            window.addKeyListener(this);
             window.addGLEventListener(this);
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
@@ -69,7 +81,7 @@ public class RedSquare implements MouseListener, GLEventListener {
             window.enablePerfLog(true);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
-            window.setFullscreen(true);
+            // window.setFullscreen(true);
             window.setVisible(true);
 
             while (!quit && window.getDuration() < 20000) {

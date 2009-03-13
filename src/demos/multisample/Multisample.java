@@ -41,6 +41,7 @@ package demos.multisample;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 
@@ -48,13 +49,13 @@ public class Multisample {
   private GLCanvas canvas;
 
   // Simple class to warn if results are not going to be as expected
-  static class MultisampleChooser extends DefaultGLCapabilitiesChooser {
-    public int chooseCapabilities(GLCapabilities desired,
-                                  GLCapabilities[] available,
+  static class MultisampleChooser extends DefaultNWCapabilitiesChooser {
+    public int chooseCapabilities(NWCapabilities desired,
+                                  NWCapabilities[] available,
                                   int windowSystemRecommendedChoice) {
       boolean anyHaveSampleBuffers = false;
       for (int i = 0; i < available.length; i++) {
-        GLCapabilities caps = available[i];
+        NWCapabilities caps = available[i];
         if (caps != null && caps.getSampleBuffers()) {
           anyHaveSampleBuffers = true;
           break;
@@ -65,7 +66,7 @@ public class Multisample {
         System.err.println("WARNING: antialiasing will be disabled because none of the available pixel formats had it to offer");
       } else {
         if (!available[selection].getSampleBuffers()) {
-          System.err.println("WARNING: antialiasing will be disabled because the DefaultGLCapabilitiesChooser didn't supply it");
+          System.err.println("WARNING: antialiasing will be disabled because the DefaultNWCapabilitiesChooser didn't supply it");
         }
       }
       return selection;
@@ -77,8 +78,8 @@ public class Multisample {
   }
 
   public void run(String[] args) {
-    GLCapabilities caps = new GLCapabilities();
-    GLCapabilitiesChooser chooser = new MultisampleChooser();
+    NWCapabilities caps = new NWCapabilities();
+    NWCapabilitiesChooser chooser = new MultisampleChooser();
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(4);

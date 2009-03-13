@@ -35,6 +35,7 @@ package demos.es2.openmax;
 
 // import demos.es1.cube.Cube;
 
+import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.sub.fixed.*;
@@ -88,7 +89,7 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
         System.err.println("MovieCube.run()");
         GLProfile.setProfileGL2ES2();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            NWCapabilities caps = new NWCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

@@ -32,6 +32,7 @@
 package demos.es1.cube;
 
 import java.nio.*;
+import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
@@ -308,7 +309,7 @@ public class Cube implements GLEventListener {
         System.err.println("Cube.run()");
         GLProfile.setProfileGLAny();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            NWCapabilities caps = new NWCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
