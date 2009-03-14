@@ -127,6 +127,10 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     gl.glTranslatef(0.0f, 0.0f, -40.0f);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    System.out.println("Gears.dispose: "+drawable);
+  }
+
   public void display(GLAutoDrawable drawable) {
     // Turn the gears' teeth
     angle += 2.0f;

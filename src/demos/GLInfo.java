@@ -45,7 +45,7 @@ public class GLInfo implements GLEventListener {
             window.display();
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("GLInfo shut down cleanly.");
         } catch (Throwable t) {
@@ -76,6 +76,9 @@ public class GLInfo implements GLEventListener {
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
     }
 
     public void display(GLAutoDrawable drawable) {

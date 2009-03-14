@@ -141,6 +141,13 @@ public class TestTextureRenderer implements GLEventListener {
     renderer.markDirty(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    renderer = null;
+    textBounds = null;
+    position = null;
+    time = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     if (startTime == 0) {
       startTime = System.currentTimeMillis();

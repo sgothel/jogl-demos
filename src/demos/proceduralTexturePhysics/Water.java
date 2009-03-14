@@ -445,6 +445,9 @@ public class Water {
       initOpenGL(gl);
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+    }
+
     public void display(GLAutoDrawable drawable) {
 
       GL2 gl = drawable.getGL().getGL2();

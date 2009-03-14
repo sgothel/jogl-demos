@@ -43,6 +43,8 @@ import java.nio.*;
 import com.sun.javafx.newt.*;
 
 public class Cube implements GLEventListener {
+    boolean quit = false;
+
     public Cube () {
         this(false, false);
     }
@@ -212,6 +214,10 @@ public class Cube implements GLEventListener {
         // weird effect ..: gl.glCullFace(gl.GL_FRONT);
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+        quit=true;
+    }
+
     public void display(GLAutoDrawable drawable) {
         GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
 
@@ -352,12 +358,12 @@ public class Cube implements GLEventListener {
             window.setFullscreen(true);
             window.setVisible(true);
 
-            while (window.getDuration() < 31000) {
+            while (!quit && window.getDuration() < 31000) {
                 window.display();
             }
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("Cube shut down cleanly.");
         } catch (Throwable t) {

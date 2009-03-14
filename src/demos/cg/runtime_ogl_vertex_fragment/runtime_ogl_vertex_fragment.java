@@ -115,6 +115,9 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     gl.glEnable(GL.GL_DEPTH_TEST);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   private void CheckCgError()
   {
     /*CGerror*/ int err = CgGL.cgGetError();

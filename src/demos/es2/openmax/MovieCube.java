@@ -113,10 +113,10 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
 
             // Shut things down cooperatively
             if(null!=movie) {
-                movie.dispose(null);
+                movie.destroy(window.getGL());
                 movie=null;
             }
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("MovieCube shut down cleanly.");
         } catch (Throwable t) {
@@ -181,6 +181,16 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
         cube.reshape(drawable, x, y, width, height);
 
         System.out.println("reshape "+width+"x"+height);
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        GL2ES2 gl = drawable.getGL().getGL2ES2();
+
+        movie.destroy(gl);
+        movie=null;
+        cube.dispose(drawable);
+        cube=null;
+        quit=true;
     }
 
     public void display(GLAutoDrawable drawable) {

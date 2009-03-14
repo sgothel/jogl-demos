@@ -75,6 +75,9 @@ public class FullscreenWorkaround implements GLEventListener {
     }
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) {}
   public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {}
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}

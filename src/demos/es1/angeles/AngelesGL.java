@@ -168,6 +168,9 @@ public class AngelesGL implements GLEventListener {
         //System.out.println("reshape ..");
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+    }
+
     public void display(GLAutoDrawable drawable) {
         long tick = System.currentTimeMillis();
 

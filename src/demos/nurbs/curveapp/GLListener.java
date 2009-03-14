@@ -52,6 +52,13 @@ public class GLListener implements GLEventListener {
     gl.glClearColor(1, 1, 1, 1);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    this.gl = null;
+    this.glu = null;
+    this.glut=null;
+    this.nurbs = null;
+  }
+
   /* (non-Javadoc)
    * @see javax.media.opengl.GLEventListener#display(javax.media.opengl.GLAutoDrawable)
    */

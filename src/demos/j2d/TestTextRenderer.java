@@ -124,6 +124,12 @@ public class TestTextRenderer implements GLEventListener {
     fps = new FPSCounter(drawable, 36);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    renderer = null;
+    position = null;
+    time = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     time.update();
 

@@ -124,6 +124,13 @@ public class TestOverlay implements GLEventListener {
     font = new Font("SansSerif", Font.BOLD, 36);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    font = null;
+    overlay = null;
+    time = null;
+    position = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     if (startTime == 0) {
       startTime = System.currentTimeMillis();

@@ -463,6 +463,9 @@ public class VertexBufferObject extends Demo {
     }
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) {
     if (!initComplete) {
       return;

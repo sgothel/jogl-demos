@@ -202,6 +202,10 @@ public abstract class DemoApplication
 		gl.glCullFace(gl.GL_BACK);
 	}
 
+    public void dispose(GLAutoDrawable drawable) {
+        gl=null;
+    }
+
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         gl = drawable.getGL();
 		glutScreenWidth = width;

@@ -120,6 +120,9 @@ public class TextCube extends Demo {
 //    gl.setSwapInterval(0);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) {
     GL2 gl = drawable.getGL().getGL2();
     gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);

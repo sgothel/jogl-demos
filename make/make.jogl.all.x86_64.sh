@@ -4,6 +4,6 @@
 
 #    -Dc.compiler.debug=true 
 
-ant -v \
+ant \
     -Drootrel.build=build-x86_64 \
     $* 2>&1 | tee make.jogl.all.x86_64.log

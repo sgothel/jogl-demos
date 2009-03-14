@@ -237,6 +237,9 @@ public class CustomText extends Demo {
     gl.setSwapInterval(0);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) {
     time.update();
 

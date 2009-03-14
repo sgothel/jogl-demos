@@ -186,6 +186,10 @@ public class Tess {
         public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
         }
 
+        public void dispose(GLAutoDrawable drawable) {
+            gl = null;
+        }
+
         public void display(GLAutoDrawable drawable) {
             gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             gl.glColor3d(1.0, 1.0, 1.0);

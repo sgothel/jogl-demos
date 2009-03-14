@@ -219,6 +219,13 @@ public class ProceduralTexturePhysics extends Demo {
         }
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+        water.destroy();
+        water = null;
+        viewer = null;
+        timer = null;
+    }
+
     public void display(GLAutoDrawable drawable) {
         if (++frameCount == 30) {
             timer.stop();

@@ -82,6 +82,9 @@ public class Picking
       glu.gluOrtho2D(0.0f,1.0f,0.0f,1.0f);
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+    }
+
     public void display(GLAutoDrawable drawable) 
     {
       GL2 gl = drawable.getGL().getGL2();

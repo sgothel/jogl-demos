@@ -148,6 +148,11 @@ public class TextFlow extends Demo {
     ((SystemTime) time).rebase();
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    renderer = null;
+    time = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     time.update();
 

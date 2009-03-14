@@ -348,6 +348,9 @@ public class VertexProgRefract extends Demo {
     initComplete = true;
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) {
     if (!initComplete) {
       return;

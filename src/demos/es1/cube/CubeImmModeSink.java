@@ -43,6 +43,8 @@ import java.nio.*;
 import com.sun.javafx.newt.*;
 
 public class CubeImmModeSink implements GLEventListener {
+    boolean quit = false;
+
     public CubeImmModeSink () {
         this(false, false);
     }
@@ -256,6 +258,10 @@ public class CubeImmModeSink implements GLEventListener {
         // weird effect ..: gl.glCullFace(gl.GL_FRONT);
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+        quit=true;
+    }
+
     public void display(GLAutoDrawable drawable) {
         GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
         GL2ES1 gl2es1=null;
@@ -425,12 +431,12 @@ public class CubeImmModeSink implements GLEventListener {
 
             long curTime;
             long startTime = System.currentTimeMillis();
-            while (((curTime = System.currentTimeMillis()) - startTime) < 31000) {
+            while (!quit && ((curTime = System.currentTimeMillis()) - startTime) < 31000) {
                 window.display();
             }
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("CubeImmModeSink shut down cleanly.");
         } catch (Throwable t) {

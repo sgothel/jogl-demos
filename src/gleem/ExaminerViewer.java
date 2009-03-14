@@ -129,6 +129,7 @@ public class ExaminerViewer {
   private GLEventListener glListener = new GLEventListener() {
       public void init(GLAutoDrawable drawable) {}
       public void display(GLAutoDrawable drawable) {}
+      public void dispose(GLAutoDrawable drawable) { }
       public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         reshapeMethod(width, height);
       }

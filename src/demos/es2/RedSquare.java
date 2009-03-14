@@ -80,7 +80,7 @@ public class RedSquare implements MouseListener, GLEventListener {
             }
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("RedSquare shut down cleanly.");
         } catch (Throwable t) {
@@ -187,6 +187,16 @@ public class RedSquare implements MouseListener, GLEventListener {
         } 
 
         st.glUseProgram(gl, false);
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        GL2ES2 gl = drawable.getGL().getGL2ES2();
+
+        st.destroy(gl);
+        st=null;
+        pmvMatrix.destroy();
+        pmvMatrix=null;
+        quit=true;
     }
 
     public void display(GLAutoDrawable drawable) {

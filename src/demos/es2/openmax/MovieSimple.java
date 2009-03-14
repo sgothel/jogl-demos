@@ -48,7 +48,6 @@ import java.net.*;
 import com.sun.javafx.newt.*;
 
 public class MovieSimple implements MouseListener, GLEventListener, OMXEventListener {
-
     private GLWindow window;
     private boolean quit = false;
     private boolean rotate = false;
@@ -119,10 +118,10 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
 
             // Shut things down cooperatively
             if(null!=movie) {
-                movie.dispose(null);
+                movie.destroy(window.getGL());
                 movie=null;
             }
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("MovieSimple shut down cleanly.");
         } catch (Throwable t) {
@@ -276,6 +275,18 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         } 
 
         st.glUseProgram(gl, false);
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        GL2ES2 gl = drawable.getGL().getGL2ES2();
+
+        movie.destroy(gl);
+        movie=null;
+        pmvMatrix.destroy();
+        pmvMatrix=null;
+        st.destroy(gl);
+        st=null;
+        quit=true;
     }
 
     public void display(GLAutoDrawable drawable) {

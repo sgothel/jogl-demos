@@ -86,6 +86,25 @@ class CubeObject {
     static final float[] material_spec = { 1.0f, 1.0f, 1.0f, 0.f };
     static final float[] zero_vec4 = { 0.0f, 0.0f, 0.0f, 0.f };
 
+    public void dispose(GL2 gl) {
+        gl.glDisableClientState(GL2ES1.GL_VERTEX_ARRAY);
+        gl.glDisableClientState(GL2ES1.GL_NORMAL_ARRAY);
+        gl.glDisableClientState(GL2ES1.GL_COLOR_ARRAY);
+        gl.glDisableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
+        this.cubeVertices.clear();
+        this.cubeVertices=null;
+        this.cubeColors.clear();
+        this.cubeColors=null;
+        this.cubeNormals.clear();
+        this.cubeNormals=null;
+        this.cubeIndices.clear();
+        this.cubeIndices=null;
+        if(null!=this.cubeTexCoords) {
+            this.cubeTexCoords.clear();
+            this.cubeTexCoords=null;
+        }
+    }
+
     public void reshape(GL2 gl, int x, int y, int width, int height) {
         float aspect = (height != 0) ? ((float)width / (float)height) : 1.0f;
 

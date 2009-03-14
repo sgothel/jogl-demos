@@ -11,11 +11,21 @@ import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 
 import com.sun.javafx.newt.*;
 
-public class RedSquare implements KeyListener, MouseListener, GLEventListener {
+public class RedSquare implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
     private GLWindow window;
     private GLU glu;
     private boolean quit = false;
+
+    public void windowResized(WindowEvent e) {
+    }
+
+    public void windowMoved(WindowEvent e) {
+    }
+
+    public void windowDestroyNotify(WindowEvent e) {
+        quit=true;
+    }
 
     public void keyPressed(KeyEvent e) { 
         System.out.println(e);
@@ -72,6 +82,7 @@ public class RedSquare implements KeyListener, MouseListener, GLEventListener {
             }
             window = GLWindow.create(nWindow, caps);
 
+            window.addWindowListener(this);
             window.addMouseListener(this);
             window.addKeyListener(this);
             window.addGLEventListener(this);
@@ -84,12 +95,12 @@ public class RedSquare implements KeyListener, MouseListener, GLEventListener {
             // window.setFullscreen(true);
             window.setVisible(true);
 
-            while (!quit && window.getDuration() < 20000) {
+            do {
                 window.display();
-            }
+            } while (!quit && window.getDuration() < 20000) ;
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("RedSquare shut down cleanly.");
         } catch (Throwable t) {
@@ -180,6 +191,20 @@ public class RedSquare implements KeyListener, MouseListener, GLEventListener {
 
         // Draw a square
         gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        System.out.println("Demo.dispose: "+gl.getContext());
+        gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
+        gl.glDisableClientState(gl.GL_COLOR_ARRAY);
+        glu.destroy();
+        glu = null;
+        colors.clear();
+        colors   = null;
+        vertices.clear();
+        vertices = null;
+        System.out.println("Demo.dispose: fin");
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {

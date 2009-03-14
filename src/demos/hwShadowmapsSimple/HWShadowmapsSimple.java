@@ -322,6 +322,11 @@ public class HWShadowmapsSimple extends Demo {
 
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    glu = null;
+    glut = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     viewer.update();
 
@@ -440,6 +445,9 @@ public class HWShadowmapsSimple extends Demo {
       set_light_view_texture_parameters(gl);
 
       fullyInitialized = true;
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
     }
 
     public void display(GLAutoDrawable drawable) {

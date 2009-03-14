@@ -43,6 +43,8 @@ import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 import com.sun.javafx.newt.*;
 
 public class Cube implements GLEventListener {
+    boolean quit = false;
+
     public Cube () {
         this(false, false);
     }
@@ -170,9 +172,10 @@ public class Cube implements GLEventListener {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[3]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_SHORT, cubeTexCoords, GL.GL_STATIC_DRAW);
             gl.glTexCoordPointer(2, gl.GL_SHORT, 0, 0);
+            /* issues an GL_INVALID_ENUM
             if(null!=gl2es1) {
                 gl2es1.glTexEnvi(gl2es1.GL_TEXTURE_ENV, gl2es1.GL_TEXTURE_ENV_MODE, gl2es1.GL_INCR);
-            }
+            } */
         } else {
             gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
         }
@@ -191,6 +194,10 @@ public class Cube implements GLEventListener {
             gl.glOrthof(-20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 40.0f);
         }
         // weird effect ..: gl.glCullFace(gl.GL_FRONT);
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        quit=true;
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -333,12 +340,12 @@ public class Cube implements GLEventListener {
             window.setFullscreen(true);
             window.setVisible(true);
 
-            while (window.getDuration() < 31000) {
+            while (!quit && window.getDuration() < 31000) {
                 window.display();
             }
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("Cube shut down cleanly.");
         } catch (Throwable t) {

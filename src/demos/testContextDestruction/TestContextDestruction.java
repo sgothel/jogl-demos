@@ -216,6 +216,9 @@ public class TestContextDestruction {
       reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+    }
+
     public void display(GLAutoDrawable drawable) {
       angle += 2.0f;
 

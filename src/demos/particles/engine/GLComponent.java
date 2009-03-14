@@ -70,6 +70,10 @@ public class GLComponent extends GLCanvas implements GLEventListener {
         return caps;
     }
     
+    public void dispose(GLAutoDrawable drawable) {
+        this.engine=null;
+    }
+
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
         engine.draw(gl);

@@ -59,6 +59,8 @@ class FBCubes implements GLEventListener {
         GLFixedFuncIf gl;
         {
             GL _gl = drawable.getGL();
+            // drawable.setGL(new DebugGL2(_gl.getGL2()));
+            // _gl = drawable.getGL();
             if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
                 if(_gl.isGLES2()) {
                     gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
@@ -70,6 +72,7 @@ class FBCubes implements GLEventListener {
                 gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
             }
         }
+
         System.out.println(gl);
 
         gl.glGetError(); // flush error ..
@@ -108,6 +111,16 @@ class FBCubes implements GLEventListener {
     public void rotate(float xRot, float yRot) {
         this.xRot = xRot;
         this.yRot = yRot;
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        fbo1.destroy(gl);
+        fbo1=null;
+        cubeInner.dispose(drawable);
+        cubeInner=null;
+        cubeOuter.dispose(drawable);
+        cubeOuter=null;
     }
 
     public void display(GLAutoDrawable drawable) {

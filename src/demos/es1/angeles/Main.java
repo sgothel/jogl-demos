@@ -5,10 +5,16 @@ import javax.media.nwi.*;
 import javax.media.opengl.*;
 import com.sun.javafx.newt.*;
 
-public class Main implements MouseListener {
+public class Main implements WindowListener, MouseListener {
 
     public boolean quit = false;
     public GLWindow window = null;
+
+    public void windowResized(WindowEvent e) { }
+    public void windowMoved(WindowEvent e) { }
+    public void windowDestroyNotify(WindowEvent e) {
+        quit = true;
+    }
 
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() > 1) {
@@ -57,6 +63,7 @@ public class Main implements MouseListener {
             }
             window = GLWindow.create(nWindow, caps);
 
+            window.addWindowListener(this);
             window.addMouseListener(this);
 
             window.enablePerfLog(true);
@@ -86,7 +93,7 @@ public class Main implements MouseListener {
             }
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.println("angeles.Main shut down cleanly.");
         } catch (GLException e) {

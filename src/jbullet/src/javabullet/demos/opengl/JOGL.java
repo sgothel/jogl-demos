@@ -35,10 +35,16 @@ import java.nio.*;
  * @author jezek2
  */
 
-public class JOGL implements MouseListener {
+public class JOGL implements WindowListener, MouseListener {
 	
     private GLWindow window;
     public boolean quit = false;
+
+    public void windowResized(WindowEvent e) { }
+    public void windowMoved(WindowEvent e) { }
+    public void windowDestroyNotify(WindowEvent e) {
+        quit = true;
+    }
 
     public void mouseClicked(MouseEvent e) {
         //if(e.getClickCount()>1) {
@@ -84,6 +90,7 @@ public class JOGL implements MouseListener {
             }
             window = GLWindow.create(nWindow, caps);
 
+            window.addWindowListener(this);
             window.addMouseListener(this);
             window.addMouseListener(demoApp);
             window.addKeyListener(demoApp);
@@ -104,7 +111,7 @@ public class JOGL implements MouseListener {
             }
 
             // Shut things down cooperatively
-            window.close();
+            window.destroy();
             window.getFactory().shutdown();
             System.out.print(title);
             System.out.println(" shut down cleanly.");

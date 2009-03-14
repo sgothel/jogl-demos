@@ -49,6 +49,9 @@ public class PrintExt {
       runExit();
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+    }
+
     public void display(GLAutoDrawable drawable) {
     }
 

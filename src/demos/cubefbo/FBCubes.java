@@ -43,6 +43,7 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.util.FBObject;
 
 
 
@@ -54,13 +55,14 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         cubeInner = new CubeObject(false);
         cubeMiddle = new CubeObject(true);
         cubeOuter = new CubeObject(true);
-        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE);
-        fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
+        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE, 0);
+        fbo2 = new FBObject(FBO_SIZE, FBO_SIZE, 0);
     }
 
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        drawable.setGL(new DebugGL2(gl));
+        // drawable.setGL(new DebugGL2(gl));
+        // gl = drawable.getGL().getGL2();
         fbo1.init(gl);
         fbo2.init(gl);
     }
@@ -76,6 +78,20 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         this.height = height;
         cubeOuter.reshape(drawable.getGL().getGL2(), x, y, width, height);
         motionIncr = 180.f / Math.max(width, height);
+    }
+
+    public void dispose(GLAutoDrawable drawable) {
+        System.out.println("FBCubes.dispose: "+drawable);
+        GL2 gl = drawable.getGL().getGL2();
+        fbo1.destroy(gl);
+        fbo2.destroy(gl);
+        fbo1=null; fbo2=null;
+        cubeInner.dispose(gl);
+        cubeInner=null;
+        cubeMiddle.dispose(gl);
+        cubeMiddle=null;
+        cubeOuter.dispose(gl);
+        cubeOuter=null;
     }
 
     public void display(GLAutoDrawable drawable) {

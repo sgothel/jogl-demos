@@ -122,6 +122,9 @@ public class TestContextSharing {
       gl.glEnable(GL2.GL_NORMALIZE);
     }
 
+    public void dispose(GLAutoDrawable drawable) {
+    }
+
     public void display(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 

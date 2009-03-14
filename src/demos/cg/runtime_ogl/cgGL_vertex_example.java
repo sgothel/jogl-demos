@@ -156,6 +156,9 @@ public class cgGL_vertex_example implements GLEventListener
     CgGL.cgGLDisableProfile(profile);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) 
   {
     GL gl = drawable.getGL();

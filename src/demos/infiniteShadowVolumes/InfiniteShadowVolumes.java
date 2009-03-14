@@ -317,6 +317,22 @@ public class InfiniteShadowVolumes extends Demo {
     //      glutAddMenuEntry("quit [<esc>]", 27);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    GL2 gl = drawable.getGL().getGL2();
+
+    gl.glDeleteLists(faceDisplayList, 1);
+    faceDisplayList=0;
+
+    int[] tmp = new int[1];
+    tmp[0]=wallTexObject;
+    gl.glDeleteTextures(1, tmp, 0);
+    wallTexObject = 0;
+
+    objectManip = null;
+    lightManip = null;
+    viewer = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     GL2 gl = drawable.getGL().getGL2();
 

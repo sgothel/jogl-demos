@@ -128,6 +128,13 @@ public class GLListener implements GLEventListener {
     gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    this.gl = null;
+    this.glu = null;
+    this.glut=null;
+    this.nurbs = null;
+  }
+
   /* (non-Javadoc)
    * @see javax.media.opengl.GLEventListener#display(javax.media.opengl.GLAutoDrawable)
    */

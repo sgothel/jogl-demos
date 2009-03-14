@@ -379,6 +379,9 @@ public class HDR extends Demo {
     initComplete = true;
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+  }
+
   public void display(GLAutoDrawable drawable) {
     //      printThreadName("display for Listener");
 

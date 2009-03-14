@@ -277,6 +277,13 @@ public class FlyingText extends Demo {
     gl.setSwapInterval(0);
   }
 
+  public void dispose(GLAutoDrawable drawable) {
+    backgroundTexture = null;
+    renderer = null;
+    fps = null;
+    time = null;
+  }
+
   public void display(GLAutoDrawable drawable) {
     time.update();
 
