@@ -4,6 +4,7 @@ import java.nio.*;
 import javax.media.nwi.*;
 import javax.media.opengl.*;
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class Main implements WindowListener, MouseListener {
 

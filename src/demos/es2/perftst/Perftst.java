@@ -7,9 +7,10 @@ import javax.media.opengl.util.*;
 
 import com.sun.opengl.util.glsl.*;
 
-import com.sun.opengl.impl.GLReflection;
+import com.sun.nwi.impl.NWReflection;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class Perftst implements MouseListener, GLEventListener {
 
@@ -173,7 +174,7 @@ public class Perftst implements MouseListener, GLEventListener {
             }
         }
 
-        PerfModule pmod = (PerfModule) GLReflection.createInstance(tstName);
+        PerfModule pmod = (PerfModule) NWReflection.createInstance(tstName);
         new Perftst().run(type, pmod);
         System.exit(0);
     }

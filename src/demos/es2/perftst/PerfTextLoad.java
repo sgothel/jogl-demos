@@ -7,8 +7,10 @@ import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import com.sun.opengl.impl.io.*;
 import com.sun.opengl.util.texture.*;
+import com.sun.opengl.util.*;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class PerfTextLoad extends PerfModule {
     static final int MAX_TEXTURE_ENGINES = 8;

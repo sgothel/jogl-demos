@@ -3,8 +3,10 @@ package demos.es2.perftst;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
+import com.sun.opengl.util.*;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class PerfUniLoad extends PerfModule {
     static final int MAX_ARRAYS = 12;

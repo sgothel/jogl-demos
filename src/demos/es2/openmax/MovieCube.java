@@ -39,8 +39,6 @@ import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.sub.fixed.*;
-import com.sun.opengl.util.glsl.fixed.*;
-import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 
 import com.sun.openmax.*;
 
@@ -48,6 +46,7 @@ import java.nio.*;
 import java.net.*;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class MovieCube implements MouseListener, GLEventListener, OMXEventListener {
     GLWindow window;
@@ -125,20 +124,7 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
     }
 
     public void init(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl;
-        {
-            GL _gl = drawable.getGL();
-            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
-                if(_gl.isGLES2()) {
-                    gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
-                } else {
-                    gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
-                }
-                _gl.getContext().setGL(gl);
-            } else {
-                gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
-            }
-        }
+        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
         System.out.println(gl);
 
         gl.glGetError(); // flush error ..
@@ -194,7 +180,7 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
     }
 
     public void display(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
 
         com.sun.opengl.util.texture.Texture tex = null;
         if(null!=movie) {

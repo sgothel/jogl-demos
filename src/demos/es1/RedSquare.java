@@ -6,10 +6,9 @@ import javax.media.opengl.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.glsl.fixed.*;
-import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class RedSquare implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
@@ -119,20 +118,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     private FloatBuffer vertices;
 
     public void init(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl;
-        {
-            GL _gl = drawable.getGL();
-            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
-                if(_gl.isGLES2()) {
-                    gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
-                } else {
-                    gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
-                }
-                _gl.getContext().setGL(gl);
-            } else {
-                gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
-            }
-        }
+        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
 
         System.err.println("Entering initialization");
         System.err.println("GL Profile: "+GLProfile.getProfile());
@@ -167,7 +153,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
         // Set location in front of camera
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
@@ -177,7 +163,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     }
 
     public void display(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // One rotation every four seconds
@@ -194,7 +180,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     }
 
     public void dispose(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
         System.out.println("Demo.dispose: "+gl.getContext());
         gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
         gl.glDisableClientState(gl.GL_COLOR_ARRAY);

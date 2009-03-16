@@ -29,8 +29,7 @@ import javax.media.opengl.sub.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.glsl.fixed.*;
-import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
+import com.sun.opengl.util.*;
 import java.nio.*;
 
 public class AngelesGLil implements GLEventListener {
@@ -83,22 +82,12 @@ public class AngelesGLil implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         // FIXME: gl.setSwapInterval(1);
 
-        {
-            GL _gl = drawable.getGL();
-            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
-                if(_gl.isGLES2()) {
-                    this.gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
-                } else {
-                    this.gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
-                }
-                _gl.getContext().setGL(this.gl);
-            } else {
-                this.gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
-            }
-            System.err.println("AngelesGL: "+this.gl);
-        }
+        cComps = drawable.getGL().isGLES1() ? 4: 3;
+
+        this.gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        System.err.println("AngelesGL: "+this.gl);
+
         this.glu = GLU.createGLU();
-        cComps = gl.isGLES1() ? 4: 3;
 
         gl.glEnable(GL2ES1.GL_NORMALIZE);
         gl.glEnable(GL.GL_DEPTH_TEST);
@@ -160,7 +149,7 @@ public class AngelesGLil implements GLEventListener {
         this.x = x;
         this.y = y;
 
-        this.gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        this.gl = drawable.getGL().getGL2ES1();
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -189,7 +178,7 @@ public class AngelesGLil implements GLEventListener {
         if (gAppAlive==0)
             return;
 
-        this.gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
+        this.gl = drawable.getGL().getGL2ES1();
 
         // Actual tick value is "blurred" a little bit.
         sTick = (sTick + tick - sStartTick) >> 1;
@@ -244,7 +233,7 @@ public class AngelesGLil implements GLEventListener {
     }
 
  private boolean blendingEnabled = true;
- private GLFixedFuncIf gl; // temp cache
+ private GL2ES1 gl; // temp cache
  private GLU glu;
 
  // Total run length is 20 * camera track base unit length (see cams.h).

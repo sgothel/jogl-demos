@@ -8,8 +8,10 @@ import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 
 import com.sun.opengl.util.glsl.*;
+import com.sun.opengl.util.*;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class RedSquare implements MouseListener, GLEventListener {
 

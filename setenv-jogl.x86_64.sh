@@ -23,7 +23,7 @@ CP_SEP=:
 
 export LIBXCB_ALLOW_SLOPPY_LOCK=1
 
-. $THISDIR/../jogl/etc/profile.jogl $THISDIR/../jogl/build-x86_64 $THISDIR/../jogl/build-x86_64/obj $JOGL_PROFILE
+. $THISDIR/../jogl/etc/profile.jogl $THISDIR/../jogl/build-x86_64 $JOGL_PROFILE
 
 GLUEGEN_JAR=$THISDIR/../gluegen/build-x86_64/gluegen-rt.jar
 GLUEGEN_OS=$THISDIR/../gluegen/build-x86_64/obj
@@ -36,7 +36,7 @@ for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done
 export CLASSPATH
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLUEGEN_OS:$THISDIR/../jogl/build-x86_64/obj
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLUEGEN_OS:$JOGL_LIB_DIR
 
 echo JOGL_CLASSPATH: $JOGL_CLASSPATH
 

@@ -36,11 +36,11 @@ import javax.media.opengl.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.glsl.fixed.*;
-import com.sun.opengl.impl.fixed.GLFixedFuncImpl;
+import com.sun.opengl.util.*;
 import java.nio.*;
 
 import com.sun.javafx.newt.*;
+import com.sun.javafx.newt.opengl.*;
 
 public class CubeImmModeSink implements GLEventListener {
     boolean quit = false;
@@ -53,7 +53,7 @@ public class CubeImmModeSink implements GLEventListener {
 
     ByteBuffer cubeIndices=null;
     ImmModeSink vboCubeF = null;
-    public void drawCube(GLFixedFuncIf gl, float extent) {
+    public void drawCube(GL2ES1 gl, float extent) {
         if(cubeIndices==null) {
             cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices);
         }
@@ -89,7 +89,7 @@ public class CubeImmModeSink implements GLEventListener {
 
     private GLUquadric sphere=null;
     private ImmModeSink vboSphere=null;
-    public void drawSphere(GLFixedFuncIf gl, float radius, int slices, int stacks) {
+    public void drawSphere(GL2ES1 gl, float radius, int slices, int stacks) {
         if(sphere==null) {
             sphere = glu.gluNewQuadric();
             sphere.enableImmModeSink(true);
@@ -114,7 +114,7 @@ public class CubeImmModeSink implements GLEventListener {
 
     private GLUquadric cylinder=null;
     private ImmModeSink vboCylinder=null;
-    public void drawCylinder(GLFixedFuncIf gl, float radius, float halfHeight, int upAxis) {
+    public void drawCylinder(GL2ES1 gl, float radius, float halfHeight, int upAxis) {
         if(cylinder==null) {
             cylinder = glu.gluNewQuadric();
             cylinder.enableImmModeSink(true);
@@ -167,20 +167,7 @@ public class CubeImmModeSink implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl;
-        {
-            GL _gl = drawable.getGL();
-            if(!GLFixedFuncUtil.isGLFixedFuncIf(_gl)) {
-                if(_gl.isGLES2()) {
-                    gl = new GLFixedFuncImpl(_gl, new FixedFuncHook(_gl.getGL2ES2()));
-                } else {
-                    gl = new GLFixedFuncImpl(_gl, _gl.getGL2ES1());
-                }
-                _gl.getContext().setGL(gl);
-            } else {
-                gl = GLFixedFuncUtil.getGLFixedFuncIf(_gl);
-            }
-        }
+        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
 
         glu = GLU.createGLU();
 
@@ -208,11 +195,7 @@ public class CubeImmModeSink implements GLEventListener {
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         float aspect = (height != 0) ? ((float)width / (float)height) : 1.0f;
 
-        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
-        GL2ES1 gl2es1=null;
-        if(gl.isGL2ES1()) {
-            gl2es1 = drawable.getGL().getGL2ES1();
-        }
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
 
         gl.glViewport(0, 0, width, height);
 
@@ -243,9 +226,7 @@ public class CubeImmModeSink implements GLEventListener {
         gl.glShadeModel(gl.GL_SMOOTH);
         gl.glDisable(gl.GL_DITHER);
 
-        if(null!=gl2es1) {
-            gl2es1.glHint(gl2es1.GL_PERSPECTIVE_CORRECTION_HINT, gl2es1.GL_FASTEST);
-        }
+        gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, gl.GL_FASTEST);
 
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();
@@ -263,11 +244,7 @@ public class CubeImmModeSink implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GLFixedFuncIf gl = GLFixedFuncUtil.getGLFixedFuncIf(drawable.getGL());
-        GL2ES1 gl2es1=null;
-        if(gl.isGL2ES1()) {
-            gl2es1 = drawable.getGL().getGL2ES1();
-        }
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
