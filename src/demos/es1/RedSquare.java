@@ -1,7 +1,6 @@
 package demos.es1;
 
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
@@ -66,7 +65,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
         System.err.println("RedSquare.run()");
         GLProfile.setProfileGLAny();
         try {
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

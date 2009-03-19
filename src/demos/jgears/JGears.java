@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
-import javax.media.nwi.NWCapabilities;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.awt.GLJPanel;
 import com.sun.opengl.util.Animator;
 import javax.swing.JCheckBox;
@@ -33,7 +33,7 @@ import javax.swing.JPanel;
  */
 
 public class JGears extends GLJPanel {
-  private static NWCapabilities caps;
+  private static GLCapabilities caps;
   private long startTime;
   private int frameCount;
   private float fps;
@@ -43,7 +43,7 @@ public class JGears extends GLJPanel {
   private BufferedImage openglImage;
 
   static {
-    caps = new NWCapabilities();
+    caps = new GLCapabilities();
     caps.setAlphaBits(8);
   }
   

@@ -52,7 +52,7 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.nwi.NWCapabilities;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
 import com.sun.opengl.util.Animator;
@@ -66,7 +66,7 @@ public class TestTextRenderer implements GLEventListener {
 
   public static void main(String[] args) {
     Frame frame = new Frame("Text Renderer Test");
-    NWCapabilities caps = new NWCapabilities();
+    GLCapabilities caps = new GLCapabilities();
     caps.setAlphaBits(8);
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());

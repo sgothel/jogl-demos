@@ -1,7 +1,6 @@
 package demos;
 
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
@@ -19,13 +18,13 @@ public class GLInfo implements GLEventListener {
         System.err.println("GLInfo.run()");
         GLProfile.setProfileGLAny();
         try {
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
             caps.setBlueBits(5);
             caps.setDepthBits(16);
-            System.err.println("NWCapabilities PRE : "+caps);
+            System.err.println("GLCapabilities PRE : "+caps);
 
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
@@ -57,7 +56,7 @@ public class GLInfo implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
-        System.err.println("NWCapabilities POST: "+drawable.getChosenNWCapabilities());
+        System.err.println("GLCapabilities POST: "+drawable.getChosenGLCapabilities());
         System.err.println("GL Profile: "+GLProfile.getProfile());
         System.err.println("GL:" + gl);
         System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));

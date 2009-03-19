@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.Canvas.*;
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
@@ -32,7 +31,7 @@ public class Picking
   {
     Frame frame = new Frame("Picking Example");
     GLDrawableFactory factory = GLDrawableFactory.getFactory();
-    NWCapabilities capabilities = new NWCapabilities();
+    GLCapabilities capabilities = new GLCapabilities();
     GLCanvas drawable = new GLCanvas(capabilities);
     final Renderer renderer = new Renderer();
     drawable.addGLEventListener(renderer);

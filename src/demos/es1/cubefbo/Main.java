@@ -1,7 +1,6 @@
 package demos.es1.cubefbo;
 
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
@@ -50,7 +49,7 @@ public class Main implements WindowListener, MouseListener {
         GLProfile.setProfileGLAny();
         try {
             // Hook this into EGL
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

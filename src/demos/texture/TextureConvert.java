@@ -46,7 +46,7 @@ import com.sun.opengl.util.texture.TextureIO;
 import java.io.File;
 import java.io.IOException;
 import javax.media.opengl.GL;
-import javax.media.nwi.NWCapabilities;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLPbuffer;
 
@@ -74,7 +74,7 @@ public class TextureConvert {
       System.out.println("Pbuffer support not available (required to run this demo)");
       System.exit(1);
     }
-    NWCapabilities caps = new NWCapabilities();
+    GLCapabilities caps = new GLCapabilities();
     caps.setDoubleBuffered(false);
     GLPbuffer pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, 2, 2, null);
     pbuffer.getContext().makeCurrent();

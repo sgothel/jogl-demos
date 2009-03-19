@@ -1,7 +1,6 @@
 package demos.es1;
 
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
@@ -19,7 +18,7 @@ public class Info implements GLEventListener {
         System.err.println("Info.run()");
         GLProfile.setProfileGL2ES1();
         try {
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

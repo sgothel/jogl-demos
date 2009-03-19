@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
-import javax.media.nwi.NWCapabilities;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLPbuffer;
@@ -44,7 +44,7 @@ public class TiledRendering {
     }
 
     // Use a pbuffer for rendering
-    NWCapabilities caps = new NWCapabilities();
+    GLCapabilities caps = new GLCapabilities();
     caps.setDoubleBuffered(false);
     GLPbuffer pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null,
                                                                        256, 256,

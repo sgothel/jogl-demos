@@ -34,7 +34,6 @@
 
 package demos.es2.openmax;
 
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 
@@ -95,7 +94,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         System.err.println("MovieSimple.run()");
         GLProfile.setProfileGL2ES2();
         try {
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

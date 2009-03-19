@@ -57,7 +57,7 @@ import java.awt.font.GlyphVector;
 import java.text.DecimalFormat;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.nwi.NWCapabilities;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
@@ -74,7 +74,7 @@ public class TestTextureRenderer implements GLEventListener {
   public static void main(String[] args) {
 
     Frame frame = new Frame("Java 2D Renderer Test");
-    NWCapabilities caps = new NWCapabilities();
+    GLCapabilities caps = new GLCapabilities();
     caps.setAlphaBits(8);
 
     GLProfile.setProfile("GL2");

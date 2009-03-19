@@ -46,8 +46,8 @@ import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.media.nwi.*;
-import javax.media.nwi.awt.*;
+import javax.media.nativewindow.*;
+import javax.media.nativewindow.awt.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.GLU;
@@ -71,9 +71,9 @@ public class DualContext extends Canvas {
   private GLUT       glut;
   private int        repaintNum;
 
-  public DualContext(NWCapabilities capabilities) {
+  public DualContext(GLCapabilities capabilities) {
     super(unwrap((AWTGraphicsConfiguration)
-                 NativeWindowFactory.getFactory(Canvas.class).chooseGraphicsConfiguration(capabilities, null, null)));
+                 GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, null, null)));
     NativeWindow win = NativeWindowFactory.getFactory(getClass()).getNativeWindow(this);
     drawable = GLDrawableFactory.getFactory().createGLDrawable(win, capabilities, null);
     context1 = drawable.createContext(null);
@@ -141,7 +141,9 @@ public class DualContext extends Canvas {
 
   public static void main(String[] args) {
     JFrame frame = new JFrame("Dual OpenGL Context Test");
-    final DualContext dc = new DualContext(new NWCapabilities());
+    // Get the GraphicsConfigurationFactory ready for OpenGL work
+    GLDrawableFactory.getFactory();
+    final DualContext dc = new DualContext(new GLCapabilities());
     frame.getContentPane().add(dc, BorderLayout.CENTER);
     JButton button = new JButton("Repaint");
     button.addActionListener(new ActionListener() {

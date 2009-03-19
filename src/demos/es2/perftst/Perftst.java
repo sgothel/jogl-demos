@@ -1,13 +1,10 @@
 package demos.es2.perftst;
 
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
 
 import com.sun.opengl.util.glsl.*;
-
-import com.sun.nwi.impl.NWReflection;
 
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
@@ -45,7 +42,7 @@ public class Perftst implements MouseListener, GLEventListener {
         System.err.println("Perftst.run()");
         GLProfile.setProfileGL2ES2();
         try {
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -174,8 +171,13 @@ public class Perftst implements MouseListener, GLEventListener {
             }
         }
 
-        PerfModule pmod = (PerfModule) NWReflection.createInstance(tstName);
-        new Perftst().run(type, pmod);
-        System.exit(0);
+        try {
+            PerfModule pmod = (PerfModule) Class.forName(tstName).newInstance();
+            new Perftst().run(type, pmod);
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 }

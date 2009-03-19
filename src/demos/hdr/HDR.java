@@ -30,7 +30,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.nwi.NWCapabilities;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
@@ -307,7 +307,7 @@ public class HDR extends Demo {
     // Workaround for apparent bug when not using render-to-texture-rectangle
     int floatDepthBits = 1;
 
-    NWCapabilities caps = new NWCapabilities();
+    GLCapabilities caps = new GLCapabilities();
     caps.setDoubleBuffered(false);
     caps.setPbufferFloatingPointBuffers(true);
     caps.setRedBits(floatBits);

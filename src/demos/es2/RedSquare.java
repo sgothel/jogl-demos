@@ -1,7 +1,6 @@
 package demos.es2;
 
 import java.nio.*;
-import javax.media.nwi.*;
 import javax.media.opengl.*;
 import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.*;
@@ -51,7 +50,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         System.err.println("RedSquare.run()");
         GLProfile.setProfileGL2ES2();
         try {
-            NWCapabilities caps = new NWCapabilities();
+            GLCapabilities caps = new GLCapabilities();
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
