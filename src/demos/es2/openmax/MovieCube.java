@@ -36,7 +36,6 @@ package demos.es2.openmax;
 // import demos.es1.cube.Cube;
 
 import javax.media.opengl.*;
-import javax.media.opengl.util.*;
 import com.sun.opengl.util.glsl.fixedfunc.*;
 
 import com.sun.openmax.*;

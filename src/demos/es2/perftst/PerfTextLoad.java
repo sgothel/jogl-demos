@@ -4,7 +4,6 @@ import java.nio.*;
 import java.io.*;
 import java.net.*;
 import javax.media.opengl.*;
-import javax.media.opengl.util.*;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.texture.*;
 

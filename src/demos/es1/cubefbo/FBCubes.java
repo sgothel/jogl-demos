@@ -36,8 +36,7 @@ package demos.es1.cubefbo;
 import demos.es1.cube.Cube;
 import java.nio.*;
 import javax.media.opengl.*;
-import javax.media.opengl.util.*;
-import javax.media.opengl.util.FBObject;
+import com.sun.opengl.util.FBObject;
 import com.sun.opengl.util.glsl.fixedfunc.*;
 
 class FBCubes implements GLEventListener {

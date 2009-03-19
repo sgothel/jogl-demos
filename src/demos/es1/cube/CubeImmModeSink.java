@@ -32,7 +32,6 @@
 package demos.es1.cube;
 
 import javax.media.opengl.*;
-import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.glsl.fixedfunc.*;

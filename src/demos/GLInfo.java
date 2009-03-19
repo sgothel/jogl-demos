@@ -2,7 +2,6 @@ package demos;
 
 import java.nio.*;
 import javax.media.opengl.*;
-import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 
 import com.sun.javafx.newt.*;
