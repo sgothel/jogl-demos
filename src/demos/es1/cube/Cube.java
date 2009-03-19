@@ -33,9 +33,10 @@ package demos.es1.cube;
 
 import java.nio.*;
 import javax.media.opengl.*;
-import javax.media.opengl.sub.fixed.*;
-import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
+
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.glsl.fixedfunc.*;
 
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
@@ -75,7 +76,7 @@ public class Cube implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
 
         glu = GLU.createGLU();
 

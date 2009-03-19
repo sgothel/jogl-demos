@@ -37,7 +37,7 @@ package demos.es2.openmax;
 
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
-import javax.media.opengl.sub.fixed.*;
+import com.sun.opengl.util.glsl.fixedfunc.*;
 
 import com.sun.openmax.*;
 
@@ -123,7 +123,7 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
         System.out.println(gl);
 
         gl.glGetError(); // flush error ..

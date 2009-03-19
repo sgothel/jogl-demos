@@ -55,7 +55,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
-import javax.media.opengl.util.BufferUtil;
+import com.sun.opengl.util.BufferUtil;
 
 
 

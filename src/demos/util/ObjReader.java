@@ -52,7 +52,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.media.opengl.util.BufferUtil;
+import com.sun.opengl.util.BufferUtil;
 
 
 

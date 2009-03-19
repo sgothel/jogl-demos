@@ -61,7 +61,7 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import com.sun.opengl.util.Animator;
-import javax.media.opengl.util.BufferUtil;
+import com.sun.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 

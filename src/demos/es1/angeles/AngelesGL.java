@@ -25,11 +25,9 @@
 package demos.es1.angeles;
 
 import javax.media.opengl.*;
-import javax.media.opengl.sub.*;
-import javax.media.opengl.sub.fixed.*;
-import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.util.*;
+import com.sun.opengl.util.glsl.fixedfunc.*;
 import java.nio.*;
 
 public class AngelesGL implements GLEventListener {
@@ -84,7 +82,7 @@ public class AngelesGL implements GLEventListener {
 
         cComps = drawable.getGL().isGLES1() ? 4: 3;
 
-        this.gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        this.gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
         System.err.println("AngelesGL: "+this.gl);
         
         this.glu = GLU.createGLU();

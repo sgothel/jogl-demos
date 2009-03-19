@@ -34,11 +34,11 @@
 package demos.es1.cubefbo;
 
 import demos.es1.cube.Cube;
+import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.util.*;
-import javax.media.opengl.sub.fixed.*;
 import javax.media.opengl.util.FBObject;
-import java.nio.*;
+import com.sun.opengl.util.glsl.fixedfunc.*;
 
 class FBCubes implements GLEventListener {
     private static final int FBO_SIZE = 256;
@@ -54,7 +54,7 @@ class FBCubes implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
         System.out.println(gl);
 
         gl.glGetError(); // flush error ..

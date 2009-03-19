@@ -2,9 +2,10 @@ package demos.es1;
 
 import java.nio.*;
 import javax.media.opengl.*;
-import javax.media.opengl.sub.fixed.*;
-import javax.media.opengl.util.*;
 import javax.media.opengl.glu.*;
+
+import com.sun.opengl.util.*;
+import com.sun.opengl.util.glsl.fixedfunc.*;
 
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
@@ -117,7 +118,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     private FloatBuffer vertices;
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = GLFixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
 
         System.err.println("Entering initialization");
         System.err.println("GL Profile: "+GLProfile.getProfile());
