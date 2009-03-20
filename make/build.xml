@@ -68,6 +68,7 @@
         <property name="jogl.awt.jar"        value="../../jogl/${rootrel.build}/jogl/jogl.awt.jar" />
         <property name="jogl.util.jar"       value="../../jogl/${rootrel.build}/jogl/jogl.util.jar" />
         <property name="jogl.util.awt.jar"   value="../../jogl/${rootrel.build}/jogl/jogl.util.awt.jar" />
+        <property name="jogl.util.fixedfuncemu.jar" value="../../jogl/${rootrel.build}/jogl/jogl.util.fixedfuncemu.jar" />
         <property name="jogl.util.gl2.jar"   value="../../jogl/${rootrel.build}/jogl/jogl.util.gl2.jar" />
         <property name="nativewindow.core.jar"        value="../../jogl/${rootrel.build}/nativewindow/nativewindow.core.jar" />
         <property name="nativewindow.x11.jar"         value="../../jogl/${rootrel.build}/nativewindow/nativewindow.x11.jar" />
@@ -121,6 +122,7 @@
             <pathelement location="${jogl.gl2.dbg.jar}" />
             <pathelement location="${jogl.awt.jar}" />
             <pathelement location="${jogl.util.jar}" />
+            <pathelement location="${jogl.util.fixedfuncemu.jar}" />
             <pathelement location="${jogl.util.awt.jar}" />
             <pathelement location="${jogl.util.gl2.jar}" />
             <pathelement location="${newt.all.jar}" />
@@ -190,6 +192,7 @@
             <pathelement location="${jogl.gles2.dbg.jar}" />
             <pathelement location="${jogl.egl.jar}" />
             <pathelement location="${jogl.util.jar}" />
+            <pathelement location="${jogl.util.fixedfuncemu.jar}" />
             <pathelement location="${newt.all.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
