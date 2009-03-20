@@ -39,6 +39,7 @@ export CLASSPATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLUEGEN_OS:$JOGL_LIB_DIR
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$GLUEGEN_OS:$JOGL_LIB_DIR
 
+echo REMEMBER to add the JVM arguments "-XstartOnFirstThread -Djava.awt.headless=true" for running demos without AWT, e.g. NEWT
 echo JOGL_CLASSPATH: $JOGL_CLASSPATH
 
 PATH=$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
