@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 Sun Microsystems, Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,9 +32,6 @@
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
- * Sun gratefully acknowledges that this software was originally authored
- * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
 package demos.util;
