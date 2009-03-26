@@ -2,43 +2,31 @@ package demos.newt;
 
 import javax.media.nativewindow.*;
 import com.sun.javafx.newt.*;
-import demos.newt.util.TaskManager;
+import demos.newt.util.TaskToolWM;
 
-public class TaskManagerTest1  implements WindowListener, KeyListener
+public class TaskManagerTest2  implements WindowListener, KeyListener
 {
-    final static TaskManager eventMgr;
-    final static TaskManager renderMgr;
-
-    static
-    {
-        System.setProperty("java.awt.headless", "true");
-
-        eventMgr = new TaskManager("Event Manager");
-        eventMgr.start();
-
-        renderMgr = new TaskManager("Render Manager");
-        renderMgr.start();
-    }
-
     public static void main(String[] args)
     {
-        new TaskManagerTest1().run();
+        new TaskManagerTest2().run();
     }
-
-    Window window;
 
     public void windowResized(WindowEvent e) {}
     public void windowMoved(WindowEvent e) {}
     public void windowDestroyNotify(WindowEvent e) {
         System.err.println("Window Event Listener DestroyNotify send stop request - START");
-        renderMgr.stop();
-        eventMgr.stop();
+        TaskToolWM.unregisterWindowEvent(e.getSource());
         System.err.println("Window Event Listener DestroyNotify send stop request - DONE");
     }
 
     public void keyPressed(KeyEvent e)
     {
-        System.err.println("keyPressed "+e);
+        if(e.getKeyChar()=='q') {
+            System.err.println("Key Event Listener 'q' - ..");
+            TaskToolWM.unregisterWindowEvent(e.getSource());
+        } else {
+            System.err.println("keyPressed "+e);
+        }
     }
     public void keyReleased(KeyEvent e)
     {
@@ -49,30 +37,12 @@ public class TaskManagerTest1  implements WindowListener, KeyListener
         System.err.println("keyTyped "+e);
     }
 
-    void render(long context)
-    {
-
-    }
-
-    private class EventThread implements Runnable {
-        public void run() {
-            try {
-                // prolog - lock whatever you need
-
-                // do it ..
-                if(null!=window) {
-                    window.pumpMessages();
-                }
-            } catch (Throwable t) {
-                // handle errors ..
-                t.printStackTrace();
-            } finally {
-                // epilog - unlock locked stuff
-            }
-        }
-    }
-
     private class RenderThread implements Runnable {
+        Window window;
+
+        public RenderThread(Window w) {
+            window = w;
+        }
         public void run() {
             if(null==window) {
                 return;
@@ -82,8 +52,8 @@ public class TaskManagerTest1  implements WindowListener, KeyListener
                 window.lockSurface();
 
                 // render(window.getSurfaceHandle());
-                System.out.print(".");
-                Thread.sleep(100);
+                System.out.println("Render: "+window);
+                Thread.sleep(200);
             } catch (Throwable t) {
                 // handle errors ..
                 t.printStackTrace();
@@ -107,7 +77,7 @@ public class TaskManagerTest1  implements WindowListener, KeyListener
 
             Display display = NewtFactory.createDisplay(null);
             Screen screen = NewtFactory.createScreen(display, 0);
-            window = NewtFactory.createWindow(screen, caps);
+            Window window = NewtFactory.createWindow(screen, caps);
             window.setTitle("GlassPrism");
             window.setAutoDrawableClient(true);
             window.setUndecorated(false);
@@ -119,16 +89,16 @@ public class TaskManagerTest1  implements WindowListener, KeyListener
 
             window.setVisible(true);
 
-            eventMgr.addTask(new EventThread());
-            renderMgr.addTask(new RenderThread());
+            TaskToolWM.registerWindowEvent(window);
+            TaskToolWM.addRenderTask(window, new RenderThread(window));
 
             System.out.println("Main - wait until finished");
-            renderMgr.waitUntilStopped();
-            eventMgr.waitUntilStopped();
+            TaskToolWM.waitUntilWindowUnregistered(window);
             System.out.println("Main - finished");
 
             window.destroy();
             System.out.println("Main - window destroyed");
+            TaskToolWM.exit(true);
         }
         catch (Throwable t)
         {

@@ -34,7 +34,7 @@
  * facility.
  */
 
-package demos.util;
+package demos.newt.util;
 
 import java.util.*;
 
@@ -56,15 +56,30 @@ public class TaskManager {
     public ThreadGroup getThreadGroup() { return threadGroup; }
 
     public void start() {
+        start(false);
+    }
+
+    /**
+     * @param externalStimuli true indicates that another thread stimulates, 
+     *                        ie. calls this TaskManager's run() loop method.
+     *                        Hence no own thread is started in this case.
+     *
+     * @return The started Runnable, which handles the run-loop.
+     *         Usefull in combination with externalStimuli=true,
+     *         so an external stimuli can call it.
+     */
+    public Runnable start(boolean externalStimuli) {
         synchronized(taskWorkerLock) { 
             if(null==taskWorker) {
                 taskWorker = new TaskWorker(name);
             }
             if(!taskWorker.isRunning()) {
-                taskWorker.start();
+                shouldStop = false;
+                taskWorker.start(externalStimuli);
             }
             taskWorkerLock.notifyAll();
         }
+        return taskWorker;
     }
 
     public void stop() {
@@ -104,6 +119,18 @@ public class TaskManager {
         return res;
     }
 
+    public void waitOnWorker() {
+        synchronized(taskWorkerLock) {
+            if(null!=taskWorker && taskWorker.isRunning()) {
+                try {
+                    taskWorkerLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public void waitUntilStopped() {
         synchronized(taskWorkerLock) {
             while(null!=taskWorker && taskWorker.isRunning()) {
@@ -118,6 +145,7 @@ public class TaskManager {
 
     class TaskWorker extends Thread {
         volatile boolean isRunning = false;
+        volatile boolean externalStimuli = false;
 
         public TaskWorker(String name) {
             super(threadGroup, name);
@@ -127,13 +155,22 @@ public class TaskManager {
             return isRunning;
         }
 
-        public void run() {
+        public void start(boolean externalStimuli) throws IllegalThreadStateException {
             synchronized(this) {
+                this.externalStimuli = externalStimuli;
                 isRunning = true;
             }
+            if(!externalStimuli) {
+                super.start();
+            }
+        }
+
+        public void run() {
             while(!shouldStop) {
                 try {
                     // prolog - lock stuff you may wanne do ..
+
+                    ArrayList clonedTasks;
 
                     // wait for something todo ..
                     synchronized(taskWorkerLock) {
@@ -144,12 +181,12 @@ public class TaskManager {
                                 e.printStackTrace();
                             }
                         }
+                        // make a safe clone of the list 
+                        // since it may change while working on it
+                        clonedTasks = (ArrayList) tasks.clone();
                     }
 
-                    // do it for all tasks,
-                    // first make a safe clone of the list 
-                    // since it may change while working on it
-                    ArrayList clonedTasks = (ArrayList) tasks.clone();
+                    // do it for all tasks
                     for(Iterator i = clonedTasks.iterator(); i.hasNext(); ) {
                         Runnable task = (Runnable) i.next();
                         task.run();
@@ -160,13 +197,15 @@ public class TaskManager {
                 } finally {
                     // epilog - unlock locked stuff
                 }
+                if(externalStimuli) break; // no loop if called by external stimuli
             }
             synchronized(this) {
-                isRunning = false;
+                isRunning = !shouldStop;
             }
-            shouldStop=false;
-            synchronized(taskWorkerLock) { 
-                taskWorkerLock.notifyAll();
+            if(!isRunning) {
+                synchronized(taskWorkerLock) {
+                    taskWorkerLock.notifyAll();
+                }
             }
         }
     }
