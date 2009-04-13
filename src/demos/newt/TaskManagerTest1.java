@@ -4,7 +4,7 @@ import javax.media.nativewindow.*;
 import com.sun.javafx.newt.*;
 import demos.newt.util.TaskManager;
 
-public class TaskManagerTest1  implements WindowListener, KeyListener
+public class TaskManagerTest1  implements WindowListener, KeyListener, MouseListener
 {
     final static TaskManager eventMgr;
     final static TaskManager renderMgr;
@@ -27,26 +27,48 @@ public class TaskManagerTest1  implements WindowListener, KeyListener
 
     Window window;
 
-    public void windowResized(WindowEvent e) {}
-    public void windowMoved(WindowEvent e) {}
+    public void windowResized(WindowEvent e) {
+        System.err.println("windowResized "+e);
+    }
+    public void windowMoved(WindowEvent e) {
+        System.err.println("windowMoved "+e);
+    }
     public void windowDestroyNotify(WindowEvent e) {
+        System.err.println("windowDestroyNotify "+e);
         System.err.println("Window Event Listener DestroyNotify send stop request - START");
         renderMgr.stop();
         eventMgr.stop();
         System.err.println("Window Event Listener DestroyNotify send stop request - DONE");
     }
-
-    public void keyPressed(KeyEvent e)
-    {
+    public void keyPressed(KeyEvent e) {
         System.err.println("keyPressed "+e);
     }
-    public void keyReleased(KeyEvent e)
-    {
+    public void keyReleased(KeyEvent e) {
         System.err.println("keyReleased "+e);
     }
-    public void keyTyped(KeyEvent e)
-    {
+    public void keyTyped(KeyEvent e) {
         System.err.println("keyTyped "+e);
+    }
+    public void mouseClicked(MouseEvent e) {
+        System.err.println("mouseClicked "+e);
+    }
+    public void mouseEntered(MouseEvent e) {
+        System.err.println("mouseEntered "+e);
+    }
+    public void mouseExited(MouseEvent e) {
+        System.err.println("mouseExited "+e);
+    }
+    public void mousePressed(MouseEvent e) {
+        System.err.println("mousePressed "+e);
+    }
+    public void mouseReleased(MouseEvent e) {
+        System.err.println("mouseReleased "+e);
+    }
+    public void mouseMoved(MouseEvent e) {
+        System.err.println("mouseMoved "+e);
+    }
+    public void mouseDragged(MouseEvent e) {
+        System.err.println("mouseDragged "+e);
     }
 
     void render(long context)
@@ -113,6 +135,7 @@ public class TaskManagerTest1  implements WindowListener, KeyListener
             window.setUndecorated(false);
             window.setSize(256, 256);
             window.addKeyListener(this);
+            window.addMouseListener(this);
 
             // let's get notified if window is closed
             window.addWindowListener(this); 
