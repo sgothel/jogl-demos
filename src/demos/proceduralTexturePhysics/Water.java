@@ -528,9 +528,9 @@ public class Water {
       
     createAndWriteUVOffsets(gl, initialMapDimensions[0], initialMapDimensions[1]);
 
-    checkExtension(gl, "GL_vertex_program");
-    checkExtension(gl, "GL_fragment_program");
-    checkExtension(gl, "GL_multitexture");
+    checkExtension(gl, "GL_ARB_vertex_program");
+    checkExtension(gl, "GL_ARB_fragment_program");
+    checkExtension(gl, "GL_ARB_multitexture");
 
     ///////////////////////////////////////////////////////////////////////////
     // UV Offset Vertex Program

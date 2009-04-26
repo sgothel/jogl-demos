@@ -76,40 +76,32 @@ import javax.swing.JOptionPane;
  */
 public class ProceduralTexturePhysics extends Demo {
 
-    public ProceduralTexturePhysics() {
-
+    public static void main(String[] args) {
         GLCanvas canvas = new GLCanvas();
-        ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
+        final ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
         canvas.addGLEventListener(demo);
 
         canvas.addKeyListener(new KeyAdapter() {
 
             public void keyPressed(KeyEvent e) {
-                dispatchKey(e.getKeyChar());
+                demo.dispatchKey(e.getKeyChar());
             }
         });
 
         canvas.addMouseListener(new MouseAdapter() {
-
             public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1 &&
-                        !e.isAltDown() && !e.isMetaDown()) {
-                    drawing = true;
-                }
+                demo.dispatchMousePress(e);
             }
 
             public void mouseReleased(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    drawing = false;
-                }
+                demo.dispatchMouseRelease(e);
             }
         });
 
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
 
             public void mouseDragged(MouseEvent e) {
-                mousePosX = e.getX();
-                mousePosY = e.getY();
+                demo.dispatchMouseDrag(e);
             }
         });
 
@@ -398,6 +390,24 @@ public class ProceduralTexturePhysics extends Demo {
         }
     }
 
+    private void dispatchMousePress(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1 &&
+            !e.isAltDown() && !e.isMetaDown()) {
+            drawing = true;
+        }
+    }
+
+    private void dispatchMouseRelease(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            drawing = false;
+        }
+    }
+
+    public void dispatchMouseDrag(MouseEvent e) {
+        mousePosX = e.getX();
+        mousePosY = e.getY();
+    }
+
     private static void runExit(final Animator animator) {
         // Note: calling System.exit() synchronously inside the draw,
         // reshape or init callbacks can lead to deadlocks on certain
@@ -411,11 +421,5 @@ public class ProceduralTexturePhysics extends Demo {
                 System.exit(0);
             }
         }).start();
-    }
-
-
-
-    public static void main(String[] args) {
-        new ProceduralTexturePhysics();
     }
 }
