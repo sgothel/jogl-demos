@@ -193,32 +193,32 @@ public class VertexProgWarp extends Demo {
 
     for(int i=0; i<NUM_PROGS; i++) {
       int[] vtxProgTmp = new int[1];
-      gl.glGenPrograms(1, vtxProgTmp, 0);
+      gl.glGenProgramsARB(1, vtxProgTmp, 0);
       programs[i] = vtxProgTmp[0];
-      gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[i]);
-      gl.glProgramString(GL2.GL_VERTEX_PROGRAM, GL2.GL_PROGRAM_FORMAT_ASCII, programTexts[i].length(),
+      gl.glBindProgramARB(GL2.GL_VERTEX_PROGRAM_ARB, programs[i]);
+      gl.glProgramStringARB(GL2.GL_VERTEX_PROGRAM_ARB, GL2.GL_PROGRAM_FORMAT_ASCII_ARB, programTexts[i].length(),
                          programTexts[i]);
     }
 
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 0, 0.0f, 0.0f, 1.0f, 0.0f);   // light position/direction
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 1, 0.0f, 1.0f, 0.0f, 0.0f);   // diffuse color
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 2, 1.0f, 1.0f, 1.0f, 0.0f);   // specular color
 
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);   // smoothstep constants
 
     // sin Taylor series constants - 1, 1/3!, 1/5!, 1/7!
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 4, 1.0f, 1.0f / (3*2), 1.0f / (5*4*3*2), 1.0f / (7*6*5*4*3*2));
 
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 5, 1.0f / (2.0f * SIN_PERIOD), 2.0f * SIN_PERIOD, SIN_PERIOD, SIN_PERIOD/2.0f);
 
     // sin wave frequency, amplitude
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 6, 1.0f, 0.2f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 6, 1.0f, 0.2f, 0.0f, 0.0f);
 
     // phase animation
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 7, 0.0f, 0.0f, 0.0f, 0.0f);
 
     // fisheye sphere radius
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 8, 1.0f, 0.0f, 0.0f, 0.0f);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 8, 1.0f, 0.0f, 0.0f, 0.0f);
 
     setWindowTitle();
 
@@ -296,21 +296,21 @@ public class VertexProgWarp extends Demo {
     ManipManager.getManipManager().updateCameraParameters((AWTGLAutoDrawable) drawable, viewer.getCameraParameters());
     ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
 
-    gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, programs[program]);
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 7, anim, 0.0f, 0.0f, 0.0f);
+    gl.glBindProgramARB(GL2.GL_VERTEX_PROGRAM_ARB, programs[program]);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 7, anim, 0.0f, 0.0f, 0.0f);
 
     if (program==6)
-      gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
+      gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 6, (float) Math.sin(anim)*amp*50.0f, 0.0f, 0.0f, 0.0f);
     else
-      gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, 6, freq, amp, d, d+1);
+      gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 6, freq, amp, d, d+1);
 
     if (b['p'])
-      gl.glEnable(GL2.GL_VERTEX_PROGRAM);
+      gl.glEnable(GL2.GL_VERTEX_PROGRAM_ARB);
 
     gl.glDisable(GL.GL_TEXTURE_2D);
     gl.glCallList(obj+1);
 
-    gl.glDisable(GL2.GL_VERTEX_PROGRAM);
+    gl.glDisable(GL2.GL_VERTEX_PROGRAM_ARB);
 
     gl.glPopMatrix();
   }

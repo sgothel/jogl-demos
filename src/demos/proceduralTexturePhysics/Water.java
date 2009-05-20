@@ -308,7 +308,7 @@ public class Water {
           gl.glEnd();
     
           cubemap.disable();
-          gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+          gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
                 
           break;
         }
@@ -537,9 +537,9 @@ public class Water {
     ///////////////////////////////////////////////////////////////////////////
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     vertexProgramID = tmpInt[0];
-    gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vertexProgramID);
+    gl.glBindProgramARB(GL2.GL_VERTEX_PROGRAM_ARB, vertexProgramID);
 
     String programBuffer = 
 "!!ARBvp1.0\n" +
@@ -617,9 +617,9 @@ public class Water {
 
     // set up constants (not currently used in the vertex program, though)
     float[] rCVConsts = new float[] { 0, 0.5f, 1.0f, 2.0f };
-    gl.glProgramEnvParameter4fv(GL2.GL_VERTEX_PROGRAM, CV_CONSTS_1, rCVConsts, 0);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_CONSTS_1, rCVConsts, 0);
 
-    loadProgram(gl, GL2.GL_VERTEX_PROGRAM, programBuffer);
+    loadProgram(gl, GL2.GL_VERTEX_PROGRAM_ARB, programBuffer);
 
     ///////////////////////////////////////////////////////////////////////////
     // fragment program setup for equal weight combination of texels
@@ -762,16 +762,16 @@ public class Water {
     gl.glDisable(GL2.GL_BLEND);
 
     // render using offset 1 (type 1 -- center + 3 of 4 nearest neighbors).
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, CV_UV_OFFSET_TO_USE, 1, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 1, 0, 0, 0);
 
     // bind the vertex program to be used for this step and the next one.
-    gl.glBindProgram(GL2.GL_VERTEX_PROGRAM, vertexProgramID);
-    gl.glEnable(GL2.GL_VERTEX_PROGRAM);
+    gl.glBindProgramARB(GL2.GL_VERTEX_PROGRAM_ARB, vertexProgramID);
+    gl.glEnable(GL2.GL_VERTEX_PROGRAM_ARB);
 
     // render a screen quad. with texture coords doing difference of nearby texels for force calc.
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTexture(GL2.GL_TEXTURE2);
@@ -808,12 +808,12 @@ public class Water {
 
     // vertex program already bound.
     // render using offset 2 (type 2 -- final nearest neighbor plus center of previous result).
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, CV_UV_OFFSET_TO_USE, 2, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 2, 0, 0, 0);
 
     // render a screen quad
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTexture(GL2.GL_TEXTURE1);
@@ -829,7 +829,7 @@ public class Water {
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_FORCE]);
 
     // use offsets of zero
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
 
     // bind the vertex program to be used for this step and the next one.
 
@@ -845,7 +845,7 @@ public class Water {
     // Draw the quad to add in force.
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     ///////////////////////////////////////////////////////////////////
     // With velocity texture selected, render new excitation droplets
@@ -877,7 +877,7 @@ public class Water {
     //////////////////////////////////////////////////////////////////////
     // Apply velocity to position
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_VELOCITY]);
-    gl.glEnable(GL2.GL_VERTEX_PROGRAM);
+    gl.glEnable(GL2.GL_VERTEX_PROGRAM_ARB);
 
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     gl.glBindTexture(GL2.GL_TEXTURE_2D, texHeightInput);
@@ -885,12 +885,12 @@ public class Water {
     gl.glEnable(GL2.GL_TEXTURE_2D);
 
     // use offsets of zero
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 0, 0, 0, 0);
 
     // Draw the quad to add in force.
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the input height texture
     gl.glActiveTexture(GL2.GL_TEXTURE0);
@@ -911,16 +911,16 @@ public class Water {
     }
 
     // use offsets of 3
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, CV_UV_OFFSET_TO_USE, 3, 0, 0, 0);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 3, 0, 0, 0);
 
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_EQ_WEIGHT_COMBINE]);
 
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     // Draw the logo in the water.
     if (applyInteriorBoundaries) {
-      gl.glDisable(GL2.GL_VERTEX_PROGRAM);
+      gl.glDisable(GL2.GL_VERTEX_PROGRAM_ARB);
       drawInteriorBoundaryObjects(gl);
     }
 
@@ -965,22 +965,22 @@ public class Water {
     // Red mask first
     float[] pixMasks = new float[] { normalSTScale, 0.0f, 0.0f, 0.0f };
 
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 0, pixMasks, 0);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 0, pixMasks, 0);
 
     // Now green mask & scale:
     pixMasks[0] = 0.0f;
     pixMasks[1] = normalSTScale;
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 1, pixMasks, 0);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 1, pixMasks, 0);
 
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_CREATE_NORMAL_MAP]);
 
     // set vp offsets to nearest neighbors
-    gl.glProgramEnvParameter4f(GL2.GL_VERTEX_PROGRAM, CV_UV_OFFSET_TO_USE, 4, 0, 0, 0);
-    gl.glEnable(GL2.GL_VERTEX_PROGRAM);
+    gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 4, 0, 0, 0);
+    gl.glEnable(GL2.GL_VERTEX_PROGRAM_ARB);
     
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
 
     // Now we need to copy the resulting pixels into the normal map
     gl.glActiveTexture(GL2.GL_TEXTURE0);
@@ -1121,10 +1121,10 @@ public class Water {
       float type2Offset[] = { type2OffsetX[i], type2OffsetY[i], 0.0f, 0.0f };
       float type4Offset[] = { type4OffsetX[i], type4OffsetY[i], 0.0f, 0.0f };
 
-      gl.glProgramEnvParameter4fv(GL2.GL_VERTEX_PROGRAM, CV_UV_T0_NO_OFFSET + 5 * i, noOffset, 0);
-      gl.glProgramEnvParameter4fv(GL2.GL_VERTEX_PROGRAM, CV_UV_T0_TYPE1     + 5 * i, type1Offset, 0);
-      gl.glProgramEnvParameter4fv(GL2.GL_VERTEX_PROGRAM, CV_UV_T0_TYPE2     + 5 * i, type2Offset, 0);
-      gl.glProgramEnvParameter4fv(GL2.GL_VERTEX_PROGRAM, CV_UV_T0_TYPE4     + 5 * i, type4Offset, 0);
+      gl.glProgramEnvParameter4fvARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_NO_OFFSET + 5 * i, noOffset, 0);
+      gl.glProgramEnvParameter4fvARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE1     + 5 * i, type1Offset, 0);
+      gl.glProgramEnvParameter4fvARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE2     + 5 * i, type2Offset, 0);
+      gl.glProgramEnvParameter4fvARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE4     + 5 * i, type4Offset, 0);
     }
   }
 
@@ -1144,13 +1144,13 @@ public class Water {
     for (int i = 0; i < 4; ++i) {
       offsets[0] = blurDist * ( type3OffsetX[i]);
       offsets[1] = blurDist * ( type3OffsetY[i]);
-      gl.glProgramEnvParameter4fv(GL2.GL_VERTEX_PROGRAM, CV_UV_T0_TYPE3 + 5 * i, offsets, 0);
+      gl.glProgramEnvParameter4fvARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_T0_TYPE3 + 5 * i, offsets, 0);
     }
   }
 
   private synchronized void drawDroplets(GL2 gl) {
-    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM);
-    gl.glDisable(GL2.GL_VERTEX_PROGRAM);
+    gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
+    gl.glDisable(GL2.GL_VERTEX_PROGRAM_ARB);
 
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     dropletTex.bind();
@@ -1228,9 +1228,9 @@ public class Water {
     float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1252,12 +1252,12 @@ public class Water {
 "\n" +
 "END\n";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 0, const0, 0);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 0, const0, 0);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1355,9 +1355,9 @@ public class Water {
     float[] const0 = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1396,12 +1396,12 @@ public class Water {
 "\n" +
 "END\n";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 0, const0, 0);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 0, const0, 0);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1442,9 +1442,9 @@ public class Water {
     // }
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1460,11 +1460,11 @@ public class Water {
 "\n" +
 "END\n";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1514,9 +1514,9 @@ public class Water {
     float[] const1 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1537,13 +1537,13 @@ public class Water {
 "\n" +
 "END\n";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 0, const0, 0);
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 1, const1, 0);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 0, const0, 0);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 1, const1, 0);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1593,9 +1593,9 @@ public class Water {
     float[] const0 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1615,12 +1615,12 @@ public class Water {
 "\n" +
 "END\n";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glProgramEnvParameter4fv(GL2.GL_FRAGMENT_PROGRAM, 0, const0, 0);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glProgramEnvParameter4fvARB(GL2.GL_FRAGMENT_PROGRAM_ARB, 0, const0, 0);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1710,9 +1710,9 @@ public class Water {
     float[] const0 = new float[] { 0.5f,  0.5f,  0.5f,  1.0f };
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1746,11 +1746,11 @@ public class Water {
 "\n" +
 "END\n";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1785,9 +1785,9 @@ public class Water {
     // of a visual difference so they are skipped as well.
 
     int[] tmpInt = new int[1];
-    gl.glGenPrograms(1, tmpInt, 0);
+    gl.glGenProgramsARB(1, tmpInt, 0);
     int fragProg = tmpInt[0];
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
 
     String program =
 "!!ARBfp1.0\n" +
@@ -1809,11 +1809,11 @@ public class Water {
 "\n" +
 "END";
 
-    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM, program);
+    loadProgram(gl, GL2.GL_FRAGMENT_PROGRAM_ARB, program);
 
     gl.glNewList(displayListID, GL2.GL_COMPILE);
-    gl.glBindProgram(GL2.GL_FRAGMENT_PROGRAM, fragProg);
-    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM);
+    gl.glBindProgramARB(GL2.GL_FRAGMENT_PROGRAM_ARB, fragProg);
+    gl.glEnable(GL2.GL_FRAGMENT_PROGRAM_ARB);
     gl.glEndList();
   }
 
@@ -1821,19 +1821,19 @@ public class Water {
                            int target,
                            String programBuffer) {
 
-    gl.glProgramString(target, GL2.GL_PROGRAM_FORMAT_ASCII, programBuffer.length(), programBuffer);
+    gl.glProgramStringARB(target, GL2.GL_PROGRAM_FORMAT_ASCII_ARB, programBuffer.length(), programBuffer);
 
     int[] errPos = new int[1];
-    gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION, errPos, 0);
+    gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
     if (errPos[0] >= 0) {
       String kind = "Program";
-      if (target == GL2.GL_VERTEX_PROGRAM) {
+      if (target == GL2.GL_VERTEX_PROGRAM_ARB) {
         kind = "Vertex program";
-      } else if (target == GL2.GL_FRAGMENT_PROGRAM) {
+      } else if (target == GL2.GL_FRAGMENT_PROGRAM_ARB) {
         kind = "Fragment program";
       }
       System.out.println(kind + " failed to load:");
-      String errMsg = gl.glGetString(GL2.GL_PROGRAM_ERROR_STRING);
+      String errMsg = gl.glGetString(GL2.GL_PROGRAM_ERROR_STRING_ARB);
       if (errMsg == null) {
         System.out.println("[No error message available]");
       } else {
@@ -1847,10 +1847,10 @@ public class Water {
       System.out.println(programBuffer.substring(errPos[0], endPos));
       throw new GLException("Error loading " + kind);
     } else {
-      if (target == GL2.GL_FRAGMENT_PROGRAM) {
+      if (target == GL2.GL_FRAGMENT_PROGRAM_ARB) {
         int[] isNative = new int[1];
-        gl.glGetProgramiv(GL2.GL_FRAGMENT_PROGRAM,
-                             GL2.GL_PROGRAM_UNDER_NATIVE_LIMITS,
+        gl.glGetProgramivARB(GL2.GL_FRAGMENT_PROGRAM_ARB,
+                             GL2.GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,
                              isNative, 0);
         if (isNative[0] != 1) {
           System.out.println("WARNING: fragment program is over native resource limits");
