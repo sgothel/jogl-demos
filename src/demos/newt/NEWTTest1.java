@@ -21,6 +21,12 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
     public void windowMoved(WindowEvent e) {
         System.err.println("windowMoved "+e);
     }
+    public void windowGainedFocus(WindowEvent e) {
+        System.err.println("windowGainedFocus "+e);
+    }
+    public void windowLostFocus(WindowEvent e) {
+        System.err.println("windowLostFocus "+e);
+    }
     public void windowDestroyNotify(WindowEvent e) {
         System.err.println("windowDestroyNotify "+e);
         // stop running ..
@@ -57,6 +63,9 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
     }
     public void mouseDragged(MouseEvent e) {
         System.err.println("mouseDragged "+e);
+    }
+    public void mouseWheelMoved(MouseEvent e) {
+        System.err.println("mouseWheelMoved "+e);
     }
 
     void render(long context)

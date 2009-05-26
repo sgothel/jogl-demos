@@ -76,6 +76,8 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
     }
     public void mouseDragged(MouseEvent e) {
     }
+    public void mouseWheelMoved(MouseEvent e) {
+    }
 
     public MovieCube (String stream) {
         cube = new Cube(true, false);

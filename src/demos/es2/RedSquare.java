@@ -41,6 +41,8 @@ public class RedSquare implements MouseListener, GLEventListener {
     }
     public void mouseDragged(MouseEvent e) {
     }
+    public void mouseWheelMoved(MouseEvent e) {
+    }
 
     private void run(int type) {
         int width = 800;

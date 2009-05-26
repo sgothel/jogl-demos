@@ -25,6 +25,8 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     public void windowDestroyNotify(WindowEvent e) {
         quit=true;
     }
+    public void windowGainedFocus(WindowEvent e) { }
+    public void windowLostFocus(WindowEvent e) { }
 
     public void keyPressed(KeyEvent e) { 
         System.out.println(e);
@@ -58,6 +60,8 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     public void mouseMoved(MouseEvent e) {
     }
     public void mouseDragged(MouseEvent e) {
+    }
+    public void mouseWheelMoved(MouseEvent e) {
     }
 
     private void run(int type) {

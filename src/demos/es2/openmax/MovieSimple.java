@@ -84,6 +84,8 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         rotate = true;
         zoom = -5;
     }
+    public void mouseWheelMoved(MouseEvent e) {
+    }
 
     public MovieSimple(String stream) {
         this.stream = stream ;

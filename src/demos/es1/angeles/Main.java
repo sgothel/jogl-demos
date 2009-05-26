@@ -12,6 +12,8 @@ public class Main implements WindowListener, MouseListener {
 
     public void windowResized(WindowEvent e) { }
     public void windowMoved(WindowEvent e) { }
+    public void windowGainedFocus(WindowEvent e) { }
+    public void windowLostFocus(WindowEvent e) { }
     public void windowDestroyNotify(WindowEvent e) {
         quit = true;
     }
@@ -32,6 +34,8 @@ public class Main implements WindowListener, MouseListener {
     public void mouseMoved(MouseEvent e) {
     }
     public void mouseDragged(MouseEvent e) {
+    }
+    public void mouseWheelMoved(MouseEvent e) {
     }
 
     private void run(int type) {

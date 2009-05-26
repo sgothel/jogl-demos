@@ -34,6 +34,8 @@ public class Perftst implements MouseListener, GLEventListener {
     }
     public void mouseDragged(MouseEvent e) {
     }
+    public void mouseWheelMoved(MouseEvent e) {
+    }
 
     private void run(int type, PerfModule pm) {
         int width = 800;
