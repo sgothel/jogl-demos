@@ -34,6 +34,7 @@ package demos.es2.openmax;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
+import javax.media.nativewindow.*;
 
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.glsl.fixedfunc.*;
@@ -319,9 +320,9 @@ public class Cube implements GLEventListener {
 
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, caps);
+                Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
             }
 
             GLWindow window = GLWindow.create(nWindow, caps);

@@ -24,7 +24,7 @@
 package javabullet.demos.opengl;
 
 import com.sun.javafx.newt.*;
-import javax.media.nwi.*;
+import javax.media.nativewindow.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.opengl.util.*;
@@ -84,9 +84,9 @@ public class JOGL implements WindowListener, MouseListener {
 
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NewtFactory.AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NewtFactory.AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NewtFactory.AWT, nScreen, caps);
+                Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
+                Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
             }
             window = GLWindow.create(nWindow, caps);
 
