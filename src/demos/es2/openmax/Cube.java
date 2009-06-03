@@ -101,7 +101,7 @@ public class Cube implements GLEventListener {
 
         if(!innerCube) {
             System.err.println("Entering initialization");
-            System.err.println("GL Profile: "+GLProfile.getProfile());
+            System.err.println("GL Profile: "+gl.getGLProfile());
             System.err.println("GL:" + gl);
             System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
             System.err.println("GL_EXTENSIONS:");
@@ -309,9 +309,8 @@ public class Cube implements GLEventListener {
         int width = 800;
         int height = 480;
         System.err.println("Cube.run()");
-        GLProfile.setProfileGLAny();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(null);
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

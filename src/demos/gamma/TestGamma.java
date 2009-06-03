@@ -43,16 +43,40 @@ import demos.gears.Gears;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.Gamma;
 
 
 
-public class TestGamma {
+public class TestGamma implements GLEventListener {
   private static void usage() {
     System.out.println("Usage: java TestGamma [gamma value] [brightness value] [contrast value]");
     System.exit(1);
+  }
+
+  public void init(GLAutoDrawable drawable) {
+    GL gl = drawable.getGL();
+    if (!Gamma.setDisplayGamma(gl, gamma, brightness, contrast)) {
+      System.err.println("Unable to change display gamma, brightness, and contrast");
+    }
+    System.err.println("init: Gamma.setDisplayGamma");
+  }
+
+  public void dispose(GLAutoDrawable drawable) {
+    GL gl = drawable.getGL();
+    Gamma.resetDisplayGamma(gl);
+    System.err.println("dispose: Gamma.resetDisplayGamma");
+  }
+
+  public void display(GLAutoDrawable drawable) {
+  }
+
+  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  }
+
+  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
   }
 
   public static void main(String[] args) {
@@ -60,9 +84,6 @@ public class TestGamma {
       usage();
     }
 
-    float gamma = 1.0f;
-    float brightness = 0.0f;
-    float contrast = 0.0f;
     try {
       gamma = Float.parseFloat(args[0]);
       brightness = Float.parseFloat(args[1]);
@@ -74,6 +95,7 @@ public class TestGamma {
     Frame frame = new Frame("Gear and Gamma Demo");
     GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Gears());
+    canvas.addGLEventListener(new TestGamma());
     frame.add(canvas);
     frame.setSize(300, 300);
     final Animator animator = new Animator(canvas);
@@ -85,7 +107,6 @@ public class TestGamma {
           new Thread(new Runnable() {
               public void run() {
                 animator.stop();
-                Gamma.resetDisplayGamma();
                 System.exit(0);
               }
             }).start();
@@ -94,8 +115,9 @@ public class TestGamma {
     frame.setVisible(true);
     animator.start();
     
-    if (!Gamma.setDisplayGamma(gamma, brightness, contrast)) {
-      System.err.println("Unable to change display gamma, brightness, and contrast");
-    }
   }
+
+    static float gamma = 1.0f;
+    static float brightness = 0.0f;
+    static float contrast = 0.0f;
 }

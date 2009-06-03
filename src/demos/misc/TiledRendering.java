@@ -38,15 +38,16 @@ public class TiledRendering {
     String filename = args[0];
     File file = new File(filename);
 
-    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {
+    GLCapabilities caps = new GLCapabilities(null);
+    caps.setDoubleBuffered(false);
+
+    if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer()) {
       System.out.println("Demo requires pbuffer support");
       System.exit(1);
     }
 
     // Use a pbuffer for rendering
-    GLCapabilities caps = new GLCapabilities();
-    caps.setDoubleBuffered(false);
-    GLPbuffer pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null,
+    GLPbuffer pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(caps, null,
                                                                        256, 256,
                                                                        null);
     

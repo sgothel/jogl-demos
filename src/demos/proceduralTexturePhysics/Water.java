@@ -213,12 +213,12 @@ public class Water {
     
     // create the pbuffer.  Will use this as an offscreen rendering buffer.
     // it allows rendering a texture larger than our window.
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = parentWindow.getGLCapabilities();
     caps.setDoubleBuffered(false);
-    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {
+    if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer()) {
       throw new GLException("Pbuffers not supported with this graphics card");
     }
-    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps,
+    pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(caps,
                                                              null,
                                                              initialMapDimensions[0],
                                                              initialMapDimensions[1],

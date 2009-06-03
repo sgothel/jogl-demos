@@ -77,7 +77,7 @@ public class Multisample {
   }
 
   public void run(String[] args) {
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(null);
     GLCapabilitiesChooser chooser = new MultisampleChooser();
 
     caps.setSampleBuffers(true);

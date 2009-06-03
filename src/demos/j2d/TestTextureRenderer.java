@@ -74,10 +74,9 @@ public class TestTextureRenderer implements GLEventListener {
   public static void main(String[] args) {
 
     Frame frame = new Frame("Java 2D Renderer Test");
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
     caps.setAlphaBits(8);
 
-    GLProfile.setProfile("GL2");
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());
     canvas.addGLEventListener(new TestTextureRenderer());

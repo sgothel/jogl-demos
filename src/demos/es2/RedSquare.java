@@ -11,16 +11,21 @@ import com.sun.opengl.util.glsl.*;
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
 
-public class RedSquare implements MouseListener, GLEventListener {
+public class RedSquare extends Thread implements MouseListener, GLEventListener {
 
     private GLWindow window;
+    private GLProfile glp;
     private GLU glu;
     private boolean quit = false;
     private long startTime;
     private long curTime;
 
+    public RedSquare() {
+        super();
+    }
+
     public void mouseClicked(MouseEvent e) {
-        System.out.println("mouseevent: "+e);
+        System.out.println(glp+" mouseevent: "+e);
         switch(e.getClickCount()) {
             case 1:
                 window.setFullscreen(!window.isFullscreen());
@@ -45,13 +50,13 @@ public class RedSquare implements MouseListener, GLEventListener {
     public void mouseWheelMoved(MouseEvent e) {
     }
 
-    private void run(int type) {
+    private void start(String glprofile, int type) {
         int width = 800;
         int height = 480;
-        System.err.println("RedSquare.run()");
-        GLProfile.setProfileGL2ES2();
+        glp = GLProfile.GetProfile(glprofile);
+        System.err.println(glp+" RedSquare.start()");
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(glp);
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -73,10 +78,21 @@ public class RedSquare implements MouseListener, GLEventListener {
 
             // Size OpenGL to Video Surface
             window.setSize(width, height);
-            window.setFullscreen(true);
+            // window.setFullscreen(true);
+
+            start();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    
+    public void run() {
+        System.err.println(glp+" RedSquare.run()");
+        try {
             window.setVisible(true);
 
             startTime = System.currentTimeMillis();
+
             while (!quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {
                 window.display();
             }
@@ -84,7 +100,7 @@ public class RedSquare implements MouseListener, GLEventListener {
             // Shut things down cooperatively
             window.destroy();
             window.getFactory().shutdown();
-            System.out.println("RedSquare shut down cleanly.");
+            System.out.println(glp+" RedSquare shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -118,10 +134,10 @@ public class RedSquare implements MouseListener, GLEventListener {
     public void init(GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
         glu = GLU.createGLU();
-        System.err.println("Entering initialization");
-        System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
-        System.err.println("GL_EXTENSIONS:");
-        System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.println(glp+" Entering initialization");
+        System.err.println(glp+" GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+        System.err.println(glp+" GL_EXTENSIONS:");
+        System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
 
         pmvMatrix = new PMVMatrix();
 
@@ -139,7 +155,7 @@ public class RedSquare implements MouseListener, GLEventListener {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
         // Allocate vertex arrays
-        GLArrayDataClient vertices = GLArrayDataClient.createGLSL("mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
+        GLArrayDataClient vertices = GLArrayDataClient.createGLSL(gl, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
             FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
@@ -150,7 +166,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataClient colors = GLArrayDataClient.createGLSL("mgl_Color",  4, gl.GL_FLOAT, false, 4);
+        GLArrayDataClient colors = GLArrayDataClient.createGLSL(gl, "mgl_Color",  4, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
             FloatBuffer colorb = (FloatBuffer)colors.getBuffer();
@@ -168,7 +184,7 @@ public class RedSquare implements MouseListener, GLEventListener {
         st.glUseProgram(gl, false);
 
         // Let's show the completed shader state ..
-        System.out.println(st);
+        System.out.println(glp+" "+st);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -193,12 +209,14 @@ public class RedSquare implements MouseListener, GLEventListener {
 
     public void dispose(GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
+        System.out.println(glp+" RedSquare.dispose: "+gl.getContext());
 
         st.destroy(gl);
         st=null;
         pmvMatrix.destroy();
         pmvMatrix=null;
         quit=true;
+        System.out.println(glp+" RedSquare.dispose: fin");
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -235,13 +253,21 @@ public class RedSquare implements MouseListener, GLEventListener {
     public static int USE_AWT       = 1 << 0;
 
     public static void main(String[] args) {
+        String glprofile  = null;
         int type = USE_NEWT ;
+        int num=0;
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
             }
+            if(args[i].startsWith("-GL")) {
+                glprofile=args[i].substring(1);
+                new RedSquare().start(glprofile, type);
+                num++;
+            }
         }
-        new RedSquare().run(type);
-        System.exit(0);
+        if(0==num) {
+            new RedSquare().start(glprofile, type);
+        }
     }
 }

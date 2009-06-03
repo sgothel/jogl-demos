@@ -51,10 +51,9 @@ public class Main implements WindowListener, MouseListener {
         int width = 800;
         int height = 480;
         System.out.println("cubefbo.Main.run()");
-        GLProfile.setProfileGLAny();
         try {
             // Hook this into EGL
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(null);
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

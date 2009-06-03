@@ -43,9 +43,8 @@ public class Perftst implements MouseListener, GLEventListener {
         int height = 480;
         pmod = pm;
         System.err.println("Perftst.run()");
-        GLProfile.setProfileGL2ES2();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(GLProfile.GetProfileGL2ES2());
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

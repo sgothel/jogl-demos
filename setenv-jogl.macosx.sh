@@ -31,7 +31,7 @@ GLUEGEN_OS=$THISDIR/../gluegen/build-macosx/obj
 LIB=$THISDIR/lib
 
 # CLASSPATH=$JAVA_HOME/jre/lib/rt.jar:.:build-macosx/classes
-CLASSPATH=.:$THISDIR/build-macosx/jogl-demos.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
+CLASSPATH=.:$THISDIR/build-macosx/jogl-demos.jar:$THISDIR/build-macosx/jogl-demos-util.jar:$THISDIR/build-macosx/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
 for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done

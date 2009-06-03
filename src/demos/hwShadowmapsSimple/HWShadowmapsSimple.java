@@ -270,17 +270,17 @@ public class HWShadowmapsSimple extends Demo {
     gl.glEnable(GL2.GL_DEPTH_TEST);
 
     // init pbuffer
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(gl.getGLProfile());
     caps.setDoubleBuffered(false);
       
-    if (!GLDrawableFactory.getFactory().canCreateGLPbuffer()) {
+    if (!GLDrawableFactory.getFactory(gl.getGLProfile()).canCreateGLPbuffer()) {
       unavailableExtension("Can not create pbuffer");
     }
     if (pbuffer != null) {
       pbuffer.destroy();
       pbuffer = null;
     }
-    pbuffer = GLDrawableFactory.getFactory().createGLPbuffer(caps, null, TEX_SIZE, TEX_SIZE, drawable.getContext());
+    pbuffer = GLDrawableFactory.getFactory(gl.getGLProfile()).createGLPbuffer(caps, null, TEX_SIZE, TEX_SIZE, drawable.getContext());
     pbuffer.addGLEventListener(new PbufferListener());
 
     doViewAll = true;

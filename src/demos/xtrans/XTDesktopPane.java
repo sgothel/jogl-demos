@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLContext;
@@ -99,6 +100,7 @@ public class XTDesktopPane extends OffscreenDesktopPane {
 
   private int textureTarget = GL.GL_TEXTURE_2D;
   private GLU glu = new GLU();
+  private GLProfile glProfile = GLProfile.GetProfileDefault();
 
   /** Creates a new accelerated transition desktop pane. */
   public XTDesktopPane() {
@@ -187,7 +189,8 @@ public class XTDesktopPane extends OffscreenDesktopPane {
           // Get valid Java2D context
           if (j2dContext == null ||
               j2dContextSurfaceIdentifier != Java2D.getOGLSurfaceIdentifier(g)) {
-            j2dContext = GLDrawableFactory.getFactory().createExternalGLContext();
+            
+            j2dContext = GLDrawableFactory.getFactory(glProfile).createExternalGLContext();
             j2dContext.setGL(new DebugGL2(j2dContext.getGL().getGL2()));
             j2dContextSurfaceIdentifier = Java2D.getOGLSurfaceIdentifier(g);
           }

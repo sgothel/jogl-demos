@@ -66,7 +66,7 @@ public class TestTextRenderer implements GLEventListener {
 
   public static void main(String[] args) {
     Frame frame = new Frame("Text Renderer Test");
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(null);
     caps.setAlphaBits(8);
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());

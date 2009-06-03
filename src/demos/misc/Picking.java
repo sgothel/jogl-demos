@@ -30,8 +30,8 @@ public class Picking
   Picking()
   {
     Frame frame = new Frame("Picking Example");
-    GLDrawableFactory factory = GLDrawableFactory.getFactory();
-    GLCapabilities capabilities = new GLCapabilities();
+    GLCapabilities capabilities = new GLCapabilities(null);
+    GLDrawableFactory factory = GLDrawableFactory.getFactory(capabilities.getGLProfile());
     GLCanvas drawable = new GLCanvas(capabilities);
     final Renderer renderer = new Renderer();
     drawable.addGLEventListener(renderer);

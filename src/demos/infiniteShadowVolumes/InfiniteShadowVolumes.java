@@ -86,7 +86,7 @@ import javax.media.opengl.glu.GLU;
 
 public class InfiniteShadowVolumes extends Demo {
   public static void main(String[] args) {
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(null);
     caps.setStencilBits(16);
     final GLCanvas canvas = new GLCanvas(caps);
     InfiniteShadowVolumes demo = new InfiniteShadowVolumes();

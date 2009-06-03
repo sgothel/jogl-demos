@@ -59,7 +59,7 @@ public class PerfTextLoad extends PerfModule {
 
         st.glUseProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
             vb.put(0f); vb.put(0f);
@@ -69,7 +69,7 @@ public class PerfTextLoad extends PerfModule {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer texCoords = GLArrayDataServer.createGLSL("mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer texCoords = GLArrayDataServer.createGLSL(gl, "mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer cb = (FloatBuffer)texCoords.getBuffer();
             cb.put(0f); cb.put(0f);

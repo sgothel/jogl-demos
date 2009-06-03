@@ -11,11 +11,16 @@ import com.sun.opengl.util.glsl.fixedfunc.*;
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
 
-public class RedSquare implements WindowListener, KeyListener, MouseListener, GLEventListener {
+public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
     private GLWindow window;
+    private GLProfile glp;
     private GLU glu;
     private boolean quit = false;
+
+    public RedSquare() {
+        super();
+    }
 
     public void windowResized(WindowEvent e) {
     }
@@ -30,17 +35,17 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     public void windowLostFocus(WindowEvent e) { }
 
     public void keyPressed(KeyEvent e) { 
-        System.out.println(e);
+        System.out.println(glp+" "+e);
     }
     public void keyReleased(KeyEvent e) { 
-        System.out.println(e);
+        System.out.println(glp+" "+e);
     }
     public void keyTyped(KeyEvent e) { 
-        System.out.println(e);
+        System.out.println(glp+" "+e);
     }
 
     public void mouseClicked(MouseEvent e) {
-        System.out.println("mouseevent: "+e);
+        System.out.println(glp+" mouseevent: "+e);
         switch(e.getClickCount()) {
             case 1:
                 window.setFullscreen(!window.isFullscreen());
@@ -65,13 +70,13 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     public void mouseWheelMoved(MouseEvent e) {
     }
 
-    private void run(int type) {
+    private void start(String glprofile, int type) {
         int width = 800;
         int height = 480;
-        System.err.println("RedSquare.run()");
-        GLProfile.setProfileGLAny();
+        glp = GLProfile.GetProfile(glprofile);
+        System.err.println(glp+" RedSquare.run()");
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(glp);
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -97,6 +102,16 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             // window.setFullscreen(true);
+
+            start();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public void run() {
+        System.err.println(glp+" RedSquare.run()");
+        try {
             window.setVisible(true);
 
             do {
@@ -106,7 +121,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
             // Shut things down cooperatively
             window.destroy();
             window.getFactory().shutdown();
-            System.out.println("RedSquare shut down cleanly.");
+            System.out.println(glp+" RedSquare shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -125,12 +140,12 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     public void init(GLAutoDrawable drawable) {
         GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
 
-        System.err.println("Entering initialization");
-        System.err.println("GL Profile: "+GLProfile.getProfile());
-        System.err.println("GL:" + gl);
-        System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
-        System.err.println("GL_EXTENSIONS:");
-        System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.println(glp+" Entering initialization");
+        System.err.println(glp+" GL Profile: "+gl.getGLProfile());
+        System.err.println(glp+" GL:" + gl);
+        System.err.println(glp+" GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+        System.err.println(glp+" GL_EXTENSIONS:");
+        System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
 
         glu = GLU.createGLU();
 
@@ -186,7 +201,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
 
     public void dispose(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
-        System.out.println("Demo.dispose: "+gl.getContext());
+        System.out.println(glp+" RedSquare.dispose: "+gl.getContext());
         gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
         gl.glDisableClientState(gl.GL_COLOR_ARRAY);
         glu.destroy();
@@ -195,7 +210,7 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
         colors   = null;
         vertices.clear();
         vertices = null;
-        System.out.println("Demo.dispose: fin");
+        System.out.println(glp+" RedSquare.dispose: fin");
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
@@ -205,13 +220,21 @@ public class RedSquare implements WindowListener, KeyListener, MouseListener, GL
     public static int USE_AWT       = 1 << 0;
 
     public static void main(String[] args) {
+        String glprofile  = null;
         int type = USE_NEWT ;
+        int num=0;
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
             }
+            if(args[i].startsWith("-GL")) {
+                glprofile=args[i].substring(1);
+                new RedSquare().start(glprofile, type);
+                num++;
+            }
         }
-        new RedSquare().run(type);
-        System.exit(0);
+        if(0==num) {
+            new RedSquare().start(glprofile, type);
+        }
     }
 }

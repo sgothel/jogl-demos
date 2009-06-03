@@ -178,7 +178,7 @@ public class GLCapsTableDemo
     pane2 = new JPanel();
 
     // Hack: use multisampled capabilities to pick up more detailed information on Windows
-    GLCapabilities multisampledCaps = new GLCapabilities();
+    GLCapabilities multisampledCaps = new GLCapabilities(null);
     multisampledCaps.setSampleBuffers(true);
     canvas = new GLCanvas(multisampledCaps, choiceExaminer, null, device);
 

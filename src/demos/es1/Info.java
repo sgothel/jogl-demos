@@ -16,9 +16,8 @@ public class Info implements GLEventListener {
         int width = 10;
         int height = 10;
         System.err.println("Info.run()");
-        GLProfile.setProfileGL2ES1();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(GLProfile.GetProfileGL2ES1());
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -54,7 +53,7 @@ public class Info implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
-        System.err.println("GL Profile: "+GLProfile.getProfile());
+        System.err.println("GL Profile: "+gl.getGLProfile());
         System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
         System.err.println("GL_EXTENSIONS: ");
         System.err.println("  " + gl.glGetString(GL.GL_EXTENSIONS));

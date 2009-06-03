@@ -67,7 +67,7 @@ import com.sun.opengl.util.Animator;
 public class TestOverlay implements GLEventListener {
   public static void main(String[] args) {
     Frame frame = new Frame("Java 2D Overlay Test");
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(null);
     caps.setAlphaBits(8);
     GLCanvas canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Gears());

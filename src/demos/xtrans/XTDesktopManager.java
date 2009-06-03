@@ -51,6 +51,7 @@ import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.GLProfile;
 import javax.swing.JDesktopPane;
 
 
@@ -116,7 +117,8 @@ public class XTDesktopManager extends OffscreenDesktopManager {
             // Get valid Java2D context
             if (j2dContext == null ||
                 j2dContextSurfaceIdentifier != Java2D.getOGLSurfaceIdentifier(g)) {
-              j2dContext = GLDrawableFactory.getFactory().createExternalGLContext();
+              GLProfile glp = GLProfile.GetProfileDefault();
+              j2dContext = GLDrawableFactory.getFactory(glp).createExternalGLContext();
               j2dContext.setGL(new DebugGL2(j2dContext.getGL().getGL2()));
               j2dContextSurfaceIdentifier = Java2D.getOGLSurfaceIdentifier(g);
             }

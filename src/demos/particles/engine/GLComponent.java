@@ -63,7 +63,7 @@ public class GLComponent extends GLCanvas implements GLEventListener {
     }
     
     private static GLCapabilities getCapabilities() {
-        GLCapabilities caps = new GLCapabilities();
+        GLCapabilities caps = new GLCapabilities(null);
         caps.setDoubleBuffered(true);
         caps.setHardwareAccelerated(true);
         return caps;

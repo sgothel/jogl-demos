@@ -93,9 +93,8 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
 
     private void run() {
         System.err.println("MovieSimple.run()");
-        GLProfile.setProfileGL2ES2();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(GLProfile.GetProfileGL2ES2());
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -198,7 +197,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         }
 
         // Allocate vertex array
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         {
             // Fill them up
             FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
@@ -210,7 +209,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         vertices.seal(gl, true);
 
         // Allocate texcoord array
-        GLArrayDataServer texcoord = GLArrayDataServer.createGLSL("mgl_MultiTexCoord", 2, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer texcoord = GLArrayDataServer.createGLSL(gl, "mgl_MultiTexCoord", 2, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         {
             // Fill them up
             FloatBuffer texcoordb = (FloatBuffer)texcoord.getBuffer();
@@ -221,7 +220,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         }
         texcoord.seal(gl, true);
 
-        GLArrayDataServer colors = GLArrayDataServer.createGLSL("mgl_Color",  4, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer colors = GLArrayDataServer.createGLSL(gl, "mgl_Color",  4, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         {
             // Fill them up
             FloatBuffer colorb = (FloatBuffer)colors.getBuffer();

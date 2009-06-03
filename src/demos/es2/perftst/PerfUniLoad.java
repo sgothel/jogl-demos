@@ -38,7 +38,7 @@ public class PerfUniLoad extends PerfModule {
 
         st.glUseProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
             vb.put(0f); vb.put(0f); vb.put(0f);
@@ -48,7 +48,7 @@ public class PerfUniLoad extends PerfModule {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer colors = GLArrayDataServer.createGLSL("mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer colors = GLArrayDataServer.createGLSL(gl, "mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer cb = (FloatBuffer)colors.getBuffer();
             cb.put(0f); cb.put(0f); cb.put(0f); cb.put(1f);

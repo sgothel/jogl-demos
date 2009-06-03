@@ -30,7 +30,7 @@ public class PerfVBOLoad extends PerfModule {
         float r=1f, g=1f, b=1f;
 
         for(int i=0; i<numObjs; i++) {
-            vertices[i] = GLArrayDataServer.createGLSL("mgl_Vertex", 3, dataType, true, numVertices, GL.GL_STATIC_DRAW);
+            vertices[i] = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 3, dataType, true, numVertices, GL.GL_STATIC_DRAW);
             vertices[i].setVBOUsage(useVBO);
             {
                 Buffer verticeb = vertices[i].getBuffer();
@@ -44,7 +44,7 @@ public class PerfVBOLoad extends PerfModule {
                     if(y>1f) { x=0f; y=0f; z+=0.01f; }
                 }
             }
-            colors[i] = GLArrayDataServer.createGLSL("mgl_Color",  4, dataType, true, numVertices, GL.GL_STATIC_DRAW);
+            colors[i] = GLArrayDataServer.createGLSL(gl, "mgl_Color",  4, dataType, true, numVertices, GL.GL_STATIC_DRAW);
             colors[i].setVBOUsage(useVBO);
             {
                 // Fill them up

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import com.sun.opengl.util.Animator;
 import javax.swing.JCheckBox;
@@ -43,7 +44,7 @@ public class JGears extends GLJPanel {
   private BufferedImage openglImage;
 
   static {
-    caps = new GLCapabilities();
+    caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
     caps.setAlphaBits(8);
   }
   

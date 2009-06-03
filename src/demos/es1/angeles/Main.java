@@ -44,10 +44,9 @@ public class Main implements WindowListener, MouseListener {
         int height = 480;
         System.out.println("angeles.Main.run()");
         //GLProfile.setProfileGL2ES1();
-        GLProfile.setProfileGLAny();
         try {
             // Hook this into EGL
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(null);
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

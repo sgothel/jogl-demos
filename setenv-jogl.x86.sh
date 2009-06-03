@@ -31,7 +31,7 @@ GLUEGEN_OS=$THISDIR/../gluegen/build-x86/obj
 LIB=$THISDIR/lib
 
 # CLASSPATH=$JAVA_HOME/jre/lib/rt.jar:.:build-x86/classes
-CLASSPATH=.:$THISDIR/build-x86/jogl-demos.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
+CLASSPATH=.:$THISDIR/build-x86/jogl-demos.jar:$THISDIR/build-x86/jogl-demos-util.jar:$THISDIR/build-x86/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
 for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done

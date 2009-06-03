@@ -47,6 +47,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -100,8 +102,8 @@ public class VertexBufferObject extends Demo {
         usage();
       }
     }
-    GLProfile.setProfile("GL2");
-    GLCanvas canvas = new GLCanvas();
+    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCanvas canvas = new GLCanvas(caps);
     VertexBufferObject demo = new VertexBufferObject();
     demo.vboEnabled = vboEnabled;
     canvas.addGLEventListener(demo);

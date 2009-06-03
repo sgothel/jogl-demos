@@ -58,6 +58,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.media.opengl.GL;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
@@ -78,8 +80,8 @@ public class TextFlow extends Demo {
     Frame frame = new Frame("Text Flow");
     frame.setLayout(new BorderLayout());
 
-    GLProfile.setProfile("GL2");
-    GLCanvas canvas = new GLCanvas();
+    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCanvas canvas = new GLCanvas(caps);
     final TextFlow demo = new TextFlow();
 
     canvas.addGLEventListener(demo);

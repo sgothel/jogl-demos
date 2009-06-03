@@ -58,7 +58,7 @@ public class CubeImmModeSink implements GLEventListener {
         }
         
         if(vboCubeF==null) {
-            ImmModeSink vbo = ImmModeSink.createFixed(GL.GL_STATIC_DRAW, 36,
+            ImmModeSink vbo = ImmModeSink.createFixed(gl, GL.GL_STATIC_DRAW, 36,
                                   3, GL.GL_SHORT,  // vertex
                                   4, GL.GL_FLOAT,  // color
                                   3, GL.GL_BYTE,  // normal
@@ -172,7 +172,7 @@ public class CubeImmModeSink implements GLEventListener {
 
         if(!innerCube) {
             System.err.println("Entering initialization");
-            System.err.println("GL Profile: "+GLProfile.getProfile());
+            System.err.println("GL Profile: "+gl.getGLProfile());
             System.err.println("GL:" + gl);
             System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
             System.err.println("GL_EXTENSIONS:");
@@ -380,9 +380,8 @@ public class CubeImmModeSink implements GLEventListener {
         int width = 800;
         int height = 480;
         System.err.println("CubeImmModeSink.run()");
-        GLProfile.setProfileGLAny();
         try {
-            GLCapabilities caps = new GLCapabilities();
+            GLCapabilities caps = new GLCapabilities(null);
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

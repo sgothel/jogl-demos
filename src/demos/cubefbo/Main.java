@@ -46,7 +46,7 @@ public class Main {
 
   public static void main(String[] args) {
 
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(null);
     GLCanvas canvas = new GLCanvas(caps);
     
     FBCubes cubes = new FBCubes();

@@ -57,6 +57,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.FPSAnimator;
@@ -135,7 +136,7 @@ public class JRefract {
     inner.setClosable(true);
     inner.setVisible(true);
 
-    GLCapabilities caps = new GLCapabilities();
+    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
     if (which == INFINITE) {
       caps.setStencilBits(16);
     }

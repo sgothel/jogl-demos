@@ -51,6 +51,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import javax.media.opengl.GL;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -76,8 +78,8 @@ public class TextCube extends Demo {
     Frame frame = new Frame("Text Cube");
     frame.setLayout(new BorderLayout());
 
-    GLProfile.setProfile("GL2");
-    GLCanvas canvas = new GLCanvas();
+    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCanvas canvas = new GLCanvas(caps);
     final TextCube demo = new TextCube();
 
     canvas.addGLEventListener(demo);
