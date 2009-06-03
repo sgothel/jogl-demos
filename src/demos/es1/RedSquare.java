@@ -70,7 +70,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void mouseWheelMoved(MouseEvent e) {
     }
 
-    private void start(String glprofile, int type) {
+    private void init(String glprofile, int type) {
         int width = 800;
         int height = 480;
         glp = GLProfile.GetProfile(glprofile);
@@ -102,11 +102,19 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             // window.setFullscreen(true);
-
-            start();
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    private void runInThread(String glprofile, int type) {
+        init(glprofile, type);
+        run();
+    }
+
+    private void start(String glprofile, int type) {
+        init(glprofile, type);
+        start();
     }
 
     public void run() {
@@ -222,19 +230,17 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static void main(String[] args) {
         String glprofile  = null;
         int type = USE_NEWT ;
-        int num=0;
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
             }
             if(args[i].startsWith("-GL")) {
+                if(null!=glprofile) {
+                    new RedSquare().start(glprofile, type);
+                }
                 glprofile=args[i].substring(1);
-                new RedSquare().start(glprofile, type);
-                num++;
             }
         }
-        if(0==num) {
-            new RedSquare().start(glprofile, type);
-        }
+        new RedSquare().runInThread(glprofile, type);
     }
 }

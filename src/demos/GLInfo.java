@@ -17,7 +17,7 @@ public class GLInfo extends Thread implements GLEventListener {
         super();
     }
 
-    private void start(String glprofile, int type) {
+    private void init(String glprofile, int type) {
         int width = 256;
         int height = 256;
         glp = GLProfile.GetProfile(glprofile);
@@ -41,26 +41,40 @@ public class GLInfo extends Thread implements GLEventListener {
             }
             window = GLWindow.create(nWindow, caps);
 
+            System.err.println(glp+" GLWindow : "+window);
+
             window.addGLEventListener(this);
 
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             // window.setFullscreen(true);
 
-            start();
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
+    private void runInThread(String glprofile, int type) {
+        init(glprofile, type);
+        run();
+    }
+
+    private void start(String glprofile, int type) {
+        init(glprofile, type);
+        start();
+    }
 
     public void run() {
         try {
-            System.err.println(glp+" GLInfo.run()");
+            System.err.println(glp+" GLInfo.run() 1");
 
             window.setVisible(true);
 
+            System.err.println(glp+" GLInfo.run() 2");
+
             window.display();
+
+            System.err.println(glp+" GLInfo.run() 3");
 
             try {
                 Thread.sleep(500);
@@ -138,19 +152,17 @@ public class GLInfo extends Thread implements GLEventListener {
     public static void main(String[] args) {
         String glprofile  = null;
         int type = USE_NEWT ;
-        int num=0;
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
             }
             if(args[i].startsWith("-GL")) {
+                if(null!=glprofile) {
+                    new GLInfo().start(glprofile, type);
+                }
                 glprofile=args[i].substring(1);
-                new GLInfo().start(glprofile, type);
-                num++;
             }
         }
-        if(0==num) {
-            new GLInfo().start(glprofile, type);
-        }
+        new GLInfo().runInThread(glprofile, type);
     }
 }
