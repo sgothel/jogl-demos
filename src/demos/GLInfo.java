@@ -37,7 +37,6 @@ public class GLInfo extends Thread implements GLEventListener {
                 Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
                 nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
                 System.err.println(glp+" "+nWindow);
-                //nWindow.setVisible(true);
             }
             window = GLWindow.create(nWindow, caps);
 
@@ -49,6 +48,7 @@ public class GLInfo extends Thread implements GLEventListener {
             window.setSize(width, height);
             // window.setFullscreen(true);
 
+            window.setVisible(true);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -67,8 +67,6 @@ public class GLInfo extends Thread implements GLEventListener {
     public void run() {
         try {
             System.err.println(glp+" GLInfo.run() 1");
-
-            window.setVisible(true);
 
             System.err.println(glp+" GLInfo.run() 2");
 

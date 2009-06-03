@@ -79,6 +79,7 @@ public class RedSquare extends Thread implements MouseListener, GLEventListener 
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             // window.setFullscreen(true);
+            window.setVisible(true);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -97,8 +98,6 @@ public class RedSquare extends Thread implements MouseListener, GLEventListener 
     public void run() {
         System.err.println(glp+" RedSquare.run()");
         try {
-            window.setVisible(true);
-
             startTime = System.currentTimeMillis();
 
             while (!quit && ((curTime = System.currentTimeMillis()) - startTime) < 20000) {

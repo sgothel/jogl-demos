@@ -102,6 +102,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             // window.setFullscreen(true);
+            window.setVisible(true);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -120,8 +121,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void run() {
         System.err.println(glp+" RedSquare.run()");
         try {
-            window.setVisible(true);
-
             do {
                 window.display();
             } while (!quit && window.getDuration() < 20000) ;
