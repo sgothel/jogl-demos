@@ -73,11 +73,11 @@ public class TextureConvert {
     caps.setDoubleBuffered(false);
 
     // Make a pbuffer to get an offscreen context
-    if (!GLDrawableFactory.getFactory(caps).canCreateGLPbuffer()) {
+    if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer()) {
       System.out.println("Pbuffer support not available (required to run this demo)");
       System.exit(1);
     }
-    GLPbuffer pbuffer = GLDrawableFactory.getFactory(caps).createGLPbuffer(caps, null, 2, 2, null);
+    GLPbuffer pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(caps, null, 2, 2, null);
     pbuffer.getContext().makeCurrent();
     GL gl = pbuffer.getGL();
 

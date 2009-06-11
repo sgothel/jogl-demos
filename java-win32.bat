@@ -14,6 +14,6 @@ echo CLASSPATH %CLASSPATH%
 
 echo PATH %PATH%
 
-java "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32.log 2>&1
+java "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32.log 2>&1
 
 

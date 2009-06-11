@@ -1,5 +1,5 @@
 
-#set TOPDIR=C:\SUN\JOGL2
+REM set TOPDIR=C:\SUN\JOGL2
 set TOPDIR=..
 set J2RE_HOME=c:\jre6
 set JAVA_HOME=c:\jdk6
@@ -14,6 +14,8 @@ echo CLASSPATH %CLASSPATH%
 
 echo PATH %PATH%
 
-java "-Dgluegen.debug.ProcAddressHelper" "-Dgluegen.debug.NativeLibrary=true" "-Djava.library.path=%LIB_DIR%" "-Dnativewindow.debug=all" "-Djogl.debug=all" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
+REM java "-Dgluegen.debug.ProcAddressHelper" "-Dgluegen.debug.NativeLibrary=true" "-Djava.library.path=%LIB_DIR%" "-Dnativewindow.debug=all" "-Djogl.debug=all" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
+REM java "-Dgluegen.debug.NativeLibrary=true" "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
+java "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
 
 

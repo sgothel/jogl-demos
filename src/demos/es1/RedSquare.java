@@ -74,14 +74,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         int width = 800;
         int height = 480;
         glp = GLProfile.GetProfile(glprofile);
-        System.err.println(glp+" RedSquare.run()");
+        System.err.println(glp+" RedSquare.init() 1");
         try {
             GLCapabilities caps = new GLCapabilities(glp);
-            // For emulation library, use 16 bpp
-            caps.setRedBits(5);
-            caps.setGreenBits(6);
-            caps.setBlueBits(5);
-            caps.setDepthBits(16);
 
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
@@ -103,6 +98,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.setSize(width, height);
             // window.setFullscreen(true);
             window.setVisible(true);
+            window.enablePerfLog(true);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -119,7 +115,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     }
 
     public void run() {
-        System.err.println(glp+" RedSquare.run()");
+        System.err.println(glp+" RedSquare.run() 0");
         try {
             do {
                 window.display();

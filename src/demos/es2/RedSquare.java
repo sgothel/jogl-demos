@@ -11,7 +11,7 @@ import com.sun.opengl.util.glsl.*;
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
 
-public class RedSquare extends Thread implements MouseListener, GLEventListener {
+public class RedSquare extends Thread implements WindowListener, MouseListener, GLEventListener {
 
     private GLWindow window;
     private GLProfile glp;
@@ -22,6 +22,18 @@ public class RedSquare extends Thread implements MouseListener, GLEventListener 
 
     public RedSquare() {
         super();
+    }
+
+    public void windowResized(WindowEvent e) { }
+
+    public void windowMoved(WindowEvent e) { }
+
+    public void windowGainedFocus(WindowEvent e) { }
+
+    public void windowLostFocus(WindowEvent e) { }
+
+    public void windowDestroyNotify(WindowEvent e) {
+        quit = true;
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -57,11 +69,6 @@ public class RedSquare extends Thread implements MouseListener, GLEventListener 
         System.err.println(glp+" RedSquare.start()");
         try {
             GLCapabilities caps = new GLCapabilities(glp);
-            // For emulation library, use 16 bpp
-            caps.setRedBits(5);
-            caps.setGreenBits(6);
-            caps.setBlueBits(5);
-            caps.setDepthBits(16);
 
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
@@ -71,6 +78,7 @@ public class RedSquare extends Thread implements MouseListener, GLEventListener 
             }
             window = GLWindow.create(nWindow, caps);
 
+            window.addWindowListener(this);
             window.addMouseListener(this);
             window.addGLEventListener(this);
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
@@ -222,7 +230,6 @@ public class RedSquare extends Thread implements MouseListener, GLEventListener 
         st=null;
         pmvMatrix.destroy();
         pmvMatrix=null;
-        quit=true;
         System.out.println(glp+" RedSquare.dispose: fin");
     }
 

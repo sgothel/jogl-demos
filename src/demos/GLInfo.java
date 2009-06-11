@@ -18,8 +18,8 @@ public class GLInfo extends Thread implements GLEventListener {
     }
 
     private void init(String glprofile, int type) {
-        int width = 256;
-        int height = 256;
+        int width = 640;
+        int height = 480;
         glp = GLProfile.GetProfile(glprofile);
         System.err.println(glp+" GLInfo.start()");
         try {
@@ -93,7 +93,7 @@ public class GLInfo extends Thread implements GLEventListener {
         GL gl = drawable.getGL();
         GLProfile glp = gl.getGLProfile();
 
-        System.err.println(glp+" GLCapabilities POST: "+drawable.getGLCapabilities());
+        System.err.println(glp+" GLCapabilities POST: "+drawable.getChosenGLCapabilities());
         System.err.println(glp+" GL Profile: "+drawable.getGLProfile());
         System.err.println(glp+" GL:" + gl);
         System.err.println(glp+" GL_VERSION: " + gl.glGetString(GL.GL_VERSION));

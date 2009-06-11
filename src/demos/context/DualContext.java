@@ -74,7 +74,8 @@ public class DualContext extends Canvas {
   public DualContext(AWTGraphicsConfiguration config) {
     super(unwrap(config));
     NativeWindow win = NativeWindowFactory.getFactory(getClass()).getNativeWindow(this, config);
-    drawable = GLDrawableFactory.getFactory(win).createGLDrawable(win);
+    GLCapabilities glCaps = (GLCapabilities) win.getGraphicsConfiguration().getNativeGraphicsConfiguration().getChosenCapabilities();
+    drawable = GLDrawableFactory.getFactory(glCaps.getGLProfile()).createGLDrawable(win);
     context1 = drawable.createContext(null);
     context2 = drawable.createContext(null);
     glu = new GLU();
