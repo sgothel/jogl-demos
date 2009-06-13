@@ -142,9 +142,11 @@ public class DualContext extends Canvas {
   public static void main(String[] args) {
     JFrame frame = new JFrame("Dual OpenGL Context Test");
 
+    GLProfile glp = GLProfile.GetProfileDefault(); // warm up ..
+
     AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
     AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)
-         GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(new GLCapabilities(null), null, screen);
+         GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(new GLCapabilities(glp), null, screen);
     final DualContext dc = new DualContext(config);
 
     frame.getContentPane().add(dc, BorderLayout.CENTER);

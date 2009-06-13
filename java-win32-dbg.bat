@@ -15,7 +15,7 @@ echo CLASSPATH %CLASSPATH%
 echo PATH %PATH%
 
 REM java "-Dgluegen.debug.ProcAddressHelper" "-Dgluegen.debug.NativeLibrary=true" "-Djava.library.path=%LIB_DIR%" "-Dnativewindow.debug=all" "-Djogl.debug=all" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
-REM java "-Dgluegen.debug.NativeLibrary=true" "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
-java "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
+REM java "-Dgluegen.debug.NativeLibrary=true" "-Dnewt.debug=all" "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
+java "-Dnewt.debug.Window" "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
 
 

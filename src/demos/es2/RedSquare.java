@@ -88,6 +88,7 @@ public class RedSquare extends Thread implements WindowListener, MouseListener, 
             window.setSize(width, height);
             // window.setFullscreen(true);
             window.setVisible(true);
+            window.enablePerfLog(true);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -269,7 +270,7 @@ public class RedSquare extends Thread implements WindowListener, MouseListener, 
     public static void main(String[] args) {
         String glprofile  = null;
         int type = USE_NEWT ;
-        for(int i=args.length-1; i>=0; i--) {
+        for(int i=0; i<args.length; i++) {
             if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
             }

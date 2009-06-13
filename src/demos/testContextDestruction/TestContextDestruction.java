@@ -217,6 +217,7 @@ public class TestContextDestruction {
     }
 
     public void dispose(GLAutoDrawable drawable) {
+      System.out.println("Listener.dispose()");
     }
 
     public void display(GLAutoDrawable drawable) {
