@@ -17,9 +17,13 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     private GLProfile glp;
     private GLU glu;
     private boolean quit = false;
+    private String glprofile;
+    private int type;
 
-    public RedSquare() {
+    public RedSquare(String glprofile, int type) {
         super();
+        this.glprofile=glprofile;
+        this.type=type;
     }
 
     public void windowResized(WindowEvent e) {
@@ -70,11 +74,15 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void mouseWheelMoved(MouseEvent e) {
     }
 
-    private void init(String glprofile, int type) {
+    private void runInMain() {
+        run();
+    }
+
+    public void run() {
+        System.err.println(glp+" RedSquare.run() 0");
         int width = 800;
         int height = 480;
         glp = GLProfile.GetProfile(glprofile);
-        System.err.println(glp+" RedSquare.init() 1");
         try {
             GLCapabilities caps = new GLCapabilities(glp);
 
@@ -99,24 +107,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             // window.setFullscreen(true);
             window.setVisible(true);
             window.enablePerfLog(true);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
 
-    private void runInThread(String glprofile, int type) {
-        init(glprofile, type);
-        run();
-    }
-
-    private void start(String glprofile, int type) {
-        init(glprofile, type);
-        start();
-    }
-
-    public void run() {
-        System.err.println(glp+" RedSquare.run() 0");
-        try {
             do {
                 window.display();
             } while (!quit && window.getDuration() < 20000) ;
@@ -227,15 +218,16 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         int type = USE_NEWT ;
         for(int i=0; i<args.length; i++) {
             if(args[i].equals("-awt")) {
-                type |= USE_AWT; 
+                type = USE_AWT; 
             }
             if(args[i].startsWith("-GL")) {
                 if(null!=glprofile) {
-                    new RedSquare().start(glprofile, type);
+                    new RedSquare(glprofile, type).start();
+                    type = USE_NEWT ;
                 }
                 glprofile=args[i].substring(1);
             }
         }
-        new RedSquare().runInThread(glprofile, type);
+        new RedSquare(glprofile, type).runInMain();
     }
 }
