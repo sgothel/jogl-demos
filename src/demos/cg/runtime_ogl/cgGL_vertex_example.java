@@ -35,6 +35,7 @@ package demos.cg.runtime_ogl;
 
 import com.sun.opengl.cg.*;
 import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.*;
 
 import java.awt.*;
@@ -103,7 +104,7 @@ public class cgGL_vertex_example implements GLEventListener
   }
 
 
-  private void DrawCube(GL gl)
+  private void DrawCube(GL2 gl)
   {
     int i;
 
@@ -131,7 +132,7 @@ public class cgGL_vertex_example implements GLEventListener
      */
     for(i = 0; i < 6; i++) 
     {
-      gl.glBegin(GL.GL_QUADS);
+      gl.glBegin(gl.GL_QUADS);
 
       gl.glNormal3f(CubeNormals[i][0], CubeNormals[i][1], CubeNormals[i][0]);
       CgGL.cgGLSetParameter3f(TestColorParam, 1.0f, 0.0f, 0.0f);
@@ -161,7 +162,7 @@ public class cgGL_vertex_example implements GLEventListener
 
   public void display(GLAutoDrawable drawable) 
   {
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     DrawCube(gl);
     //glutSwapBuffers();
@@ -227,7 +228,7 @@ public class cgGL_vertex_example implements GLEventListener
       TestColorParam = CgGL.cgGetNamedParameter(Program, "IN.TestColor");
       CheckCgError();
     }
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
 
     InitializeCube(CubeVertices);
 

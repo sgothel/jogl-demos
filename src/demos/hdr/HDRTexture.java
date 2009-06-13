@@ -106,7 +106,7 @@ public class HDRTexture {
     gl.glTexParameteri(m_target, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
     gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-    gl.glTexParameteri(m_target, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
+    gl.glTexParameteri(m_target, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
     gl.glTexImage2D(m_target, 0, GL.GL_RGBA, m_width, m_height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ByteBuffer.wrap(m_data));
 
     return texid;
@@ -126,7 +126,7 @@ public class HDRTexture {
     gl.glTexParameteri(m_target, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
     gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-    gl.glTexParameteri(m_target, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
+    gl.glTexParameteri(m_target, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
 
     float[] img = new float [m_width * m_height * 2];
     int src = 0;
@@ -144,7 +144,7 @@ public class HDRTexture {
       }
     }
 
-    gl.glTexImage2D(m_target, 0, GL.GL_HILO16_NV, m_width, m_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(img));
+    gl.glTexImage2D(m_target, 0, GL2.GL_HILO16_NV, m_width, m_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(img));
 
     return texid;
   }
@@ -163,7 +163,7 @@ public class HDRTexture {
     gl.glBindTexture(m_target, texid);
 
     gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-    gl.glTexParameteri(m_target, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
+    gl.glTexParameteri(m_target, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
 
     // gl.glTexParameteri(m_target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     // gl.glTexParameteri(m_target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
@@ -268,7 +268,7 @@ public class HDRTexture {
     gl.glBindTexture(m_target, texid);
 
     gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-    gl.glTexParameteri(m_target, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
+    gl.glTexParameteri(m_target, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
 
     gl.glTexParameteri(m_target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     gl.glTexParameteri(m_target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
@@ -291,7 +291,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL2.GL_HILO16_NV, face_width, face_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
   
     // positive X
     ptr = 0;
@@ -307,7 +307,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL2.GL_HILO16_NV, face_width, face_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative Z
     ptr = 0;
@@ -323,7 +323,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL2.GL_HILO16_NV, face_width, face_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative X
     ptr = 0;
@@ -339,7 +339,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL2.GL_HILO16_NV, face_width, face_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // negative Y
     ptr = 0;
@@ -355,7 +355,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL2.GL_HILO16_NV, face_width, face_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     // positive Z
     ptr = 0;
@@ -371,7 +371,7 @@ public class HDRTexture {
         }
       }
     }
-    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL.GL_HILO16_NV, face_width, face_height, 0, GL.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
+    gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL2.GL_HILO16_NV, face_width, face_height, 0, GL2.GL_HILO_NV, GL.GL_FLOAT, FloatBuffer.wrap(face));
 
     return texid;
   }
@@ -389,7 +389,7 @@ public class HDRTexture {
     gl.glBindTexture(m_target, texid);
 
     gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-    gl.glTexParameteri(m_target, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
+    gl.glTexParameteri(m_target, GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
 
     gl.glTexParameteri(m_target, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     gl.glTexParameteri(m_target, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);

@@ -35,6 +35,7 @@ package demos.cg.runtime_ogl_vertex_fragment;
 
 import com.sun.opengl.cg.*;
 import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.*;
@@ -99,7 +100,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     // Use debug pipeline
     // drawable.setGL(new DebugGL(drawable.getGL()));
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     
     // Basic Cg setup; register a callback function for any errors
     // and create an initial context
@@ -134,7 +135,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
   public void display(GLAutoDrawable drawable) 
   {
 
-    GL gl = drawable.getGL();
+    GL2 gl = drawable.getGL().getGL2();
     
     // The usual OpenGL stuff to clear the screen and set up viewing.
     gl.glClearColor(.25f, .25f, .25f, 1.0f);
@@ -272,7 +273,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     CgGL.cgGLLoadProgram(fragmentProgram);
   }
 
-  void LoadTextures(GL gl)
+  void LoadTextures(GL2 gl)
   {
     // There is only one texture needed here--we'll set up a basic
     // checkerboard--which is used to modulate the diffuse channel in the
@@ -282,7 +283,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
 
     // Basic OpenGL texture state setup
     gl.glBindTexture(GL.GL_TEXTURE_2D, handle[0]);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_GENERATE_MIPMAP_SGIS, GL.GL_TRUE);
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, gl.GL_GENERATE_MIPMAP, GL.GL_TRUE);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
@@ -322,7 +323,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
 
   private static FloatBuffer P, N, uv;
   private static IntBuffer indices;
-  void DrawGeometry(GL gl)
+  void DrawGeometry(GL2 gl)
   {
     // Cache the sphere positions, normals, texture coordinates, and 
     // vertex indices in a local array; we only need to fill them in the
@@ -396,7 +397,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     CgGL.cgGLEnableTextureParameter(param);
 
     // And now, draw the geometry.
-    gl.glDrawElements(GL.GL_TRIANGLES, 3*nTris, GL.GL_UNSIGNED_INT, indices);
+    gl.glDrawElements(GL.GL_TRIANGLES, 3*nTris, gl.GL_UNSIGNED_INT, indices);
 
     // Be a good citizen and disable the various bindings we set up above.
     param = CgGL.cgGetNamedParameter(vertexProgram, "Pobject");
