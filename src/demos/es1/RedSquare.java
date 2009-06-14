@@ -1,6 +1,7 @@
 package demos.es1;
 
 import java.nio.*;
+import java.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.nativewindow.*;
@@ -72,10 +73,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void mouseDragged(MouseEvent e) {
     }
     public void mouseWheelMoved(MouseEvent e) {
-    }
-
-    private void runInMain() {
-        run();
     }
 
     public void run() {
@@ -214,20 +211,41 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static int USE_AWT       = 1 << 0;
 
     public static void main(String[] args) {
-        String glprofile  = null;
         int type = USE_NEWT ;
+        List threads = new ArrayList();
         for(int i=0; i<args.length; i++) {
             if(args[i].equals("-awt")) {
-                type = USE_AWT; 
+                type |= USE_AWT; 
             }
             if(args[i].startsWith("-GL")) {
-                if(null!=glprofile) {
-                    new RedSquare(glprofile, type).start();
-                    type = USE_NEWT ;
-                }
-                glprofile=args[i].substring(1);
+                threads.add(new RedSquare(args[i].substring(1), type));
             }
         }
-        new RedSquare(glprofile, type).runInMain();
+        if(threads.size()==0) {
+            threads.add(new RedSquare(null, type));
+        }
+        Thread firstT = (Thread) threads.remove(0);
+
+        for(Iterator i = threads.iterator(); i.hasNext(); ) {
+            ((Thread)i.next()).start();
+        }
+
+        // always run the first on main ..
+        firstT.run();
+
+        boolean done = false;
+
+        while(!done) {
+            int aliveCount = 0;
+            for(Iterator i = threads.iterator(); i.hasNext(); ) {
+                if ( ((Thread)i.next()).isAlive() ) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ie) {}
+                    aliveCount++;
+                }
+            }
+            done = 0==aliveCount ;
+        }
     }
 }
