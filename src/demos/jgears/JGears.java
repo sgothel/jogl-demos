@@ -44,7 +44,7 @@ public class JGears extends GLJPanel {
   private BufferedImage openglImage;
 
   static {
-    caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     caps.setAlphaBits(8);
   }
   

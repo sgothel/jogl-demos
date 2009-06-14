@@ -78,7 +78,7 @@ public class TextCube extends Demo {
     Frame frame = new Frame("Text Cube");
     frame.setLayout(new BorderLayout());
 
-    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     GLCanvas canvas = new GLCanvas(caps);
     final TextCube demo = new TextCube();
 

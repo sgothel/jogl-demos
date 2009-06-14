@@ -102,7 +102,7 @@ public class VertexBufferObject extends Demo {
         usage();
       }
     }
-    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     GLCanvas canvas = new GLCanvas(caps);
     VertexBufferObject demo = new VertexBufferObject();
     demo.vboEnabled = vboEnabled;

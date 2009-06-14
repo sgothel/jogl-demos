@@ -71,7 +71,7 @@ public class RedSquare extends Thread implements WindowListener, MouseListener, 
         System.err.println(glp+" RedSquare.run()");
         int width = 800;
         int height = 480;
-        glp = GLProfile.GetProfile(glprofile);
+        glp = GLProfile.get(glprofile);
         try {
             GLCapabilities caps = new GLCapabilities(glp);
 

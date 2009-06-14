@@ -20,7 +20,7 @@ public class GLInfo extends Thread implements GLEventListener {
     private void init(String glprofile, int type) {
         int width = 640;
         int height = 480;
-        glp = GLProfile.GetProfile(glprofile);
+        glp = GLProfile.get(glprofile);
         System.err.println(glp+" GLInfo.start()");
         try {
             GLCapabilities caps = new GLCapabilities(glp);

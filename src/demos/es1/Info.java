@@ -17,7 +17,7 @@ public class Info implements GLEventListener {
         int height = 10;
         System.err.println("Info.run()");
         try {
-            GLCapabilities caps = new GLCapabilities(GLProfile.GetProfileGL2ES1());
+            GLCapabilities caps = new GLCapabilities(GLProfile.getGL2ES1());
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

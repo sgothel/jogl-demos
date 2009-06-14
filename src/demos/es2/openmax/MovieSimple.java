@@ -94,7 +94,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
     private void run() {
         System.err.println("MovieSimple.run()");
         try {
-            GLCapabilities caps = new GLCapabilities(GLProfile.GetProfileGL2ES2());
+            GLCapabilities caps = new GLCapabilities(GLProfile.getGL2ES2());
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);

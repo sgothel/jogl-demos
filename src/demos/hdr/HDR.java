@@ -315,7 +315,7 @@ public class HDR extends Demo {
     caps.setAlphaBits(floatAlphaBits);
     caps.setDepthBits(floatDepthBits);
     int[] tmp = new int[1];
-    if (!GLDrawableFactory.getFactory(GLProfile.GetProfileDefault()).canCreateGLPbuffer()) {
+    if (!GLDrawableFactory.getFactory(GLProfile.getDefault()).canCreateGLPbuffer()) {
       unavailableExtension("Can not create pbuffer");
     }
     if (pbuffer != null) {
@@ -336,15 +336,15 @@ public class HDR extends Demo {
     }
 
     GLContext parentContext = drawable.getContext();
-    pbuffer = GLDrawableFactory.getFactory(GLProfile.GetProfileDefault()).createGLPbuffer(caps, null, pbuffer_w, pbuffer_h, parentContext);
+    pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(caps, null, pbuffer_w, pbuffer_h, parentContext);
     pbuffer.addGLEventListener(new PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     pbuffer_tex = tmp[0];
-    blur_pbuffer = GLDrawableFactory.getFactory(GLProfile.GetProfileDefault()).createGLPbuffer(caps, null, blur_w, blur_h, parentContext);
+    blur_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(caps, null, blur_w, blur_h, parentContext);
     blur_pbuffer.addGLEventListener(new BlurPbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur_pbuffer_tex = tmp[0];
-    blur2_pbuffer = GLDrawableFactory.getFactory(GLProfile.GetProfileDefault()).createGLPbuffer(caps, null, blur_w, blur_h, parentContext);
+    blur2_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(caps, null, blur_w, blur_h, parentContext);
     blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur2_pbuffer_tex = tmp[0];
@@ -353,7 +353,7 @@ public class HDR extends Demo {
     caps.setGreenBits(8);
     caps.setBlueBits(8);
     caps.setDepthBits(24);
-    tonemap_pbuffer = GLDrawableFactory.getFactory(GLProfile.GetProfileDefault()).createGLPbuffer(caps, null, pbuffer_w, pbuffer_h, parentContext);
+    tonemap_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(caps, null, pbuffer_w, pbuffer_h, parentContext);
     tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
     gl.glGenTextures(1, tmp, 0);
     tonemap_pbuffer_tex = tmp[0];

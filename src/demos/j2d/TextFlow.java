@@ -80,7 +80,7 @@ public class TextFlow extends Demo {
     Frame frame = new Frame("Text Flow");
     frame.setLayout(new BorderLayout());
 
-    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     GLCanvas canvas = new GLCanvas(caps);
     final TextFlow demo = new TextFlow();
 

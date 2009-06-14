@@ -35,8 +35,7 @@ package demos.jrefract;
 
 import demos.common.Demo;
 import demos.common.DemoListener;
-// FIXME: commenting out demos that don't compile right now
-//import demos.hdr.HDR;
+import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
 import demos.j2d.FlyingText;
@@ -136,7 +135,7 @@ public class JRefract {
     inner.setClosable(true);
     inner.setVisible(true);
 
-    GLCapabilities caps = new GLCapabilities(GLProfile.GetProfile(GLProfile.GL2));
+    GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     if (which == INFINITE) {
       caps.setStencilBits(16);
     }

@@ -100,7 +100,7 @@ public class XTDesktopPane extends OffscreenDesktopPane {
 
   private int textureTarget = GL.GL_TEXTURE_2D;
   private GLU glu = new GLU();
-  private GLProfile glProfile = GLProfile.GetProfileDefault();
+  private GLProfile glProfile = GLProfile.getDefault();
 
   /** Creates a new accelerated transition desktop pane. */
   public XTDesktopPane() {

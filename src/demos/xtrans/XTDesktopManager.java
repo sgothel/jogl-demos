@@ -117,7 +117,7 @@ public class XTDesktopManager extends OffscreenDesktopManager {
             // Get valid Java2D context
             if (j2dContext == null ||
                 j2dContextSurfaceIdentifier != Java2D.getOGLSurfaceIdentifier(g)) {
-              GLProfile glp = GLProfile.GetProfileDefault();
+              GLProfile glp = GLProfile.getDefault();
               j2dContext = GLDrawableFactory.getFactory(glp).createExternalGLContext();
               j2dContext.setGL(new DebugGL2(j2dContext.getGL().getGL2()));
               j2dContextSurfaceIdentifier = Java2D.getOGLSurfaceIdentifier(g);
