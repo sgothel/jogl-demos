@@ -1,0 +1,64 @@
+!!ARBfp1.0
+# cgc version 1.3.0001, build date Aug  4 2004 10:01:10
+# command line args: -profile arbfp1
+# source file: ../cg/tonemap.cg
+# source file: ../cg/hdr.cg
+#vendor NVIDIA Corporation
+#version 1.0.02
+#profile arbfp1
+#program main
+#semantic main.sceneTex : TEXUNIT0
+#semantic main.blurTex : TEXUNIT1
+#semantic main.gammaTex : TEXUNIT2
+#semantic main.vignetteTex : TEXUNIT3
+#semantic main.blurAmount
+#semantic main.windowSize
+#semantic main.exposure
+#var float4 In.wpos :  :  : 0 : 0
+#var float3 In.tex0 : $vin.TEX0 : TEX0 : 0 : 1
+#var float3 In.tex1 : $vin.TEX1 : TEX1 : 0 : 1
+#var float4 In.col0 :  :  : 0 : 0
+#var samplerRECT sceneTex : TEXUNIT0 : texunit 0 : 1 : 1
+#var samplerRECT blurTex : TEXUNIT1 : texunit 1 : 2 : 1
+#var sampler1D gammaTex : TEXUNIT2 : texunit 2 : 3 : 1
+#var samplerRECT vignetteTex : TEXUNIT3 : texunit 3 : 4 : 1
+#var float blurAmount :  : c[1] : 5 : 1
+#var float4 windowSize :  :  : 6 : 0
+#var float exposure :  : c[2] : 7 : 1
+#var half4 main : $vout.COL : COL : -1 : 1
+#const c[0] = 1 0
+PARAM c[3] = { { 1, 0 },
+		program.local[1..2] };
+TEMP R0;
+TEMP R1;
+TEMP R2;
+TEMP R3;
+TEMP R4;
+ADD R0.xy, fragment.texcoord[1], c[0].yxzw;
+ADD R1.xy, fragment.texcoord[1], c[0].x;
+TEX R1.xyz, R1, texture[1], RECT;
+TEX R0.xyz, R0, texture[1], RECT;
+ADD R3.xyz, R1, -R0;
+FRC R4.xy, fragment.texcoord[1];
+ADD R1.xy, fragment.texcoord[1], c[0];
+TEX R2.xyz, fragment.texcoord[1], texture[1], RECT;
+TEX R1.xyz, R1, texture[1], RECT;
+ADD R1.xyz, R1, -R2;
+MAD R1.xyz, R4.x, R1, R2;
+MAD R0.xyz, R4.x, R3, R0;
+ADD R2.xyz, R0, -R1;
+TEX R0.xyz, fragment.texcoord[0], texture[0], RECT;
+MAD R1.xyz, R4.y, R2, R1;
+ADD R1.xyz, R1, -R0;
+MAD R1.xyz, R1, c[1].x, R0;
+MUL R1.xyz, R1, c[2].x;
+TEX R0.xyz, fragment.texcoord[0], texture[3], RECT;
+MUL R0.xyz, R1, R0;
+TEX result.color.x, R0, texture[2], 1D;
+TEX R0.x, R0.y, texture[2], 1D;
+TEX R1.x, R0.z, texture[2], 1D;
+MOV result.color.y, R0.x;
+MOV result.color.z, R1.x;
+MOV result.color.w, c[0].x;
+END
+# 26 instructions, 5 R-regs

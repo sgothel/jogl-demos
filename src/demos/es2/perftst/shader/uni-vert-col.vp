@@ -1,0 +1,61 @@
+
+#ifdef GL_ES
+  #define MEDIUMP mediump
+  #define HIGHP highp
+#else
+  #define MEDIUMP
+  #define HIGHP
+#endif
+
+uniform MEDIUMP mat4    mgl_PMVMatrix[2];
+uniform MEDIUMP vec4    mgl_Dummy0[16];
+uniform MEDIUMP vec4    mgl_Dummy1[16];
+uniform MEDIUMP vec4    mgl_Dummy2[16];
+uniform MEDIUMP vec4    mgl_Dummy3[16];
+uniform MEDIUMP vec4    mgl_Dummy4[16];
+uniform MEDIUMP vec4    mgl_Dummy5[16];
+uniform MEDIUMP vec4    mgl_Dummy6[16];
+uniform MEDIUMP vec4    mgl_Dummy7[16];
+uniform MEDIUMP vec4    mgl_Dummy8[16];
+uniform MEDIUMP vec4    mgl_Dummy9[16];
+uniform MEDIUMP vec4    mgl_Dummy10[16];
+uniform MEDIUMP vec4    mgl_Dummy11[16];
+/*
+uniform MEDIUMP vec4    mgl_Dummy12[16];
+uniform MEDIUMP vec4    mgl_Dummy13[16];
+uniform MEDIUMP vec4    mgl_Dummy14[16];
+uniform MEDIUMP vec4    mgl_Dummy15[16];
+ */
+attribute HIGHP vec4    mgl_Vertex;
+attribute HIGHP vec4    mgl_Color;
+varying   HIGHP vec4    frontColor;
+
+void main(void)
+{
+  int i;
+  vec4 val=vec4(0);
+
+  for(i=0; i<16; i++) {
+    val += mgl_Dummy0[i];
+    val += mgl_Dummy1[i];
+    val += mgl_Dummy2[i];
+    val += mgl_Dummy3[i];
+    val += mgl_Dummy4[i];
+    val += mgl_Dummy5[i];
+    val += mgl_Dummy6[i];
+    val += mgl_Dummy7[i];
+    val += mgl_Dummy8[i];
+    val += mgl_Dummy9[i];
+    val += mgl_Dummy10[i];
+    val += mgl_Dummy11[i];
+    /*
+    val += mgl_Dummy12[i];
+    val += mgl_Dummy13[i];
+    val += mgl_Dummy14[i];
+    val += mgl_Dummy15[i];
+     */
+  }
+
+  frontColor=mgl_Color+val;
+  gl_Position = mgl_PMVMatrix[0] * mgl_PMVMatrix[1] * mgl_Vertex;
+}

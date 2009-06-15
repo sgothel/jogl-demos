@@ -1,0 +1,61 @@
+/*********************************************************************NVMH3****
+
+Copyright NVIDIA Corporation 2002
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THIS SOFTWARE IS PROVIDED
+*AS IS* AND NVIDIA AND ITS SUPPLIERS DISCLAIM ALL WARRANTIES, EITHER EXPRESS
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL NVIDIA OR ITS SUPPLIERS
+BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT, OR CONSEQUENTIAL DAMAGES
+WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS,
+BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS)
+ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF NVIDIA HAS
+BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+Comments:
+
+******************************************************************************/
+
+// Utility functions that return the appropriate components from the vector
+// of lighting coefficients returned by the standard library lighting
+// funciton, lit().
+
+half diffuse(half4 l) { return l.y; }
+half specular(half4 l) { return l.z; }
+
+// Main shader.
+
+half4 main(float3 Peye         : TEXCOORD0,
+           half3 Neye         : TEXCOORD1,
+           half2 uv           : TEXCOORD2,
+           half3 Kd           : COLOR0,
+           half3 Ks           : COLOR1,
+           uniform sampler2D diffuseMap,
+           uniform float3 Plight,
+           uniform half3 lightColor,
+           uniform half3 shininess) : COLOR
+{
+    // Normalize surface normal, vector to light source, and vector
+    // to the viewer
+    half3 N = normalize(Neye);
+    half3 L = normalize(Plight - Peye);
+    half3 V = normalize(-Peye);
+
+    // Compute half-angle vector for specular lighting
+    half3 H = normalize(L + V);
+
+    // Compute lighting values.  lit() returns the diffuse coefficient
+    // in y (or zero, if NdotL < 0), and the specular coefficient in z
+    // (or zero, also if NdotL < 0).
+    half NdotL = dot(N, L), NdotH = dot(N, H);
+    half4 lighting = lit(NdotL, NdotH, shininess);
+
+    // Compute overall color for the fragment.  Scale sum of diffuse
+    // and specular contributions together and by the light color.
+    half3 C = lightColor * 
+	(diffuse(lighting) * Kd * (half3)tex2D(diffuseMap, uv).xyz +
+	 specular(lighting) * Ks);
+
+    // Always set the alpha value to 1.
+    return half4(C, 1);
+}

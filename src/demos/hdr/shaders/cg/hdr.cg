@@ -1,0 +1,130 @@
+/*
+   Cg functions to decode and filter textures in Radiance (RGBE) high dynamic range format
+   sgg 2/15/02
+
+   http://www.graphics.cornell.edu/~bjw/rgbe.html
+*/
+
+#if 0
+typedef float4 vec4;
+typedef float3 vec3;
+typedef float2 vec2;
+typedef float real;
+#define texRECT f4texRECT
+#define texCUBE f4texCUBE
+#else
+typedef half4 vec4;
+typedef half3 vec3;
+typedef half2 vec2;
+typedef half real;
+#define texRECT h4texRECT
+#define texCUBE h4texCUBE
+#endif
+
+struct fragin
+{
+    float4 wpos : WPOS;
+    float3 tex0 : TEXCOORD0;
+    float3 tex1 : TEXCOORD1;
+    float4 col0 : COLOR0;
+};
+
+// Lookup in RGBE-encoded rectangle texture
+vec3 texRECT_RGBE(uniform samplerRECT tex, float2 t)
+{
+   vec4 rgbe = texRECT(tex, t);
+   real e = (rgbe[3] * 255) - 128;
+   return rgbe.xyz * exp2(e);
+}
+
+// Lookup in RGBE-encoded cube map texture
+vec3 texCUBE_RGBE(uniform samplerCUBE tex, float3 t)
+{
+   vec4 rgbe = texCUBE(tex, t);
+   real e = (rgbe[3] * 255) - 128;
+   return rgbe.xyz * exp2(e);
+}
+
+// Lookup in RGBE-encoded rectangle texture with filtering
+vec3 texRECT_RGBE_Bilinear(uniform samplerRECT tex, half2 t)
+{
+  float2 f = frac(t);
+  vec3 t0 = texRECT_RGBE(tex, t);
+  vec3 t1 = texRECT_RGBE(tex, t + half2(1,0) );
+  vec3 t2  = lerp(t0, t1, f[0]);
+  t0 = texRECT_RGBE(tex, t + half2(0,1) );
+  t1 = texRECT_RGBE(tex, t + half2(1,1) );
+  t0 = lerp(t0, t1, f[0]);
+  t0 = lerp(t2, t0, f[1]);
+  return t0;
+}
+
+// Lookup in cubemap encoded as two HILO cube maps
+vec3 texCUBE_hilo(uniform samplerCUBE rg_tex : TEXUNIT0, uniform samplerCUBE b_tex : TEXUNIT1, float3 t)
+{
+  vec3 c;
+  c.xy = texCUBE(rg_tex, t).xy;
+  c.z = texCUBE(b_tex, t).x;
+//  c = c * c;
+  return c;
+}
+
+// Lookup in rectangle texture encoded as two HILO cube maps
+vec3 texRECT_hilo(uniform samplerRECT rg_tex : TEXUNIT0, uniform samplerRECT b_tex : TEXUNIT1, float2 t)
+{
+  vec3 c;
+  c.xy = texRECT(rg_tex, t).xy;
+  c.z = texRECT(b_tex, t).x;
+  return c;
+}
+
+// bilinear lookup in float texture
+vec4 texRECT_bilinear(uniform samplerRECT tex, half2 t)
+{
+  float2 f = frac(t);
+  vec4 t0 = texRECT(tex, t);
+  vec4 t1 = texRECT(tex, t + half2(1,0) );
+  vec4 t2  = lerp(t0, t1, f[0]);
+  t0 = texRECT(tex, t + half2(0,1) );
+  t1 = texRECT(tex, t + half2(1,1) );
+  t0 = lerp(t0, t1, f[0]);
+  t0 = lerp(t2, t0, f[1]);
+  return t0;
+}
+
+// applying vignetting based on window coordinates
+void vignette(inout float3 c, float4 wpos, const float2 win_bias, const float2 win_scale)
+{
+  // convert window coord to [-1, 1] range
+  wpos.xy = (wpos.xy - win_bias) * win_scale;
+  // calculate distance from origin
+  float r = length(wpos.xy);
+  r = 1.0 - smoothstep(0.8, 1.5, r);
+  c = c * r;
+}
+
+// refraction function from Renderman spec
+// I = incident direction, N = normal, eta = relative index of refraction
+half3 my_refract(half3 I, half3 N, half eta)
+{
+  half IdotN = dot(I,N);
+  half k = 1 - eta*eta*(1 - IdotN*IdotN);
+
+  return eta*I - (eta*IdotN + sqrt(k))*N;
+}
+
+// fresnel approximation
+half my_fresnel(half3 I, half3 N, half power, half scale, half bias)
+{
+  return bias + (pow(max(0.0, 1.0 - dot(I, N)), power) * scale);
+}
+
+// transform a direction vector by a 4x4 matrix
+float3 transform_dir(float4x4 m, float3 v)
+{
+  float3 o;
+  o.x = dot(v, m._11_12_13);
+  o.y = dot(v, m._21_22_23);
+  o.z = dot(v, m._31_32_33);
+  return o;
+}

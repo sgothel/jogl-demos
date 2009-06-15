@@ -1,0 +1,31 @@
+// object shader
+
+#include "hdr.cg"
+
+struct v2f 
+{
+    float4 HPosition : POSITION;
+    float4 P         : TEXCOORD0; // position
+    float3 N         : TEXCOORD1; // normal
+    float3 I         : TEXCOORD2; // incident vector
+};
+
+half4 main(v2f In,
+           uniform samplerCUBE envMap_rg : TEXUNIT0,
+           uniform samplerCUBE envMap_b  : TEXUNIT1) : COLOR
+{
+    half3 I = normalize(half3(In.I));
+    half3 N = normalize(half3(In.N));
+
+    half3 R = reflect(I, N);
+//    half3 T = refract(I, N, 0.9);
+    half fresnel = my_fresnel(-I, N, 5.0, 0.98, 0.02);
+
+    half3 Creflect = texCUBE_hilo(envMap_rg, envMap_b, R).rgb; // lookup reflection in HDR cube map
+//    half3 Crefract = texCUBE_hilo(envMap_rg, envMap_b, T).rgb; // refraction
+
+//    half3 Cout = lerp(Crefract, Creflect, fresnel);
+//    return half4(Cout, 1.0);
+
+    return half4(Creflect * fresnel, 1.0);
+}
