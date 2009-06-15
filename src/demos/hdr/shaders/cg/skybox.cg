@@ -1,8 +1,0 @@
-#include "hdr.cg"
-
-half4 main(fragin In,
-           uniform samplerCUBE envMap : TEXUNIT0) : COLOR
-{
-    half3 c = texCUBE(envMap, In.tex0).rgb;
-    return half4(c, 1.0);
-}

@@ -1,7 +1,0 @@
-cgc -profile arbfp1 -o object.arbfp1 ../cg/object.cg
-cgc -profile arbfp1 -o object_hilo.arbfp1 ../cg/object_hilo.cg
-cgc -profile arbvp1 -o object_vp.arbvp1 ../cg/object_vp.cg
-cgc -profile arbfp1 -o shrink.arbfp1 ../cg/shrink.cg
-cgc -profile arbfp1 -o skybox.arbfp1 ../cg/skybox.cg
-cgc -profile arbfp1 -o skybox_hilo.arbfp1 ../cg/skybox_hilo.cg
-cgc -profile arbfp1 -o tonemap.arbfp1 ../cg/tonemap.cg
