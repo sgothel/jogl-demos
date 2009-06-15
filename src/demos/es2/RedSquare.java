@@ -12,7 +12,7 @@ import com.sun.opengl.util.glsl.*;
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
 
-public class RedSquare extends Thread implements WindowListener, MouseListener, GLEventListener {
+public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
     private GLWindow window;
     private GLProfile glp;
@@ -39,6 +39,19 @@ public class RedSquare extends Thread implements WindowListener, MouseListener, 
 
     public void windowDestroyNotify(WindowEvent e) {
         quit = true;
+    }
+
+    public void keyPressed(KeyEvent e) { 
+        System.out.println(glp+" "+e);
+        if(e.getKeyCode()==KeyEvent.VK_Q) {
+            quit = true;
+        }
+    }
+    public void keyReleased(KeyEvent e) { 
+        System.out.println(glp+" "+e);
+    }
+    public void keyTyped(KeyEvent e) { 
+        System.out.println(glp+" "+e);
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -85,6 +98,7 @@ public class RedSquare extends Thread implements WindowListener, MouseListener, 
 
             window.addWindowListener(this);
             window.addMouseListener(this);
+            window.addKeyListener(this);
             window.addGLEventListener(this);
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
