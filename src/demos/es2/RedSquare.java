@@ -43,7 +43,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public void keyPressed(KeyEvent e) { 
         System.out.println(glp+" "+e);
-        if(e.getKeyCode()==KeyEvent.VK_Q) {
+        if(e.getKeyChar()=='q') {
             quit = true;
         }
     }
