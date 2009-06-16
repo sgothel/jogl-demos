@@ -41,7 +41,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public void keyPressed(KeyEvent e) { 
         System.out.println(glp+" "+e);
-        if(e.getKeyChar()=='q') {
+        if(e.getKeyChar()=='f') {
+            window.setFullscreen(!window.isFullscreen());
+        } else if(e.getKeyChar()=='q') {
             quit = true;
         }
     }
@@ -56,7 +58,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.out.println(glp+" mouseevent: "+e);
         switch(e.getClickCount()) {
             case 1:
-                window.setFullscreen(!window.isFullscreen());
+                if(e.getButton()>MouseEvent.BUTTON1) {
+                    window.setFullscreen(!window.isFullscreen());
+                }
                 break;
             default: 
                 quit=true;
