@@ -82,6 +82,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void mouseWheelMoved(MouseEvent e) {
     }
 
+    public boolean shouldQuit() { return quit; }
+
     public void run() {
         System.err.println(glp+" RedSquare.run() 0");
         int width = 800;
@@ -103,7 +105,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.addKeyListener(this);
             window.addGLEventListener(this);
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
-            // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
+            window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
+            window.setRunPumpMessages(pumpOnce?false:true);
 
             window.enablePerfLog(true);
             // Size OpenGL to Video Surface
@@ -112,18 +115,42 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.setVisible(true);
             window.enablePerfLog(true);
 
-            do {
-                window.display();
-            } while (!quit && window.getDuration() < 20000) ;
+            if(!oneThread) {
+                do {
+                    display();
+                } while (!quit && window.getDuration() < 20000) ;
 
+                shutdown();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public void display() {
+        try {
+            if(pumpOnce && !oneThread) {
+                GLWindow.runCurrentThreadPumpMessage();
+            }
+            window.display();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public void shutdown() {
+        try {
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
+            if(oneThread) {
+                window.getFactory().shutdown();
+            }
             System.out.println(glp+" RedSquare shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
+
 
     // FIXME: we must add storage of the pointers in the GL state to
     // the GLImpl classes. The need for this can be seen by making
@@ -217,42 +244,70 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static int USE_NEWT      = 0;
     public static int USE_AWT       = 1 << 0;
 
+    public static boolean oneThread = false;
+    public static boolean pumpOnce = true;
+
     public static void main(String[] args) {
         int type = USE_NEWT ;
         List threads = new ArrayList();
         for(int i=0; i<args.length; i++) {
-            if(args[i].equals("-awt")) {
+            if(args[i].equals("-pumponce")) {
+                pumpOnce=true;
+            } else if(args[i].equals("-1thread")) {
+                oneThread=true;
+            } else if(args[i].equals("-awt")) {
                 type |= USE_AWT; 
-            }
-            if(args[i].startsWith("-GL")) {
+            } else if(args[i].startsWith("-GL")) {
                 threads.add(new RedSquare(args[i].substring(1), type));
             }
         }
         if(threads.size()==0) {
             threads.add(new RedSquare(null, type));
         }
-        Thread firstT = (Thread) threads.remove(0);
 
-        for(Iterator i = threads.iterator(); i.hasNext(); ) {
-            ((Thread)i.next()).start();
-        }
+        if(!oneThread) {
+            Thread firstT = (Thread) threads.remove(0);
 
-        // always run the first on main ..
-        firstT.run();
-
-        boolean done = false;
-
-        while(!done) {
-            int aliveCount = 0;
             for(Iterator i = threads.iterator(); i.hasNext(); ) {
-                if ( ((Thread)i.next()).isAlive() ) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ie) {}
-                    aliveCount++;
+                ((Thread)i.next()).start();
+            }
+
+            // always run the first on main ..
+            firstT.run();
+
+            boolean done = false;
+
+            while(!done) {
+                int aliveCount = 0;
+                for(Iterator i = threads.iterator(); i.hasNext(); ) {
+                    if ( ((Thread)i.next()).isAlive() ) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ie) {}
+                        aliveCount++;
+                    }
+                }
+                done = 0==aliveCount ;
+            }
+        } else {
+            // init all ..
+            for(Iterator i = threads.iterator(); i.hasNext(); ) {
+                ((Thread)i.next()).run();
+            }
+            while (threads.size()>0) {
+                if(pumpOnce) {
+                    GLWindow.runCurrentThreadPumpMessage();
+                }
+                for(Iterator i = threads.iterator(); i.hasNext(); ) {
+                    RedSquare app = (RedSquare) i.next();
+                    if(app.shouldQuit()) {
+                        app.shutdown();
+                        i.remove();
+                    } else {
+                        app.display();
+                    }
                 }
             }
-            done = 0==aliveCount ;
         }
     }
 }
