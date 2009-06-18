@@ -26,6 +26,7 @@ public class TaskManagerTest1  implements WindowListener, KeyListener, MouseList
     }
 
     Window window;
+    Display display;
 
     public void windowResized(WindowEvent e) {
         System.err.println("windowResized "+e);
@@ -91,8 +92,8 @@ public class TaskManagerTest1  implements WindowListener, KeyListener, MouseList
                 // prolog - lock whatever you need
 
                 // do it ..
-                if(null!=window) {
-                    window.pumpMessages();
+                if(null!=display) {
+                    display.pumpMessages();
                 }
             } catch (Throwable t) {
                 // handle errors ..
@@ -136,7 +137,7 @@ public class TaskManagerTest1  implements WindowListener, KeyListener, MouseList
             caps.setBlueBits(8);
             //caps.setBackgroundOpaque(true);
 
-            Display display = NewtFactory.createDisplay(null);
+            display = NewtFactory.createDisplay(null);
             Screen screen = NewtFactory.createScreen(display, 0);
             window = NewtFactory.createWindow(screen, caps);
             window.setTitle("GlassPrism");

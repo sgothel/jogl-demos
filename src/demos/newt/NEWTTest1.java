@@ -100,7 +100,7 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
 
             while (running)
             {
-                window.pumpMessages();
+                display.pumpMessages();
 
                 window.lockSurface();
                 try

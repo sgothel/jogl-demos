@@ -74,18 +74,18 @@ public class TaskToolWM {
     }
 
     private static class EventThread implements Runnable {
-        Window window;
+        Display display;
 
-        EventThread(Window w) {
-            window = w;
+        EventThread(Display d) {
+            display = d;
         }
         public void run() {
             try {
                 // prolog - lock whatever you need
 
                 // do it ..
-                if(null!=window) {
-                    window.pumpMessages();
+                if(null!=display) {
+                    display.pumpMessages();
                 }
             } catch (Throwable t) {
                 // handle errors ..
@@ -101,7 +101,7 @@ public class TaskToolWM {
         synchronized(window2Event) {
             Runnable evt = (Runnable) window2Event.get(w);
             if(null==evt) {
-                evt = new EventThread(w);
+                evt = new EventThread(w.getScreen().getDisplay());
                 window2Event.put(w, evt);
                 eventMgr.addTask(evt);
                 res = true;
