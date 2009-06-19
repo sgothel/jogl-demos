@@ -43,7 +43,6 @@ import gleem.BSphere;
 import gleem.BSphereProvider;
 import gleem.ExaminerViewer;
 import gleem.ManipManager;
-import gleem.MouseButtonHelper;
 import gleem.linalg.Vec3f;
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -231,7 +230,8 @@ public class VertexProgWarp extends Demo {
     manager.registerWindow((AWTGLAutoDrawable) drawable);
     this.drawable = drawable;
 
-    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer = new ExaminerViewer();
+    viewer.setUpVector(Vec3f.Y_AXIS);
     viewer.setNoAltKeyMode(true);
     viewer.setAutoRedrawMode(false);
     viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {

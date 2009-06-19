@@ -84,8 +84,7 @@ public class ExaminerViewer {
   /** Simple state machine for computing distance dragged */
   private boolean button1Down;
   private boolean button2Down;
-  private int numMouseButtons;
-  private int oldNumMouseButtons;
+  private boolean button3Down;
   private int lastX;
   private int lastY;
 
@@ -94,6 +93,7 @@ public class ExaminerViewer {
   private Vec3f dolly        = new Vec3f(0, 0, 10); // Amount we have "backed up" from focal point
   private Vec3f center       = new Vec3f(0, 0,  0); // Position of focal point in world coordinates
   private Rotf  orientation  = new Rotf();
+  private Vec3f upVector     = null;
   private float rotateSpeed       = 1.0f;
   private float minRotateSpeed    = 0.0001f;
   private float dollySpeed        = 2.0f;
@@ -112,17 +112,23 @@ public class ExaminerViewer {
       }
 
       public void mouseMoved(MouseEvent e) {
-        passiveMotionMethod(e);
+        if (interactionUnderway && iOwnInteraction) {
+          // Hack for AWT behavior where Ctrl + Alt + Left mouse button is treated
+          // as motion instead of drag
+          motionMethod(e, e.getX(), e.getY());
+        } else {
+          passiveMotionMethod(e);
+        }
       }
     };
 
   private MouseAdapter mouseListener = new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        mouseMethod(e, e.getModifiers(), true, e.getX(), e.getY());
+        mouseMethod(e, e.getModifiersEx(), true, e.getX(), e.getY());
       }
 
       public void mouseReleased(MouseEvent e) {
-        mouseMethod(e, e.getModifiers(), false, e.getX(), e.getY());
+        mouseMethod(e, e.getModifiersEx(), false, e.getX(), e.getY());
       }
     };
 
@@ -136,11 +142,7 @@ public class ExaminerViewer {
       public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
     };
 
-  /** The constructor takes the number of mouse buttons on this system
-      (couldn't figure out how to determine this internally) */
-  public ExaminerViewer(int numMouseButtons) {
-    this.numMouseButtons = numMouseButtons;
-    oldNumMouseButtons = numMouseButtons;
+  public ExaminerViewer() {
   }
 
   /** <P> Attaches this ExaminerViewer to the given GLAutoDrawable. This
@@ -287,16 +289,18 @@ public class ExaminerViewer {
     this.orientation.set(orientation);
   }
 
+  /** Sets the preferred up vector of this ExaminerViewer. The default
+      is null. */
+  public void setUpVector(Vec3f up) {
+    if (up == null) {
+      upVector = null;
+    } else {
+      upVector = up.copy();
+    }
+  }
+
   public void setNoAltKeyMode(boolean noAltKeyMode) {
     this.noAltKeyMode = noAltKeyMode;
-    if (noAltKeyMode) {
-      // FIXME: this is a hack to work around Windows' apparently
-      // conflating the alt/meta key with one of the mouse buttons
-      oldNumMouseButtons = numMouseButtons;
-      numMouseButtons = 3;
-    } else {
-      numMouseButtons = oldNumMouseButtons;
-    }
   }
 
   public boolean getNoAltKeyMode() {
@@ -354,17 +358,16 @@ public class ExaminerViewer {
 
   private boolean modifiersMatch(MouseEvent e, int mods) {
     if (noAltKeyMode) {
-      if ((mods & MouseEvent.BUTTON1_MASK) != 0 &&
-          (mods & MouseEvent.BUTTON2_MASK) == 0 &&
-          (mods & MouseEvent.BUTTON3_MASK) == 0) {
+      if ((mods & MouseEvent.BUTTON1_DOWN_MASK) != 0 &&
+          (mods & MouseEvent.BUTTON2_DOWN_MASK) == 0 &&
+          (mods & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
         return (!e.isAltDown() && !e.isMetaDown() && !e.isControlDown() && !e.isShiftDown());
       } else {
         // At least on Windows, meta seems to be declared to be down on right button presses
         return !e.isControlDown() && !e.isShiftDown();
       }
     } else {
-      return ((e.isAltDown() || e.isMetaDown()) &&
-              (!e.isControlDown() && !e.isShiftDown()));
+      return (e.isAltDown() || e.isMetaDown());
     }
   }
 
@@ -396,7 +399,30 @@ public class ExaminerViewer {
       lastX = x;
       lastY = y;
 
-      if ((button1Down && (!button2Down))) {
+      // The intent is to match Maya's camera controls, which are the de facto standard:
+      //   - Alt + Left   = rotation
+      //   - Alt + Right  = zoom
+      //   - Alt + Middle = translation
+      // With the hack that Ctrl + Alt + Right on a trackpad be the same as translation,
+      // so that gesture can be done without a 3-button mouse hooked up.
+
+      boolean doRotation =
+        (button1Down && !button2Down && !button3Down);
+      boolean doTranslation =
+        (button2Down && !button1Down && !button3Down);
+      boolean doZoom =
+        (button3Down && !button1Down && !button2Down);
+      
+      // Hack to allow us to use Ctrl + Alt + LMB to translate so
+      // that we can do that gesture on the trackpad
+      if (e.isControlDown() && (doRotation || doZoom ||
+                                (button1Down && button2Down))) {
+        doRotation = false;
+        doZoom = false;
+        doTranslation = true;
+      }
+
+      if (doRotation) {
 
         // Rotation functionality
         float xRads = (float) Math.PI * -1.0f * dy * rotateSpeed / 1000.0f;
@@ -406,7 +432,23 @@ public class ExaminerViewer {
         Rotf newRot = yRot.times(xRot);
         orientation = orientation.times(newRot);
 
-      } else if (button2Down && (!button1Down)) {
+        if (upVector != null) {
+          // FIXME: has degenerate behavior when pointing parallel to up vector
+          Vec3f cameraUp = orientation.rotateVector(Vec3f.Y_AXIS);
+          float dotp = cameraUp.dot(upVector);
+          if (Math.abs(dotp) > MathUtil.ZERO_TOLERANCE) {
+            // Form orthonormal basis
+            Vec3f back = orientation.rotateVector(Vec3f.Z_AXIS);
+            Vec3f right = upVector.cross(back);
+            right.normalize();
+            cameraUp.cross(back, right);
+            Mat4f mat = new Mat4f();
+            mat.setRotation(right, cameraUp, back);
+            orientation.fromMatrix(mat);
+          }
+        }
+
+      } else if (doTranslation) {
 
         // Translate functionality
         // Compute the local coordinate system's difference vector
@@ -418,9 +460,10 @@ public class ExaminerViewer {
         // Add on to center
         center.add(worldDiff);
 
-      } else if (button1Down && button2Down) {
+      } else if (doZoom) {
 
-        float diff = dollySpeed * -1.0f * dy / 100.0f;
+        // FIXME: implement this in terms of mouse wheel
+        float diff = dollySpeed * (-1.0f * dy - dx) / 100.0f;
         float newDolly = dolly.z() + diff;
         if (newDolly < minFocalDist) {
           newDolly = minFocalDist;
@@ -451,37 +494,26 @@ public class ExaminerViewer {
         ManipManager.getManipManager().mouseReleased(e);
       }
     } else {
-      if ((mods & MouseEvent.BUTTON1_MASK) != 0) {
-        if (press) {
-          button1Down = true;
-        } else {
-          button1Down = false;
-        }
+      if ((mods & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
+        button1Down = true;
       } else {
-        if (numMouseButtons != 3) {
-          if ((mods & MouseEvent.BUTTON2_MASK) != 0) {
-            if (press) {
-              button2Down = true;
-            } else {
-              button2Down = false;
-            }
-          }
-        } else {
-          // FIXME: must test this on 3-button system
-          if ((mods & MouseEvent.BUTTON3_MASK) != 0) {
-            if (press) {
-              button2Down = true;
-            } else {
-              button2Down = false;
-            }
-          }
-        }
+        button1Down = false;
+      }
+      if ((mods & MouseEvent.BUTTON2_DOWN_MASK) != 0) {
+        button2Down = true;
+      } else {
+        button2Down = false;
+      }
+      if ((mods & MouseEvent.BUTTON3_DOWN_MASK) != 0) {
+        button3Down = true;
+      } else {
+        button3Down = false;
       }
 
       lastX = x;
       lastY = y;
 
-      if (button1Down || button2Down) {
+      if (button1Down || button2Down || button3Down) {
         interactionUnderway = true;
         iOwnInteraction = true;
       } else {

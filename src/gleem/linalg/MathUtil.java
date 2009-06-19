@@ -42,6 +42,15 @@ package gleem.linalg;
 /** Utility math routines. */
 
 public class MathUtil {
+  /** A "close to zero" float epsilon value for use */
+  public static final float FLT_EPSILON = 1.19209290e-07f;
+
+  /** A "close to zero" double epsilon value for use */
+  public static final double EPSILON = 2.220446049250313E-16d;
+
+  /** A close, but not quite, zero float epsilon value for use */
+  public static final float ZERO_TOLERANCE = 0.0001f;
+
   /** Makes an arbitrary vector perpendicular to <B>src</B> and
       inserts it into <B>dest</B>. Returns false if the source vector
       was equal to (0, 0, 0). */

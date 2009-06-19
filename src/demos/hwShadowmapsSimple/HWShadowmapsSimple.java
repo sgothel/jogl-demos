@@ -44,7 +44,6 @@ import gleem.CameraParameters;
 import gleem.ExaminerViewer;
 import gleem.HandleBoxManip;
 import gleem.ManipManager;
-import gleem.MouseButtonHelper;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import gleem.linalg.Vec3f;
@@ -301,7 +300,8 @@ public class HWShadowmapsSimple extends Demo {
     spotlight.setRotation(new Rotf(Vec3f.X_AXIS, (float) Math.toRadians(-30.0f)));
     manager.showManipInWindow(spotlight, (AWTGLAutoDrawable) drawable);
 
-    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer = new ExaminerViewer();
+    viewer.setUpVector(Vec3f.Y_AXIS);
     viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
         public BSphere getBoundingSphere() {
           return new BSphere(object.getTranslation(), 2.0f);

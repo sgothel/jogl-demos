@@ -43,7 +43,6 @@ import gleem.CameraParameters;
 import gleem.ExaminerViewer;
 import gleem.HandleBoxManip;
 import gleem.ManipManager;
-import gleem.MouseButtonHelper;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import gleem.linalg.Vec3f;
@@ -260,7 +259,8 @@ public class InfiniteShadowVolumes extends Demo {
     lightManip.setTranslation(new Vec3f(0.5f, 0.5f, -1));
     lightManip.setGeometryScale(new Vec3f(0.1f, 0.1f, 0.1f));
 
-    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer = new ExaminerViewer();
+    viewer.setUpVector(Vec3f.Y_AXIS);
     viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
         public BSphere getBoundingSphere() {
           return new BSphere(objectManip.getTranslation(), 1.0f);

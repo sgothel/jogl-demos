@@ -13,7 +13,6 @@ import gleem.BSphereProvider;
 import gleem.CameraParameters;
 import gleem.ExaminerViewer;
 import gleem.ManipManager;
-import gleem.MouseButtonHelper;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import gleem.linalg.Vec3f;
@@ -365,7 +364,8 @@ public class HDR extends Demo {
     manager.registerWindow((AWTGLAutoDrawable) drawable);
     this.drawable = drawable;
 
-    viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+    viewer = new ExaminerViewer();
+    viewer.setUpVector(Vec3f.Y_AXIS);
     viewer.setAutoRedrawMode(false);
     viewer.setNoAltKeyMode(true);
     viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {

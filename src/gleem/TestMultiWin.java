@@ -126,7 +126,8 @@ public class TestMultiWin {
       manager.showManipInWindow(manip, (AWTGLAutoDrawable) drawable);
 
       // Instantiate ExaminerViewer
-      viewer = new ExaminerViewer(MouseButtonHelper.numMouseButtons());
+      viewer = new ExaminerViewer();
+      viewer.setUpVector(Vec3f.Y_AXIS);
       viewer.attach((AWTGLAutoDrawable) drawable, new HandleBoxManipBSphereProvider(manip));
       viewer.viewAll(gl);
     }
