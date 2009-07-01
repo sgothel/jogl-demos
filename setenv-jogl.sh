@@ -1,44 +1,100 @@
 #! /bin/sh
 
+function print_usage() {
+    echo "Usage: $0 {JOGL_ALL|JOGL_ES1_MIN|JOGL_ES1_MAX|JOGL_ES2_MIN|JOGL_ES2_MAX|JOGL_GL2ES12_MIN|JOGL_GL2ES12_MAX|JOGL_GL2_MIN|JOGL_GL2_MAX} [jogl-build-dir]"
+}
+
 if [ -z "$1" ] ; then
-    echo "Usage: $0 {JOGL_ALL|JOGL_ES1_MIN|JOGL_ES1_MAX|JOGL_ES2_MIN|JOGL_ES2_MAX|JOGL_GL2ES12_MIN|JOGL_GL2ES12_MAX|JOGL_GL2_MIN|JOGL_GL2_MAX}"
-else
+    echo JOGL PROFILE missing
+    print_usage
+fi
 
 JOGL_PROFILE=$1
 shift
 
-echo JOGL PROFILE: $JOGL_PROFILE
-
-CVSROOT=":pserver:sgoethel@cvs.dev.java.net:/cvs"
-THISDIR=`pwd`
-export CVSROOT THISDIR
-
-if [ -x /devtools/etc/profile.ant ] ; then
-    . /devtools/etc/profile.ant
+JOGL_BUILDDIR=
+if [ ! -z "$1" ] ; then
+    JOGL_BUILDDIR=$1
+    shift
 fi
 
-J2RE_HOME=$(dirname `which java`)
-JAVA_HOME=$(dirname `which javac`)
+THISDIR=`pwd`
+AUTOBUILD=0
+
+if [ -e "$JOGL_BUILDDIR" ] ; then
+    JOGL_DIR=$JOGL_BUILDDIR/..
+    JOGL_BUILDDIR_BASE=`basename $JOGL_BUILDDIR`
+else
+    AUTOBUILD=1
+    jpf=`find jogl/etc -name profile.jogl`
+    if [ -z "$jpf" ] ; then
+        jpf=`find . -name profile.jogl`
+    fi
+    if [ -z "$jpf" ] ; then
+        echo JOGL_DIR not found
+        echo JOGL_BUILDDIR $JOGL_BUILDDIR not exist or not given
+        print_usage
+    fi
+    JOGL_DIR=`dirname $jpf`/..
+    JOGL_BUILDDIR=$JOGL_DIR/lib
+    JOGL_BUILDDIR_BASE="."
+fi
+
+if [ $AUTOBUILD -eq 0 ] ; then
+    gpf=`find ../gluegen/make -name dynlink-unix.cfg`
+    if [ -z "$gpf" ] ; then
+        gpf=`find .. -name dynlink-unix.cfg`
+    fi
+    if [ -z "$gpf" ] ; then
+        echo GLUEGEN_BUILDDIR not found
+        print_usage
+    fi
+    GLUEGEN_DIR=`dirname $gpf`/..
+    GLUEGEN_BUILDDIR=$GLUEGEN_DIR/$JOGL_BUILDDIR_BASE
+    if [ -e "$GLUEGEN_BUILDDIR" ] ; then
+        echo GLUEGEN_BUILDDIR $GLUEGEN_BUILDDIR does not exist
+        print_usage
+    fi
+    GLUEGEN_JAR=$GLUEGEN_BUILDDIR/gluegen-rt.jar
+    GLUEGEN_OS=$GLUEGEN_BUILDDIR/obj
+else
+    GLUEGEN_BUILDDIR=$JOGL_BUILDDIR
+    GLUEGEN_JAR=$JOGL_BUILDDIR/gluegen-rt.jar
+    GLUEGEN_OS=$JOGL_BUILDDIR
+fi
+
+DEMOS_BUILDDIR=$THISDIR/$JOGL_BUILDDIR_BASE
+
+echo JOGL AUTOBUILD: $AUTOBUILD
+echo GLUEGEN BUILDDIR: $GLUEGEN_BUILDDIR
+echo JOGL DIR: $JOGL_DIR
+echo JOGL BUILDDIR: $JOGL_BUILDDIR
+echo JOGL BUILDDIR BASE: $JOGL_BUILDDIR_BASE
+echo JOGL PROFILE: $JOGL_PROFILE
+echo DEMOS BUILDDIR: $DEMOS_BUILDDIR
+
+J2RE_HOME=$(which java)
+JAVA_HOME=$(which javac)
 CP_SEP=:
 
-export LIBXCB_ALLOW_SLOPPY_LOCK=1
-
-. $THISDIR/../jogl/etc/profile.jogl $THISDIR/../jogl/build $THISDIR/../jogl/build/obj $JOGL_PROFILE
-
-GLUEGEN_JAR=$THISDIR/../gluegen/build/gluegen-rt.jar
-GLUEGEN_OS=$THISDIR/../gluegen/build/obj
+. $JOGL_DIR/etc/profile.jogl $JOGL_PROFILE $JOGL_BUILDDIR 
 
 LIB=$THISDIR/lib
 
-# CLASSPATH=$JAVA_HOME/jre/lib/rt.jar:.:build/classes
-CLASSPATH=.:$THISDIR/build/jogl-demos.jar:$THISDIR/build/jogl-demos-util.jar:$THISDIR/build/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
+CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
 for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done
 export CLASSPATH
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLUEGEN_OS:$THISDIR/../jogl/build/obj
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GLUEGEN_OS:$JOGL_LIB_DIR
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$GLUEGEN_OS:$JOGL_LIB_DIR
 
-echo JOGL_CLASSPATH: $JOGL_CLASSPATH
-fi
+echo CLASSPATH: $CLASSPATH
+echo
+echo MacOSX REMEMBER to add the JVM arguments "-XstartOnFirstThread -Djava.awt.headless=true" for running demos without AWT, e.g. NEWT
+echo MacOSX REMEMBER to add the JVM arguments "-XstartOnFirstThread -Djava.awt.headless=true com.sun.javafx.newt.util.MainThread" for running demos with NEWT
+
+PATH=$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
+export PATH
 
 

@@ -56,6 +56,9 @@
 
     <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes">
         <property name="jogl.core.jar"       value="../../jogl/${rootrel.build}/jogl/jogl.core.jar" />
+        <condition property="jogl.cg.jar"    value="../../jogl/${rootrel.build}/jogl/jogl.cg.jar">
+          <isset property="jogl.cg"/>
+        </condition>
         <property name="jogl.gles12.jar"     value="../../jogl/${rootrel.build}/jogl/jogl.gles12.jar" />
         <property name="jogl.gles12.dbg.jar" value="../../jogl/${rootrel.build}/jogl/jogl.gles12.dbg.jar" />
         <property name="jogl.gles1.jar"      value="../../jogl/${rootrel.build}/jogl/jogl.gles1.jar" />
@@ -113,6 +116,7 @@
             <pathelement location="${nativewindow.x11.jar}" />
             <pathelement location="${nativewindow.awt.jar}" />
             <pathelement location="${jogl.core.jar}" />
+            <pathelement location="${jogl.cg.jar}" />
             <pathelement location="${jogl.gles1.jar}" />
             <pathelement location="${jogl.gles1.dbg.jar}" />
             <pathelement location="${jogl.gles2.jar}" />
