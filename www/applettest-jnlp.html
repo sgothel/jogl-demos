@@ -18,6 +18,7 @@ otherwise it shall fallback to <a href="http://applet-launcher.dev.java.net">JNL
       width=600
       height=400
       archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
                http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar">
@@ -26,8 +27,10 @@ otherwise it shall fallback to <a href="http://applet-launcher.dev.java.net">JNL
    <param name="subapplet.displayname" value="JOGL Gears Applet">
    <param name="noddraw.check" value="true">
    <param name="progressbar" value="true">
-   <param name="jnlpNumExtensions" value="1">
+   <param name="jnlpNumExtensions" value="2">
    <param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.jnlp">
+   <param name="jnlpExtension2"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp">
    <param name="jnlp_href" value="applet-gears.jnlp">
 </applet>
@@ -42,6 +45,7 @@ The applet above is instantiated with the following code:
       width=600
       height=400
       archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
                http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar"&gt;
@@ -50,11 +54,44 @@ The applet above is instantiated with the following code:
    &lt;param name="subapplet.displayname" value="JOGL Gears Applet"&gt;
    &lt;param name="noddraw.check" value="true"&gt;
    &lt;param name="progressbar" value="true"&gt;
-   &lt;param name="jnlpNumExtensions" value="1"&gt;
+   &lt;param name="jnlpNumExtensions" value="2"&gt;
    &lt;param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.jnlp"&gt;
+   &lt;param name="jnlpExtension2"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp"&gt;
    &lt;param name="jnlp_href" value="applet-gears.jnlp"&gt;
 &lt;/applet&gt;
+</pre>
+
+Where the referenced JNLP file <em>applet-gears.jnlp</em> looks as follow:
+
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;jnlp href="applet-gears.jnlp"&gt;
+  &lt;information&gt;
+    &lt;title&gt;JOGL JNLP Applet Gears Demo&lt;/title&gt;
+    &lt;vendor&gt;Sun Microsystems, Inc.&lt;/vendor&gt;
+    &lt;homepage href="http://jogl-demos.dev.java.net/"/&gt;
+    &lt;description&gt;Gears Demo&lt;/description&gt;
+    &lt;description kind="short"&gt;Brian Paul's Gears demo ported to Java and JOGL.&lt;/description&gt;
+    &lt;offline-allowed/&gt;
+  &lt;/information&gt;
+
+    &lt;resources&gt;
+      &lt;j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/&gt;
+      &lt;property name="sun.java2d.noddraw" value="true"/&gt;
+      &lt;jar href="http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar" main="true"/&gt;
+      &lt;jar href="http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos-util.jar"/&gt;
+      &lt;extension name="jogl-all-awt" href="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-all-awt.jnlp" /&gt;
+    &lt;/resources&gt;
+
+  &lt;applet-desc 
+      name="Gears-Applet"
+      main-class="demos.applets.GearsApplet"
+      width="640" 
+      height="480"&gt;
+  &lt;/applet-desc&gt;
+&lt;/jnlp&gt;
 </pre>
 
 </P>

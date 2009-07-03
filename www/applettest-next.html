@@ -11,6 +11,7 @@
       width=600
       height=400
       archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/nativewindow.all.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/jogl.all.jar,
                http://download.java.net/media/gluegen/webstart-2.x-next/gluegen-rt.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart-next/jogl-demos.jar">
@@ -19,8 +20,10 @@
    <param name="subapplet.displayname" value="JOGL Gears Applet">
    <param name="noddraw.check" value="true">
    <param name="progressbar" value="true">
-   <param name="jnlpNumExtensions" value="1">
+   <param name="jnlpNumExtensions" value="2">
    <param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/nativewindow.jnlp">
+   <param name="jnlpExtension2"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/jogl-core.jnlp">
 </applet>
 

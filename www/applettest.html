@@ -24,6 +24,7 @@ as an applet:
       width=600
       height=400
       archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
                http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar">
@@ -32,8 +33,10 @@ as an applet:
    <param name="subapplet.displayname" value="JOGL Gears Applet">
    <param name="noddraw.check" value="true">
    <param name="progressbar" value="true">
-   <param name="jnlpNumExtensions" value="1">
+   <param name="jnlpNumExtensions" value="2">
    <param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.jnlp">
+   <param name="jnlpExtension2"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp">
 </applet>
 
@@ -47,6 +50,7 @@ The applet above is instantiated with the following code:
       width=600
       height=400
       archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
                http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar"&gt;
@@ -55,8 +59,10 @@ The applet above is instantiated with the following code:
    &lt;param name="subapplet.displayname" value="JOGL Gears Applet"&gt;
    &lt;param name="noddraw.check" value="true"&gt;
    &lt;param name="progressbar" value="true"&gt;
-   &lt;param name="jnlpNumExtensions" value="1"&gt;
+   &lt;param name="jnlpNumExtensions" value="2"&gt;
    &lt;param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.jnlp"&gt;
+   &lt;param name="jnlpExtension2"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp"&gt;
 &lt;/applet&gt;
 </pre>

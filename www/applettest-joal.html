@@ -30,6 +30,7 @@ rendering and OpenAL audio:
       width=600
       height=400
       archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
                http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
                http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar,
@@ -40,10 +41,12 @@ rendering and OpenAL audio:
    <param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet">
    <param name="noddraw.check" value="true">
    <param name="progressbar" value="true">
-   <param name="jnlpNumExtensions" value="2">
+   <param name="jnlpNumExtensions" value="3">
    <param name="jnlpExtension1"
-          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp">
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.jnlp">
    <param name="jnlpExtension2"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp">
+   <param name="jnlpExtension3"
           value="http://download.java.net/media/joal/webstart/joal.jnlp">
 </applet>
 
