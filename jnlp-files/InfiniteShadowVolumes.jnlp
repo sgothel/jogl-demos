@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp codebase="DEMO_CODEBASE_TAG"
+      href="InfiniteShadowVolumes.jnlp">
+  <information>
+    <title>JOGL Infinite Shadow Volumes Demo</title>
+    <vendor>Sun Microsystems, Inc.</vendor>
+    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <description>InfiniteShadowVolumes Demo</description>
+    <description kind="short">NVidia's InfiniteShadowVolumes demo ported to Java and JOGL.</description>
+    <offline-allowed/>
+  </information>
+
+    <resources>
+      <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+      <property name="sun.java2d.noddraw" value="true"/>
+      <jar href="jogl-demos.jar" main="true"/>
+      <jar href="jogl-demos-util.jar" />
+      <jar href="jogl-demos-data.jar" />
+      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
+    </resources>
+
+  <application-desc main-class="demos.infiniteShadowVolumes.InfiniteShadowVolumes"/>
+</jnlp>

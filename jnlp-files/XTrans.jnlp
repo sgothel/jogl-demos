@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp codebase="DEMO_CODEBASE_TAG"
+      href="XTrans.jnlp">
+  <information>
+    <title>JOGL XTrans (Accelerated Transition) Demo - JOGL/Java2D Integration</title>
+    <vendor>Sun Microsystems, Inc.</vendor>
+    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <description>XTrans Demo</description>
+    <description kind="short">Demo showing OpenGL-accelerated animated transitions of Swing components using the Java2D/JOGL bridge.</description>
+    <offline-allowed/>
+  </information>
+
+    <resources>
+      <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+      <property name="sun.java2d.opengl" value="True"/>
+      <!-- Temporary workaround for slowness in Windows NVidia drivers -->
+      <property name="swing.bufferPerWindow" value="false"/>
+      <jar href="jogl-demos.jar" main="true"/>
+      <jar href="jogl-demos-util.jar" />
+      <jar href="jogl-demos-data.jar" />
+      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
+    </resources>
+
+  <application-desc main-class="demos.xtrans.Main"/>
+</jnlp>
