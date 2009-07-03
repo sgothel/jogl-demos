@@ -1,21 +1,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<title>JOGL Applet Test</title>
+<title>JOGL JNLP Applet Test</title>
 </head>
 <body>
 
 <P>
 
-The new <a
-href="http://applet-launcher.dev.java.net">JNLPAppletLauncher</a>
-enables the creation and deployment of applets using 3D graphics via
-OpenGL without requiring the applet to be signed or performing any
-manual installation of software on users' computers. It has been
-tested and should work on any OS/CPU combination supported by JOGL
-with a Java Runtime Environment version 1.4.2 or later installed into
-the web browser. Here is an example of the standard Gears demo running
-as an applet:
+In case your <a href="https://jdk6.dev.java.net/plugin2/jnlp/">Java Plugin supports JNLP</a>, 
+the <em>applet-gears.jnlp</em> is used, 
+otherwise it shall fallback to <a href="http://applet-launcher.dev.java.net">JNLPAppletLauncher</a>.
 
 </P>
 <P>
@@ -35,6 +29,7 @@ as an applet:
    <param name="jnlpNumExtensions" value="1">
    <param name="jnlpExtension1"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp">
+   <param name="jnlp_href" value="applet-gears.jnlp">
 </applet>
 
 </P>
@@ -58,6 +53,7 @@ The applet above is instantiated with the following code:
    &lt;param name="jnlpNumExtensions" value="1"&gt;
    &lt;param name="jnlpExtension1"
           value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp"&gt;
+   &lt;param name="jnlp_href" value="applet-gears.jnlp"&gt;
 &lt;/applet&gt;
 </pre>
 
