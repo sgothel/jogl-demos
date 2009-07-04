@@ -10,8 +10,14 @@
 In case your <a href="https://jdk6.dev.java.net/plugin2/jnlp/">Java Plugin supports JNLP</a>, 
 the <em>applet-gears.jnlp</em> is used, 
 otherwise it shall fallback to <a href="http://applet-launcher.dev.java.net">JNLPAppletLauncher</a>.
-
+<br>
+Note that it is important for the startup time to have the same JVM arguments in the applet tags,
+as well as within the JNLP applet description, here see property <em>sun.java2d.noddraw</em>. 
+Only if JVM arguments of the JNLP applet description are satisfied by the applet tag's JVM,
+the plugin will not need to start a new JVM. OF course, the applet tag's JVM spec may exceed the
+JNLP applet's one.
 </P>
+
 <P>
 
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
