@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>JOGL JNLP Applet Test NEXT</title>
+</head>
+<body>
+
+<P>
+
+<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
+      width=600
+      height=400
+      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/nativewindow.all.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/jogl.all.jar,
+               http://download.java.net/media/gluegen/webstart-2.x-next/gluegen-rt.jar,
+               http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart-next/jogl-demos.jar">
+   <param name="codebase_lookup" value="false">
+   <param name="subapplet.classname" value="demos.applets.RedSquareNEWTAWTApplet">
+   <param name="subapplet.displayname" value="JOGL RedSquare NEWT-AWT Applet">
+   <param name="noddraw.check" value="true">
+   <param name="progressbar" value="true">
+   <param name="jnlpNumExtensions" value="1">
+   <param name="jnlpExtension1"
+          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/jogl-core.jnlp">
+   <param name="java_arguments" value="-Dsun.java2d.noddraw=true">
+   <param name="jnlp_href" value="applet-redsquare-newtawt-next.jnlp">
+</applet>
+
+</P>
+<P>
+
+</body>
+</html>
