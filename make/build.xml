@@ -73,10 +73,11 @@
         <property name="jogl.util.awt.jar"   value="../../jogl/${rootrel.build}/jogl/jogl.util.awt.jar" />
         <property name="jogl.util.fixedfuncemu.jar" value="../../jogl/${rootrel.build}/jogl/jogl.util.fixedfuncemu.jar" />
         <property name="jogl.util.gl2.jar"   value="../../jogl/${rootrel.build}/jogl/jogl.util.gl2.jar" />
-        <property name="nativewindow.core.jar"        value="../../jogl/${rootrel.build}/nativewindow/nativewindow.core.jar" />
-        <property name="nativewindow.x11.jar"         value="../../jogl/${rootrel.build}/nativewindow/nativewindow.x11.jar" />
-        <property name="nativewindow.awt.jar"         value="../../jogl/${rootrel.build}/nativewindow/nativewindow.awt.jar" />
-        <property name="newt.all.jar"        value="../../jogl/${rootrel.build}/newt/newt.all.jar" />
+        <property name="nativewindow.core.jar" value="../../jogl/${rootrel.build}/nativewindow/nativewindow.core.jar" />
+        <property name="nativewindow.x11.jar"  value="../../jogl/${rootrel.build}/nativewindow/nativewindow.x11.jar" />
+        <property name="nativewindow.awt.jar"  value="../../jogl/${rootrel.build}/nativewindow/nativewindow.awt.jar" />
+        <property name="newt.core.jar"       value="../../jogl/${rootrel.build}/newt/newt.core.jar" />
+        <property name="newt.ogl.jar"        value="../../jogl/${rootrel.build}/newt/newt.ogl.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
         <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
@@ -129,7 +130,8 @@
             <pathelement location="${jogl.util.fixedfuncemu.jar}" />
             <pathelement location="${jogl.util.awt.jar}" />
             <pathelement location="${jogl.util.gl2.jar}" />
-            <pathelement location="${newt.all.jar}" />
+            <pathelement location="${newt.core.jar}" />
+            <pathelement location="${newt.ogl.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${simple-xml.jar}" />
@@ -189,6 +191,7 @@
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
             <pathelement location="${nativewindow.core.jar}" />
+            <pathelement location="${nativewindow.x11.jar}" />
             <pathelement location="${jogl.core.jar}" />
             <pathelement location="${jogl.gles1.jar}" />
             <pathelement location="${jogl.gles1.dbg.jar}" />
@@ -197,7 +200,8 @@
             <pathelement location="${jogl.egl.jar}" />
             <pathelement location="${jogl.util.jar}" />
             <pathelement location="${jogl.util.fixedfuncemu.jar}" />
-            <pathelement location="${newt.all.jar}" />
+            <pathelement location="${newt.core.jar}" />
+            <pathelement location="${newt.ogl.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
                bootclasspath="../../gluegen/make/lib/cdc_fp.jar">

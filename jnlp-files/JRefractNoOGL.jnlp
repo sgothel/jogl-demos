@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp codebase="DEMO_CODEBASE_TAG"
-      href="JRefract.jnlp">
+      href="JRefractNoOGL.jnlp">
   <information>
     <title>JOGL JRefract Demo - no JOGL/Java2D Integration</title>
     <vendor>Sun Microsystems, Inc.</vendor>
