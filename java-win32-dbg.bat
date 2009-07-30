@@ -12,6 +12,6 @@ echo CLASSPATH %CLASSPATH%
 
 echo PATH %PATH%
 
-java "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32.log 2>&1
+java "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dnewt.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" "-Djava.library.path=%LIB_DIR%" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
 
 
