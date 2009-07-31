@@ -183,6 +183,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             gl.setSwapInterval(swapInterval);
         }
 
+        glu = GLU.createGLU();
+
         System.err.println(glp+" Entering initialization");
         System.err.println(glp+" GL Profile: "+gl.getGLProfile());
         System.err.println(glp+" GL:" + gl);
@@ -190,8 +192,18 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+" GL_EXTENSIONS:");
         System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
         System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
+        System.err.println(glp+" GLU: " + glu);
 
-        glu = GLU.createGLU();
+        /***
+        // Debug ..
+        DebugGL2ES2 gldbg = new DebugGL2ES2(gl);
+        gl.getContext().setGL(gldbg);
+        gl = gldbg;
+
+        // Trace ..
+        TraceGL2ES2 gltrace = new TraceGL2ES2(gl, System.err);
+        gl.getContext().setGL(gltrace);
+        gl = gltrace; **/
 
         pmvMatrix = new PMVMatrix();
 

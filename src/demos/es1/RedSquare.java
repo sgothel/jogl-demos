@@ -168,6 +168,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             gl.setSwapInterval(swapInterval);
         }
 
+        glu = GLU.createGLU();
+
         System.err.println(glp+" Entering initialization");
         System.err.println(glp+" GL Profile: "+gl.getGLProfile());
         System.err.println(glp+" GL:" + gl);
@@ -175,8 +177,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+" GL_EXTENSIONS:");
         System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
         System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
-
-        glu = GLU.createGLU();
+        System.err.println(glp+" GLU: " + glu);
 
         // Allocate vertex arrays
         colors   = BufferUtil.newFloatBuffer(16);
