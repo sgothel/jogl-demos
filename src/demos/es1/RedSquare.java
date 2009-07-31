@@ -164,6 +164,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public void init(GLAutoDrawable drawable) {
         GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        gl.setSwapInterval(vsync?1:0);
 
         System.err.println(glp+" Entering initialization");
         System.err.println(glp+" GL Profile: "+gl.getGLProfile());
@@ -171,6 +172,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+" GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
         System.err.println(glp+" GL_EXTENSIONS:");
         System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.println(glp+" vsync:" + vsync);
 
         glu = GLU.createGLU();
 
@@ -246,12 +248,15 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public static boolean oneThread = false;
     public static boolean pumpOnce = true;
+    public static boolean vsync = false;
 
     public static void main(String[] args) {
         int type = USE_NEWT ;
         List threads = new ArrayList();
         for(int i=0; i<args.length; i++) {
-            if(args[i].equals("-pumponce")) {
+            if(args[i].equals("-vsync")) {
+                vsync = true;
+            } else if(args[i].equals("-pumponce")) {
                 pumpOnce=true;
             } else if(args[i].equals("-1thread")) {
                 oneThread=true;
@@ -262,7 +267,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             }
         }
         if(threads.size()==0) {
-            threads.add(new RedSquare(null, type));
+            threads.add(new RedSquare(GLProfile.GL2ES1, type));
         }
 
         if(!oneThread) {
