@@ -163,7 +163,20 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     private FloatBuffer vertices;
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL _gl = drawable.getGL();
+
+        if(debugffemu) {
+            debuggl = false;
+            try {
+                // Debug ..
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES2.class, _gl, null) );
+
+                // Trace ..
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, _gl, new Object[] { System.err } ) );
+            } catch (Exception e) {e.printStackTrace();} 
+        }
+
+        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(_gl);
         if(swapInterval>=0) {
             gl.setSwapInterval(swapInterval);
         }
@@ -178,6 +191,16 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
         System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
         System.err.println(glp+" GLU: " + glu);
+
+        if(debuggl) {
+            try {
+                // Debug ..
+                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES1.class, gl, null) );
+
+                // Trace ..
+                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES1.class, gl, new Object[] { System.err } ) );
+            } catch (Exception e) {e.printStackTrace();}
+        }
 
         // Allocate vertex arrays
         colors   = BufferUtil.newFloatBuffer(16);
@@ -252,6 +275,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static boolean oneThread = false;
     public static boolean pumpOnce = true;
     public static int swapInterval = -1;
+    public static boolean debuggl = false;
+    public static boolean debugffemu = false;
 
     public static void main(String[] args) {
         int type = USE_NEWT ;
@@ -262,6 +287,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 try {
                     swapInterval = Integer.parseInt(args[i]);
                 } catch (Exception ex) { ex.printStackTrace(); }
+            } else if(args[i].equals("-debug")) {
+                debuggl=true;
+            } else if(args[i].equals("-debugff")) {
+                debugffemu=true;
             } else if(args[i].equals("-pumponce")) {
                 pumpOnce=true;
             } else if(args[i].equals("-1thread")) {

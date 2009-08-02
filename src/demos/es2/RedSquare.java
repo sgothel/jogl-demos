@@ -194,16 +194,15 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
         System.err.println(glp+" GLU: " + glu);
 
-        /***
-        // Debug ..
-        DebugGL2ES2 gldbg = new DebugGL2ES2(gl);
-        gl.getContext().setGL(gldbg);
-        gl = gldbg;
+        if(debuggl) {
+            try {
+                // Debug ..
+                gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES2.class, gl, null) );
 
-        // Trace ..
-        TraceGL2ES2 gltrace = new TraceGL2ES2(gl, System.err);
-        gl.getContext().setGL(gltrace);
-        gl = gltrace; **/
+                // Trace ..
+                gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, gl, new Object[] { System.err } ) );
+            } catch (Exception e) {e.printStackTrace();}
+        }
 
         pmvMatrix = new PMVMatrix();
 
@@ -320,6 +319,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static boolean oneThread = false;
     public static boolean pumpOnce = true;
     public static int swapInterval = -1;
+    public static boolean debuggl = false;
 
     public static void main(String[] args) {
         int type = USE_NEWT ;
@@ -330,6 +330,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 try {
                     swapInterval = Integer.parseInt(args[i]);
                 } catch (Exception ex) { ex.printStackTrace(); }
+            } else if(args[i].equals("-debug")) {
+                debuggl=true;
             } else if(args[i].equals("-pumponce")) {
                 pumpOnce=true;
             } else if(args[i].equals("-1thread")) {
