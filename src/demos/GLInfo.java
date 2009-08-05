@@ -96,11 +96,14 @@ public class GLInfo extends Thread implements GLEventListener {
         System.err.println(glp+" GLCapabilities POST: "+drawable.getChosenGLCapabilities());
         System.err.println(glp+" GL Profile: "+drawable.getGLProfile());
         System.err.println(glp+" GL:" + gl);
+        System.err.println(glp+"");
         System.err.println(glp+" GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
         System.err.println(glp+" GL_EXTENSIONS: ");
         System.err.println(glp+"   " + gl.glGetString(GL.GL_EXTENSIONS));
+        System.err.println(glp+"");
         System.err.println(glp+" Platform EXTENSIONS: ");
         System.err.println(glp+"   " + gl.getContext().getPlatformExtensionsString());
+        System.err.println(glp+"");
         System.err.println(glp+" Availability Tests: ");
         System.err.println(glp+"   Fixed: glBegin: "+gl.isFunctionAvailable("glBegin"));
         System.err.println(glp+"   ES1  : glClearColorx: "+gl.isFunctionAvailable("glClearColorx"));
@@ -109,16 +112,69 @@ public class GLInfo extends Thread implements GLEventListener {
         System.err.println(glp+"   GL_ARB_vertex_array_object: glBindVertexArray: "+gl.isFunctionAvailable("glBindVertexArray"));
         System.err.println(glp+"   GL_EXT_gpu_shader4: "+gl.isExtensionAvailable("GL_EXT_gpu_shader4"));
         System.err.println(glp+"   GL_EXT_gpu_shader4: glBindFragDataLocation"+gl.isFunctionAvailable("glBindFragDataLocation"));
-        System.err.println(glp+"   GL_VERSION_3_0: "+gl.isExtensionAvailable("GL_VERSION_3_0"));
-        System.err.println(glp+"   GL_VERSION_3_0: glBeginConditionalRender: "+gl.isFunctionAvailable("glBeginConditionalRender"));
-        System.err.println(glp+"   GL_ARB_texture_buffer_object: "+gl.isExtensionAvailable("GL_ARB_texture_buffer_object"));
-        System.err.println(glp+"   GL_ARB_texture_buffer_object: glTexBuffer: "+gl.isFunctionAvailable("glTexBuffer"));
-        System.err.println(glp+"   GL_VERSION_3_1: "+gl.isExtensionAvailable("GL_VERSION_3_1"));
+        System.err.println(glp+"");
+        boolean complete30 = gl.isExtensionAvailable("GL_VERSION_3_0") &&
+                        gl.isExtensionAvailable("GL_ARB_framebuffer_object") &&
+                        gl.isExtensionAvailable("GL_ARB_map_buffer_range") &&
+                        gl.isExtensionAvailable("GL_ARB_vertex_array_object") ;
+        System.err.println(glp+"   GL_VERSION_3_0: "+gl.isExtensionAvailable("GL_VERSION_3_0")+", complete: "+complete30);
+        System.err.println(glp+"       glBeginConditionalRender: "+gl.isFunctionAvailable("glBeginConditionalRender"));
+        System.err.println(glp+"       GL_ARB_framebuffer_object: "+gl.isExtensionAvailable("GL_ARB_framebuffer_object"));
+        System.err.println(glp+"           glIsRenderbuffer: "+gl.isFunctionAvailable("glIsRenderbuffer"));
+        System.err.println(glp+"       GL_ARB_map_buffer_range: "+gl.isExtensionAvailable("GL_ARB_map_buffer_range"));
+        System.err.println(glp+"           glMapBufferRange: "+gl.isFunctionAvailable("glMapBufferRange"));
+        System.err.println(glp+"       GL_ARB_vertex_array_object: "+gl.isExtensionAvailable("GL_ARB_vertex_array_object"));
+        System.err.println(glp+"           glBindVertexArray: "+gl.isFunctionAvailable("glBindVertexArray"));
+        System.err.println(glp+"");
+        boolean complete31 = complete30 &&
+                   gl.isExtensionAvailable("GL_VERSION_3_1") &&
+                   gl.isExtensionAvailable("GL_ARB_uniform_buffer_object") &&
+                   gl.isExtensionAvailable("GL_ARB_copy_buffer") ;
+        System.err.println(glp+"   GL_VERSION_3_1: "+gl.isExtensionAvailable("GL_VERSION_3_1")+", complete: "+complete31);
+        System.err.println(glp+"       glDrawArraysInstanced: "+gl.isFunctionAvailable("glDrawArraysInstanced"));
+        System.err.println(glp+"       GL_ARB_uniform_buffer_object: "+gl.isExtensionAvailable("GL_ARB_uniform_buffer_object"));
+        System.err.println(glp+"           glGetUniformIndices: "+gl.isFunctionAvailable("glGetUniformIndices"));
+        System.err.println(glp+"       GL_ARB_copy_buffer: "+gl.isExtensionAvailable("GL_ARB_copy_buffer"));
+        System.err.println(glp+"           glCopyBufferSubData: "+gl.isFunctionAvailable("glCopyBufferSubData"));
+        System.err.println(glp+"");
+        boolean complete32 = complete31 &&
+                   gl.isExtensionAvailable("GL_VERSION_3_2") &&
+                   gl.isExtensionAvailable("GL_ARB_vertex_array_bgra") &&
+                   gl.isExtensionAvailable("GL_ARB_draw_elements_base_vertex") &&
+                   gl.isExtensionAvailable("GL_ARB_fragment_coord_conventions") &&
+                   gl.isExtensionAvailable("GL_ARB_provoking_vertex") &&
+                   gl.isExtensionAvailable("GL_ARB_seamless_cube_map") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_multisample") &&
+                   gl.isExtensionAvailable("GL_ARB_depth_clamp") &&
+                   gl.isExtensionAvailable("GL_ARB_geometry_shader4") &&
+                   gl.isExtensionAvailable("GL_ARB_sync") ;
+        System.err.println(glp+"   GL_VERSION_3_2: "+gl.isExtensionAvailable("GL_VERSION_3_2")+", complete: "+complete32);
+        System.err.println(glp+"       GL_ARB_vertex_array_bgra: "+gl.isExtensionAvailable("GL_ARB_vertex_array_bgra"));
+        System.err.println(glp+"       GL_ARB_draw_elements_base_vertex: "+gl.isExtensionAvailable("GL_ARB_draw_elements_base_vertex"));
+        System.err.println(glp+"           glDrawElementsBaseVertex: "+gl.isFunctionAvailable("glDrawElementsBaseVertex"));
+        System.err.println(glp+"       GL_ARB_fragment_coord_conventions: "+gl.isExtensionAvailable("GL_ARB_fragment_coord_conventions"));
+        System.err.println(glp+"       GL_ARB_provoking_vertex: "+gl.isExtensionAvailable("GL_ARB_provoking_vertex"));
+        System.err.println(glp+"           glProvokingVertex: "+gl.isFunctionAvailable("glProvokingVertex"));
+        System.err.println(glp+"       GL_ARB_seamless_cube_map: "+gl.isExtensionAvailable("GL_ARB_seamless_cube_map"));
+        System.err.println(glp+"       GL_ARB_texture_multisample: "+gl.isExtensionAvailable("GL_ARB_texture_multisample"));
+        System.err.println(glp+"           glTexImage2DMultisample: "+gl.isFunctionAvailable("glTexImage2DMultisample"));
+        System.err.println(glp+"       GL_ARB_depth_clamp: "+gl.isExtensionAvailable("GL_ARB_depth_clamp"));
+        System.err.println(glp+"       GL_ARB_geometry_shader4: "+gl.isExtensionAvailable("GL_ARB_geometry_shader4"));
+        System.err.println(glp+"           glProgramParameteri: "+gl.isFunctionAvailable("glProgramParameteri"));
+        System.err.println(glp+"       GL_ARB_sync: "+gl.isExtensionAvailable("GL_ARB_sync"));
+        System.err.println(glp+"           glFenceSync: "+gl.isFunctionAvailable("glFenceSync"));
+        System.err.println(glp+"");
+        System.err.println(glp+"   GL_AMD_vertex_shader_tessellator: "+gl.isExtensionAvailable("GL_AMD_vertex_shader_tessellator"));
+        System.err.println(glp+"       glTessellationFactorAMD: "+gl.isFunctionAvailable("glTessellationFactorAMD"));
+        System.err.println(glp+"");
         System.err.println(glp+"   EGL  : eglCreateContext: "+gl.isFunctionAvailable("eglCreateContext"));
         System.err.println(glp+"   EGLEx: eglCreateImage: "+gl.isFunctionAvailable("eglCreateImage"));
+        System.err.println(glp+"");
         System.err.println(glp+"   GLX  : glXCreateWindow: "+gl.isFunctionAvailable("glXCreateWindow"));
         System.err.println(glp+"   GLX_ARB_create_context: "+gl.isExtensionAvailable("GLX_ARB_create_context"));
+        System.err.println(glp+"");
         System.err.println(glp+"   WGL  : wglCreateContext: "+gl.isFunctionAvailable("wglCreateContext"));
+        System.err.println(glp+"");
         System.err.println(glp+"   CGL  : CGLCreateContext: "+gl.isFunctionAvailable("CGLCreateContext"));
     }
 
