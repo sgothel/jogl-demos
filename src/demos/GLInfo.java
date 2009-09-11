@@ -105,6 +105,7 @@ public class GLInfo extends Thread implements GLEventListener {
         System.err.println(glp+"   " + gl.getContext().getPlatformExtensionsString());
         System.err.println(glp+"");
         System.err.println(glp+" Availability Tests: ");
+        System.err.println(glp+"   glConvolutionFilter2D: "+gl.isFunctionAvailable("glConvolutionFilter2D"));
         System.err.println(glp+"   Fixed: glBegin: "+gl.isFunctionAvailable("glBegin"));
         System.err.println(glp+"   ES1  : glClearColorx: "+gl.isFunctionAvailable("glClearColorx"));
         System.err.println(glp+"   GLSL : glUseProgram: "+gl.isFunctionAvailable("glUseProgram"));
