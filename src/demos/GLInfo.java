@@ -37,8 +37,10 @@ public class GLInfo extends Thread implements GLEventListener {
                 Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
                 nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
                 System.err.println(glp+" "+nWindow);
+                window = GLWindow.create(nWindow);
+            } else {
+                window = GLWindow.create(caps);
             }
-            window = GLWindow.create(nWindow, caps);
 
             System.err.println(glp+" GLWindow : "+window);
 

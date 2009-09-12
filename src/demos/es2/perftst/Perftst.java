@@ -56,8 +56,10 @@ public class Perftst implements MouseListener, GLEventListener {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                 Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
                 nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                window = GLWindow.create(nWindow);
+            } else {
+                window = GLWindow.create(caps);
             }
-            window = GLWindow.create(nWindow, caps);
 
             window.addMouseListener(this);
             window.addGLEventListener(this);

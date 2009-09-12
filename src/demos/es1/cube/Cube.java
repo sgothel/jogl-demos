@@ -301,13 +301,15 @@ public class Cube implements GLEventListener {
             caps.setDepthBits(16);
 
             Window nWindow = null;
+            GLWindow window;
             if(0!=(type&USE_AWT)) {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                 Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
                 nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                window = GLWindow.create(nWindow);
+            } else {
+                window = GLWindow.create(caps);
             }
-
-            GLWindow window = GLWindow.create(nWindow, caps);
 
             window.addGLEventListener(this);
 
