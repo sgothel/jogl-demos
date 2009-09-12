@@ -14,12 +14,16 @@ import com.sun.javafx.newt.opengl.*;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
-    private GLWindow window;
+    public GLWindow window;
     private GLProfile glp;
     private GLU glu;
     private boolean quit = false;
     private String glprofile;
     private int type;
+
+    public RedSquare() {
+        this(null, USE_NEWT);
+    }
 
     public RedSquare(String glprofile, int type) {
         super();
