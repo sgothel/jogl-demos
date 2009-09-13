@@ -71,12 +71,23 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
 
     public boolean shouldQuit() { return quit; }
 
+    public static int str2int(String str, int def) {
+        try {
+            return Integer.parseInt(str);
+        } catch (Exception ex) { ex.printStackTrace(); }
+        return def;
+    }
+
     public static void main(String[] args) {
         boolean parented = false;
         boolean useAWTTestFrame = false;
         boolean useAWT = false;
         boolean undecorated = false;
         boolean fullscreen = false;
+        int x_p = 0;
+        int y_p = 0;
+        int x = 0;
+        int y = 0;
         int width = 800;
         int height = 480;
         String glProfileStr = null;
@@ -100,6 +111,24 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
                 parented = true;
             } else if(args[i].equals("-fs")) {
                 fullscreen = true;
+            } else if(args[i].equals("-xp")) {
+                i++;
+                x_p = str2int(args[i], x_p);
+            } else if(args[i].equals("-yp")) {
+                i++;
+                y_p = str2int(args[i], y_p);
+            } else if(args[i].equals("-x")) {
+                i++;
+                x = str2int(args[i], x);
+            } else if(args[i].equals("-y")) {
+                i++;
+                y = str2int(args[i], y);
+            } else if(args[i].equals("-width")) {
+                i++;
+                width = str2int(args[i], width);
+            } else if(args[i].equals("-height")) {
+                i++;
+                height = str2int(args[i], height);
             } else if(args[i].startsWith("-GL")) {
                 glProfileStr = args[i].substring(1);
             }
@@ -142,6 +171,7 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
                 Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
                 if(parented) {
                     Window parent = NewtFactory.createWindow(nScreen, caps, undecorated);
+                    parent.setPosition(x_p, y_p);
                     parent.setSize(2*width, 2*height);
                     parent.setVisible(true);
                     nWindow = NewtFactory.createWindow(parent.getWindowHandle(), nScreen, caps, undecorated);
@@ -173,6 +203,7 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
             window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
             window.setRunPumpMessages(true);
 
+            window.setPosition(x, y);
             window.setSize(width, height);
             window.setFullscreen(fullscreen);
             // Size OpenGL to Video Surface
