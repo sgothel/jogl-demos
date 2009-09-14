@@ -142,7 +142,7 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
             demoObject = demoClazz.newInstance();
         } catch (Throwable t) {
             t.printStackTrace();
-            throw new RuntimeException("Error while instaniating demo: "+demoClassName);
+            throw new RuntimeException("Error while instantiating demo: "+demoClassName);
         }
         if( !(demoObject instanceof GLEventListener) ) {
             throw new RuntimeException("Not a GLEventListener: "+demoClassName);

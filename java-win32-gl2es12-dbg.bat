@@ -25,6 +25,6 @@ set CP_ALL=%CP_GLUE%;%CP_NWI%;%CP_JOGL%;%CP_NEWT%;%CP_DEMO%
 
 echo CP_ALL %CP_ALL%
 
-%J2RE_HOME%\bin\java -cp %CP_ALL% "-Djava.library.path=%LIB_DIR%" "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dnewt.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" %1 %2 %3 %4 > java-win32-dbg.log 2>&1
+%J2RE_HOME%\bin\java -cp %CP_ALL% "-Djava.library.path=%LIB_DIR%" "-Dnativewindow.debug=all" "-Djogl.debug=all" "-Dnewt.debug=all" "-Dsun.java2d.noddraw=true" "-Dsun.awt.noerasebackground=true" %1 %2 %3 %4 %5 %6 %7 %8 %9 > java-win32-dbg.log 2>&1
 
 
