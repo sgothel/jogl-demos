@@ -2,6 +2,9 @@ package demos.applets;
 
 import java.applet.*;
 import java.awt.Container;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.KeyListener;
 
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
@@ -59,6 +62,19 @@ public class JOGLNewtApplet1Run extends Applet {
             // nWindow.setSize(width, height);
             if(null!=nWindow) {
                 base.init(nWindow);
+            }
+            if(base.isValid()) {
+                GLEventListener glEventListener = base.getGLEventListener();
+
+                if(glEventListener instanceof MouseListener) {
+                    addMouseListener((MouseListener)glEventListener);
+                }
+                if(glEventListener instanceof MouseMotionListener) {
+                    addMouseMotionListener((MouseMotionListener)glEventListener);
+                }
+                if(glEventListener instanceof KeyListener) {
+                    addKeyListener((KeyListener)glEventListener);
+                }
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);

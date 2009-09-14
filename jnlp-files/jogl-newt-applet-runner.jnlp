@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp codebase="DEMO_CODEBASE_TAG" href="jogl-newt-applet-runner.jnlp">
+  <information>
+    <title>JOGL NEWT JNLP Applet Runner</title>
+    <vendor>Sun Microsystems, Inc.</vendor>
+    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <description>JOGL NEWT JNLP Applet Runner</description>
+    <offline-allowed/>
+  </information>
+
+    <resources>
+      <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+      <property name="sun.java2d.noddraw" value="true"/>
+      <jar href="jogl-demos.jar" main="true"/>
+      <jar href="jogl-demos-util.jar"/>
+      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/newt-all-awt.jnlp" />
+    </resources>
+
+  <applet-desc 
+      name="JOGLNewtApplet2Run-Applet"
+      main-class="demos.applets.JOGLNewtApplet1Run"
+      width="640" 
+      height="480">
+  </applet-desc>
+</jnlp>

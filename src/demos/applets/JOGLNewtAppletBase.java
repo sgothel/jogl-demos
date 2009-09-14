@@ -21,10 +21,10 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     boolean glDebug;
     boolean glTrace;
 
+    GLEventListener glEventListener = null;
     GLWindow glWindow = null;
     Animator glAnimator=null;
     boolean isValid = false;
-    boolean quit = false;
 
     public JOGLNewtAppletBase(String glEventListenerClazzName, 
                               String glProfileName,
@@ -43,10 +43,10 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
         this.glTrace = glTrace;
     }
 
+    public GLEventListener getGLEventListener() { return glEventListener; }
     public GLWindow getGLWindow() { return glWindow; }
     public Animator getGLAnimator() { return glAnimator; }
     public boolean isValid() { return isValid; }
-    public boolean shouldQuit() { return quit; }
 
     public static boolean str2Bool(String str, boolean def) {
         if(null==str) return def;
@@ -101,7 +101,7 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     }
 
     public void init(Window nWindow) {
-        GLEventListener glEventListener = createInstance(glEventListenerClazzName);
+        glEventListener = createInstance(glEventListenerClazzName);
 
         try {
             glWindow = GLWindow.create(nWindow);
@@ -112,9 +112,22 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
 
             glWindow.addGLEventListener(this);
             glWindow.addGLEventListener(glEventListener);
+
+            if(glEventListener instanceof WindowListener) {
+                glWindow.addWindowListener((WindowListener)glEventListener);
+            }
             glWindow.addWindowListener(this);
+
+            if(glEventListener instanceof MouseListener) {
+                glWindow.addMouseListener((MouseListener)glEventListener);
+            }
             glWindow.addMouseListener(this);
+
+            if(glEventListener instanceof KeyListener) {
+                glWindow.addKeyListener((KeyListener)glEventListener);
+            }
             glWindow.addKeyListener(this);
+
             glWindow.setEventHandlerMode( useGLInEventHandler ? GLWindow.EVENT_HANDLER_GL_CURRENT : GLWindow.EVENT_HANDLER_GL_NONE );
             glWindow.setRunPumpMessages(handleWindowEvents);
             glWindow.setVisible(true);
@@ -141,7 +154,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     }
 
     public void destroy() {
-        quit = true;
         isValid = false;
         if(null!=glAnimator) {
             glAnimator.stop();
@@ -196,7 +208,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     }
 
     public void windowDestroyNotify(WindowEvent e) {
-        quit=true;
     }
     public void windowGainedFocus(WindowEvent e) { }
     public void windowLostFocus(WindowEvent e) { }
@@ -207,11 +218,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
 
     public void keyPressed(KeyEvent e) { 
         System.out.println(e);
-        if(e.getKeyChar()=='f') {
-            glWindow.setFullscreen(!glWindow.isFullscreen());
-        } else if(e.getKeyChar()=='q') {
-            quit = true;
-        }
     }
     public void keyReleased(KeyEvent e) { 
         System.out.println(e);
@@ -226,16 +232,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
 
     public void mouseClicked(MouseEvent e) {
         System.out.println(" mouseevent: "+e);
-        switch(e.getClickCount()) {
-            case 1:
-                if(e.getButton()>MouseEvent.BUTTON1) {
-                    glWindow.setFullscreen(!glWindow.isFullscreen());
-                }
-                break;
-            default: 
-                quit=true;
-                break;
-        }
     }
     public void mouseEntered(MouseEvent e) {
     }

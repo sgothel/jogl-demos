@@ -31,6 +31,10 @@ import java.nio.*;
 
 public class AngelesES1 implements GLEventListener {
 
+    public AngelesES1() {
+        this(true);
+    }
+
     public AngelesES1(boolean enableBlending) {
         blendingEnabled = enableBlending;
         quadVertices = BufferUtil.newIntBuffer(12);

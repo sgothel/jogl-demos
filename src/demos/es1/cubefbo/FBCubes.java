@@ -39,7 +39,7 @@ import javax.media.opengl.*;
 import com.sun.opengl.util.FBObject;
 import com.sun.opengl.util.glsl.fixedfunc.*;
 
-class FBCubes implements GLEventListener {
+public class FBCubes implements GLEventListener {
     private static final int FBO_SIZE = 256;
 
     public FBCubes () {

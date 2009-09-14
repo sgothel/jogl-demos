@@ -32,6 +32,10 @@ import java.nio.*;
 
 public class AngelesGL implements GLEventListener {
 
+    public AngelesGL() {
+        this(true);
+    }
+
     public AngelesGL(boolean enableBlending) {
         blendingEnabled = enableBlending;
         quadVertices = BufferUtil.newFloatBuffer(12);
