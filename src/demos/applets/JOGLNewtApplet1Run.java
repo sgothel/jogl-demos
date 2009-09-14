@@ -59,7 +59,7 @@ public class JOGLNewtApplet1Run extends Applet {
             Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { container }, 
                                                      nScreen, caps, true /* undecorated */);
             // nWindow.setPosition(x, y);
-            // nWindow.setSize(width, height);
+            // nWindow.setSize(container.getWidth(), container.getHeight());
             if(null!=nWindow) {
                 base.init(nWindow);
             }
