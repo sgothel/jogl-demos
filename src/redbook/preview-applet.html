@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- ########################## IMPORTANT NOTE ############################ -->
+<!-- This preview HTML page will work only with JDK 6 update 10 and higher! -->
+<!-- ###################################################################### -->
+<html>
+    <head>
+        <title>Test page for launching the applet via JNLP</title>
+        <script type="text/javascript">
+            current = 0;
+            function next() {
+                if (document.slideform.slide[current+1]) {
+                    document.slideform.applet.loadDemo(document.slideform.slide[current+1].value);
+                    document.slideform.slide.selectedIndex = ++current;
+                }
+                else first();
+            }
+            function previous() {
+                if (current-1 >= 0) {
+                    document.slideform.applet.loadDemo(document.slideform.slide[current-1].value);
+                    document.slideform.slide.selectedIndex = --current;
+                }
+                else last();
+            }
+            function first() {
+                current = 0;
+                document.slideform.applet.loadDemo(document.slideform.slide[0].value);
+                document.slideform.slide.selectedIndex = 0;
+            }
+            function last() {
+                current = document.slideform.slide.length-1;
+                document.slideform.applet.loadDemo(document.slideform.slide[current].value);
+                document.slideform.slide.selectedIndex = current;
+            }
+            function change() {
+                current = document.slideform.slide.selectedIndex;
+                document.slideform.applet.loadDemo(document.slideform.slide[current].value);
+            }
+            //  End -->
+        </script>
+    </head>
+    <body>
+        <h3>Test page for launching the applet via JNLP</h3>
+        <form name=slideform action="">
+            <table cellspacing=1 cellpadding=4 bgcolor="#000000">
+                <tr>
+                    <td align=center bgcolor="white">
+                        <b>Applet Slideshow</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td align=center bgcolor="white" width=200 height=150>
+                        <applet name="applet" width='${JNLP.APPLET.WIDTH}' height='${JNLP.APPLET.HEIGHT}'>
+                            <param name='jnlp_href' value='${JNLP.FILE}'/>
+                            <param name='demo' value='glredbook10.accanti'/>
+                        </applet>
+                    </td>
+                </tr>
+                <tr>
+                    <td align=center bgcolor="#C0C0C0">
+                        <select name="slide" onChange="change();">
+                            <option value='glredbook10.accanti' selected>glredbook10.accanti
+                            <option value='glredbook10.accnot' selected>glredbook10.accnot
+                            <option value='glredbook10.accpersp' selected>glredbook10.accpersp
+                            <option value='glredbook10.accum' selected>glredbook10.accum
+                            <option value='glredbook10.aim' selected>glredbook10.aim
+                            <option value='glredbook10.alpha' selected>glredbook10.alpha
+                            <option value='glredbook10.alpha3D' selected>glredbook10.alpha3D
+                            <option value='glredbook10.anti' selected>glredbook10.anti
+                            <option value='glredbook10.antipoint' selected>glredbook10.antipoint
+                            <option value='glredbook10.antipoly' selected>glredbook10.antipoly
+                            <option value='glredbook10.bezcurve' selected>glredbook10.bezcurve
+                            <option value='glredbook10.bezmesh' selected>glredbook10.bezmesh
+                            <option value='glredbook10.bezsurf' selected>glredbook10.bezsurf
+                            <option value='glredbook10.checker' selected>glredbook10.checker
+                            <option value='glredbook10.checker2' selected>glredbook10.checker2
+                            <option value='glredbook10.chess' selected>glredbook10.chess
+                            <option value='glredbook10.clip' selected>glredbook10.clip
+                            <option value='glredbook10.colormat' selected>glredbook10.colormat
+                            <option value='glredbook10.cone' selected>glredbook10.cone
+                            <option value='glredbook10.cube' selected>glredbook10.cube
+                            <option value='glredbook10.depthcue' selected>glredbook10.depthcue
+                            <option value='glredbook10.disk' selected>glredbook10.disk
+                            <option value='glredbook10.dof' selected>glredbook10.dof
+                            <option value='glredbook10.dofnot' selected>glredbook10.dofnot
+                            <option value='glredbook10.doublebuf' selected>glredbook10.doublebuf
+                            <option value='glredbook10.drawf' selected>glredbook10.drawf
+                            <option value='glredbook10.feedback' selected>glredbook10.feedback
+                            <option value='glredbook10.fog' selected>glredbook10.fog
+                            <option value='glredbook10.font' selected>glredbook10.font
+                            <option value='glredbook10.jfont' selected>glredbook10.jfont
+                            <option value='glredbook10.light' selected>glredbook10.light
+                            <option value='glredbook10.linelist' selected>glredbook10.linelist
+                            <option value='glredbook10.lines' selected>glredbook10.lines
+                            <option value='glredbook10.list' selected>glredbook10.list
+                            <option value='glredbook10.list2' selected>glredbook10.list2
+                            <option value='glredbook10.maplight' selected>glredbook10.maplight
+                            <option value='glredbook10.material' selected>glredbook10.material
+                            <option value='glredbook10.mipmap' selected>glredbook10.mipmap
+                            <option value='glredbook10.model' selected>glredbook10.model
+                            <option value='glredbook10.movelight' selected>glredbook10.movelight
+                            <option value='glredbook10.pickdepth' selected>glredbook10.pickdepth
+                            <option value='glredbook10.pickline' selected>glredbook10.pickline
+                            <option value='glredbook10.picksquare' selected>glredbook10.picksquare
+                            <option value='glredbook10.plane' selected>glredbook10.plane
+                            <option value='glredbook10.planet' selected>glredbook10.planet
+                            <option value='glredbook10.planetup' selected>glredbook10.planetup
+                            <option value='glredbook10.polys' selected>glredbook10.polys
+                            <option value='glredbook10.robot' selected>glredbook10.robot
+                            <option value='glredbook10.sccolorlight' selected>glredbook10.sccolorlight
+                            <option value='glredbook10.scene' selected>glredbook10.scene
+                            <option value='glredbook10.scenebamb' selected>glredbook10.scenebamb
+                            <option value='glredbook10.sceneflat' selected>glredbook10.sceneflat
+                            <option value='glredbook10.select' selected>glredbook10.select
+                            <option value='glredbook10.simple' selected>glredbook10.simple
+                            <option value='glredbook10.smooth' selected>glredbook10.smooth
+                            <option value='glredbook10.sphere' selected>glredbook10.sphere
+                            <option value='glredbook10.stencil' selected>glredbook10.stencil
+                            <option value='glredbook10.stroke' selected>glredbook10.stroke
+                            <option value='glredbook10.tea' selected>glredbook10.tea
+                            <option value='glredbook10.teaambient' selected>glredbook10.teaambient
+                            <option value='glredbook10.teapots' selected>glredbook10.teapots
+                            <option value='glredbook10.texturesurf' selected>glredbook10.texturesurf
+                            <option value='glredbook11.aargb' selected>glredbook11.aargb
+                            <option value='glredbook11.hello' selected>glredbook11.hello
+                            <option value='glredbook11.image' selected>glredbook11.image
+                            <option value='glredbook11.polyoff' selected>glredbook11.polyoff
+                            <option value='glredbook11.tess' selected>glredbook11.tess
+                            <option value='glredbook11.tesswind' selected>glredbook11.tesswind
+                            <option value='glredbook11.texbind' selected>glredbook11.texbind
+                            <option value='glredbook11.texgen' selected>glredbook11.texgen
+                            <option value='glredbook11.texprox' selected>glredbook11.texprox
+                            <option value='glredbook11.texsub' selected>glredbook11.texsub
+                            <option value='glredbook11.torus' selected>glredbook11.torus
+                            <option value='glredbook11.unproject' selected>glredbook11.unproject
+                            <option value='glredbook11.varray' selected>glredbook11.varray
+                            <option value='glredbook11.wrap' selected>glredbook11.wrap
+                            <option value='glredbook12x.blendeqn' selected>glredbook12x.blendeqn
+                            <option value='glredbook12x.colormatrix' selected>glredbook12x.colormatrix
+                            <option value='glredbook12x.colortable' selected>glredbook12x.colortable
+                            <option value='glredbook12x.convolution' selected>glredbook12x.convolution
+                            <option value='glredbook12x.histogram' selected>glredbook12x.histogram
+                            <option value='glredbook12x.minmax' selected>glredbook12x.minmax
+                            <option value='glredbook12x.multitex' selected>glredbook12x.multitex
+                            <option value='glredbook12x.quadric' selected>glredbook12x.quadric
+                            <option value='glredbook12x.texture3d' selected>glredbook12x.texture3d
+                            <option value='glredbook1314.combiner' selected>glredbook1314.combiner
+                            <option value='glredbook1314.cubemap' selected>glredbook1314.cubemap
+                            <option value='glredbook1314.fogcoord' selected>glredbook1314.fogcoord
+                            <option value='glredbook1314.multisamp' selected>glredbook1314.multisamp
+                            <option value='glredbook1314.mvarray' selected>glredbook1314.mvarray
+                            <option value='glredbook1314.pointp' selected>glredbook1314.pointp
+                            <option value='glredbook1314.shadowmap' selected>glredbook1314.shadowmap
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align=center bgcolor="#C0C0C0">
+                        <input type=button onClick="first();" value="|<<" title="Beginning">
+                        <input type=button onClick="previous();" value="<<" title="Previous">
+                        <input type=button onClick="next();" value=">>" title="Next">
+                        <input type=button onClick="last();" value=">>|" title="End">
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <!-- Or use the following script element to launch with the Deployment Toolkit -->
+        <!-- Open the deployJava.js script to view its documentation -->
+        <!--
+        <script src="http://java.com/js/deployJava.js"></script>
+        <script>
+            var attributes = {
+                codebase:   [applet codebase],
+                code:       [class to launch],
+                archive:    [JAR file with the applet],
+                width:      [applet width],
+                height:     [applet height]
+            };
+            var parameters = { [applet parameters] };
+            var version = [JDK version];
+            deployJava.runApplet(attributes, parameters, version);
+        </script>
+        -->
+    </body>
+</html>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*** GENERATED FROM jogl-projects module - DO NOT EDIT  ***
+***             EDIT ../build.xml INSTEAD              ***
+-->
+<project name="jogl-template-impl" default="default" basedir=".." >
+
+    <description>Ant targets for JOGL2 projects.</description>
+
+    <target name="-jogl-template-post-jar">
+        <echo message="Creating native distibutions"/>
+
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="linux-i586"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="linux-amd64"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="macosx-ppc"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="macosx-universal"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="solaris-sparc"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="solaris-sparcv9"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="solaris-i586"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="windows-i586"/>
+        </antcall>
+        <antcall target="-create-native-distribution" inheritall="true">
+            <param name="platform.name" value="windows-amd64"/>
+        </antcall>
+
+    </target>
+
+    <target name="-create-native-distribution">
+        <unzip dest="${dist.dir}/lib" overwrite="true">
+            <patternset>
+                <include name="**-natives-${platform.name}.jar"/>
+            </patternset>
+            <fileset dir="jogl-dist">
+                <include name="jogl-2.0-webstart.zip"/>
+                <include name="nativewindow-2.0-webstart.zip"/>
+                <include name="newt-2.0-webstart.zip"/>
+                <include name="gluegen-rt-2.0-webstart.zip"/>
+            </fileset>
+        </unzip>
+        <unzip dest="${dist.dir}/lib/natives-${platform.name}" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/**"/>
+            </patternset>
+            <fileset dir="${dist.dir}/lib">
+                <include name="**-natives-${platform.name}.jar"/>
+            </fileset>
+        </unzip>
+        <delete>
+            <fileset dir="${dist.dir}/lib">
+                <include name="**-natives-${platform.name}.jar"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="-jogl-template-post-clean">
+        <echo message="Removing native distibutions"/>
+        <delete dir="${dist.dir}/lib/natives-linux-i586"/>
+        <delete dir="${dist.dir}/lib/natives-linux-amd64"/>
+        <delete dir="${dist.dir}/lib/natives-macosx-ppc"/>
+        <delete dir="${dist.dir}/lib/natives-macosx-universal"/>
+        <delete dir="${dist.dir}/lib/natives-solaris-sparc"/>
+        <delete dir="${dist.dir}/lib/natives-solaris-sparcv9"/>
+        <delete dir="${dist.dir}/lib/natives-solaris-i586"/>
+        <delete dir="${dist.dir}/lib/natives-windows-i586"/>
+        <delete dir="${dist.dir}/lib/natives-windows-amd64"/>
+    </target>
+
+    <!-- remove jogl libraries from jnlp and jars from distribution -->
+    <target name="-jogl-template-jnlp" depends="-jogl-template-test-jnlp-enabled,-jogl-template-patch-master-jnlp,jnlp-impl.jnlp" if="is.jnlp.enabled">
+
+        <!--remove jogl from dist/lib folder-->
+        <antcall target="-jogl-template-post-clean" inheritall="true"/>
+
+        <delete file="${dist.dir}/lib/jogl.all.jar"/>
+        <delete file="${dist.dir}/lib/nativewindow.all.jar"/>
+        <delete file="${dist.dir}/lib/newt.all.jar"/>
+        <delete file="${dist.dir}/lib/gluegen-rt.jar"/>
+
+        <!--remove jogl dependency from jnlp to add it later as jnlp extention-->
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/jogl.all.jar"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/nativewindow.all.jar"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/newt.all.jar"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/gluegen-rt.jar"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/jogl.all.jar" download="eager"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/nativewindow.all.jar" download="eager"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/newt.all.jar" download="eager"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[<jar href="lib/gluegen-rt.jar" download="eager"/>]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+        <replace file="${dist.dir}/launch.jnlp">
+            <replacetoken><![CDATA[-Djava.library.path=&quot;lib&quot;]]></replacetoken>
+            <replacevalue></replacevalue>
+        </replace>
+
+    </target>
+
+    <!--noop in case jnlp-impl.xml is not available-->
+    <target name="jnlp-impl.jnlp" ></target>
+
+    <!--inserts jogl jnlp extensions into the jnlp master-->
+    <target name="-jogl-template-patch-master-jnlp" depends="-jogl-template-check-master-jnlp" if="is.jnlp.unpatched">
+        <replace file="master-${jnlp.descriptor}.jnlp">
+            <replacetoken><![CDATA[</resources>]]></replacetoken>
+            <replacevalue><![CDATA[    <extension name="jogl-all-awt" href="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-all-awt.jnlp" />
+    </resources>]]></replacevalue>
+        </replace>
+    </target>
+
+    <target name="-jogl-template-check-master-jnlp" if="is.jnlp.enabled">
+        <loadfile property="master.jnlp.content" srcfile="master-${jnlp.descriptor}.jnlp"/>
+        <condition property="is.jnlp.unpatched">
+            <not>
+                <contains string="${master.jnlp.content}" substring='extension name="jogl-all-awt"'/>
+            </not>
+        </condition>
+    </target>
+
+    <target name="-jogl-template-test-jnlp-enabled">
+        <condition property="is.jnlp.enabled">
+            <equals arg1="${jnlp.enabled}" arg2="true" casesensitive="false" trim="true"/>
+        </condition>
+    </target>
+
+    <!--    deploys JOGL and its dependencies to the projects lib folder,
+            platform dependent natives are deployed as well                 -->
+    <target name="jogl-template-deploy-jogl">
+
+        <echo message="Deploying JOGL"/>
+
+        <unzip src="jogl-dist/jogl-2.0-webstart.zip" dest="lib" overwrite="true">
+            <patternset>
+                <include name="jogl.all.jar"/>
+                <include name="jogl-natives-${natives.platform}.jar"/>
+            </patternset>
+        </unzip>
+        <unzip src="lib/jogl-natives-${natives.platform}.jar" dest="lib" overwrite="true"/>
+        <delete file="lib/jogl-natives-${natives.platform}.jar"/>
+
+        <unzip src="jogl-dist/nativewindow-2.0-webstart.zip" dest="lib" overwrite="true">
+            <patternset>
+                <include name="nativewindow.all.jar"/>
+                <include name="nativewindow-natives-${natives.platform}.jar"/>
+            </patternset>
+        </unzip>
+        <unzip src="lib/nativewindow-natives-${natives.platform}.jar" dest="lib" overwrite="true"/>
+        <delete file="lib/nativewindow-natives-${natives.platform}.jar"/>
+
+        <unzip src="jogl-dist/newt-2.0-webstart.zip" dest="lib" overwrite="true">
+            <patternset>
+                <include name="newt.all.jar"/>
+                <include name="newt-natives-${natives.platform}.jar"/>
+            </patternset>
+        </unzip>
+        <unzip src="lib/newt-natives-${natives.platform}.jar" dest="lib" overwrite="true"/>
+        <delete file="lib/newt-natives-${natives.platform}.jar"/>
+
+        <unzip src="jogl-dist/gluegen-rt-2.0-webstart.zip" dest="lib" overwrite="true">
+            <patternset>
+                <include name="gluegen-rt.jar"/>
+                <include name="gluegen-rt-natives-${natives.platform}.jar"/>
+            </patternset>
+        </unzip>
+        <unzip src="lib/gluegen-rt-natives-${natives.platform}.jar" dest="lib" overwrite="true"/>
+        <delete file="lib/gluegen-rt-natives-${natives.platform}.jar"/>
+    </target>
+
+</project>

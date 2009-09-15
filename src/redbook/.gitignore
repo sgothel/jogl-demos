@@ -1,0 +1,6 @@
+build
+dist
+jogl-dist
+lib/nblibraries-private.properties
+**~
+nbproject/private
