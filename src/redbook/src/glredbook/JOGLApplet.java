@@ -5,9 +5,10 @@ import java.awt.Component;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JApplet;
+import javax.swing.SwingUtilities;
 
 /**
- *
+ * Slideshow applet for iterating through the red book samples.
  * @author michael-bien.com
  */
 public class JOGLApplet extends JApplet {
@@ -16,6 +17,7 @@ public class JOGLApplet extends JApplet {
 
     @Override
     public void start() {
+        //start a default sample
         String className = getParameter("demo");
         loadDemo(className);
     }
@@ -27,15 +29,21 @@ public class JOGLApplet extends JApplet {
         }
     }
 
-    private Logger log() {
-        return Logger.getLogger(JOGLApplet.class.getName());
-    }
-
+    /*
+     * called via javascript
+     */
     public void loadDemo(String className) {
 
         if (skeleton != null) {
             skeleton.runExit();
-            remove((Component) skeleton.drawable);
+
+            // remove old drawable on EDT
+            SwingUtilities.invokeLater(new Runnable() {
+                final Component drawable = (Component)skeleton.drawable;
+                public void run() {
+                    remove(drawable);
+                }
+            });
         }
 
         log().info("i'll try to instantiate: " + className);
@@ -47,9 +55,18 @@ public class JOGLApplet extends JApplet {
             try {
                 skeleton = (GLSkeleton<?>) clazz.newInstance();
                 System.out.println(skeleton);
-                add((Component) skeleton.drawable);
-                System.out.println("added");
-                validate();
+
+                // add new drawable on EDT
+                SwingUtilities.invokeLater(new Runnable() {
+                    final GLSkeleton<?> s = skeleton;
+                    public void run() {
+                        if(skeleton == s) {
+                            add((Component) s.drawable);
+                            System.out.println("added");
+                            validate();
+                        }
+                    }
+                });
             } catch (InstantiationException ex) {
                 log().log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
@@ -60,5 +77,9 @@ public class JOGLApplet extends JApplet {
         } catch (ClassNotFoundException ex) {
             log().log(Level.SEVERE, "can't find main class", ex);
         }
+    }
+
+    private Logger log() {
+        return Logger.getLogger(JOGLApplet.class.getName());
     }
 }
