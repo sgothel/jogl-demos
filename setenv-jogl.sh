@@ -79,9 +79,10 @@ CP_SEP=:
 
 . $JOGL_DIR/etc/profile.jogl $JOGL_PROFILE $JOGL_BUILDDIR 
 
+SWT_CLASSPATH=$HOME/.java/swt.jar
 LIB=$THISDIR/lib
 
-CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH
+CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH:$SWT_CLASSPATH
 for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done

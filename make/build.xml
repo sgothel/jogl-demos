@@ -54,7 +54,18 @@
         <property name="jogl.cg.excludes" value="" />
     </target>
 
-    <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes">
+    <target name="init.swt">
+        <condition property="jogl.swt.excludes"
+                   value="demos/swt/**">
+            <not>
+                <isset property="user.swt.jar" />
+            </not>
+        </condition>
+
+        <property name="swt.jar"            value="${user.swt.jar}"/>
+    </target>
+
+    <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
         <property name="jogl.core.jar"       value="../../jogl/${rootrel.build}/jogl/jogl.core.jar" />
         <condition property="jogl.cg.jar"    value="../../jogl/${rootrel.build}/jogl/jogl.cg.jar">
           <isset property="jogl.cg"/>
@@ -90,6 +101,14 @@
         <property name="jogl.demos.util.jar" value="../${rootrel.build}/jogl-demos-util.jar" />
         <property name="jogl.demos.data.jar" value="../${rootrel.build}/jogl-demos-data.jar" />
         <property name="jogl.demos.src.zip"  value="../${rootrel.build}/jogl-demos-src.zip" />
+
+        <condition property="jogl.redbook.excludes"
+                   value="redbook/**">
+            <not>
+                <isset property="jogl.redbook" />
+            </not>
+        </condition>
+
     </target>
 
     <target name="nurbs" if="jogl.nurbs">
@@ -135,9 +154,10 @@
             <pathelement location="${joal.jar}" />
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${simple-xml.jar}" />
+            <pathelement location="${swt.jar}" />
         </path>
         <!-- For the time being we exclude the VertexArrayRange and HDR demos, which rely on NVIDIA-specific extensions -->
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,jbullet/**,redbook/**,demos/vertexArrayRange/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes},demos/vertexArrayRange/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
