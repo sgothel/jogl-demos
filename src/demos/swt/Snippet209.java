@@ -95,6 +95,7 @@ public class Snippet209 {
 
     context.makeCurrent();
     GL2 gl = context.getGL().getGL2();
+    gl.setSwapInterval(1);
     gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     gl.glColor3f(1.0f, 0.0f, 0.0f);
     gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, gl.GL_NICEST);
