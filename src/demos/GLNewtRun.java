@@ -26,12 +26,27 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
         quit = true;
     }
 
+    static int dx=0;
+    static int dy=0;
+    static int dw=0;
+    static int dh=0;
+
     public void keyPressed(KeyEvent e) { 
         System.out.println(e);
         if(e.getKeyChar()=='f') {
             window.setFullscreen(!window.isFullscreen());
         } else if(e.getKeyChar()=='q') {
             quit = true;
+        } else if(e.getKeyChar()=='p') {
+            int x = window.getX() + dx;
+            int y = window.getY() + dy;
+            System.out.println("Reset Pos "+x+"/"+y);
+            window.setPosition(x, y);
+        } else if(e.getKeyChar()=='s') {
+            int w = window.getWidth() + dw;
+            int h = window.getHeight() + dh;
+            System.out.println("Reset Size "+w+"x"+h);
+            window.setSize(w, h);
         }
     }
     public void keyReleased(KeyEvent e) { 
@@ -131,6 +146,18 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
                 height = str2int(args[i], height);
             } else if(args[i].startsWith("-GL")) {
                 glProfileStr = args[i].substring(1);
+            } else if(args[i].equals("-dx")) {
+                i++;
+                dx = str2int(args[i], dx);
+            } else if(args[i].equals("-dy")) {
+                i++;
+                dy = str2int(args[i], dy);
+            } else if(args[i].equals("-dw")) {
+                i++;
+                dw = str2int(args[i], dw);
+            } else if(args[i].equals("-dh")) {
+                i++;
+                dh = str2int(args[i], dh);
             }
             i++;
         }
@@ -172,7 +199,7 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
                 if(parented) {
                     Window parent = NewtFactory.createWindow(nScreen, caps, undecorated);
                     parent.setPosition(x_p, y_p);
-                    parent.setSize(2*width, 2*height);
+                    parent.setSize(width+width/10, height+height/10);
                     parent.setVisible(true);
                     nWindow = NewtFactory.createWindow(parent.getWindowHandle(), nScreen, caps, undecorated);
                 } else {

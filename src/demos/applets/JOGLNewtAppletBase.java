@@ -14,7 +14,6 @@ import com.sun.opengl.util.*;
 
 public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseListener, GLEventListener {
     String glEventListenerClazzName;
-    String glProfileName;
     int glSwapInterval;
     boolean handleWindowEvents;
     boolean useGLInEventHandler;
@@ -27,7 +26,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     boolean isValid = false;
 
     public JOGLNewtAppletBase(String glEventListenerClazzName, 
-                              String glProfileName,
                               int glSwapInterval,
                               boolean handleWindowEvents,
                               boolean useGLInEventHandler,
@@ -35,7 +33,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
                               boolean glTrace) {
     
         this.glEventListenerClazzName=glEventListenerClazzName;
-        this.glProfileName=glProfileName;
         this.glSwapInterval=glSwapInterval;
         this.handleWindowEvents=handleWindowEvents;
         this.useGLInEventHandler=useGLInEventHandler;

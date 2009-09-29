@@ -45,7 +45,6 @@ public class JOGLNewtApplet1Run extends Applet {
             throw new RuntimeException("No applet parameter 'gl_event_listener_class'");
         }
         base = new JOGLNewtAppletBase(glEventListenerClazzName, 
-                                      glProfileName,
                                       glSwapInterval,
                                       handleWindowEvents,
                                       useGLInEventHandler,
