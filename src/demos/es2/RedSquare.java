@@ -3,7 +3,6 @@ package demos.es2;
 import java.nio.*;
 import java.util.*;
 import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
 import javax.media.nativewindow.*;
 
 import com.sun.opengl.util.*;
@@ -16,7 +15,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public GLWindow window;
     private GLProfile glp;
-    private GLU glu;
     private boolean quit = false;
     private String glprofile;
     private int type;
@@ -189,8 +187,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             gl.setSwapInterval(swapInterval);
         }
 
-        glu = GLU.createGLU();
-
         System.err.println(glp+" Entering initialization");
         System.err.println(glp+" GL Profile: "+gl.getGLProfile());
         System.err.println(glp+" GL:" + gl);
@@ -198,7 +194,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+" GL_EXTENSIONS:");
         System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
         System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
-        System.err.println(glp+" GLU: " + glu);
 
         if(debuggl) {
             try {

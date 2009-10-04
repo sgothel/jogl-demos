@@ -43,6 +43,8 @@ import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
 
 public class Cube implements GLEventListener {
+    public boolean glDebug = false ;
+    public boolean glTrace = false ;
     boolean quit = false;
 
     public Cube () {
@@ -77,7 +79,23 @@ public class Cube implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL _gl = drawable.getGL();
+
+        _gl.glGetError(); // flush error ..
+
+        if(glDebug) {
+            try {
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", null, _gl, null) );
+            } catch (Exception e) {e.printStackTrace();} 
+        }
+
+        if(glTrace) {
+            try {
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", null, _gl, new Object[] { System.err } ) );
+            } catch (Exception e) {e.printStackTrace();} 
+        }
+
+        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(_gl);
 
         glu = GLU.createGLU();
 
@@ -179,9 +197,15 @@ public class Cube implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
+        display(drawable, true);
+    }
+
+    public void display(GLAutoDrawable drawable, boolean clear) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
 
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        if(clear) {
+            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        }
 
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();

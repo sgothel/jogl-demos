@@ -14,6 +14,9 @@ import com.sun.javafx.newt.opengl.*;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
+    public static boolean glDebugEmu = false;
+    public static boolean glDebug = false ;
+    public static boolean glTrace = false ;
     public GLWindow window;
     private GLProfile glp;
     private GLU glu;
@@ -171,15 +174,18 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void init(GLAutoDrawable drawable) {
         GL _gl = drawable.getGL();
 
-        if(debugffemu) {
-            debuggl = false;
+        if(glDebugEmu) {
             try {
                 // Debug ..
                 _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES2.class, _gl, null) );
 
-                // Trace ..
-                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, _gl, new Object[] { System.err } ) );
+                if(glTrace) {
+                    // Trace ..
+                    _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, _gl, new Object[] { System.err } ) );
+                }
             } catch (Exception e) {e.printStackTrace();} 
+            glDebug = false;
+            glTrace = false;
         }
 
         GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(_gl);
@@ -187,7 +193,21 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             gl.setSwapInterval(swapInterval);
         }
 
-        glu = GLU.createGLU();
+        if(glDebug) {
+            try {
+                // Debug ..
+                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES1.class, gl, null) );
+            } catch (Exception e) {e.printStackTrace();} 
+        }
+
+        if(glTrace) {
+            try {
+                // Trace ..
+                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES1.class, gl, new Object[] { System.err } ) );
+            } catch (Exception e) {e.printStackTrace();}
+        }
+
+        glu = GLU.createGLU(gl);
 
         System.err.println(glp+" Entering initialization");
         System.err.println(glp+" GL Profile: "+gl.getGLProfile());
@@ -197,16 +217,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
         System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
         System.err.println(glp+" GLU: " + glu);
-
-        if(debuggl) {
-            try {
-                // Debug ..
-                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES1.class, gl, null) );
-
-                // Trace ..
-                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES1.class, gl, new Object[] { System.err } ) );
-            } catch (Exception e) {e.printStackTrace();}
-        }
 
         // Allocate vertex arrays
         colors   = BufferUtil.newFloatBuffer(16);
@@ -281,8 +291,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static boolean oneThread = false;
     public static boolean pumpOnce = true;
     public static int swapInterval = -1;
-    public static boolean debuggl = false;
-    public static boolean debugffemu = false;
 
     public static void main(String[] args) {
         int type = USE_NEWT ;
@@ -293,10 +301,12 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 try {
                     swapInterval = Integer.parseInt(args[i]);
                 } catch (Exception ex) { ex.printStackTrace(); }
+            } else if(args[i].equals("-trace")) {
+                glTrace=true;
             } else if(args[i].equals("-debug")) {
-                debuggl=true;
+                glDebug=true;
             } else if(args[i].equals("-debugff")) {
-                debugffemu=true;
+                glDebugEmu=true;
             } else if(args[i].equals("-pumponce")) {
                 pumpOnce=true;
             } else if(args[i].equals("-1thread")) {

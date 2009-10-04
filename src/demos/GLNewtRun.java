@@ -93,6 +93,23 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
         return def;
     }
 
+    public static boolean setField(Object instance, String fieldName, Object value) {
+        try {
+            Field f = instance.getClass().getField(fieldName);
+            if(f.getType().isInstance(value)) {
+                f.set(instance, value);
+                return true;
+            } else {
+                System.out.println(instance.getClass()+" '"+fieldName+"' field not assignable with "+value.getClass()+", it's a: "+f.getType());
+            }
+        } catch (NoSuchFieldException nsfe) {
+            System.out.println(instance.getClass()+" has no '"+fieldName+"' field");
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         boolean parented = false;
         boolean useAWTTestFrame = false;
@@ -208,18 +225,8 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
             }
             window = GLWindow.create(nWindow);
 
-            try {
-                Field f = demo.getClass().getField("window");
-                if(f.getType().isInstance(window)) {
-                    f.set(demo, window);
-                } else {
-                    System.out.println("Demo's 'window' field not a Window, but: "+f.getType());
-                    
-                }
-            } catch (NoSuchFieldException nsfe) {
-                System.out.println("Demo has no 'window' field");
-            } catch (Throwable t) {
-                t.printStackTrace();
+            if(!setField(demo, "window", window)) {
+                setField(demo, "glWindow", window);
             }
 
             window.addWindowListener(listener);

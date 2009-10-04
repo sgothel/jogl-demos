@@ -197,12 +197,16 @@
                 <include name="demos/data/**" />
             </fileset>
         </jar>
-	<!-- Build a source archive as well -->
+        <!-- Build a source archive as well -->
+        <antcall target="all-src-zip" inheritrefs="true" />
+    </target>
+
+    <target name="all-src-zip" unless="skipSourceZIP">
         <delete file="${jogl.demos.src.zip}" />
         <zip destfile="${jogl.demos.src.zip}"
-	     basedir="../.."
-	     includes="jogl-demos/doc/**,jogl-demos/make/**,jogl-demos/src/**,jogl-demos/lib/**"
-	     excludes="**/*.class,**/*~"
+             basedir="../.."
+             includes="jogl-demos/doc/**,jogl-demos/make/**,jogl-demos/src/**,jogl-demos/lib/**"
+             excludes="**/*.class,**/*~"
 	     />
     </target>
 
