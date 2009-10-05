@@ -39,7 +39,7 @@ import javax.media.opengl.*;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.BufferUtil;
 
-import com.sun.opengl.util.texture.spi.awt.IIOTextureWriter;
+import com.sun.opengl.util.texture.spi.NetPbmTextureWriter;
 import java.io.File;
 import java.io.IOException;
 
@@ -48,7 +48,7 @@ import javax.media.nativewindow.*;
 public class Surface2File implements SurfaceUpdatedListener {
 
     ReadBufferUtil readBufferUtil = new ReadBufferUtil();
-    IIOTextureWriter textureWriter = new IIOTextureWriter();
+    NetPbmTextureWriter textureWriter = new NetPbmTextureWriter(6);
     int shotNum=0;
 
     public void dispose() {
@@ -70,7 +70,7 @@ public class Surface2File implements SurfaceUpdatedListener {
       if(!readBufferUtil.isValid()) return;
 
       try {
-        textureWriter.write(new File(basename+"-"+shotNum+".jpg"), readBufferUtil.getTextureData());
+        textureWriter.write(new File(basename+"-"+shotNum+"."+textureWriter.getSuffix()), readBufferUtil.getTextureData());
         shotNum++;
       } catch (IOException ioe) { ioe.printStackTrace(); }
       readBufferUtil.rewindPixelBuffer();

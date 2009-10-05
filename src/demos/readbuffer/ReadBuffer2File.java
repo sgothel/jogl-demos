@@ -37,7 +37,7 @@ import java.nio.*;
 import javax.media.opengl.*;
 
 import com.sun.opengl.util.texture.TextureData;
-import com.sun.opengl.util.texture.spi.awt.IIOTextureWriter;
+import com.sun.opengl.util.texture.spi.NetPbmTextureWriter;
 import java.io.File;
 import java.io.IOException;
 
@@ -53,14 +53,14 @@ public class ReadBuffer2File extends ReadBufferBase {
         super.dispose(drawable);
     }
 
-    IIOTextureWriter textureWriter = new IIOTextureWriter();
+    NetPbmTextureWriter textureWriter = new NetPbmTextureWriter(6);
     int shotNum=0;
 
     void copyTextureData2File() {
       if(!readBufferUtil.isValid()) return;
 
       try {
-        textureWriter.write(new File("/tmp/shot/shot-"+shotNum+".jpg"), readBufferUtil.getTextureData());
+        textureWriter.write(new File("/tmp/shot/shot-"+shotNum+"."+textureWriter.getSuffix()), readBufferUtil.getTextureData());
         shotNum++;
       } catch (IOException ioe) { ioe.printStackTrace(); }
       readBufferUtil.rewindPixelBuffer();

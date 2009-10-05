@@ -65,12 +65,13 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         return windowOffscreen;
     }
 
-    private void run(int typeNewt, boolean fullscreen, int typeTest, GLEventListener demo) {
+    private void run(String glProfileStr, int typeNewt, boolean fullscreen, int typeTest, GLEventListener demo) {
+        GLProfile glp = GLProfile.get(glProfileStr);
         int width = 800;
         int height = 480;
         System.out.println("readbuffer.Main.run() Test: "+typeTest);
         try {
-            GLCapabilities caps = new GLCapabilities(null);
+            GLCapabilities caps = new GLCapabilities(glp);
 
             // Full init pbuffer window ..
             GLWindow windowOffscreen = createOffscreen(caps, width, height);
@@ -146,6 +147,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
     public static int TEST_READBUFFER2SCREEN = 2;
 
     public static void main(String[] args) {
+        String glProfileStr = null;
         boolean fullscreen = false;
         int typeNewt = USE_NEWT ;
         int typeTest = TEST_SURFACE2FILE;
@@ -158,6 +160,8 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
             } else if(args[i].equals("-test")) {
                 i++;
                 typeTest = str2int(args[i], typeTest);
+            } else if(args[i].startsWith("-GL")) {
+                glProfileStr = args[i].substring(1);
             }
             i++;
         }
@@ -176,7 +180,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         }
         GLEventListener demo = (GLEventListener) demoObject;
 
-        new Main().run(typeNewt, fullscreen, typeTest, demo);
+        new Main().run(glProfileStr, typeNewt, fullscreen, typeTest, demo);
         System.exit(0);
     }
 

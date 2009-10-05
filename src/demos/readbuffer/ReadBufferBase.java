@@ -76,6 +76,9 @@ public class ReadBufferBase implements GLEventListener {
         if(_gl.isGL2GL3()) {
             _gl.getGL2GL3().glReadBuffer(GL2GL3.GL_FRONT);
         }
+        System.out.println("---------------------------");
+        System.out.println(_gl.getContext());
+        System.out.println("---------------------------");
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
