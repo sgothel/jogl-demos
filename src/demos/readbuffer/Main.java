@@ -195,7 +195,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
     public static boolean setField(Object instance, String fieldName, Object value) {
         try {
             Field f = instance.getClass().getField(fieldName);
-            if(f.getType().isInstance(value)) {
+            if(value instanceof Boolean || f.getType().isInstance(value)) {
                 f.set(instance, value);
                 return true;
             } else {
