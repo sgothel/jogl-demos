@@ -58,6 +58,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         GLCapabilities capsOffscreen = (GLCapabilities) caps.clone();
         capsOffscreen.setOnscreen(false);
         capsOffscreen.setPBuffer(true);
+        capsOffscreen.setDoubleBuffered(false);
         GLWindow windowOffscreen = GLWindow.create(capsOffscreen);
         windowOffscreen.enablePerfLog(true);
         windowOffscreen.setSize(w, h);

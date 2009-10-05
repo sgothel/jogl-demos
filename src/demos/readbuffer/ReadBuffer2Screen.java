@@ -44,13 +44,16 @@ import javax.media.opengl.fixedfunc.GLPointerFunc;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.GLArrayDataClient;
 import com.sun.opengl.util.GLArrayDataServer;
 import com.sun.opengl.util.BufferUtil;
 
 public class ReadBuffer2Screen extends ReadBufferBase {
     PMVMatrix pmvMatrix;
-    GLArrayDataServer readTextureVertices = null;
-    GLArrayDataServer readTextureCoords = null;
+    GLArrayDataClient readTextureVertices = null;
+    GLArrayDataClient readTextureCoords = null;
+    boolean enableBufferAlways = false; // FIXME
+    boolean enableBufferVBO    = true; // FIXME
 
     public ReadBuffer2Screen (GLDrawable externalRead) {
         super(externalRead);
@@ -65,8 +68,12 @@ public class ReadBuffer2Screen extends ReadBufferBase {
 
         float f_edge = 1f;
         if(null==readTextureVertices) {
+            //readTextureVertices = GLArrayDataClient.createFixed(gl, GLPointerFunc.GL_VERTEX_ARRAY, "mgl_Vertex", 
+            //                                                    2, GL.GL_FLOAT, true, 4);
             readTextureVertices = GLArrayDataServer.createFixed(gl, GLPointerFunc.GL_VERTEX_ARRAY, "mgl_Vertex", 
                                                                 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+            readTextureVertices.setEnableAlways(enableBufferAlways);
+            readTextureVertices.setVBOUsage(enableBufferVBO);
             {
                 FloatBuffer vb = (FloatBuffer)readTextureVertices.getBuffer();
                 vb.put(-f_edge); vb.put(-f_edge);
@@ -75,6 +82,7 @@ public class ReadBuffer2Screen extends ReadBufferBase {
                 vb.put( f_edge); vb.put( f_edge);
             }
             readTextureVertices.seal(gl, true);
+            System.out.println(readTextureVertices);
         }
 
         // Clear background to gray
@@ -125,21 +133,27 @@ public class ReadBuffer2Screen extends ReadBufferBase {
     void renderOffscreenTexture(GL gl) {
       if(!readBufferUtil.isValid()) return;
 
-      updateTextureCoords(gl, false);
-
       // Now draw one quad with the texture
       readBufferUtil.getTexture().enable();
       readBufferUtil.getTexture().bind();
+
       if(gl.isGL2ES1()) {
           // gl.getGL2ES1().glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_REPLACE);
           gl.getGL2ES1().glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
       }
+
+      updateTextureCoords(gl, false);
 
       readTextureVertices.enableBuffer(gl, true);
       if(null!=readTextureCoords) {
           readTextureCoords.enableBuffer(gl, true);
       }
       gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, readTextureVertices.getElementNumber());
+      /**
+      if(null!=readTextureCoords) {
+          readTextureCoords.enableBuffer(gl, false);
+      }
+      readTextureVertices.enableBuffer(gl, false); */
 
       readBufferUtil.getTexture().disable();
     }
@@ -148,6 +162,8 @@ public class ReadBuffer2Screen extends ReadBufferBase {
         if(force || null==readTextureCoords) {
             readTextureCoords = GLArrayDataServer.createFixed(gl, GLPointerFunc.GL_TEXTURE_COORD_ARRAY, "mgl_MultiTexCoord0", 
                                                               2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+            readTextureCoords.setEnableAlways(enableBufferAlways);
+            readTextureCoords.setVBOUsage(enableBufferVBO);
             {
                 TextureCoords coords = readBufferUtil.getTexture().getImageTexCoords();
                 FloatBuffer cb = (FloatBuffer)readTextureCoords.getBuffer();
@@ -157,6 +173,7 @@ public class ReadBuffer2Screen extends ReadBufferBase {
                 cb.put(coords.right()); cb.put(coords.top());
             }
             readTextureCoords.seal(gl, true);
+            System.out.println(readTextureCoords);
         }
     }
 
