@@ -197,6 +197,7 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
         try {
             GLCapabilities caps = new GLCapabilities(glp);
 
+            NewtFactory.setUseEDT(true);
             Window nWindow = null;
             if(useAWT) {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
@@ -233,9 +234,6 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
             window.addMouseListener(listener);
             window.addKeyListener(listener);
             window.addGLEventListener(demo);
-            // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
-            window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
-            window.setRunPumpMessages(true);
 
             window.setPosition(x, y);
             window.setSize(width, height);

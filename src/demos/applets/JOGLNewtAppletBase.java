@@ -16,7 +16,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     String glEventListenerClazzName;
     int glSwapInterval;
     boolean handleWindowEvents;
-    boolean useGLInEventHandler;
     boolean glDebug;
     boolean glTrace;
 
@@ -28,14 +27,12 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     public JOGLNewtAppletBase(String glEventListenerClazzName, 
                               int glSwapInterval,
                               boolean handleWindowEvents,
-                              boolean useGLInEventHandler,
                               boolean glDebug,
                               boolean glTrace) {
     
         this.glEventListenerClazzName=glEventListenerClazzName;
         this.glSwapInterval=glSwapInterval;
         this.handleWindowEvents=handleWindowEvents;
-        this.useGLInEventHandler=useGLInEventHandler;
         this.glDebug = glDebug;
         this.glTrace = glTrace;
     }
@@ -98,6 +95,10 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     }
 
     public void init(Window nWindow) {
+        init(Thread.currentThread().getThreadGroup(), nWindow);
+    }
+
+    public void init(ThreadGroup tg, Window nWindow) {
         glEventListener = createInstance(glEventListenerClazzName);
 
         try {
@@ -125,13 +126,11 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
             }
             glWindow.addKeyListener(this);
 
-            glWindow.setEventHandlerMode( useGLInEventHandler ? GLWindow.EVENT_HANDLER_GL_CURRENT : GLWindow.EVENT_HANDLER_GL_NONE );
             glWindow.setRunPumpMessages(handleWindowEvents);
-            glWindow.setVisible(true);
             glWindow.enablePerfLog(true);
 
             // glAnimator = new FPSAnimator(canvas, 60);
-            glAnimator = new Animator(glWindow);
+            glAnimator = new Animator(tg, glWindow);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -140,6 +139,7 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
 
     public void start() {
         if(isValid) {
+            glWindow.setVisible(true);
             glAnimator.start();
         }
     }
@@ -147,6 +147,7 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     public void stop() {
         if(null!=glAnimator) {
             glAnimator.stop();
+            glWindow.setVisible(false);
         }
     }
 
@@ -158,7 +159,7 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
             glAnimator=null;
         }
         if(null!=glWindow) {
-            glWindow.destroy();
+            glWindow.destroy(true); // deep, incl. Screen and Display
             glWindow=null;
         }
     }

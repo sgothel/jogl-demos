@@ -38,26 +38,30 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void windowLostFocus(WindowEvent e) { }
 
     public void windowDestroyNotify(WindowEvent e) {
+        System.out.println("WINDOW-DESTROY NOTIFY "+Thread.currentThread()+" QUIT "+e);
         quit = true;
     }
 
     public void keyPressed(KeyEvent e) { 
-        System.out.println(glp+" "+e);
-        if(e.getKeyChar()=='f') {
-            window.setFullscreen(!window.isFullscreen());
-        } else if(e.getKeyChar()=='q') {
-            quit = true;
-        }
+        System.out.println("KEY-PRESSED "+Thread.currentThread()+" UNHANDLED "+e);
     }
     public void keyReleased(KeyEvent e) { 
-        System.out.println(glp+" "+e);
+        System.out.println("KEY-RELEASED "+Thread.currentThread()+" UNHANDLED "+e);
     }
     public void keyTyped(KeyEvent e) { 
-        System.out.println(glp+" "+e);
+        if(e.getKeyChar()=='f') {
+            System.out.println("KEY-TYPED "+Thread.currentThread()+" FULLSCREEN "+e);
+            window.setFullscreen(!window.isFullscreen());
+        } else if(e.getKeyChar()=='q') {
+            System.out.println("KEY-TYPED "+Thread.currentThread()+" QUIT "+e);
+            quit = true;
+        } else {
+            System.out.println("KEY-TYPED "+Thread.currentThread()+" UNHANDLED "+e);
+        }
     }
 
     public void mouseClicked(MouseEvent e) {
-        System.out.println(glp+" mouseevent: "+e);
+        System.out.println("MOUSE-CLICKED "+Thread.currentThread()+" UNHANDLED "+e);
         switch(e.getClickCount()) {
             case 1:
                 if(e.getButton()>MouseEvent.BUTTON1) {
@@ -87,10 +91,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public boolean shouldQuit() { return quit; }
 
     public void run() {
-        System.err.println(glp+" RedSquare.run()");
         int width = 800;
         int height = 480;
         glp = GLProfile.get(glprofile);
+        System.out.println("RUN "+Thread.currentThread()+" "+glp);
         try {
             GLCapabilities caps = new GLCapabilities(glp);
 
@@ -108,9 +112,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.addMouseListener(this);
             window.addKeyListener(this);
             window.addGLEventListener(this);
-            // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
-            window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
-            window.setRunPumpMessages(pumpOnce?false:true);
 
             // Size OpenGL to Video Surface
             window.setSize(width, height);
@@ -133,9 +134,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public void display() {
         try {
-            if(pumpOnce && !oneThread) {
-                GLWindow.runCurrentThreadPumpMessage();
-            }
             window.display();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -149,7 +147,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             if(oneThread) {
                 window.getFactory().shutdown();
             }
-            System.out.println(glp+" RedSquare shut down cleanly.");
+            System.out.println("SHUTDOWN "+Thread.currentThread()+" cleanly");
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -187,13 +185,13 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             gl.setSwapInterval(swapInterval);
         }
 
-        System.err.println(glp+" Entering initialization");
-        System.err.println(glp+" GL Profile: "+gl.getGLProfile());
-        System.err.println(glp+" GL:" + gl);
-        System.err.println(glp+" GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
-        System.err.println(glp+" GL_EXTENSIONS:");
-        System.err.println(glp+"   " + gl.glGetString(gl.GL_EXTENSIONS));
-        System.err.println(glp+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
+        System.err.println(Thread.currentThread()+" Entering initialization");
+        System.err.println(Thread.currentThread()+" GL Profile: "+gl.getGLProfile());
+        System.err.println(Thread.currentThread()+" GL:" + gl);
+        System.err.println(Thread.currentThread()+" GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+        System.err.println(Thread.currentThread()+" GL_EXTENSIONS:");
+        System.err.println(Thread.currentThread()+"   " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.println(Thread.currentThread()+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
 
         if(debuggl) {
             try {
@@ -250,7 +248,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         st.glUseProgram(gl, false);
 
         // Let's show the completed shader state ..
-        System.out.println(glp+" "+st);
+        System.out.println(Thread.currentThread()+" "+st);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -275,13 +273,13 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     public void dispose(GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
-        System.out.println(glp+" RedSquare.dispose: "+gl.getContext());
+        System.out.println(Thread.currentThread()+" RedSquare.dispose: "+gl.getContext());
 
         st.destroy(gl);
         st=null;
         pmvMatrix.destroy();
         pmvMatrix=null;
-        System.out.println(glp+" RedSquare.dispose: fin");
+        System.out.println(Thread.currentThread()+" RedSquare.dispose: FIN");
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -318,11 +316,11 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static int USE_AWT       = 1 << 0;
 
     public static boolean oneThread = false;
-    public static boolean pumpOnce = true;
     public static int swapInterval = -1;
     public static boolean debuggl = false;
 
     public static void main(String[] args) {
+        NewtFactory.setUseEDT(true); // should be the default
         int type = USE_NEWT ;
         List threads = new ArrayList();
         for(int i=0; i<args.length; i++) {
@@ -333,8 +331,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 } catch (Exception ex) { ex.printStackTrace(); }
             } else if(args[i].equals("-debug")) {
                 debuggl=true;
-            } else if(args[i].equals("-pumponce")) {
-                pumpOnce=true;
             } else if(args[i].equals("-1thread")) {
                 oneThread=true;
             } else if(args[i].equals("-awt")) {
@@ -348,14 +344,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
 
         if(!oneThread) {
-            Thread firstT = (Thread) threads.remove(0);
-
             for(Iterator i = threads.iterator(); i.hasNext(); ) {
                 ((Thread)i.next()).start();
             }
-
-            // always run the first on main ..
-            firstT.run();
 
             boolean done = false;
 
@@ -377,9 +368,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 ((Thread)i.next()).run();
             }
             while (threads.size()>0) {
-                if(pumpOnce) {
-                    GLWindow.runCurrentThreadPumpMessage();
-                }
                 for(Iterator i = threads.iterator(); i.hasNext(); ) {
                     RedSquare app = (RedSquare) i.next();
                     if(app.shouldQuit()) {

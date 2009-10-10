@@ -26,8 +26,6 @@ public class JOGLNewtApplet1Run extends Applet {
         String glEventListenerClazzName=null;
         String glProfileName=null;
         int glSwapInterval=0;
-        boolean handleWindowEvents=true;
-        boolean useGLInEventHandler=false;
         boolean glDebug=false;
         boolean glTrace=false;
         String tmp;
@@ -35,7 +33,6 @@ public class JOGLNewtApplet1Run extends Applet {
             glEventListenerClazzName = getParameter("gl_event_listener_class");
             glProfileName = getParameter("gl_profile");
             glSwapInterval = JOGLNewtAppletBase.str2Int(getParameter("gl_swap_interval"), glSwapInterval);
-            useGLInEventHandler = JOGLNewtAppletBase.str2Bool(getParameter("gl_use_in_events"), useGLInEventHandler);
             glDebug = JOGLNewtAppletBase.str2Bool(getParameter("gl_debug"), glDebug);
             glTrace = JOGLNewtAppletBase.str2Bool(getParameter("gl_trace"), glTrace);
         } catch (Exception e) {
@@ -46,8 +43,7 @@ public class JOGLNewtApplet1Run extends Applet {
         }
         base = new JOGLNewtAppletBase(glEventListenerClazzName, 
                                       glSwapInterval,
-                                      handleWindowEvents,
-                                      useGLInEventHandler,
+                                      false /* pumpMessages == handleWindowEvents */,
                                       glDebug,
                                       glTrace);
 
