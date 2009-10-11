@@ -138,7 +138,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                     glAnimator = new Animator(Thread.currentThread().getThreadGroup(), window);
                     glAnimator.start();
                     while (glAnimator.isAnimating()) {
-                        Thread.yield();
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception e) {}
                     }
                     shutdown();
                 } else {

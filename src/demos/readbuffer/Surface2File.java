@@ -37,9 +37,9 @@ import java.nio.*;
 import javax.media.opengl.*;
 
 import com.sun.opengl.util.texture.TextureData;
+import com.sun.opengl.util.texture.TextureIO;
 import com.sun.opengl.util.BufferUtil;
 
-import com.sun.opengl.util.texture.spi.NetPbmTextureWriter;
 import java.io.File;
 import java.io.IOException;
 
@@ -48,7 +48,6 @@ import javax.media.nativewindow.*;
 public class Surface2File implements SurfaceUpdatedListener {
 
     ReadBufferUtil readBufferUtil = new ReadBufferUtil();
-    NetPbmTextureWriter textureWriter = new NetPbmTextureWriter(6);
     int shotNum=0;
 
     public void dispose() {
@@ -61,7 +60,7 @@ public class Surface2File implements SurfaceUpdatedListener {
             GLContext ctx = GLContext.getCurrent();
             if(null!=ctx && ctx.getGLDrawable()==drawable) {
                 readBufferUtil.fetchOffscreenTexture(drawable, ctx.getGL());
-                surface2File("/tmp/shot/shot");
+                surface2File("shot");
             }
         }
     }
@@ -70,7 +69,11 @@ public class Surface2File implements SurfaceUpdatedListener {
       if(!readBufferUtil.isValid()) return;
 
       try {
-        textureWriter.write(new File(basename+"-"+shotNum+"."+textureWriter.getSuffix()), readBufferUtil.getTextureData());
+        File file = File.createTempFile(basename+shotNum+"-", ".ppm");
+        TextureIO.write(readBufferUtil.getTextureData(), file);
+        if(0==shotNum) {
+            System.out.println("Wrote: "+file.getAbsolutePath()+", ...");
+        }
         shotNum++;
       } catch (IOException ioe) { ioe.printStackTrace(); }
       readBufferUtil.rewindPixelBuffer();
