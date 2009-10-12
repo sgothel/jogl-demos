@@ -151,7 +151,8 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
         }
     }
 
-    public void destroy() {
+    /** @param sendDisposeEvent should be false in a [time,reliable] critical shutdown */
+    public void destroy(boolean sendDisposeEvent) {
         isValid = false;
         if(null!=glAnimator) {
             glAnimator.stop();
@@ -159,7 +160,7 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
             glAnimator=null;
         }
         if(null!=glWindow) {
-            glWindow.destroy(true); // deep, incl. Screen and Display
+            glWindow.destroy(sendDisposeEvent);
             glWindow=null;
         }
     }

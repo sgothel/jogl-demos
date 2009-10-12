@@ -13,6 +13,7 @@ import com.sun.javafx.newt.opengl.*;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
+    public Window nWindow = null;
     public GLWindow window;
     private GLProfile glp;
     private boolean quit = false;
@@ -98,7 +99,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         try {
             GLCapabilities caps = new GLCapabilities(glp);
 
-            Window nWindow = null;
             if(0!=(type&USE_AWT)) {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                 Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
@@ -146,6 +146,11 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.destroy();
             if(oneThread) {
                 window.getFactory().shutdown();
+            }
+            window = null;
+            if(null!=nWindow) {
+                nWindow.destroy();
+                nWindow=null;
             }
             System.out.println("SHUTDOWN "+Thread.currentThread()+" cleanly");
         } catch (Throwable t) {

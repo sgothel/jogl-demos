@@ -16,6 +16,7 @@ import com.sun.javafx.newt.opengl.*;
 
 public class JOGLNewtApplet1Run extends Applet {
     JOGLNewtAppletBase base;
+    Window nWindow = null;
 
     public void init() {
         if(!(this instanceof Container)) {
@@ -51,8 +52,8 @@ public class JOGLNewtApplet1Run extends Applet {
             GLCapabilities caps = new GLCapabilities(GLProfile.get(glProfileName));
             Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
             Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-            Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { container }, 
-                                                     nScreen, caps, true /* undecorated */);
+            nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { container }, 
+                                               nScreen, caps, true /* undecorated */);
             // nWindow.setPosition(x, y);
             // nWindow.setSize(container.getWidth(), container.getHeight());
             if(null!=nWindow) {
@@ -85,7 +86,12 @@ public class JOGLNewtApplet1Run extends Applet {
     }
 
     public void destroy() {
-        base.destroy();
+        base.destroy(false); // no dispose events
+        base=null;
+        if(null!=nWindow) {
+            nWindow.destroy();
+            nWindow=null;
+        }
     }
 }
 
