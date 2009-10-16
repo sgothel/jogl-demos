@@ -54,10 +54,10 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
     public void mouseWheelMoved(MouseEvent e) {
     }
 
-    public GLWindow createOffscreen(GLCapabilities caps, int w, int h) {
+    public GLWindow createOffscreen(GLCapabilities caps, int w, int h, boolean pbuffer) {
         GLCapabilities capsOffscreen = (GLCapabilities) caps.clone();
         capsOffscreen.setOnscreen(false);
-        capsOffscreen.setPBuffer(true);
+        capsOffscreen.setPBuffer(pbuffer);
         capsOffscreen.setDoubleBuffered(false);
         GLWindow windowOffscreen = GLWindow.create(capsOffscreen);
         windowOffscreen.enablePerfLog(true);
@@ -66,7 +66,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         return windowOffscreen;
     }
 
-    private void run(String glProfileStr, int typeNewt, boolean fullscreen, int typeTest, GLEventListener demo) {
+    private void run(String glProfileStr, int typeNewt, boolean fullscreen, int typeTest, GLEventListener demo, boolean pbuffer) {
         GLProfile glp = GLProfile.get(glProfileStr);
         int width = 800;
         int height = 480;
@@ -75,7 +75,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
             GLCapabilities caps = new GLCapabilities(glp);
 
             // Full init pbuffer window ..
-            GLWindow windowOffscreen = createOffscreen(caps, width, height);
+            GLWindow windowOffscreen = createOffscreen(caps, width, height, pbuffer);
             // setField(demo, "glDebug", new Boolean(true));
             // setField(demo, "glTrace", new Boolean(true));
             if(!setField(demo, "window", windowOffscreen)) {
@@ -150,6 +150,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
     public static void main(String[] args) {
         String glProfileStr = null;
         boolean fullscreen = false;
+        boolean pbuffer = true;
         int typeNewt = USE_NEWT ;
         int typeTest = TEST_SURFACE2FILE;
         int i=0;
@@ -158,6 +159,8 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
                 typeNewt |= USE_AWT; 
             } else if(args[i].equals("-fs")) {
                 fullscreen = true;
+            } else if(args[i].equals("-nopbuffer")) {
+                pbuffer = false;
             } else if(args[i].equals("-test")) {
                 i++;
                 typeTest = str2int(args[i], typeTest);
@@ -181,7 +184,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         }
         GLEventListener demo = (GLEventListener) demoObject;
 
-        new Main().run(glProfileStr, typeNewt, fullscreen, typeTest, demo);
+        new Main().run(glProfileStr, typeNewt, fullscreen, typeTest, demo, pbuffer);
         System.exit(0);
     }
 
