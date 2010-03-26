@@ -12,6 +12,9 @@
    -->
 <project name="JOGL.demos" default="all">
 
+    <property name="jogl.root" value="../../jogl" />
+    <property name="gluegen.root" value="../../gluegen" />
+
     <condition property="rootrel.build" value="build">
       <not>
           <isset property="rootrel.build"/>
@@ -66,29 +69,29 @@
     </target>
 
     <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
-        <property name="jogl.core.jar"       value="../../jogl/${rootrel.build}/jogl/jogl.core.jar" />
-        <condition property="jogl.cg.jar"    value="../../jogl/${rootrel.build}/jogl/jogl.cg.jar">
+        <property name="jogl.core.jar"       value="${jogl.root}/${rootrel.build}/jogl/jogl.core.jar" />
+        <condition property="jogl.cg.jar"    value="${jogl.root}/${rootrel.build}/jogl/jogl.cg.jar">
           <isset property="jogl.cg"/>
         </condition>
-        <property name="jogl.gles12.jar"     value="../../jogl/${rootrel.build}/jogl/jogl.gles12.jar" />
-        <property name="jogl.gles12.dbg.jar" value="../../jogl/${rootrel.build}/jogl/jogl.gles12.dbg.jar" />
-        <property name="jogl.gles1.jar"      value="../../jogl/${rootrel.build}/jogl/jogl.gles1.jar" />
-        <property name="jogl.gles1.dbg.jar"  value="../../jogl/${rootrel.build}/jogl/jogl.gles1.dbg.jar" />
-        <property name="jogl.gles2.jar"      value="../../jogl/${rootrel.build}/jogl/jogl.gles2.jar" />
-        <property name="jogl.gles2.dbg.jar"  value="../../jogl/${rootrel.build}/jogl/jogl.gles2.dbg.jar" />
-        <property name="jogl.egl.jar"        value="../../jogl/${rootrel.build}/jogl/jogl.egl.jar" />
-        <property name="jogl.gl2.jar"        value="../../jogl/${rootrel.build}/jogl/jogl.gl2.jar" />
-        <property name="jogl.gl2.dbg.jar"    value="../../jogl/${rootrel.build}/jogl/jogl.gl2.dbg.jar" />
-        <property name="jogl.awt.jar"        value="../../jogl/${rootrel.build}/jogl/jogl.awt.jar" />
-        <property name="jogl.util.jar"       value="../../jogl/${rootrel.build}/jogl/jogl.util.jar" />
-        <property name="jogl.util.awt.jar"   value="../../jogl/${rootrel.build}/jogl/jogl.util.awt.jar" />
-        <property name="jogl.util.fixedfuncemu.jar" value="../../jogl/${rootrel.build}/jogl/jogl.util.fixedfuncemu.jar" />
-        <property name="jogl.util.gl2.jar"   value="../../jogl/${rootrel.build}/jogl/jogl.util.gl2.jar" />
-        <property name="nativewindow.core.jar" value="../../jogl/${rootrel.build}/nativewindow/nativewindow.core.jar" />
-        <property name="nativewindow.x11.jar"  value="../../jogl/${rootrel.build}/nativewindow/nativewindow.x11.jar" />
-        <property name="nativewindow.awt.jar"  value="../../jogl/${rootrel.build}/nativewindow/nativewindow.awt.jar" />
-        <property name="newt.core.jar"       value="../../jogl/${rootrel.build}/newt/newt.core.jar" />
-        <property name="newt.ogl.jar"        value="../../jogl/${rootrel.build}/newt/newt.ogl.jar" />
+        <property name="jogl.gles12.jar"     value="${jogl.root}/${rootrel.build}/jogl/jogl.gles12.jar" />
+        <property name="jogl.gles12.dbg.jar" value="${jogl.root}/${rootrel.build}/jogl/jogl.gles12.dbg.jar" />
+        <property name="jogl.gles1.jar"      value="${jogl.root}/${rootrel.build}/jogl/jogl.gles1.jar" />
+        <property name="jogl.gles1.dbg.jar"  value="${jogl.root}/${rootrel.build}/jogl/jogl.gles1.dbg.jar" />
+        <property name="jogl.gles2.jar"      value="${jogl.root}/${rootrel.build}/jogl/jogl.gles2.jar" />
+        <property name="jogl.gles2.dbg.jar"  value="${jogl.root}/${rootrel.build}/jogl/jogl.gles2.dbg.jar" />
+        <property name="jogl.egl.jar"        value="${jogl.root}/${rootrel.build}/jogl/jogl.egl.jar" />
+        <property name="jogl.gl2.jar"        value="${jogl.root}/${rootrel.build}/jogl/jogl.gl2.jar" />
+        <property name="jogl.gl2.dbg.jar"    value="${jogl.root}/${rootrel.build}/jogl/jogl.gl2.dbg.jar" />
+        <property name="jogl.awt.jar"        value="${jogl.root}/${rootrel.build}/jogl/jogl.awt.jar" />
+        <property name="jogl.util.jar"       value="${jogl.root}/${rootrel.build}/jogl/jogl.util.jar" />
+        <property name="jogl.util.awt.jar"   value="${jogl.root}/${rootrel.build}/jogl/jogl.util.awt.jar" />
+        <property name="jogl.util.fixedfuncemu.jar" value="${jogl.root}/${rootrel.build}/jogl/jogl.util.fixedfuncemu.jar" />
+        <property name="jogl.util.gl2.jar"   value="${jogl.root}/${rootrel.build}/jogl/jogl.util.gl2.jar" />
+        <property name="nativewindow.core.jar" value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.core.jar" />
+        <property name="nativewindow.x11.jar"  value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.x11.jar" />
+        <property name="nativewindow.awt.jar"  value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.awt.jar" />
+        <property name="newt.core.jar"       value="${jogl.root}/${rootrel.build}/newt/newt.core.jar" />
+        <property name="newt.ogl.jar"        value="${jogl.root}/${rootrel.build}/newt/newt.ogl.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
         <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
@@ -96,7 +99,7 @@
         <property name="src"                 value="../src" />
         <property name="javadoc"             value="../javadoc" />
         <property name="javadoc.link"        value="http://java.sun.com/j2se/1.4.2/docs/api/" />
-        <property name="javadoc.link.jogl"   value="../../jogl/javadoc-public/" />
+        <property name="javadoc.link.jogl"   value="${jogl.root}/javadoc-public/" />
         <property name="jogl.demos.jar"      value="../${rootrel.build}/jogl-demos.jar" />
         <property name="jogl.demos.util.jar" value="../${rootrel.build}/jogl-demos-util.jar" />
         <property name="jogl.demos.data.jar" value="../${rootrel.build}/jogl-demos-data.jar" />
@@ -231,7 +234,7 @@
             <pathelement location="${newt.ogl.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
-               bootclasspath="../../gluegen/make/lib/cdc_fp.jar">
+               bootclasspath="${gluegen.root}/make/lib/cdc_fp.jar">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
