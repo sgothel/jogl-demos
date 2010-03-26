@@ -1,0 +1,12 @@
+
+Deprecated demos, ie using a deprecated - non std GL API.
+Solution might be:
+    (1) Remove, with a reference of a similar demo using the std API
+    (2) Rewrite using the std API
+
+And here the infamous candidates, demos using:
+
+    (1) GL_VERTEX_ARRAY_RANGE_NV -> Any VBO demo (FIXME)
+    (2) glGenFencesNV -> GL3/GL4
+    (?) GL_ALL_COMPLETED_NV
+    (?) glAllocateMemoryNV -> might be removed . of GLContext ?
