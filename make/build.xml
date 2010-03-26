@@ -124,7 +124,7 @@
         <copy file="../lib/stax-1.2.0.jar" todir="../${rootrel.build}" />
     </target>
 
-    <target name="redbook-javac" if="jogl.redbook">
+    <target name="redbook-javac">
         <javac destdir="${classes}" source="1.5" target="1.5" debug="true" debuglevel="source,lines">
             <src path="${src}/redbook/src" />
             <classpath refid="jogl-demos.classpath" />
