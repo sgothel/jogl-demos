@@ -46,6 +46,7 @@ import com.sun.opengl.util.texture.TextureIO;
 import java.io.IOException;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLException;
+import javax.media.opengl.GLContext;
 
 
 
@@ -69,7 +70,7 @@ public class Cubemap {
 
     for (int i = 0; i < suffixes.length; i++) {
       String resourceName = basename + suffixes[i] + "." + suffix;
-      TextureData data = TextureIO.newTextureData(scope.getResourceAsStream(resourceName),
+      TextureData data = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(), scope.getResourceAsStream(resourceName),
                                                   mipmapped,
                                                   FileUtil.getFileSuffix(resourceName));
       if (data == null) {

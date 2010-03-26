@@ -40,7 +40,7 @@ public class PerfTextLoad extends PerfModule {
                 if(urlText==null) {
                     throw new RuntimeException("couldn't fetch "+textName);
                 }
-                textDatas[i] = TextureIO.newTextureData(urlText.openStream(), false, TextureIO.TGA);
+                textDatas[i] = TextureIO.newTextureData(gl.getGLProfile(), urlText.openStream(), false, TextureIO.TGA);
                 System.out.println(textBaseName+": "+textDatas[i]);
             }
 

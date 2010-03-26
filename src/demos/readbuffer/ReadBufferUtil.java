@@ -64,6 +64,7 @@ public class ReadBufferUtil {
             readPixelSizeLast = readPixelSize ;
             try {
                 readTextureData = new TextureData(
+                           gl.getGLProfile(),
                            // gl.isGL2GL3()?gl.GL_RGBA:gl.GL_RGB,
                            gl.GL_RGB,
                            drawable.getWidth(), drawable.getHeight(),

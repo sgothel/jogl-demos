@@ -190,6 +190,8 @@ public class CustomText extends Demo {
   }
 
   public void init(GLAutoDrawable drawable) {
+    GL gl = drawable.getGL();
+
     // Create the background texture
     BufferedImage bgImage = new BufferedImage(2, 2, BufferedImage.TYPE_BYTE_GRAY);
     Graphics2D g = bgImage.createGraphics();
@@ -199,7 +201,7 @@ public class CustomText extends Demo {
     g.fillRect(0, 0, 1, 1);
     g.fillRect(1, 1, 1, 1);
     g.dispose();
-    backgroundTexture = AWTTextureIO.newTexture(bgImage, false);
+    backgroundTexture = AWTTextureIO.newTexture(gl.getGLProfile(), bgImage, false);
     backgroundTexture.bind();
     backgroundTexture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
     backgroundTexture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
@@ -231,7 +233,6 @@ public class CustomText extends Demo {
     ((SystemTime) time).rebase();
 
     // Set up properties; note we don't need the depth buffer in this demo
-    GL gl = drawable.getGL();
     gl.glDisable(GL.GL_DEPTH_TEST);
     // Turn off vsync if we can
     gl.setSwapInterval(0);

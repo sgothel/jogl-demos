@@ -139,7 +139,7 @@ public class TestSubImage {
         g.dispose();
 
         // Create a TextureData and Texture from it
-        textureData = AWTTextureIO.newTextureData(convertedImage, false);
+        textureData = AWTTextureIO.newTextureData(gl.getGLProfile(), convertedImage, false);
         texture = TextureIO.newTexture(textureData);
       }
 

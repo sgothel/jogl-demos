@@ -45,6 +45,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -205,7 +206,9 @@ public class Water {
                          String cubeMapFilenamePrefix,
                          String cubeMapFilenameSuffix,
                          GLAutoDrawable parentWindow) {
-    loadInitialTexture(initialMapFilename);
+    GLCapabilities caps = parentWindow.getChosenGLCapabilities();
+
+    loadInitialTexture(caps.getGLProfile(), initialMapFilename);
     tmpSpinFilename           = spinFilename;
     tmpDropletFilename        = dropletFilename;
     tmpCubeMapFilenamePrefix  = cubeMapFilenamePrefix;
@@ -213,7 +216,6 @@ public class Water {
     
     // create the pbuffer.  Will use this as an offscreen rendering buffer.
     // it allows rendering a texture larger than our window.
-    GLCapabilities caps = parentWindow.getChosenGLCapabilities();
     caps.setDoubleBuffered(false);
     if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer()) {
       throw new GLException("Pbuffers not supported with this graphics card");
@@ -493,9 +495,10 @@ public class Water {
 
   // We need to load the initial texture file early to get the width
   // and height for the pbuffer
-  private void loadInitialTexture(String initialMapFilename) {
+  private void loadInitialTexture(GLProfile glp, String initialMapFilename) {
     try {
-      initialMapData = TextureIO.newTextureData(getClass().getClassLoader().getResourceAsStream(initialMapFilename),
+      initialMapData = TextureIO.newTextureData(glp,
+                                                getClass().getClassLoader().getResourceAsStream(initialMapFilename),
                                                 false,
                                                 FileUtil.getFileSuffix(initialMapFilename));
     } catch (IOException e) {

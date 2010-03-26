@@ -49,6 +49,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLPbuffer;
+import javax.media.opengl.GLProfile;
 
 
 
@@ -69,15 +70,16 @@ public class TextureConvert {
     String inputFile  = args[0];
     String outputFile = args[1];
 
-    GLCapabilities caps = new GLCapabilities(null);
+    GLProfile glp = GLProfile.getDefault();
+    GLCapabilities caps = new GLCapabilities(glp);
     caps.setDoubleBuffered(false);
 
     // Make a pbuffer to get an offscreen context
-    if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer()) {
+    if (!GLDrawableFactory.getFactory(glp).canCreateGLPbuffer()) {
       System.out.println("Pbuffer support not available (required to run this demo)");
       System.exit(1);
     }
-    GLPbuffer pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(caps, null, 2, 2, null);
+    GLPbuffer pbuffer = GLDrawableFactory.getFactory(glp).createGLPbuffer(caps, null, 2, 2, null);
     pbuffer.getContext().makeCurrent();
     GL gl = pbuffer.getGL();
 
@@ -89,7 +91,7 @@ public class TextureConvert {
       }
     }
 
-    TextureData inputData = TextureIO.newTextureData(new File(inputFile), false, null);
+    TextureData inputData = TextureIO.newTextureData(glp, new File(inputFile), false, null);
     if (attemptCompression && !inputData.isDataCompressed()) {
       inputData.setInternalFormat(GL.GL_COMPRESSED_RGBA_S3TC_DXT3_EXT);
     }
