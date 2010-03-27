@@ -7,7 +7,7 @@ import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.GLWindow;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
+import com.jogamp.opengl.util.*;
 
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */

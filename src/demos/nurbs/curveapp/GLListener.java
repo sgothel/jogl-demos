@@ -5,7 +5,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.*;
 
-import com.sun.opengl.util.GLUT;
+import com.jogamp.opengl.util.GLUT;
 
 /**
  * Listener raacting to OpenGL canvas events

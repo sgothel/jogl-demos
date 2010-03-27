@@ -38,7 +38,7 @@ import java.nio.ShortBuffer;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.BufferUtil;
 
 class CubeObject {
     public CubeObject (boolean useTexCoords) {

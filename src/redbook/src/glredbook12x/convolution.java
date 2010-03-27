@@ -14,7 +14,7 @@ import javax.media.opengl.*;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.BufferUtil;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;

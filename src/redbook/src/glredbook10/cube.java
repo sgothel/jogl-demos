@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 

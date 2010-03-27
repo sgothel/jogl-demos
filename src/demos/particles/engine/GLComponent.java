@@ -40,7 +40,7 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.opengl.awt.*;
 
-import com.sun.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.FPSAnimator;
 
 public class GLComponent extends GLCanvas implements GLEventListener {
     

@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import demos.common.Demo;
 import demos.util.SystemTime;
 import demos.util.Time;
@@ -63,7 +63,7 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 
 
 /** Illustrates both the TextRenderer's capability for handling

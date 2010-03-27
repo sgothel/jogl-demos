@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 
 import glredbook10.GLSkeleton;
  
-import com.sun.opengl.util.*; 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 

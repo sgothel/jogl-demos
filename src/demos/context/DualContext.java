@@ -39,7 +39,7 @@
 
 package demos.context;
 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Graphics;

@@ -3,7 +3,7 @@ package glredbook10;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.*; import javax.media.opengl.awt.GLJPanel;
 
 /**

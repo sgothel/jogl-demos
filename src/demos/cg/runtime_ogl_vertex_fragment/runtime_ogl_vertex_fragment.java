@@ -33,12 +33,12 @@
 
 package demos.cg.runtime_ogl_vertex_fragment;
 
-import com.sun.opengl.cg.*;
+import com.jogamp.opengl.cg.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.*;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.*;
 
 import java.awt.*;
 import java.awt.event.*;

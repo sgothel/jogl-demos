@@ -11,7 +11,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.ToolTipManager;

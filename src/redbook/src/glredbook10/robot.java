@@ -1,6 +1,6 @@
 package glredbook10;
 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import java.awt.event.*;
 
 import javax.swing.*;

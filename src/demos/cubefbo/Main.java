@@ -38,8 +38,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.Animator;
-import com.sun.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.FPSAnimator;
 
 
 public class Main {

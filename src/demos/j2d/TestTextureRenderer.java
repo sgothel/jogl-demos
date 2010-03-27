@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.TextureRenderer;
+import com.jogamp.opengl.util.awt.TextureRenderer;
 import demos.gears.Gears;
 import demos.util.SystemTime;
 import demos.util.Time;
@@ -62,7 +62,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 
 
 

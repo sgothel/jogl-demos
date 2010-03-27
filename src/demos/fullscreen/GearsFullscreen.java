@@ -6,7 +6,7 @@ import java.awt.event.*;
 import demos.gears.Gears;
 import demos.util.*;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 
 /**
  * GearsFullscreen.java <BR>

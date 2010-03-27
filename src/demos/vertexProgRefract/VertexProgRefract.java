@@ -33,8 +33,8 @@
 
 package demos.vertexProgRefract;
 
-import com.sun.opengl.util.gl2.GLUT;
-import com.sun.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.Texture;
 import demos.common.Demo;
 import demos.common.DemoListener;
 import demos.util.Bunny;
@@ -57,8 +57,8 @@ import java.io.IOException;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.GLU;
-import com.sun.opengl.util.Animator;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 

@@ -36,7 +36,7 @@ package demos.es2.openmax;
 // import demos.es1.cube.Cube;
 
 import javax.media.opengl.*;
-import com.sun.opengl.util.glsl.fixedfunc.*;
+import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 import com.sun.openmax.*;
 
@@ -181,7 +181,7 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
     public void display(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
 
-        com.sun.opengl.util.texture.Texture tex = null;
+        com.jogamp.opengl.util.texture.Texture tex = null;
         if(null!=movie) {
             tex=movie.getNextTextureID();
             if(null!=tex) {

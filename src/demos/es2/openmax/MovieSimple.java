@@ -36,8 +36,8 @@ package demos.es2.openmax;
 
 import javax.media.opengl.*;
 
-import com.sun.opengl.util.glsl.*;
-import com.sun.opengl.util.*;
+import com.jogamp.opengl.util.glsl.*;
+import com.jogamp.opengl.util.*;
 
 import com.sun.openmax.*;
 
@@ -321,7 +321,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         }
 
 
-        com.sun.opengl.util.texture.Texture tex = null;
+        com.jogamp.opengl.util.texture.Texture tex = null;
         if(null!=movie) {
             tex=movie.getNextTextureID();
             if(null!=tex) {

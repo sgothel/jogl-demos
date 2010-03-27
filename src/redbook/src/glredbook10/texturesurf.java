@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 import java.nio.*;
 
-import com.sun.opengl.util.*;
+import com.jogamp.opengl.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLJPanel;
 

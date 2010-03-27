@@ -57,7 +57,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 import javax.swing.JOptionPane;
 
 /**

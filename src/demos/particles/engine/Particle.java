@@ -36,7 +36,7 @@
 
 package demos.particles.engine;
 
-import com.sun.opengl.util.texture.*;
+import com.jogamp.opengl.util.texture.*;
 
 import javax.media.opengl.*;
 

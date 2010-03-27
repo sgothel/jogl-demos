@@ -15,7 +15,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.awt.GLJPanel;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 
 /**
  * Gears.java <BR>

@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import javax.media.opengl.*;
-import com.sun.opengl.cg.*;
+import com.jogamp.opengl.cg.*;
 import demos.util.*;
 
 public class CgPipeline implements Pipeline {

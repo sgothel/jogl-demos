@@ -4,8 +4,8 @@ import java.nio.*;
 import java.io.*;
 import java.net.*;
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.texture.*;
 
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;
