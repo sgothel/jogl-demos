@@ -23,7 +23,7 @@
 
 package javabullet.demos.opengl;
 
-import com.sun.javafx.newt.*;
+import com.jogamp.javafx.newt.*;
 import javax.media.nativewindow.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;

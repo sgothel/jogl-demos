@@ -38,13 +38,13 @@ package demos.es2.openmax;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
-import com.sun.openmax.*;
+import com.jogamp.openmax.*;
 
 import java.nio.*;
 import java.net.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.javafx.newt.*;
+import com.jogamp.javafx.newt.opengl.*;
 
 public class MovieCube implements MouseListener, GLEventListener, OMXEventListener {
     GLWindow window;

@@ -3,8 +3,8 @@ package demos.applets;
 import java.util.*;
 import java.lang.reflect.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.GLWindow;
+import com.jogamp.javafx.newt.*;
+import com.jogamp.javafx.newt.opengl.GLWindow;
 
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;

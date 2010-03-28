@@ -4,8 +4,8 @@ import java.nio.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.javafx.newt.*;
+import com.jogamp.javafx.newt.opengl.*;
 
 public class PerfUniLoad extends PerfModule {
     static final int MAX_ARRAYS = 12;

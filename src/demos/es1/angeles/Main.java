@@ -3,8 +3,8 @@ package demos.es1.angeles;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.javafx.newt.*;
+import com.jogamp.javafx.newt.opengl.*;
 
 public class Main implements WindowListener, MouseListener {
 

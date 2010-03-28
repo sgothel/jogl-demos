@@ -6,8 +6,8 @@ import java.lang.reflect.*;
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.javafx.newt.*;
+import com.jogamp.javafx.newt.opengl.*;
 
 public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
 

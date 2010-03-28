@@ -18,5 +18,5 @@ else
         X_ARGS="-XstartOnFirstThread"
     fi
 
-    java $X_ARGS -Djava.awt.headless=true com.sun.javafx.newt.util.MainThread $* 2>&1 | tee java-run-newt.log
+    java $X_ARGS -Djava.awt.headless=true com.jogamp.javafx.newt.util.MainThread $* 2>&1 | tee java-run-newt.log
 fi
