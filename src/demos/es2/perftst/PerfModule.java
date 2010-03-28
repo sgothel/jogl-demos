@@ -3,8 +3,8 @@ package demos.es2.perftst;
 import java.nio.*;
 import javax.media.opengl.*;
 
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.glsl.*;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.*;
 
 public abstract class PerfModule {
 

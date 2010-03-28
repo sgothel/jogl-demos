@@ -17,8 +17,8 @@ import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.Animator;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.BufferUtil;
 
 public class Picking
 {

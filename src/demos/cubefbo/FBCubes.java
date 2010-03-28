@@ -43,7 +43,7 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.FBObject;
+import com.jogamp.opengl.util.FBObject;
 
 
 

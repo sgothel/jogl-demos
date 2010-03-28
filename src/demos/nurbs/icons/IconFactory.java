@@ -1,6 +1,6 @@
 package demos.nurbs.icons;
 
-import com.sun.opengl.impl.io.StreamUtil;
+import com.jogamp.opengl.impl.io.StreamUtil;
 import java.io.*;
 import javax.swing.ImageIcon;
 

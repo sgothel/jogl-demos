@@ -39,8 +39,8 @@
 
 package demos.util;
 
-import com.sun.opengl.util.awt.TextRenderer;
-import com.sun.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.texture.Texture;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;

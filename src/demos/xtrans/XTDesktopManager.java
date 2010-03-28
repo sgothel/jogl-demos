@@ -39,7 +39,7 @@
 
 package demos.xtrans;
 
-import com.sun.opengl.impl.awt.Java2D;
+import com.jogamp.opengl.impl.awt.Java2D;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;

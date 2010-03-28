@@ -33,7 +33,7 @@
 
 package demos.cg.runtime_ogl;
 
-import com.sun.opengl.cg.*;
+import com.jogamp.opengl.cg.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.*;

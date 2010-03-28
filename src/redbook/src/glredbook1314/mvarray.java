@@ -10,7 +10,7 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.*;
 import javax.swing.JFrame;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.BufferUtil;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 

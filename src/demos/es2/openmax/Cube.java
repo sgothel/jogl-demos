@@ -36,8 +36,8 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.nativewindow.*;
 
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.glsl.fixedfunc.*;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 import com.sun.javafx.newt.*;
 import com.sun.javafx.newt.opengl.*;

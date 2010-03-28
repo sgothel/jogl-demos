@@ -33,9 +33,9 @@
 
 package demos.hwShadowmapsSimple;
 
-import com.sun.opengl.util.gl2.GLUT;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import demos.common.Demo;
 import demos.common.DemoListener;
 import gleem.BSphere;

@@ -37,16 +37,16 @@ import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.fixedfunc.*;
 
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.glsl.fixedfunc.*;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 import javax.media.opengl.fixedfunc.GLPointerFunc;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureData;
-import com.sun.opengl.util.texture.TextureCoords;
-import com.sun.opengl.util.GLArrayDataClient;
-import com.sun.opengl.util.GLArrayDataServer;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureCoords;
+import com.jogamp.opengl.util.GLArrayDataClient;
+import com.jogamp.opengl.util.GLArrayDataServer;
+import com.jogamp.opengl.util.BufferUtil;
 
 public class ReadBuffer2Screen extends ReadBufferBase {
     PMVMatrix pmvMatrix;

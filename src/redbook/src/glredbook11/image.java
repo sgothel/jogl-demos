@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.BufferUtil;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;

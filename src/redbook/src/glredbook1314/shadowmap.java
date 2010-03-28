@@ -8,11 +8,11 @@ import javax.media.opengl.*; import javax.media.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
 
-import com.sun.opengl.util.BufferUtil;
-import com.sun.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.FPSAnimator;
 
 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import glredbook10.GLSkeleton;
 import javax.media.opengl.glu.GLU;
  

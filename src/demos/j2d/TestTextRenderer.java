@@ -39,7 +39,7 @@
 
 package demos.j2d;
 
-import com.sun.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import demos.gears.Gears;
 import demos.util.FPSCounter;
 import demos.util.SystemTime;
@@ -55,7 +55,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 
 
 

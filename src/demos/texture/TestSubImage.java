@@ -39,11 +39,11 @@
 
 package demos.texture;
 
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureCoords;
-import com.sun.opengl.util.texture.TextureData;
-import com.sun.opengl.util.texture.TextureIO;
-import com.sun.opengl.util.texture.awt.AWTTextureIO;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;

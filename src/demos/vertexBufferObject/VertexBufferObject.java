@@ -56,8 +56,8 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import com.sun.opengl.util.Animator;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 

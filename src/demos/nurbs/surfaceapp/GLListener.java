@@ -5,7 +5,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.*;
 
-import com.sun.opengl.util.glut.gl2.GLUTgl2;
+import com.jogamp.opengl.util.glut.gl2.GLUTgl2;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 

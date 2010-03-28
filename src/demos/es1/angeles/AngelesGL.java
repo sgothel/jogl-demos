@@ -26,8 +26,8 @@ package demos.es1.angeles;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.glsl.fixedfunc.*;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.fixedfunc.*;
 import java.nio.*;
 
 public class AngelesGL implements GLEventListener {

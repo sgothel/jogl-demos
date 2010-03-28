@@ -33,10 +33,10 @@
 
 package demos.proceduralTexturePhysics;
 
-import com.sun.opengl.util.FileUtil;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureData;
-import com.sun.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.FileUtil;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 import demos.util.Cubemap;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
@@ -56,7 +56,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.BufferUtil;
 
 
 

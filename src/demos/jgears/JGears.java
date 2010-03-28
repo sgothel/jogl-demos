@@ -21,7 +21,7 @@ import javax.imageio.ImageIO;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;

@@ -33,7 +33,7 @@
 
 package demos.infiniteShadowVolumes;
 
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import demos.common.Demo;
 import demos.common.DemoListener;
 import demos.util.MD2;

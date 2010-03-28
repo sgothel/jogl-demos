@@ -5,8 +5,8 @@ import javax.swing.*;
 
 import java.nio.*;
 
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.*; import javax.media.opengl.awt.GLJPanel;
 
 /**
