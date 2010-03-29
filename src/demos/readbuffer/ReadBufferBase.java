@@ -33,12 +33,7 @@
 
 package demos.readbuffer;
 
-import java.nio.*;
 import javax.media.opengl.*;
-
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.BufferUtil;
 
 
 public class ReadBufferBase implements GLEventListener {

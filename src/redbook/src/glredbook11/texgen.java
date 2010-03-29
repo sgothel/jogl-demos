@@ -6,9 +6,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.nio.ByteBuffer;
 
-import javax.media.opengl.*;import javax.swing.JFrame;
+import javax.media.opengl.*;
+import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.gluegen.runtime.Buffers;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.awt.GLJPanel;
@@ -31,8 +32,7 @@ public class texgen//
     private GLUT glut;
     private static final int stripeImageWidth = 32;
     private byte stripeImage[] = new byte[3 * stripeImageWidth];
-    private ByteBuffer stripeImageBuf = BufferUtil
-            .newByteBuffer(stripeImage.length);
+    private ByteBuffer stripeImageBuf = Buffers.newDirectByteBuffer(stripeImage.length);
     /* glTexGen stuff: */
     // private float sgenparams[] = { 1.0f, 1.0f, 1.0f, 0.0f };
     private int texName[] = new int[1];

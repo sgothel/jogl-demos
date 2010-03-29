@@ -14,7 +14,7 @@ import javax.media.opengl.*;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -110,7 +110,7 @@ public class histogram //
             }// key sw
 
         // short values[][] = new short[HISTOGRAM_SIZE][3];
-        ShortBuffer values = BufferUtil.newShortBuffer(HISTOGRAM_SIZE * 3);
+        ShortBuffer values = GLBuffers.newDirectShortBuffer(HISTOGRAM_SIZE * 3);
 
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
         gl.glRasterPos2i(1, 1);
@@ -183,7 +183,7 @@ public class histogram //
             System.out.println("Creating buffer, width: " + dim.width
                     + " height: " + dim.height);
             // byte[] buf = new byte[3 * dim.height * dim.width];
-            bytes = BufferUtil.newByteBuffer(3 * dim.width * dim.height);
+            bytes = GLBuffers.newDirectByteBuffer(3 * dim.width * dim.height);
             for (int i = 0; i < bytes.capacity(); i++) {
                 bytes.put(dis.readByte());
                 // int b = dis.readByte();// dis.read();

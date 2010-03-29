@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 import java.nio.*;
 
-import com.jogamp.opengl.util.*;
+import com.jogamp.gluegen.runtime.Buffers;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLJPanel;
 
@@ -20,6 +20,7 @@ import javax.media.opengl.awt.GLJPanel;
 public class texturesurf//
         extends GLSkeleton<GLJPanel>
         implements GLEventListener, KeyListener {
+
     // as from C version of file
     private static final float ctrlpoints[][][] = new float[][][] {
             { { -1.5f, -1.5f, 4.0f }, { -0.5f, -1.5f, 2.0f },
@@ -30,10 +31,10 @@ public class texturesurf//
                     { 0.5f, 0.5f, 3.0f }, { 1.5f, 0.5f, 4.0f } },
             { { -1.5f, 1.5f, -2.0f }, { -0.5f, 1.5f, -2.0f },
                     { 0.5f, 1.5f, 0.0f }, { 1.5f, 1.5f, -1.0f } } };
+
     // need float buffer instead of n-dimensional array above
-    private FloatBuffer ctrlpointsBuf = BufferUtil
-            .newFloatBuffer(ctrlpoints.length * ctrlpoints[0].length
-                    * ctrlpoints[0][0].length);
+    private FloatBuffer ctrlpointsBuf = Buffers.newDirectFloatBuffer(ctrlpoints.length * ctrlpoints[0].length * ctrlpoints[0][0].length);
+
     {// SO copy 4x4x3 array above to float buffer
         for (int i = 0; i < ctrlpoints.length; i++)
             // System.out.print(ctrlpoints.length+ " ");
@@ -51,9 +52,7 @@ public class texturesurf//
     private float[][][] texpts = new float[][][] {
             { { 0.0f, 0.0f }, { 0.0f, 1.0f } },
             { { 1.0f, 0.0f }, { 1.0f, 1.0f } } };
-    private FloatBuffer texptsBuf = BufferUtil
-            //
-            .newFloatBuffer(texpts.length * texpts[0].length * texpts[1].length);
+    private FloatBuffer texptsBuf = Buffers.newDirectFloatBuffer(texpts.length * texpts[0].length * texpts[1].length);
     {
         for (int i = 0; i < texpts.length; i++)
             // System.out.print(ctrlpoints.length+ " ");
@@ -72,7 +71,7 @@ public class texturesurf//
     private static final int imageWidth = 64;
     private static final int imageHeight = 64;
     private static byte image[] = new byte[3 * imageWidth * imageHeight];
-    private static ByteBuffer imageBuf = BufferUtil.newByteBuffer(image.length);
+    private static ByteBuffer imageBuf = Buffers.newDirectByteBuffer(image.length);
 
     @Override
     protected GLJPanel createDrawable() {
@@ -104,23 +103,17 @@ public class texturesurf//
         GL2 gl = drawable.getGL().getGL2();
         //
         gl.glMap2f(GL2.GL_MAP2_VERTEX_3, 0, 1, 3, 4, 0, 1, 12, 4, ctrlpointsBuf);
-        gl.glMap2f(GL2.GL_MAP2_TEXTURE_COORD_2, 0, 1, 2, 2, 0, 1, 4, 2,
-                texptsBuf);
+        gl.glMap2f(GL2.GL_MAP2_TEXTURE_COORD_2, 0, 1, 2, 2, 0, 1, 4, 2, texptsBuf);
         gl.glEnable(GL2.GL_MAP2_TEXTURE_COORD_2);
         gl.glEnable(GL2.GL_MAP2_VERTEX_3);
         gl.glMapGrid2f(20, 0.0f, 1.0f, 20, 0.0f, 1.0f);
         makeImage();
         gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S,
-                        GL2.GL_REPEAT);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T,
-                        GL2.GL_REPEAT);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER,
-                GL.GL_NEAREST);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER,
-                GL.GL_NEAREST);
-        gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGB, imageWidth,
-                imageHeight, 0, GL2.GL_RGB, GL.GL_UNSIGNED_BYTE, imageBuf);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+        gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGB, imageWidth, imageHeight, 0, GL2.GL_RGB, GL.GL_UNSIGNED_BYTE, imageBuf);
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glShadeModel(GL2.GL_FLAT);
@@ -153,8 +146,7 @@ public class texturesurf//
         gl.glRotatef(85.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
-            boolean deviceChanged) {
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
     private void makeImage() {

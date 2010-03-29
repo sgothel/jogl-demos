@@ -31,6 +31,7 @@
  */
 package demos.es1.cube;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.nativewindow.*;
@@ -54,7 +55,7 @@ public class CubeImmModeSink implements GLEventListener {
     ImmModeSink vboCubeF = null;
     public void drawCube(GL2ES1 gl, float extent) {
         if(cubeIndices==null) {
-            cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices);
+            cubeIndices = Buffers.newDirectByteBuffer(s_cubeIndices);
         }
         
         if(vboCubeF==null) {
@@ -66,9 +67,9 @@ public class CubeImmModeSink implements GLEventListener {
 
             vbo.glBegin(GL.GL_TRIANGLES);
 
-            vbo.glVertexv(BufferUtil.newShortBuffer(s_cubeVertices));
-            vbo.glColorv(BufferUtil.newFloatBuffer(s_cubeColors));
-            vbo.glNormalv(BufferUtil.newByteBuffer(s_cubeNormals));
+            vbo.glVertexv(Buffers.newDirectShortBuffer(s_cubeVertices));
+            vbo.glColorv(Buffers.newDirectFloatBuffer(s_cubeColors));
+            vbo.glNormalv(Buffers.newDirectByteBuffer(s_cubeNormals));
 
             if(VBO_CACHE) {
                 vbo.glEnd(gl, false);

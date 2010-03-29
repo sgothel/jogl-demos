@@ -14,7 +14,7 @@ import javax.media.opengl.*;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -27,6 +27,7 @@ import javax.media.opengl.awt.GLJPanel;
 public class convolution//
         extends GLSkeleton<GLJPanel>
         implements GLEventListener, KeyListener {
+
     private JFrame frame;
     private KeyEvent key;
     //
@@ -41,12 +42,9 @@ public class convolution//
     private float laplacian[][] = { { -0.125f, -0.125f, -0.125f },
             { -0.125f, 1.0f, -0.125f }, { -0.125f, -0.125f, -0.125f } };
 
-    private FloatBuffer horizontalBuf = BufferUtil
-            .newFloatBuffer(horizontal.length * horizontal[0].length);
-    private FloatBuffer verticalBuf = BufferUtil.newFloatBuffer(vertical.length
-            * vertical[0].length);
-    private FloatBuffer laplacianBuf = BufferUtil
-            .newFloatBuffer(laplacian.length * laplacian[0].length);
+    private FloatBuffer horizontalBuf = GLBuffers.newDirectFloatBuffer(horizontal.length * horizontal[0].length);
+    private FloatBuffer verticalBuf = GLBuffers.newDirectFloatBuffer(vertical.length * vertical[0].length);
+    private FloatBuffer laplacianBuf = GLBuffers.newDirectFloatBuffer(laplacian.length * laplacian[0].length);
     {
         for (int i = 0; i < 3; i++) {
             horizontalBuf.put(horizontal[i]);
@@ -190,7 +188,7 @@ public class convolution//
             System.out.println("Creating buffer, width: " + dim.width
                     + " height: " + dim.height);
             // byte[] buf = new byte[3 * dim.height * dim.width];
-            bytes = BufferUtil.newByteBuffer(3 * dim.width * dim.height);
+            bytes = GLBuffers.newDirectByteBuffer(3 * dim.width * dim.height);
             for (int i = 0; i < bytes.capacity(); i++) {
                 bytes.put(dis.readByte());
                 // int b = dis.readByte();// dis.read();

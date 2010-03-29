@@ -1,5 +1,6 @@
 package demos.es2.perftst;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import java.nio.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
@@ -65,7 +66,7 @@ public class PerfUniLoad extends PerfModule {
         float x=0f, y=0f, z=0f, w=0f;
 
         for(int i=0; i<numObjs; i++) {
-            FloatBuffer fb = BufferUtil.newFloatBuffer(4*numArrayElem);
+            FloatBuffer fb = Buffers.newDirectFloatBuffer(4*numArrayElem);
 
             for(int j=0; j<numArrayElem; j++) {
                 // Fill them up
@@ -121,7 +122,7 @@ public class PerfUniLoad extends PerfModule {
         }
 
         int uniElements = numObjs * numArrayElem ;
-        int uniBytes    = uniElements * BufferUtil.SIZEOF_FLOAT;
+        int uniBytes    = uniElements * Buffers.SIZEOF_FLOAT;
 
         dt = 0;
         for(int i=1; i<loops; i++) {

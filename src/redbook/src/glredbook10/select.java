@@ -196,7 +196,7 @@ public class select//
   private void selectObjects(GL2 gl)
   {
     int selectBuf[] = new int[BUFSIZE];
-    IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE);
+    IntBuffer selectBuffer = GLBuffers.newDirectIntBuffer(BUFSIZE);
     int hits;
 
     gl.glSelectBuffer(BUFSIZE, selectBuffer);

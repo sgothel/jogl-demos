@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.nio.*;
 
 import javax.media.opengl.*;
-import com.jogamp.opengl.util.*;
+import com.jogamp.gluegen.runtime.Buffers;
 import javax.media.opengl.awt.GLJPanel;
 
 /**
@@ -29,9 +29,7 @@ public class bezsurf//
             { { -1.5f, 1.5f, -2.0f }, { -0.5f, 1.5f, -2.0f },
                     { 0.5f, 1.5f, 0.0f }, { 1.5f, 1.5f, -1.0f } } };
     // need float buffer instead of n-dimensional array above
-    private FloatBuffer ctrlpointsBuf = BufferUtil
-            .newFloatBuffer(ctrlpoints.length * ctrlpoints[0].length
-                    * ctrlpoints[0][0].length);
+    private FloatBuffer ctrlpointsBuf = Buffers.newDirectFloatBuffer(ctrlpoints.length * ctrlpoints[0].length * ctrlpoints[0][0].length);
     {// SO copy 4x4x3 array above to float buffer
         for (int i = 0; i < ctrlpoints.length; i++) {
             // System.out.print(ctrlpoints.length+ " ");

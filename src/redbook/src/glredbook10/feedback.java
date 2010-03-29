@@ -56,7 +56,7 @@ public class feedback//
         GL2 gl = drawable.getGL().getGL2();
         //
         float feedBuffer[] = new float[1024];
-        FloatBuffer feedBuf = BufferUtil.newFloatBuffer(1024);
+        FloatBuffer feedBuf = GLBuffers.newDirectFloatBuffer(1024);
         int size;
 
         gl.glMatrixMode(GL2.GL_PROJECTION);

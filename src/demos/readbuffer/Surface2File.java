@@ -33,12 +33,9 @@
 
 package demos.readbuffer;
 
-import java.nio.*;
 import javax.media.opengl.*;
 
-import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
-import com.jogamp.opengl.util.BufferUtil;
 
 import java.io.File;
 import java.io.IOException;

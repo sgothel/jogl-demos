@@ -5,7 +5,7 @@ import javax.swing.*;
 
 import java.nio.*;
 
-import com.jogamp.opengl.util.*;
+import com.jogamp.gluegen.runtime.Buffers;
 import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.*; import javax.media.opengl.awt.GLJPanel;
 
@@ -22,8 +22,7 @@ public class texgen//
 
     private static final int stripeImageWidth = 32;
     private byte stripeImage[] = new byte[3 * stripeImageWidth];
-    private ByteBuffer stripeImageBuf = BufferUtil
-            .newByteBuffer(stripeImage.length);
+    private ByteBuffer stripeImageBuf = Buffers.newDirectByteBuffer(stripeImage.length);
     /* glTexGen stuff: */
     private float sgenparams[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 

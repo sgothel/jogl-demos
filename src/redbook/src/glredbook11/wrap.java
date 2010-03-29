@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -34,7 +34,7 @@ public class wrap//
     private static final int rgba = 4;
     // private byte[][][] checkImage;
     private ByteBuffer checkImageBuf = //
-    BufferUtil.newByteBuffer(checkImageHeight * checkImageWidth * rgba);
+    GLBuffers.newDirectByteBuffer(checkImageHeight * checkImageWidth * rgba);
     private KeyEvent key;
 
     @Override

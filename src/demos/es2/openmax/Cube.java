@@ -31,12 +31,12 @@
  */
 package demos.es2.openmax;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import javax.media.nativewindow.*;
 
-import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 import com.jogamp.newt.*;
@@ -53,19 +53,19 @@ public class Cube implements GLEventListener {
         this.innerCube = innerCube;
 
         // Initialize data Buffers
-        this.cubeVertices = BufferUtil.newShortBuffer(s_cubeVertices.length);
+        this.cubeVertices = Buffers.newDirectShortBuffer(s_cubeVertices.length);
         cubeVertices.put(s_cubeVertices);
         cubeVertices.flip();
 
-        this.cubeColors = BufferUtil.newFloatBuffer(s_cubeColors.length);
+        this.cubeColors = Buffers.newDirectFloatBuffer(s_cubeColors.length);
         cubeColors.put(s_cubeColors);
         cubeColors.flip();
 
-        this.cubeNormals = BufferUtil.newByteBuffer(s_cubeNormals.length);
+        this.cubeNormals = Buffers.newDirectByteBuffer(s_cubeNormals.length);
         cubeNormals.put(s_cubeNormals);
         cubeNormals.flip();
 
-        this.cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices.length);
+        this.cubeIndices = Buffers.newDirectByteBuffer(s_cubeIndices.length);
         cubeIndices.put(s_cubeIndices);
         cubeIndices.flip();
         
@@ -86,7 +86,7 @@ public class Cube implements GLEventListener {
                 }
             }
 
-            this.cubeTexCoords = BufferUtil.newFloatBuffer(s_cubeTexCoords.length);
+            this.cubeTexCoords = Buffers.newDirectFloatBuffer(s_cubeTexCoords.length);
             cubeTexCoords.put(s_cubeTexCoords);
             cubeTexCoords.flip();
         }
@@ -151,26 +151,26 @@ public class Cube implements GLEventListener {
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[0]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.limit() * BufferUtil.SIZEOF_SHORT, cubeVertices, GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.limit() * Buffers.SIZEOF_SHORT, cubeVertices, GL.GL_STATIC_DRAW);
         gl.glVertexPointer(3, gl.GL_SHORT, 0, 0);
 
         gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[1]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeNormals.limit() * BufferUtil.SIZEOF_BYTE, cubeNormals, GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeNormals.limit() * Buffers.SIZEOF_BYTE, cubeNormals, GL.GL_STATIC_DRAW);
         gl.glNormalPointer(gl.GL_BYTE, 0, 0);
 
         gl.glEnableClientState(gl.GL_COLOR_ARRAY);
         if (cubeColors != null) {
             gl.glEnableClientState(gl.GL_COLOR_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[2]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeColors.limit() * BufferUtil.SIZEOF_FLOAT, cubeColors, GL.GL_STATIC_DRAW);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeColors.limit() * Buffers.SIZEOF_FLOAT, cubeColors, GL.GL_STATIC_DRAW);
             gl.glColorPointer(4, gl.GL_FLOAT, 0, 0);
         }
 
         if (cubeTexCoords != null) {
             gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboNames[3]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * BufferUtil.SIZEOF_SHORT, cubeTexCoords, GL.GL_STATIC_DRAW);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeTexCoords.limit() * Buffers.SIZEOF_SHORT, cubeTexCoords, GL.GL_STATIC_DRAW);
             gl.glTexCoordPointer(2, gl.GL_SHORT, 0, 0);
             gl.glTexEnvi(gl.GL_TEXTURE_ENV, gl.GL_TEXTURE_ENV_MODE, gl.GL_INCR);
         } else {

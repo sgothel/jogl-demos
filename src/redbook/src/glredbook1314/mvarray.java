@@ -10,7 +10,7 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.*;
 import javax.swing.JFrame;
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 
@@ -40,7 +40,7 @@ public class mvarray //
             300, 250 };
 
     private IntBuffer vertexBuf = //
-    BufferUtil.newIntBuffer(vertices.length);
+    GLBuffers.newDirectIntBuffer(vertices.length);
 
     private byte oneIndices[] = { 0, 1, 2, 3, 4, 5, 6 };
 
@@ -49,8 +49,8 @@ public class mvarray //
     private int count[] = { 7, 6 };
 
     private ByteBuffer indices[] = {//
-    BufferUtil.newByteBuffer(oneIndices.length),
-            BufferUtil.newByteBuffer(twoIndices.length) };
+    GLBuffers.newDirectByteBuffer(oneIndices.length),
+            GLBuffers.newDirectByteBuffer(twoIndices.length) };
 
     // static GLvoid * indices[2] = {oneIndices, twoIndices};
     {

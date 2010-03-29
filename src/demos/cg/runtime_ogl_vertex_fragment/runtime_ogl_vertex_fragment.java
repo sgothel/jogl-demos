@@ -333,9 +333,9 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
     if (P == null) {
       int u, v;
 
-      P = BufferUtil.newFloatBuffer(3*nVerts);
-      N = BufferUtil.newFloatBuffer(3*nVerts);
-      uv = BufferUtil.newFloatBuffer(2*nVerts);
+      P = GLBuffers.newDirectFloatBuffer(3*nVerts);
+      N = GLBuffers.newDirectFloatBuffer(3*nVerts);
+      uv = GLBuffers.newDirectFloatBuffer(2*nVerts);
 
       // Fill in the position, normal, and texture coordinate arrays.
       // Just loop over all of the vertices, compute their parametreic
@@ -358,7 +358,7 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
       }
 
       // Now fill in the vertex index arrays
-      indices = BufferUtil.newIntBuffer(3*nTris);
+      indices = GLBuffers.newDirectIntBuffer(3*nTris);
       int ip = 0;
       for (v = 0; v < nv-1; ++v) {
         for (u = 0; u < nu-1; ++u) {

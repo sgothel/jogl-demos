@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 
 import javax.media.opengl.*;import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -135,7 +135,7 @@ public class colormatrix//
             System.out.println("Creating buffer, width: " + dim.width
                     + " height: " + dim.height);
             // byte[] buf = new byte[3 * dim.height * dim.width];
-            bytes = BufferUtil.newByteBuffer(3 * dim.width * dim.height);
+            bytes = GLBuffers.newDirectByteBuffer(3 * dim.width * dim.height);
             for (int i = 0; i < bytes.capacity(); i++) {
                 bytes.put(dis.readByte());
                 // int b = dis.readByte();// dis.read();

@@ -41,13 +41,11 @@ import demos.util.Cubemap;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -56,7 +54,6 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
-import com.jogamp.opengl.util.BufferUtil;
 
 
 

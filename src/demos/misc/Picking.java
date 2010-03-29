@@ -10,6 +10,7 @@ package demos.misc;
 // Notes: * Based on example 13-3 (p 542) in the "OpenGL Programming Guide"
 //        * This version should handle overlapping objects correctly.
 //---------------------------------------------------------------------------------
+import com.jogamp.gluegen.runtime.Buffers;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.Canvas.*;
@@ -18,7 +19,6 @@ import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.BufferUtil;
 
 public class Picking
 {
@@ -96,7 +96,7 @@ public class Picking
           int buffsize = 512;
           double x = (double) mouse_x, y = (double) mouse_y;
           int[] viewPort = new int[4];
-          IntBuffer selectBuffer = BufferUtil.newIntBuffer(buffsize);
+          IntBuffer selectBuffer = Buffers.newDirectIntBuffer(buffsize);
           int hits = 0;
           gl.glGetIntegerv(GL2.GL_VIEWPORT, viewPort, 0);
           gl.glSelectBuffer(buffsize, selectBuffer);

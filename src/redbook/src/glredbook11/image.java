@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -50,7 +50,7 @@ public class image //
     private static final int rgb = 3;
     // private byte checkImage[][][];
     private ByteBuffer checkImageBuf = //
-    BufferUtil.newByteBuffer(checkImageHeight * checkImageWidth * rgb);
+    GLBuffers.newDirectByteBuffer(checkImageHeight * checkImageWidth * rgb);
 
     private static float zoomFactor = 1.0f;
     private static int height;

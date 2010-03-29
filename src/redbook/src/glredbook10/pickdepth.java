@@ -146,7 +146,7 @@ public class pickdepth//
      */
     private void pickRects(GL2 gl) {
         int[] selectBuf = new int[BUFSIZE];
-        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE);
+        IntBuffer selectBuffer = GLBuffers.newDirectIntBuffer(BUFSIZE);
         int hits;
         int viewport[] = new int[4];
         // int x, y;

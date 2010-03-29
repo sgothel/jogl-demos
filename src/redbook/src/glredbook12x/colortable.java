@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -74,7 +74,7 @@ public class colortable//
         }
 
         // byte colorTable[][] = new byte[256][3];
-        ByteBuffer colorTableBuf = BufferUtil.newByteBuffer(256 * 3);
+        ByteBuffer colorTableBuf = GLBuffers.newDirectByteBuffer(256 * 3);
 
         gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -157,7 +157,7 @@ public class colortable//
             System.out.println("Creating buffer, width: " + dim.width
                     + " height: " + dim.height);
             // byte[] buf = new byte[3 * dim.height * dim.width];
-            bytes = BufferUtil.newByteBuffer(3 * dim.width * dim.height);
+            bytes = GLBuffers.newDirectByteBuffer(3 * dim.width * dim.height);
             for (int i = 0; i < bytes.capacity(); i++) {
                 bytes.put(dis.readByte());
                 // int b = dis.readByte();// dis.read();

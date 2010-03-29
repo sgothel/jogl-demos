@@ -152,7 +152,7 @@ public class picksquare//
     // private void pickSquares(GL2 gl, int button, int state, int x, int y)
     private void pickSquares(GL2 gl) {
         int selectBuf[] = new int[BUFSIZE];
-        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE);
+        IntBuffer selectBuffer = GLBuffers.newDirectIntBuffer(BUFSIZE);
         int hits;
         int viewport[] = new int[4];
 

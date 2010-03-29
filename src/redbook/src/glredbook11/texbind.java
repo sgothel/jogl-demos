@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 
@@ -30,9 +30,9 @@ public class texbind //
     // private byte checkImage[][][];
     // private byte otherImage[][][];
     private ByteBuffer checkImageBuf = //
-    BufferUtil.newByteBuffer(checkImageWidth * checkImageHeight * rgba);
+    GLBuffers.newDirectByteBuffer(checkImageWidth * checkImageHeight * rgba);
     private ByteBuffer otherImageBuf = //
-    BufferUtil.newByteBuffer(checkImageWidth * checkImageHeight * rgba);
+    GLBuffers.newDirectByteBuffer(checkImageWidth * checkImageHeight * rgba);
     private int[] texName = new int[2];
 
     @Override

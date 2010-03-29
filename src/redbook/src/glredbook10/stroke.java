@@ -210,7 +210,7 @@ public class stroke//
     // private void printStrokedString(char *s)
     private void printStrokedString(GL2 gl, String s) {
         int len = s.length();
-        ByteBuffer str = BufferUtil.newByteBuffer(len);
+        ByteBuffer str = GLBuffers.newDirectByteBuffer(len);
         str.put(s.getBytes());
         str.rewind();
         gl.glCallLists(len, GL.GL_BYTE, str);
