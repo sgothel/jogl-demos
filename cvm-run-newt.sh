@@ -19,4 +19,4 @@ if [ "$1" = "-cpu" ] ; then
     shift
 fi
 
-$CVM $X_FLAGS -Djava.awt.headless=true -Dsun.boot.library.path=../jogl/$BUILD_SUBDIR/lib -Xbootclasspath/a:../gluegen/$BUILD_SUBDIR/gluegen-rt-cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/nativewindow/nativewindow.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/jogl/jogl.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/newt/newt.all.cdc.jar -Xbootclasspath/a:$BUILD_SUBDIR/jogl-demos.jar com.jogamp.javafx.newt.util.MainThread $* 2>&1 | tee cvm-run-newt.log
+$CVM $X_FLAGS -Djava.awt.headless=true -Dsun.boot.library.path=../jogl/$BUILD_SUBDIR/lib -Xbootclasspath/a:../gluegen/$BUILD_SUBDIR/gluegen-rt-cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/nativewindow/nativewindow.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/jogl/jogl.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/newt/newt.all.cdc.jar -Xbootclasspath/a:$BUILD_SUBDIR/jogl-demos.jar com.jogamp.newt.util.MainThread $* 2>&1 | tee cvm-run-newt.log

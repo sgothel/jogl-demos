@@ -38,8 +38,7 @@ package demos.newt.util;
 
 import java.util.*;
 
-import javax.media.nativewindow.*;
-import com.jogamp.javafx.newt.*;
+import com.jogamp.newt.*;
 
 public class TaskToolWM {
     final static boolean externalStimuli;

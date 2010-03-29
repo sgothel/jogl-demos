@@ -38,8 +38,8 @@ import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 import java.nio.*;
 
-import com.jogamp.javafx.newt.*;
-import com.jogamp.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class CubeImmModeSink implements GLEventListener {
     boolean quit = false;

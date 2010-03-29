@@ -44,8 +44,8 @@ import com.jogamp.openmax.*;
 import java.nio.*;
 import java.net.*;
 
-import com.jogamp.javafx.newt.*;
-import com.jogamp.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class MovieSimple implements MouseListener, GLEventListener, OMXEventListener {
     private GLWindow window;

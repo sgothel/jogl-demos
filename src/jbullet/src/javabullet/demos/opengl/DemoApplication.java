@@ -48,7 +48,7 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import java.nio.*;
 
-import com.jogamp.javafx.newt.*;
+import com.jogamp.newt.*;
 
 /**
  *

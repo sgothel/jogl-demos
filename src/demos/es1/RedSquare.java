@@ -9,8 +9,8 @@ import javax.media.nativewindow.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
-import com.jogamp.javafx.newt.*;
-import com.jogamp.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 

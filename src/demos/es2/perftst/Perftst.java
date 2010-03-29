@@ -1,14 +1,13 @@
 package demos.es2.perftst;
 
-import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.*;
 
-import com.jogamp.javafx.newt.*;
-import com.jogamp.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class Perftst implements MouseListener, GLEventListener {
 

@@ -40,11 +40,10 @@ import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 import com.jogamp.openmax.*;
 
-import java.nio.*;
 import java.net.*;
 
-import com.jogamp.javafx.newt.*;
-import com.jogamp.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class MovieCube implements MouseListener, GLEventListener, OMXEventListener {
     GLWindow window;

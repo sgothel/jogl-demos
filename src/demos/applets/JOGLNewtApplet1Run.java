@@ -8,8 +8,7 @@ import java.awt.event.KeyListener;
 
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
-import com.jogamp.javafx.newt.*;
-import com.jogamp.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
 
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */
