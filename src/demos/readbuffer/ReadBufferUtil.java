@@ -33,12 +33,12 @@
 
 package demos.readbuffer;
 
+import com.jogamp.opengl.util.GLBuffers;
 import java.nio.*;
 import javax.media.opengl.*;
 
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.BufferUtil;
 
 public class ReadBufferUtil {
     protected int readPixelSizeLast = 0;
@@ -60,7 +60,7 @@ public class ReadBufferUtil {
         int readPixelSize = drawable.getWidth() * drawable.getHeight() * 3 ; // RGB
         boolean newData = false;
         if(readPixelSize>readPixelSizeLast) {
-            readPixelBuffer = BufferUtil.newGLBuffer(gl.GL_UNSIGNED_BYTE, readPixelSize);
+            readPixelBuffer = GLBuffers.newDirectGLBuffer(GL.GL_UNSIGNED_BYTE, readPixelSize);
             readPixelSizeLast = readPixelSize ;
             try {
                 readTextureData = new TextureData(

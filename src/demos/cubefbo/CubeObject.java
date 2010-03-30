@@ -33,34 +33,35 @@
 
 package demos.cubefbo;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
-import com.jogamp.opengl.util.BufferUtil;
 
 class CubeObject {
-    public CubeObject (boolean useTexCoords) {
+
+    CubeObject (boolean useTexCoords) {
         // Initialize data Buffers
-        this.cubeVertices = BufferUtil.newShortBuffer(s_cubeVertices.length);
+        this.cubeVertices = Buffers.newDirectShortBuffer(s_cubeVertices.length);
         cubeVertices.put(s_cubeVertices);
         cubeVertices.rewind();
 
-        this.cubeColors = BufferUtil.newByteBuffer(s_cubeColors.length);
+        this.cubeColors = Buffers.newDirectByteBuffer(s_cubeColors.length);
         cubeColors.put(s_cubeColors);
         cubeColors.rewind();
 
-        this.cubeNormals = BufferUtil.newByteBuffer(s_cubeNormals.length);
+        this.cubeNormals = Buffers.newDirectByteBuffer(s_cubeNormals.length);
         cubeNormals.put(s_cubeNormals);
         cubeNormals.rewind();
 
-        this.cubeIndices = BufferUtil.newByteBuffer(s_cubeIndices.length);
+        this.cubeIndices = Buffers.newDirectByteBuffer(s_cubeIndices.length);
         cubeIndices.put(s_cubeIndices);
         cubeIndices.rewind();
 
         if (useTexCoords) {
-            this.cubeTexCoords = BufferUtil.newShortBuffer(s_cubeTexCoords.length);
+            this.cubeTexCoords = Buffers.newDirectShortBuffer(s_cubeTexCoords.length);
             cubeTexCoords.put(s_cubeTexCoords);
             cubeTexCoords.rewind();
         }

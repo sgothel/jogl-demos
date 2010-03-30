@@ -141,7 +141,7 @@ public class GLSRT {
             16, 19, 17, 18, 16, 17, /* right  */
             23, 20, 21, 20, 22, 21 /* left   */
     };
-    private ByteBuffer cubeIndices=BufferUtil.newByteBuffer(s_cubeIndices);
+    private ByteBuffer cubeIndices=GLBuffers.newDirectByteBuffer(s_cubeIndices);
 	
 	////////////////////////////////////////////////////////////////////////////
 	

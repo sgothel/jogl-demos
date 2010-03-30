@@ -1,13 +1,12 @@
 package demos;
 
-import java.util.*;
 import java.lang.reflect.*;
 
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
 

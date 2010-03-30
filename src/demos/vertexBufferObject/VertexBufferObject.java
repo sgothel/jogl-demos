@@ -33,6 +33,7 @@
 
 package demos.vertexBufferObject;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import demos.common.Demo;
 import demos.common.DemoListener;
 import java.awt.BorderLayout;
@@ -48,7 +49,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -57,7 +57,6 @@ import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 
@@ -374,8 +373,8 @@ public class VertexBufferObject extends Demo {
       buffers[i].vertices = sliceBuffer(bigArray, startIndex, sliceSize);
       buffers[i].normals  = sliceBuffer(buffers[i].vertices, 3,
                                         buffers[i].vertices.limit() - 3);
-      buffers[i].vertexOffset = startIndex       * BufferUtil.SIZEOF_FLOAT;
-      buffers[i].normalOffset = (startIndex + 3) * BufferUtil.SIZEOF_FLOAT;
+      buffers[i].vertexOffset = startIndex       * Buffers.SIZEOF_FLOAT;
+      buffers[i].normalOffset = (startIndex + 3) * Buffers.SIZEOF_FLOAT;
     }
   }
 
@@ -653,7 +652,7 @@ public class VertexBufferObject extends Demo {
         for (int i = 0; i < len; i++) {
           ++numDrawElementsCalls;
           gl.glDrawElements(primitive, 2 * STRIP_SIZE, GL2.GL_UNSIGNED_INT,
-                            i * 2 * STRIP_SIZE * BufferUtil.SIZEOF_INT);
+                            i * 2 * STRIP_SIZE * Buffers.SIZEOF_INT);
           if(getFlag('f')) {
             gl.glFlush();
           }
@@ -760,7 +759,7 @@ public class VertexBufferObject extends Demo {
     elementBufferObject = tmp[0];
     gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
     gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,
-                       linearElements.remaining() * BufferUtil.SIZEOF_INT,
+                       linearElements.remaining() * Buffers.SIZEOF_INT,
                        linearElements,
                        GL.GL_STATIC_DRAW);
     gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);

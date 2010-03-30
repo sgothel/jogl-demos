@@ -93,7 +93,7 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$GLUEGEN_OS:$JOGL_LIB_DIR
 echo CLASSPATH: $CLASSPATH
 echo
 echo MacOSX REMEMBER to add the JVM arguments "-XstartOnFirstThread -Djava.awt.headless=true" for running demos without AWT, e.g. NEWT
-echo MacOSX REMEMBER to add the JVM arguments "-XstartOnFirstThread -Djava.awt.headless=true com.sun.javafx.newt.util.MainThread" for running demos with NEWT
+echo MacOSX REMEMBER to add the JVM arguments "-XstartOnFirstThread -Djava.awt.headless=true com.jogamp.newt.util.MainThread" for running demos with NEWT
 
 PATH=$J2RE_HOME/bin:$JAVA_HOME/bin:$PATH
 export PATH

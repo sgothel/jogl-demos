@@ -36,17 +36,17 @@ public class cubemap//
     // private static byte image5[][][] = new byte[imageSize][imageSize][4];
     // private static byte image6[][][] = new byte[imageSize][imageSize][4];
     private static ByteBuffer imageBuf1 //
-    = BufferUtil.newByteBuffer(imageSize * imageSize * 4);
+    = GLBuffers.newDirectByteBuffer(imageSize * imageSize * 4);
     private static ByteBuffer imageBuf2 //
-    = BufferUtil.newByteBuffer(imageSize * imageSize * 4);
+    = GLBuffers.newDirectByteBuffer(imageSize * imageSize * 4);
     private static ByteBuffer imageBuf3 //
-    = BufferUtil.newByteBuffer(imageSize * imageSize * 4);
+    = GLBuffers.newDirectByteBuffer(imageSize * imageSize * 4);
     private static ByteBuffer imageBuf4 //
-    = BufferUtil.newByteBuffer(imageSize * imageSize * 4);
+    = GLBuffers.newDirectByteBuffer(imageSize * imageSize * 4);
     private static ByteBuffer imageBuf5 //
-    = BufferUtil.newByteBuffer(imageSize * imageSize * 4);
+    = GLBuffers.newDirectByteBuffer(imageSize * imageSize * 4);
     private static ByteBuffer imageBuf6 //
-    = BufferUtil.newByteBuffer(imageSize * imageSize * 4);
+    = GLBuffers.newDirectByteBuffer(imageSize * imageSize * 4);
 
     private static double ztrans = 0.0;
 

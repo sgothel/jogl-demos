@@ -1,12 +1,10 @@
 package demos;
 
-import java.nio.*;
 import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
 import javax.media.nativewindow.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class GLInfo extends Thread implements GLEventListener {
 

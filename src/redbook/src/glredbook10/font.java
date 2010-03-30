@@ -108,7 +108,7 @@ public class font //
     }
 
     private void printString(GL2 gl, String s) {
-        ByteBuffer str = BufferUtil.newByteBuffer(s.length());
+        ByteBuffer str = GLBuffers.newDirectByteBuffer(s.length());
         str.put(s.getBytes());
         str.rewind();
         //
@@ -359,7 +359,7 @@ public class font //
             { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, (byte) 0x8f,
                     (byte) 0xf1, 0x60, 0x00, 0x00, 0x00 } };
     private ByteBuffer rastersBuf = //
-    BufferUtil.newByteBuffer(rasters.length * rasters[0].length);
+    GLBuffers.newDirectByteBuffer(rasters.length * rasters[0].length);
     {
         for (int i = 0; i < rasters.length; i++)
             rastersBuf.put((byte[]) rasters[i]);// put each array into byte

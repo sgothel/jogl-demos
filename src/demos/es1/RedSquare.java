@@ -1,5 +1,6 @@
 package demos.es1;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import java.nio.*;
 import java.util.*;
 import javax.media.opengl.*;
@@ -9,8 +10,8 @@ import javax.media.nativewindow.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
@@ -241,8 +242,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(Thread.currentThread()+" GLU: " + glu);
 
         // Allocate vertex arrays
-        colors   = BufferUtil.newFloatBuffer(16);
-        vertices = BufferUtil.newFloatBuffer(12);
+        colors   = Buffers.newDirectFloatBuffer(16);
+        vertices = Buffers.newDirectFloatBuffer(12);
         // Fill them up
         colors.put( 0, 1);    colors.put( 1, 0);     colors.put( 2, 0);    colors.put( 3, 1);
         colors.put( 4, 0);    colors.put( 5, 0);     colors.put( 6, 1);    colors.put( 7, 1);

@@ -8,7 +8,7 @@ import javax.media.opengl.*; import javax.media.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.FPSAnimator;
 
 
@@ -232,7 +232,7 @@ public class shadowmap //
         if (shadowRender && textureOn)
             gl.glEnable(GL2.GL_TEXTURE_2D);
     }
-    FloatBuffer depthImageBuf = BufferUtil.newFloatBuffer(SHADOW_MAP_WIDTH * SHADOW_MAP_HEIGHT);
+    FloatBuffer depthImageBuf = GLBuffers.newDirectFloatBuffer(SHADOW_MAP_WIDTH * SHADOW_MAP_HEIGHT);
     
     private void generateShadowMap(GL2 gl) {
         int viewport[] = {0,0,0,0};//new int[4];
@@ -288,7 +288,7 @@ public class shadowmap //
             // demo.canvas.display();causes overflow!
         }
     }
-    FloatBuffer tmpMatbuf = BufferUtil.newFloatBuffer(16);
+    FloatBuffer tmpMatbuf = GLBuffers.newDirectFloatBuffer(16);
 
     private void generateTextureMatrix(GL2 gl) {
         // float tmpMatrix[] = new float[16];

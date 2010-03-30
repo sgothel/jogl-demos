@@ -22,5 +22,5 @@ fi
 # D_ARGS="-Dgluegen.debug.ProcAddressHelper=true -Dgluegen.debug.NativeLibrary=true -Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all"
 D_ARGS="-Dgluegen.debug.NativeLibrary=true -Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all"
 
-$CVM $X_FLAGS -Djava.awt.headless=true $D_ARGS -Dsun.boot.library.path=../jogl/$BUILD_SUBDIR/lib -Xbootclasspath/a:../gluegen/$BUILD_SUBDIR/gluegen-rt-cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/nativewindow/nativewindow.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/jogl/jogl.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/newt/newt.all.cdc.jar -Xbootclasspath/a:$BUILD_SUBDIR/jogl-demos.jar com.sun.javafx.newt.util.MainThread $* 2>&1 | tee cvm-dbg-newt.log
+$CVM $X_FLAGS -Djava.awt.headless=true $D_ARGS -Dsun.boot.library.path=../jogl/$BUILD_SUBDIR/lib -Xbootclasspath/a:../gluegen/$BUILD_SUBDIR/gluegen-rt-cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/nativewindow/nativewindow.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/jogl/jogl.all.cdc.jar -Xbootclasspath/a:../jogl/$BUILD_SUBDIR/newt/newt.all.cdc.jar -Xbootclasspath/a:$BUILD_SUBDIR/jogl-demos.jar com.jogamp.newt.util.MainThread $* 2>&1 | tee cvm-dbg-newt.log
 

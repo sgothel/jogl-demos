@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -40,9 +40,9 @@ public class combiner//
     // private static byte[][][] image1 = new
     // byte[imageHeight][imageWidth][imageColor];
     private static ByteBuffer imageBuf0 //
-    = BufferUtil.newByteBuffer(imageWidth * imageHeight * imageColor);
+    = GLBuffers.newDirectByteBuffer(imageWidth * imageHeight * imageColor);
     private static ByteBuffer imageBuf1 //
-    = BufferUtil.newByteBuffer(imageWidth * imageHeight * imageColor);
+    = GLBuffers.newDirectByteBuffer(imageWidth * imageHeight * imageColor);
     private static int texName[] = new int[4];
 
     @Override

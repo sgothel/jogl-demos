@@ -34,7 +34,7 @@ public class AngelesGLil implements GLEventListener {
 
     public AngelesGLil(boolean enableBlending) {
         blendingEnabled = enableBlending;
-        quadVertices = BufferUtil.newFloatBuffer(12);
+        quadVertices = GLBuffers.newDirectFloatBuffer(12);
         quadVertices.put(new float[]{
             -1.0f, -1.0f,
              1.0f, -1.0f,
@@ -45,13 +45,13 @@ public class AngelesGLil implements GLEventListener {
         });
         quadVertices.flip();
 
-        light0Position=BufferUtil.newFloatBuffer(4);
-        light0Diffuse=BufferUtil.newFloatBuffer(4);
-        light1Position=BufferUtil.newFloatBuffer(4);
-        light1Diffuse=BufferUtil.newFloatBuffer(4);
-        light2Position=BufferUtil.newFloatBuffer(4);
-        light2Diffuse=BufferUtil.newFloatBuffer(4);
-        materialSpecular=BufferUtil.newFloatBuffer(4);
+        light0Position=GLBuffers.newDirectFloatBuffer(4);
+        light0Diffuse=GLBuffers.newDirectFloatBuffer(4);
+        light1Position=GLBuffers.newDirectFloatBuffer(4);
+        light1Diffuse=GLBuffers.newDirectFloatBuffer(4);
+        light2Position=GLBuffers.newDirectFloatBuffer(4);
+        light2Diffuse=GLBuffers.newDirectFloatBuffer(4);
+        materialSpecular=GLBuffers.newDirectFloatBuffer(4);
 
         light0Position.put(new float[] { FixedPoint.toFloat(-0x40000), 1.0f, 1.0f, 0.0f });
         light0Diffuse.put(new float[] { 1.0f, FixedPoint.toFloat(0x6666), 0.0f, 1.0f });
@@ -277,15 +277,15 @@ public class GLSpatial {
         vComps= vertexComponents;
         nComps = useNormalArray ? 3 : 0;
 
-        int bStride = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * ( vComps + cComps + nComps );
+        int bStride = GLBuffers.sizeOfGLType(GL.GL_FLOAT) * ( vComps + cComps + nComps );
         int bSize = count * bStride;
 
-        pBuffer = BufferUtil.newByteBuffer(bSize);
+        pBuffer = GLBuffers.newDirectByteBuffer(bSize);
         interlArray = pBuffer.asFloatBuffer();
 
         int vOffset = 0;
-        int cOffset = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * (vComps);
-        int nOffset = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * (vComps + cComps);
+        int cOffset = GLBuffers.sizeOfGLType(GL.GL_FLOAT) * (vComps);
+        int nOffset = GLBuffers.sizeOfGLType(GL.GL_FLOAT) * (vComps + cComps);
 
         int[] tmp = new int[1];
         gl.glGenBuffers(1, tmp, 0);

@@ -27,7 +27,7 @@ public class checker2//
     private static final int color = 3;
     private byte checkImage[][][] = new byte[checkImageWidth][checkImageHeight][color];
     private ByteBuffer checkImageBuf = //
-    BufferUtil.newByteBuffer(checkImageHeight * checkImageWidth * color);
+    GLBuffers.newDirectByteBuffer(checkImageHeight * checkImageWidth * color);
 
     @Override
     protected GLJPanel createDrawable() {

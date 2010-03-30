@@ -38,7 +38,7 @@ public class AngelesGL implements GLEventListener {
 
     public AngelesGL(boolean enableBlending) {
         blendingEnabled = enableBlending;
-        quadVertices = BufferUtil.newFloatBuffer(12);
+        quadVertices = GLBuffers.newDirectFloatBuffer(12);
         quadVertices.put(new float[]{
             -1.0f, -1.0f,
              1.0f, -1.0f,
@@ -49,13 +49,13 @@ public class AngelesGL implements GLEventListener {
         });
         quadVertices.flip();
 
-        light0Position=BufferUtil.newFloatBuffer(4);
-        light0Diffuse=BufferUtil.newFloatBuffer(4);
-        light1Position=BufferUtil.newFloatBuffer(4);
-        light1Diffuse=BufferUtil.newFloatBuffer(4);
-        light2Position=BufferUtil.newFloatBuffer(4);
-        light2Diffuse=BufferUtil.newFloatBuffer(4);
-        materialSpecular=BufferUtil.newFloatBuffer(4);
+        light0Position=GLBuffers.newDirectFloatBuffer(4);
+        light0Diffuse=GLBuffers.newDirectFloatBuffer(4);
+        light1Position=GLBuffers.newDirectFloatBuffer(4);
+        light1Diffuse=GLBuffers.newDirectFloatBuffer(4);
+        light2Position=GLBuffers.newDirectFloatBuffer(4);
+        light2Diffuse=GLBuffers.newDirectFloatBuffer(4);
+        materialSpecular=GLBuffers.newDirectFloatBuffer(4);
 
         light0Position.put(new float[] { FixedPoint.toFloat(-0x40000), 1.0f, 1.0f, 0.0f });
         light0Diffuse.put(new float[] { 1.0f, FixedPoint.toFloat(0x6666), 0.0f, 1.0f });
@@ -271,24 +271,24 @@ public class GLSpatial {
         vComps= vertexComponents;
         nComps = useNormalArray ? 3 : 0;
 
-        int bSize = BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * ( vComps + cComps + nComps) ;
-        pBuffer = BufferUtil.newByteBuffer(bSize);
+        int bSize = GLBuffers.sizeOfGLType(GL.GL_FLOAT) * count * ( vComps + cComps + nComps) ;
+        pBuffer = GLBuffers.newDirectByteBuffer(bSize);
 
         int pos = 0;
-        int size= BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * vComps ;
-        vertexArray = (FloatBuffer) BufferUtil.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
+        int size= GLBuffers.sizeOfGLType(GL.GL_FLOAT) * count * vComps ;
+        vertexArray = (FloatBuffer) GLBuffers.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
         int vOffset = 0;
         pos+=size;
 
-        size=BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * cComps ;
-        colorArray = (FloatBuffer) BufferUtil.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
+        size=GLBuffers.sizeOfGLType(GL.GL_FLOAT) * count * cComps ;
+        colorArray = (FloatBuffer) GLBuffers.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
         int cOffset=pos;
         pos+=size;
 
         int nOffset=0;
         if(useNormalArray) {
-            size=BufferUtil.sizeOfGLType(GL.GL_FLOAT) * count * nComps ;
-            normalArray = (FloatBuffer) BufferUtil.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
+            size=GLBuffers.sizeOfGLType(GL.GL_FLOAT) * count * nComps ;
+            normalArray = (FloatBuffer) GLBuffers.sliceGLBuffer(pBuffer, pos, size, GL.GL_FLOAT);
             nOffset=pos;
             pos+=size;
         }

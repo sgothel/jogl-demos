@@ -58,7 +58,6 @@ import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.BufferUtil;
 import javax.swing.JOptionPane;
 
 

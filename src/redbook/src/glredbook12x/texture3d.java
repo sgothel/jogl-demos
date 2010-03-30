@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -32,7 +32,7 @@ public class texture3d //
     private static final int iDepth = 16;
     private static final int iRgb = 3;
     private ByteBuffer image 
-        = BufferUtil.newByteBuffer(iRgb * iWidth * iHeight * iDepth);
+        = GLBuffers.newDirectByteBuffer(iRgb * iWidth * iHeight * iDepth);
     private int texName[] = new int[1];
     
     @Override

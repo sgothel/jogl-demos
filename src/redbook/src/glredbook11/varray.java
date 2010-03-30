@@ -12,7 +12,7 @@ import java.nio.IntBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 
@@ -96,7 +96,7 @@ public class varray//
         } else if (derefMethod == DRAWELEMENTS) {
             int indices[] = new int[] { 0, 1, 3, 4 };
             if (indicesBuf == null) {
-                indicesBuf = BufferUtil.newIntBuffer(indices.length);
+                indicesBuf = GLBuffers.newDirectIntBuffer(indices.length);
                 indicesBuf.put(indices);
             }
             indicesBuf.rewind();
@@ -135,11 +135,11 @@ public class varray//
                 0.5f, 0.5f, 0.5f };
 
         if (verticesBuf == null) {// IntBuffer tmpVerticesBuf
-            verticesBuf = BufferUtil.newIntBuffer(vertices.length);
+            verticesBuf = GLBuffers.newDirectIntBuffer(vertices.length);
             verticesBuf.put(vertices);
         }
         if (colorsBuf == null) {
-            colorsBuf = BufferUtil.newFloatBuffer(colors.length);
+            colorsBuf = GLBuffers.newDirectFloatBuffer(colors.length);
             colorsBuf.put(colors);
         }
         verticesBuf.rewind();
@@ -160,7 +160,7 @@ public class varray//
                 0.2f, 1.0f, 1.0f, 300.0f, 200.0f, 0.0f, 0.2f, 0.2f, 1.0f,
                 200.0f, 100.0f, 0.0f };
         if (intertwinedBuf == null) {
-            intertwinedBuf = BufferUtil.newFloatBuffer(intertwined.length);
+            intertwinedBuf = GLBuffers.newDirectFloatBuffer(intertwined.length);
             intertwinedBuf.put(intertwined);
         }
 

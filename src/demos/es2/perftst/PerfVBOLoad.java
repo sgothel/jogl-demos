@@ -4,8 +4,6 @@ import java.nio.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
 
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
 
 public class PerfVBOLoad extends PerfModule {
 

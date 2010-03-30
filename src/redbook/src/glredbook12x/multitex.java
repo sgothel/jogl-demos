@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 
@@ -27,8 +27,8 @@ public class multitex //
     private GLU glu;
     // private byte[][][] texels0 = new byte[32][32][4];
     // private byte[][][] texels1 = new byte[16][16][4];
-    private ByteBuffer texelsBuf0 = BufferUtil.newByteBuffer(32 * 32 * 4);
-    private ByteBuffer texelsBuf1 = BufferUtil.newByteBuffer(16 * 16 * 4);
+    private ByteBuffer texelsBuf0 = GLBuffers.newDirectByteBuffer(32 * 32 * 4);
+    private ByteBuffer texelsBuf1 = GLBuffers.newDirectByteBuffer(16 * 16 * 4);
 
     @Override
     protected GLJPanel createDrawable() {

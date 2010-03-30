@@ -39,6 +39,7 @@
 
 package demos.util;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -52,7 +53,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import com.jogamp.opengl.util.BufferUtil;
 
 
 
@@ -321,10 +321,10 @@ public class ObjReader {
     newVertices.trim();
     newVertexNormals.trim();
     newIndices.trim();
-    vertices = BufferUtil.newFloatBuffer(newVertices.size());
+    vertices = Buffers.newDirectFloatBuffer(newVertices.size());
     vertices.put(newVertices.getData());
     vertices.rewind();
-    normals = BufferUtil.newFloatBuffer(newVertexNormals.size());
+    normals = Buffers.newDirectFloatBuffer(newVertexNormals.size());
     normals.put(newVertexNormals.getData());
     normals.rewind();
     faceIndices = newIndices;

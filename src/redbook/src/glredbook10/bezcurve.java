@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import javax.media.opengl.awt.GLJPanel;
 
@@ -23,7 +23,7 @@ public class bezcurve//
             { -2.0f, 4.0f, 0.0f }, { 2.0f, -4.0f, 0.0f }, { 4.0f, 4.0f, 0.0f } };
     private FloatBuffer ctrlpointBuf;
 
-    // = BufferUtil.newFloatBuffer(ctrlpoints[0].length * ctrlpoints.length);
+    // = GLBuffers.newDirectFloatBuffer(ctrlpoints[0].length * ctrlpoints.length);
 
     @Override
     protected GLJPanel createDrawable() {
@@ -55,7 +55,7 @@ public class bezcurve//
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         // need to convert 2d array to buffer type
-        ctrlpointBuf = BufferUtil.newFloatBuffer(ctrlpoints[0].length
+        ctrlpointBuf = GLBuffers.newDirectFloatBuffer(ctrlpoints[0].length
                 * ctrlpoints.length);
         for (int i = 0; i < ctrlpoints.length; i++) {
             ctrlpointBuf.put(ctrlpoints[i]);

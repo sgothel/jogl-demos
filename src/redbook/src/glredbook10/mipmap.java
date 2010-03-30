@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import java.nio.*;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
 import javax.media.opengl.awt.GLJPanel;
@@ -29,18 +30,12 @@ public class mipmap//
     // private byte mipmapImage4[][][] = new byte[4][4][color];
     // private byte mipmapImage2[][][] = new byte[2][2][color];
     // private byte mipmapImage1[][][] = new byte[1][1][color];
-    private ByteBuffer mipmapImage32Buf = BufferUtil
-            .newByteBuffer(32 * 32 * color);
-    private ByteBuffer mipmapImage16Buf = BufferUtil
-            .newByteBuffer(16 * 16 * color);
-    private ByteBuffer mipmapImage8Buf = BufferUtil
-            .newByteBuffer(8 * 8 * color);
-    private ByteBuffer mipmapImage4Buf = BufferUtil
-            .newByteBuffer(4 * 4 * color);
-    private ByteBuffer mipmapImage2Buf = BufferUtil
-            .newByteBuffer(2 * 2 * color);
-    private ByteBuffer mipmapImage1Buf = BufferUtil
-            .newByteBuffer(1 * 1 * color);
+    private ByteBuffer mipmapImage32Buf = Buffers.newDirectByteBuffer(32 * 32 * color);
+    private ByteBuffer mipmapImage16Buf = Buffers.newDirectByteBuffer(16 * 16 * color);
+    private ByteBuffer mipmapImage8Buf = Buffers.newDirectByteBuffer(8 * 8 * color);
+    private ByteBuffer mipmapImage4Buf = Buffers.newDirectByteBuffer(4 * 4 * color);
+    private ByteBuffer mipmapImage2Buf = Buffers.newDirectByteBuffer(2 * 2 * color);
+    private ByteBuffer mipmapImage1Buf = Buffers.newDirectByteBuffer(1 * 1 * color);
 
     @Override
     protected GLJPanel createDrawable() {

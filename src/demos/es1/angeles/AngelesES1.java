@@ -24,6 +24,7 @@
 
 package demos.es1.angeles;
 
+import com.jogamp.gluegen.runtime.Buffers;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.*;
@@ -37,7 +38,7 @@ public class AngelesES1 implements GLEventListener {
 
     public AngelesES1(boolean enableBlending) {
         blendingEnabled = enableBlending;
-        quadVertices = BufferUtil.newIntBuffer(12);
+        quadVertices = Buffers.newDirectIntBuffer(12);
         quadVertices.put(new int[]{
             -0x10000, -0x10000,
              0x10000, -0x10000,
@@ -48,13 +49,13 @@ public class AngelesES1 implements GLEventListener {
         });
         quadVertices.flip();
 
-        light0Position=BufferUtil.newIntBuffer(4);
-        light0Diffuse=BufferUtil.newIntBuffer(4);
-        light1Position=BufferUtil.newIntBuffer(4);
-        light1Diffuse=BufferUtil.newIntBuffer(4);
-        light2Position=BufferUtil.newIntBuffer(4);
-        light2Diffuse=BufferUtil.newIntBuffer(4);
-        materialSpecular=BufferUtil.newIntBuffer(4);
+        light0Position=Buffers.newDirectIntBuffer(4);
+        light0Diffuse=Buffers.newDirectIntBuffer(4);
+        light1Position=Buffers.newDirectIntBuffer(4);
+        light1Diffuse=Buffers.newDirectIntBuffer(4);
+        light2Position=Buffers.newDirectIntBuffer(4);
+        light2Diffuse=Buffers.newDirectIntBuffer(4);
+        materialSpecular=Buffers.newDirectIntBuffer(4);
 
         light0Position.put(new int[] { -0x40000, 0x10000, 0x10000, 0 });
         light0Diffuse.put(new int[] { 0x10000, 0x6666, 0, 0x10000 });
@@ -245,11 +246,11 @@ public class GLObject {
                     boolean useNormalArray) {
         this.count = vertices;
         this.vertexComponents = vertexComponents;
-        this.vertexArray = BufferUtil.newIntBuffer( vertices * vertexComponents );
-        this.colorArray =  BufferUtil.newByteBuffer (vertices * 4 );
+        this.vertexArray = Buffers.newDirectIntBuffer( vertices * vertexComponents );
+        this.colorArray =  Buffers.newDirectByteBuffer (vertices * 4 );
         if (useNormalArray)
         {
-            this.normalArray = BufferUtil.newIntBuffer (vertices * 3 );
+            this.normalArray = Buffers.newDirectIntBuffer (vertices * 3 );
         } else {
             this.normalArray = null;
         }
@@ -262,18 +263,18 @@ public class GLObject {
         gl.glGenBuffers(3, vbo, 0);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexArray.capacity() * BufferUtil.SIZEOF_INT, vertexArray, GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexArray.capacity() * Buffers.SIZEOF_INT, vertexArray, GL.GL_STATIC_DRAW);
         gl.glVertexPointer(vertexComponents, gl.GL_FIXED, 0, 0);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, colorArray.capacity() * BufferUtil.SIZEOF_BYTE, colorArray, GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, colorArray.capacity() * Buffers.SIZEOF_BYTE, colorArray, GL.GL_STATIC_DRAW);
         gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, 0);
 
         if (null!=normalArray)
         {
             gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
-            gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * BufferUtil.SIZEOF_INT, normalArray, GL.GL_STATIC_DRAW);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * Buffers.SIZEOF_INT, normalArray, GL.GL_STATIC_DRAW);
             gl.glNormalPointer(gl.GL_FIXED, 0, 0);
         } else {
             gl.glDisableClientState(gl.GL_NORMAL_ARRAY);

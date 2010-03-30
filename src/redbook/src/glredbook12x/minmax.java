@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import javax.media.opengl.*;import javax.swing.JFrame; 
 import javax.swing.SwingUtilities;
 
-import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
 import javax.media.opengl.awt.GLJPanel;
@@ -90,7 +90,7 @@ public class minmax//
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
         // byte [] values=new byte[6];
-        ByteBuffer values = BufferUtil.newByteBuffer(6);
+        ByteBuffer values = GLBuffers.newDirectByteBuffer(6);
 
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
         gl.glRasterPos2i(1, 1);
@@ -141,7 +141,7 @@ public class minmax//
             System.out.println("Creating buffer, width: " + dim.width
                     + " height: " + dim.height);
 
-            bytes = BufferUtil.newByteBuffer(3 * dim.width * dim.height);
+            bytes = GLBuffers.newDirectByteBuffer(3 * dim.width * dim.height);
             for (int i = 0; i < bytes.capacity(); i++) {
                 bytes.put(dis.readByte());
 

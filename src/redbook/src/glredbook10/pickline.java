@@ -112,7 +112,7 @@ public class pickline//
      */
     private void pickLine(GL2 gl) {
         int selectBuf[] = new int[BUFSIZE];
-        IntBuffer selectBuffer = BufferUtil.newIntBuffer(BUFSIZE);
+        IntBuffer selectBuffer = GLBuffers.newDirectIntBuffer(BUFSIZE);
         int hits;
         int viewport[] = new int[4];
 

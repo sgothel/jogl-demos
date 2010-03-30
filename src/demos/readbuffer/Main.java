@@ -1,11 +1,10 @@
 package demos.readbuffer;
 
 import java.lang.reflect.*;
-import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
-import com.sun.javafx.newt.*;
-import com.sun.javafx.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.opengl.*;
 
 public class Main implements WindowListener, MouseListener, SurfaceUpdatedListener {
 
