@@ -73,7 +73,7 @@
         <condition property="jogl.cg.jar"    value="${jogl.root}/${rootrel.build}/jogl/jogl.cg.jar">
           <isset property="jogl.cg"/>
         </condition>
-        <property name="gluegen-rt.jar"      value="${gluegen.root}/build/gluegen-rt.jar" />
+        <property name="gluegen-rt.jar"      value="${gluegen.root}/${rootrel.build}/gluegen-rt.jar" />
         <property name="jogl.gles12.jar"     value="${jogl.root}/${rootrel.build}/jogl/jogl.gles12.jar" />
         <property name="jogl.gles12.dbg.jar" value="${jogl.root}/${rootrel.build}/jogl/jogl.gles12.dbg.jar" />
         <property name="jogl.gles1.jar"      value="${jogl.root}/${rootrel.build}/jogl/jogl.gles1.jar" />

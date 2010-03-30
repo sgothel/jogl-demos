@@ -197,6 +197,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(Thread.currentThread()+" GL_EXTENSIONS:");
         System.err.println(Thread.currentThread()+"   " + gl.glGetString(gl.GL_EXTENSIONS));
         System.err.println(Thread.currentThread()+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
+        System.err.println(Thread.currentThread()+" isShaderCompilerAvailable: " + ShaderUtil.isShaderCompilerAvailable(gl));
 
         if(debuggl) {
             try {
@@ -257,6 +258,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        if(null==st) return;
+
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         st.glUseProgram(gl, true);
@@ -277,6 +280,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     }
 
     public void dispose(GLAutoDrawable drawable) {
+        if(null==st) return;
+
         GL2ES2 gl = drawable.getGL().getGL2ES2();
         System.out.println(Thread.currentThread()+" RedSquare.dispose: "+gl.getContext());
 
@@ -288,6 +293,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     }
 
     public void display(GLAutoDrawable drawable) {
+        if(null==st) return;
+
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         st.glUseProgram(gl, true);

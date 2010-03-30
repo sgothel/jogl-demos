@@ -10,6 +10,7 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.*;
 import javax.swing.JFrame;
+import com.jogamp.gluegen.runtime.PointerBuffer;
 import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
@@ -48,19 +49,16 @@ public class mvarray //
 
     private int count[] = { 7, 6 };
 
-    private ByteBuffer indices[] = {//
-    GLBuffers.newDirectByteBuffer(oneIndices.length),
-            GLBuffers.newDirectByteBuffer(twoIndices.length) };
-
     // static GLvoid * indices[2] = {oneIndices, twoIndices};
+    private PointerBuffer indices = PointerBuffer.allocateDirect(2);
+
     {
         vertexBuf.put(vertices);
-        indices[0].put(oneIndices);
-        indices[1].put(twoIndices);
-
         vertexBuf.rewind();
-        indices[0].rewind();
-        indices[1].rewind();
+
+        indices.referenceBuffer(GLBuffers.newDirectByteBuffer(oneIndices));
+        indices.referenceBuffer(GLBuffers.newDirectByteBuffer(twoIndices));
+        indices.rewind();
     }
 
     private boolean mde_bug;
@@ -92,9 +90,9 @@ public class mvarray //
                     GL.GL_UNSIGNED_BYTE, indices, 2);
         else {
             // workaround for glMultiDrawElem bug before July
-            for (int i = 0; i < indices.length; i++)
+            for (int i = 0; i < indices.capacity(); i++)
                 gl.glDrawElements(GL.GL_LINE_STRIP, count[i], //
-                        GL.GL_UNSIGNED_BYTE, indices[i]);
+                        GL.GL_UNSIGNED_BYTE, (ByteBuffer)indices.getReferencedBuffer(i));
         }
         gl.glFlush();
     }
