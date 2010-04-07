@@ -39,7 +39,7 @@
 
 package demos.util;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

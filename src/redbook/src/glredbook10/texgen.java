@@ -5,7 +5,7 @@ import javax.swing.*;
 
 import java.nio.*;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.gl2.GLUT;
 import javax.media.opengl.*; import javax.media.opengl.awt.GLJPanel;
 

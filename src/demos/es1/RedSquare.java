@@ -1,6 +1,6 @@
 package demos.es1;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import java.nio.*;
 import java.util.*;
 import javax.media.opengl.*;

@@ -24,7 +24,7 @@
 
 package demos.es1.angeles;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.*;

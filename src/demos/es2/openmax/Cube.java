@@ -31,7 +31,7 @@
  */
 package demos.es2.openmax;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
