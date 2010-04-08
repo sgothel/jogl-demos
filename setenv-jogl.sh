@@ -7,6 +7,7 @@ function print_usage() {
 if [ -z "$1" ] ; then
     echo JOGL PROFILE missing
     print_usage
+    return
 fi
 
 JOGL_PROFILE=$1
@@ -34,6 +35,7 @@ else
         echo JOGL_DIR not found
         echo JOGL_BUILDDIR $JOGL_BUILDDIR not exist or not given
         print_usage
+        return
     fi
     JOGL_DIR=`dirname $jpf`/..
     JOGL_BUILDDIR=$JOGL_DIR/lib
@@ -48,19 +50,23 @@ if [ $AUTOBUILD -eq 0 ] ; then
     if [ -z "$gpf" ] ; then
         echo GLUEGEN_BUILDDIR not found
         print_usage
+        return
     fi
     GLUEGEN_DIR=`dirname $gpf`/..
     GLUEGEN_BUILDDIR=$GLUEGEN_DIR/$JOGL_BUILDDIR_BASE
-    if [ -e "$GLUEGEN_BUILDDIR" ] ; then
+    if [ ! -e "$GLUEGEN_BUILDDIR" ] ; then
         echo GLUEGEN_BUILDDIR $GLUEGEN_BUILDDIR does not exist
         print_usage
+        return
     fi
     GLUEGEN_JAR=$GLUEGEN_BUILDDIR/gluegen-rt.jar
     GLUEGEN_OS=$GLUEGEN_BUILDDIR/obj
+    JUNIT_JAR=$GLUEGEN_DIR/make/lib/junit-4.5.jar
 else
     GLUEGEN_BUILDDIR=$JOGL_BUILDDIR
     GLUEGEN_JAR=$JOGL_BUILDDIR/gluegen-rt.jar
     GLUEGEN_OS=$JOGL_BUILDDIR
+    JUNIT_JAR=$GLUEGEN_DIR/junit-4.5.jar
 fi
 
 DEMOS_BUILDDIR=$THISDIR/$JOGL_BUILDDIR_BASE
@@ -82,7 +88,7 @@ CP_SEP=:
 SWT_CLASSPATH=$HOME/.java/swt.jar
 LIB=$THISDIR/lib
 
-CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH:$SWT_CLASSPATH
+CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH:$SWT_CLASSPATH:$JUNIT_JAR
 for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done
