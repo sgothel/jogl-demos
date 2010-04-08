@@ -33,7 +33,7 @@
 
 package demos.cubefbo;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import javax.media.opengl.GL;

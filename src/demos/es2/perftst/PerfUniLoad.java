@@ -1,6 +1,6 @@
 package demos.es2.perftst;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import java.nio.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;

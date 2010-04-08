@@ -33,7 +33,7 @@
 
 package demos.vertexBufferObject;
 
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import demos.common.Demo;
 import demos.common.DemoListener;
 import java.awt.BorderLayout;

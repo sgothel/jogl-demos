@@ -10,7 +10,7 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.*;
 import javax.swing.JFrame;
-import com.jogamp.gluegen.runtime.PointerBuffer;
+import com.jogamp.common.nio.PointerBuffer;
 import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;

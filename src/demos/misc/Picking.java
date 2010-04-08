@@ -10,7 +10,7 @@ package demos.misc;
 // Notes: * Based on example 13-3 (p 542) in the "OpenGL Programming Guide"
 //        * This version should handle overlapping objects correctly.
 //---------------------------------------------------------------------------------
-import com.jogamp.gluegen.runtime.Buffers;
+import com.jogamp.common.nio.Buffers;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.Canvas.*;
