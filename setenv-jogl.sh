@@ -69,6 +69,12 @@ else
     JUNIT_JAR=$GLUEGEN_DIR/junit-4.5.jar
 fi
 
+if [ -z "$ANT_PATH" ] ; then
+    ANT_JARS=
+else
+    ANT_JARS=$ANT_PATH/lib/ant.jar:$ANT_PATH/lib/ant-junit.jar
+fi
+
 DEMOS_BUILDDIR=$THISDIR/$JOGL_BUILDDIR_BASE
 
 echo JOGL AUTOBUILD: $AUTOBUILD
@@ -88,7 +94,7 @@ CP_SEP=:
 SWT_CLASSPATH=$HOME/.java/swt.jar
 LIB=$THISDIR/lib
 
-CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH:$SWT_CLASSPATH:$JUNIT_JAR
+CLASSPATH=.:$DEMOS_BUILDDIR/jogl-demos.jar:$DEMOS_BUILDDIR/jogl-demos-util.jar:$DEMOS_BUILDDIR/jogl-demos-data.jar:$GLUEGEN_JAR:$JOGL_CLASSPATH:$SWT_CLASSPATH:$JUNIT_JAR:$ANT_JARS
 for i in $LIB/*jar ; do
     CLASSPATH=$CLASSPATH:$i
 done

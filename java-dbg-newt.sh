@@ -16,6 +16,8 @@ if [ $CPOK -eq 0 ] ; then
 else
     # D_ARGS="-Dgluegen.debug.ProcAddressHelper=true -Dgluegen.debug.NativeLibrary=true -Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all"
     D_ARGS="-Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all -Djogl.debug.GLSLState"
+    #D_ARGS="-Dnativewindow.debug.X11Util=true -Djogl.debug.GLDrawableFactory=true"
+    #D_ARGS="-Dnativewindow.debug.X11Util=true"
     if [ $MOSX -eq 1 ] ; then
         X_ARGS="-XstartOnFirstThread"
     fi

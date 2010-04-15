@@ -147,7 +147,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 } else {
                     do {
                         display();
-                    } while (!quit && window.getDuration() < 20000) ;
+                    } while (!quit && window.getDuration() < 11000) ;
                     shutdown();
                 }
             }

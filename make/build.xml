@@ -112,7 +112,8 @@
 
     <target name="nurbs" if="jogl.nurbs">
         <!-- NOTE: this target requires a 1.5 javac to be on the PATH -->
-        <javac destdir="${classes}" includes="demos/nurbs/**" source="1.5" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" includes="demos/nurbs/**" source="1.5" debug="true" debuglevel="source,lines"
+               includeantruntime="false">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -129,7 +130,8 @@
     </target>
 
     <target name="redbook-javac">
-        <javac destdir="${classes}" source="1.5" target="1.5" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" source="1.5" target="1.5" debug="true" debuglevel="source,lines"
+               includeantruntime="false">
             <src path="${src}/redbook/src" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -164,7 +166,8 @@
             <pathelement location="${swt.jar}" />
         </path>
         <!-- For the time being we exclude the VertexArrayRange and HDR demos, which rely on NVIDIA-specific extensions -->
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes},demos/vertexArrayRange/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines">
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes},demos/vertexArrayRange/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+            includeantruntime="false">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -237,6 +240,7 @@
             <pathelement location="${newt.ogl.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+               includeantruntime="false">
                bootclasspath="${gluegen.root}/make/lib/cdc_fp.jar">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />

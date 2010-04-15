@@ -22,6 +22,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
     public void windowGainedFocus(WindowEvent e) { }
     public void windowLostFocus(WindowEvent e) { }
     public void windowDestroyNotify(WindowEvent e) {
+        System.err.println("********** quit **************");
         quit = true;
     }
 
@@ -58,7 +59,12 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         capsOffscreen.setOnscreen(false);
         capsOffscreen.setPBuffer(pbuffer);
         capsOffscreen.setDoubleBuffered(false);
-        GLWindow windowOffscreen = GLWindow.create(capsOffscreen);
+
+            Display nDisplay = NewtFactory.createDisplay(null); // local display
+            Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
+            Window nWindow = NewtFactory.createWindow(nScreen, capsOffscreen, false /* undecorated */);
+
+        GLWindow windowOffscreen = GLWindow.create(nWindow);
         windowOffscreen.enablePerfLog(true);
         windowOffscreen.setSize(w, h);
         windowOffscreen.setVisible(true);
@@ -85,14 +91,16 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
             if ( TEST_SURFACE2FILE < typeTest ) {
                 System.out.println("readbuffer.Main.run() Using a target onscreen window with read drawable attachment");
                 // Setup init onscreen window ..
-                Window nWindow = null;
                 if(0!=(typeNewt&USE_AWT)) {
                     Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                     Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                    Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
                     window = GLWindow.create(nWindow);
                 } else {
-                    window = GLWindow.create(caps);
+                    Display nDisplay = NewtFactory.createDisplay(null); // local display
+                    Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
+                    Window nWindow = NewtFactory.createWindow(nScreen, caps, false /* undecorated */);
+                    window = GLWindow.create(nWindow);
                 }
 
                 window.addWindowListener(this);
@@ -124,15 +132,29 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
             System.out.println(windowOffscreen);
             System.out.println("+++++++++++++++++++++++++++");
 
-            while ( !quit && windowOffscreen.getDuration() < 31000) {
+            while ( !quit ) {
                 // System.out.println("...............................");
                 windowOffscreen.display();
+                if ( TEST_READBUFFER2SCREEN == typeTest ) {
+                    if ( windowOffscreen.getDuration() >= 10000) {
+                        break;
+                    }
+                } else {
+                    if ( windowOffscreen.getTotalFrames() >= 10) {
+                        break;
+                    }
+                }
             }
 
             // Shut things down cooperatively
-            window.destroy();
             windowOffscreen.destroy();
-            window.getFactory().shutdown();
+            if(null!=window) {
+                window.destroy();
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {}
+            windowOffscreen.getFactory().shutdown();
             System.out.println("readbuffer.Main shut down cleanly.");
         } catch (GLException e) {
             e.printStackTrace();

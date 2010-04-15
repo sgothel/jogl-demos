@@ -41,7 +41,7 @@ public class TiledRendering {
     GLCapabilities caps = new GLCapabilities(null);
     caps.setDoubleBuffered(false);
 
-    if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer()) {
+    if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer(null)) {
       System.out.println("Demo requires pbuffer support");
       System.exit(1);
     }
