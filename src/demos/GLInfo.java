@@ -97,6 +97,8 @@ public class GLInfo extends Thread implements GLEventListener {
         System.err.println(glp+" GL Profile: "+drawable.getGLProfile());
         System.err.println(glp+" GL:" + gl);
         System.err.println(glp+"");
+        System.err.println(glp+" Context GL Version: "+gl.getContext().getGLVersion());
+        System.err.println(glp+"");
         System.err.println(glp+" GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
         System.err.println(glp+" GL_EXTENSIONS: ");
         System.err.println(glp+"   " + gl.glGetString(GL.GL_EXTENSIONS));
