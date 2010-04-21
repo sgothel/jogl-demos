@@ -9,6 +9,7 @@
     <description kind="short">Advanced demo of TextRenderer, showing use of a custom RenderDelegate for fancy Java 2D font rendering effects.</description>
     <offline-allowed/>
   </information>
+  <update check="background" policy="always"/>
 
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>

@@ -10,6 +10,7 @@
         <description kind="short">World Wind Java Application</description>
         <offline-allowed/>
     </information>
+  <update check="background" policy="always"/>
     <security>
         <all-permissions/>
     </security>

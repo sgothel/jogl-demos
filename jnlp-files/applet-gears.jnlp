@@ -8,6 +8,7 @@
     <description kind="short">Brian Paul's Gears demo ported to Java and JOGL.</description>
     <offline-allowed/>
   </information>
+  <update check="background" policy="always"/>
 
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>

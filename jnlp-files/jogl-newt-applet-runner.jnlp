@@ -7,6 +7,7 @@
     <description>JOGL NEWT JNLP Applet Runner</description>
     <offline-allowed/>
   </information>
+  <update check="background" policy="always"/>
 
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>

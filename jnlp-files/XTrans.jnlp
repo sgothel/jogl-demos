@@ -9,6 +9,7 @@
     <description kind="short">Demo showing OpenGL-accelerated animated transitions of Swing components using the Java2D/JOGL bridge.</description>
     <offline-allowed/>
   </information>
+  <update check="background" policy="always"/>
 
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
