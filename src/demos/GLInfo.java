@@ -93,6 +93,9 @@ public class GLInfo extends Thread implements GLEventListener {
         GL gl = drawable.getGL();
         GLProfile glp = gl.getGLProfile();
 
+        System.err.println(glp+" GL Profile Static: "+GLProfile.glAvailabilityToString());
+        System.err.println(glp+" GL Profile Static - MaxFixedFunc: "+GLProfile.getMaxFixedFunc());
+        System.err.println(glp+" GL Profile Static - MaxProgrammable: "+GLProfile.getMaxProgrammable());
         System.err.println(glp+" GLCapabilities POST: "+drawable.getChosenGLCapabilities());
         System.err.println(glp+" GL Profile: "+drawable.getGLProfile());
         System.err.println(glp+" GL:" + gl);

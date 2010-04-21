@@ -74,7 +74,7 @@ public class Main implements WindowListener, MouseListener {
 
             window.enablePerfLog(true);
             window.setSize(width, height);
-            window.setFullscreen(true);
+            window.setFullscreen(false);
             window.setVisible(true);
 
             GL gl = window.getGL();
