@@ -81,13 +81,13 @@
         <property name="jogl.gles2.jar"      value="${jogl.root}/${rootrel.build}/jogl/jogl.gles2.jar" />
         <property name="jogl.gles2.dbg.jar"  value="${jogl.root}/${rootrel.build}/jogl/jogl.gles2.dbg.jar" />
         <property name="jogl.egl.jar"        value="${jogl.root}/${rootrel.build}/jogl/jogl.egl.jar" />
-        <property name="jogl.gl2.jar"        value="${jogl.root}/${rootrel.build}/jogl/jogl.gl2.jar" />
-        <property name="jogl.gl2.dbg.jar"    value="${jogl.root}/${rootrel.build}/jogl/jogl.gl2.dbg.jar" />
+        <property name="jogl.gldesktop.jar"  value="${jogl.root}/${rootrel.build}/jogl/jogl.gldesktop.jar" />
+        <property name="jogl.gldesktop.dbg.jar" value="${jogl.root}/${rootrel.build}/jogl/jogl.gldesktop.dbg.jar" />
         <property name="jogl.awt.jar"        value="${jogl.root}/${rootrel.build}/jogl/jogl.awt.jar" />
         <property name="jogl.util.jar"       value="${jogl.root}/${rootrel.build}/jogl/jogl.util.jar" />
         <property name="jogl.util.awt.jar"   value="${jogl.root}/${rootrel.build}/jogl/jogl.util.awt.jar" />
         <property name="jogl.util.fixedfuncemu.jar" value="${jogl.root}/${rootrel.build}/jogl/jogl.util.fixedfuncemu.jar" />
-        <property name="jogl.util.gl2.jar"   value="${jogl.root}/${rootrel.build}/jogl/jogl.util.gl2.jar" />
+        <property name="jogl.util.gldesktop.jar" value="${jogl.root}/${rootrel.build}/jogl/jogl.util.gldesktop.jar" />
         <property name="nativewindow.core.jar" value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.core.jar" />
         <property name="nativewindow.x11.jar"  value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.x11.jar" />
         <property name="nativewindow.awt.jar"  value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.awt.jar" />
@@ -150,13 +150,13 @@
             <pathelement location="${jogl.gles2.jar}" />
             <pathelement location="${jogl.gles2.dbg.jar}" />
             <pathelement location="${jogl.egl.jar}" />
-            <pathelement location="${jogl.gl2.jar}" />
-            <pathelement location="${jogl.gl2.dbg.jar}" />
+            <pathelement location="${jogl.gldesktop.jar}" />
+            <pathelement location="${jogl.gldesktop.dbg.jar}" />
             <pathelement location="${jogl.awt.jar}" />
             <pathelement location="${jogl.util.jar}" />
             <pathelement location="${jogl.util.fixedfuncemu.jar}" />
             <pathelement location="${jogl.util.awt.jar}" />
-            <pathelement location="${jogl.util.gl2.jar}" />
+            <pathelement location="${jogl.util.gldesktop.jar}" />
             <pathelement location="${newt.core.jar}" />
             <pathelement location="${newt.ogl.jar}" />
             <pathelement location="${joal.jar}" />
