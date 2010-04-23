@@ -174,7 +174,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             }
             window = null;
             if(null!=nWindow) {
-                nWindow.destroy();
+                nWindow.destroy(true);
                 nWindow=null;
             }
             System.out.println("SHUTDOWN "+Thread.currentThread()+" FIN");
@@ -349,6 +349,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
         NewtFactory.setUseEDT(useEDT); // true is the default
 
+        System.out.println(Thread.currentThread()+" RedSquare.main: Start - oneThread: "+oneThread);
         if(!oneThread) {
             for(Iterator i = threads.iterator(); i.hasNext(); ) {
                 ((Thread)i.next()).start();
@@ -356,6 +357,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
             boolean done = false;
 
+            int lastAliveCount = 0;
             while(!done) {
                 int aliveCount = 0;
                 for(Iterator i = threads.iterator(); i.hasNext(); ) {
@@ -366,6 +368,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                         aliveCount++;
                     }
                 }
+                if(lastAliveCount != aliveCount) {
+                    System.out.println(Thread.currentThread()+" RedSquare.main: alive changed: "+lastAliveCount+" -> "+aliveCount);
+                }
+                lastAliveCount = aliveCount;
                 done = 0==aliveCount ;
             }
         } else {
@@ -385,5 +391,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 }
             }
         }
+        System.out.println(Thread.currentThread()+" RedSquare.main: FIN");
     }
 }

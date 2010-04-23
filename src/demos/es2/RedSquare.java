@@ -149,7 +149,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             }
             window = null;
             if(null!=nWindow) {
-                nWindow.destroy();
+                nWindow.destroy(true);
                 nWindow=null;
             }
             System.out.println("SHUTDOWN "+Thread.currentThread()+" cleanly");
