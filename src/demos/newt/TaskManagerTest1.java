@@ -2,6 +2,7 @@ package demos.newt;
 
 import javax.media.nativewindow.*;
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import demos.newt.util.TaskManager;
 
 public class TaskManagerTest1  implements WindowListener, KeyListener, MouseListener

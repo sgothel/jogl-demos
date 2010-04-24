@@ -7,6 +7,7 @@ import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class Perftst implements MouseListener, GLEventListener {
@@ -74,7 +75,6 @@ public class Perftst implements MouseListener, GLEventListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("Perftst shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

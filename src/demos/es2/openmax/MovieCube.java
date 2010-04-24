@@ -43,6 +43,7 @@ import com.jogamp.openmax.*;
 import java.net.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class MovieCube implements MouseListener, GLEventListener, OMXEventListener {
@@ -114,7 +115,6 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
                 movie=null;
             }
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("MovieCube shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

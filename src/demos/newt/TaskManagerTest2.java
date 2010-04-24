@@ -2,6 +2,7 @@ package demos.newt;
 
 import javax.media.nativewindow.*;
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import demos.newt.util.TaskToolWM;
 
 public class TaskManagerTest2  implements WindowListener, KeyListener, MouseListener
@@ -27,7 +28,7 @@ public class TaskManagerTest2  implements WindowListener, KeyListener, MouseList
         System.err.println("windowDestroyNotify "+e);
         // stop running ..
         System.err.println("Window Event Listener DestroyNotify send stop request - START");
-        TaskToolWM.unregisterWindowEvent(e.getSource());
+        TaskToolWM.unregisterWindowEvent((Window)e.getSource());
         System.err.println("Window Event Listener DestroyNotify send stop request - DONE");
     }
 
@@ -35,7 +36,7 @@ public class TaskManagerTest2  implements WindowListener, KeyListener, MouseList
         System.err.println("keyPressed "+e);
         if(e.getKeyChar()=='q') {
             System.err.println("Key Event Listener 'q' - ..");
-            TaskToolWM.unregisterWindowEvent(e.getSource());
+            TaskToolWM.unregisterWindowEvent((Window)e.getSource());
         }
     }
     public void keyReleased(KeyEvent e) {

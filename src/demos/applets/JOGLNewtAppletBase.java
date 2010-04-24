@@ -3,6 +3,7 @@ package demos.applets;
 import java.lang.reflect.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.GLWindow;
 
 import javax.media.opengl.*;

@@ -43,7 +43,6 @@ public class Info implements GLEventListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("Info shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

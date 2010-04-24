@@ -416,7 +416,6 @@ public class CubeImmModeSink implements GLEventListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("CubeImmModeSink shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

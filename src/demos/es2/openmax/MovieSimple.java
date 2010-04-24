@@ -45,6 +45,7 @@ import java.nio.*;
 import java.net.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class MovieSimple implements MouseListener, GLEventListener, OMXEventListener {
@@ -123,7 +124,6 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
                 movie=null;
             }
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("MovieSimple shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

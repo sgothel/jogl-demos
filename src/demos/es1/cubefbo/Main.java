@@ -3,6 +3,7 @@ package demos.es1.cubefbo;
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class Main implements WindowListener, MouseListener {
@@ -87,7 +88,6 @@ public class Main implements WindowListener, MouseListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("cubefbo.Main shut down cleanly.");
         } catch (GLException e) {
             e.printStackTrace();

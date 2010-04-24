@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class Main implements WindowListener, MouseListener, SurfaceUpdatedListener {
@@ -154,7 +155,6 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
             try {
                 Thread.sleep(2000);
             } catch (Exception e) {}
-            windowOffscreen.getFactory().shutdown();
             System.out.println("readbuffer.Main shut down cleanly.");
         } catch (GLException e) {
             e.printStackTrace();

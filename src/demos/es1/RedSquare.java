@@ -11,6 +11,7 @@ import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
@@ -169,9 +170,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             System.out.println("SHUTDOWN "+Thread.currentThread()+" START");
             // Shut things down cooperatively
             window.destroy();
-            if(oneThread) {
-                window.getFactory().shutdown();
-            }
             window = null;
             if(null!=nWindow) {
                 nWindow.destroy(true);

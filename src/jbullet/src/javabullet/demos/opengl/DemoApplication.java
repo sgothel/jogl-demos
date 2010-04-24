@@ -49,6 +49,7 @@ import javax.media.opengl.glu.*;
 import java.nio.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 
 /**
  *

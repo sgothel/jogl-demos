@@ -342,7 +342,6 @@ public class Cube implements GLEventListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println("Cube shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

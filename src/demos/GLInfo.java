@@ -4,6 +4,7 @@ import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class GLInfo extends Thread implements GLEventListener {
@@ -82,7 +83,6 @@ public class GLInfo extends Thread implements GLEventListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.println(glp+" GLInfo shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

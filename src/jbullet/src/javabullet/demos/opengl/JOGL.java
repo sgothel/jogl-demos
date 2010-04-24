@@ -24,6 +24,7 @@
 package javabullet.demos.opengl;
 
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 import javax.media.nativewindow.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
@@ -114,7 +115,6 @@ public class JOGL implements WindowListener, MouseListener {
 
             // Shut things down cooperatively
             window.destroy();
-            window.getFactory().shutdown();
             System.out.print(title);
             System.out.println(" shut down cleanly.");
         } catch (Throwable t) {

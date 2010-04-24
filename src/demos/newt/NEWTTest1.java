@@ -2,6 +2,7 @@ package demos.newt;
 
 import javax.media.nativewindow.*;
 import com.jogamp.newt.*;
+import com.jogamp.newt.event.*;
 
 public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
 {
