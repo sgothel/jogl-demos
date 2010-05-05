@@ -2,8 +2,8 @@
 <jnlp href="applet-redsquare-newtawt-next.jnlp">
   <information>
     <title>JOGL JNLP Applet RedSquare NEWT-AWT Demo - NEXT</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>RedSquare NEWT-AWT Demo - NEXT</description>
     <description kind="short">RedSquare NEWT-AWT Demo - NEXT</description>
     <offline-allowed/>
@@ -12,9 +12,9 @@
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
       <property name="sun.java2d.noddraw" value="true"/>
-      <jar href="http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart-next/jogl-demos.jar" main="true"/>
-      <jar href="http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart-next/jogl-demos-util.jar"/>
-      <extension name="jogl-all-awt" href="http://download.java.net/media/jogl/jsr-231-2.x-webstart-next/jogl-all-awt.jnlp" />
+      <jar href="http://jogamp.org/deployment/webstart-next/jogl-demos.jar" main="true"/>
+      <jar href="http://jogamp.org/deployment/webstart-next/jogl-demos-util.jar"/>
+      <extension name="jogl-all-awt" href="http://jogamp.org/deployment/webstart-next/jogl-all-awt.jnlp" />
     </resources>
 
   <applet-desc 

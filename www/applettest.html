@@ -23,11 +23,11 @@ as an applet:
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
-               http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
-               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
-               http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
-               http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar">
+      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
+               http://jogamp.org/deployment/webstart/jogl.all.jar,
+               http://jogamp.org/deployment/webstart/nativewindow.all.jar,
+               http://jogamp.org/deployment/webstart/gluegen-rt.jar,
+               http://jogamp.org/deployment/webstart/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" value="demos.applets.GearsApplet">
    <param name="subapplet.displayname" value="JOGL Gears Applet">
@@ -35,7 +35,7 @@ as an applet:
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="1">
    <param name="jnlpExtension1"
-          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp">
+          value="http://jogamp.org/deployment/webstart/jogl-core.jnlp">
 </applet>
 
 </P>
@@ -47,11 +47,11 @@ The applet above is instantiated with the following code:
 &lt;applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://download.java.net/media/applet-launcher/applet-launcher.jar,
-               http://download.java.net/media/jogl/jsr-231-2.x-webstart/nativewindow.all.jar,
-               http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl.all.jar,
-               http://download.java.net/media/gluegen/webstart-2.x/gluegen-rt.jar,
-               http://download.java.net/media/jogl/jsr-231-2.x-demos-webstart/jogl-demos.jar"&gt;
+      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
+               http://jogamp.org/deployment/webstart/nativewindow.all.jar,
+               http://jogamp.org/deployment/webstart/jogl.all.jar,
+               http://jogamp.org/deployment/webstart/gluegen-rt.jar,
+               http://jogamp.org/deployment/webstart/jogl-demos.jar"&gt;
    &lt;param name="codebase_lookup" value="false"&gt;
    &lt;param name="subapplet.classname" value="demos.applets.GearsApplet"&gt;
    &lt;param name="subapplet.displayname" value="JOGL Gears Applet"&gt;
@@ -59,7 +59,7 @@ The applet above is instantiated with the following code:
    &lt;param name="progressbar" value="true"&gt;
    &lt;param name="jnlpNumExtensions" value="1"&gt;
    &lt;param name="jnlpExtension1"
-          value="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-core.jnlp"&gt;
+          value="http://jogamp.org/deployment/webstart/jogl-core.jnlp"&gt;
 &lt;/applet&gt;
 </pre>
 
@@ -67,7 +67,7 @@ The applet above is instantiated with the following code:
 <P>
 
 Note that the jogl-demos.jar, which contains the GearsApplet class,
-<B>does not need to be signed</B>! Sun Microsystems, Inc. signs
+<B>does not need to be signed</B>! JogAmp Community signs
 applet-launcher.jar, jogl.jar and gluegen-rt.jar, which contain the
 JNLPAppletLauncher and JOGL's supporting classes; this is the only
 Java code which needs to be signed in order to deploy applets using
