@@ -219,7 +219,7 @@ public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
                     parent.setPosition(x_p, y_p);
                     parent.setSize(width+width/10, height+height/10);
                     parent.setVisible(true);
-                    nWindow = NewtFactory.createWindow(parent.getWindowHandle(), nScreen, caps, undecorated);
+                    nWindow = NewtFactory.createWindow(parent, nScreen, caps);
                 } else {
                     nWindow = NewtFactory.createWindow(nScreen, caps, undecorated);
                 }
