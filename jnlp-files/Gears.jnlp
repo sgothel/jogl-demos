@@ -3,8 +3,8 @@
       href="Gears.jnlp">
   <information>
     <title>JOGL Gears Demo</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>Gears Demo</description>
     <description kind="short">Brian Paul's Gears demo ported to Java and JOGL.</description>
     <offline-allowed/>

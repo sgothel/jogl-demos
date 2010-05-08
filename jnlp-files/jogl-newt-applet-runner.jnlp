@@ -2,8 +2,8 @@
 <jnlp codebase="DEMO_CODEBASE_TAG" href="jogl-newt-applet-runner.jnlp">
   <information>
     <title>JOGL NEWT JNLP Applet Runner</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>JOGL NEWT JNLP Applet Runner</description>
     <offline-allowed/>
   </information>

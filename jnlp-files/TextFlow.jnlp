@@ -3,8 +3,8 @@
       href="TextFlow.jnlp">
   <information>
     <title>Text Flow</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>Text Flow</description>
     <description kind="short">Shows how to use the TextRenderer to draw dynamically flowing text.</description>
     <offline-allowed/>

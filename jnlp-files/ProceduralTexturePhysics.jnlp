@@ -3,8 +3,8 @@
       href="ProceduralTexturePhysics.jnlp">
   <information>
     <title>JOGL Procedural Texture Physics Demo</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>ProceduralTexturePhysics Demo</description>
     <description kind="short">NVidia's ProceduralTexturePhysics demo ported to Java and JOGL.</description>
     <offline-allowed/>

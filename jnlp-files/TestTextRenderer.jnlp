@@ -3,8 +3,8 @@
       href="TestTextRenderer.jnlp">
   <information>
     <title>TextRenderer Test</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>TextRenderer Test</description>
     <description kind="short">Simple test of TextRenderer, with text overlaid on Gears demo.</description>
     <offline-allowed/>

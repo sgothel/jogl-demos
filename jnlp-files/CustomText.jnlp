@@ -3,8 +3,8 @@
       href="CustomText.jnlp">
   <information>
     <title>Custom Text</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>Custom Text</description>
     <description kind="short">Advanced demo of TextRenderer, showing use of a custom RenderDelegate for fancy Java 2D font rendering effects.</description>
     <offline-allowed/>

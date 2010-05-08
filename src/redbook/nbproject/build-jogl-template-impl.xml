@@ -138,7 +138,7 @@
     <target name="-jogl-template-patch-master-jnlp" depends="-jogl-template-check-master-jnlp" if="is.jnlp.unpatched">
         <replace file="master-${jnlp.descriptor}.jnlp">
             <replacetoken><![CDATA[</resources>]]></replacetoken>
-            <replacevalue><![CDATA[    <extension name="jogl-all-awt" href="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-all-awt.jnlp" />
+            <replacevalue><![CDATA[    <extension name="jogl-all-awt" href="http://jogamp.org/deployment/webstart/jogl-all-awt.jnlp" />
     </resources>]]></replacevalue>
         </replace>
     </target>

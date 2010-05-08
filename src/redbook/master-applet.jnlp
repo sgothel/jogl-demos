@@ -14,7 +14,7 @@
 <!--${JNLP.RESOURCES.MAIN.JAR}-->
 <!--${JNLP.RESOURCES.JARS}-->
 <!--${JNLP.RESOURCES.EXTENSIONS}-->
-        <extension name="jogl-all-awt" href="http://download.java.net/media/jogl/jsr-231-2.x-webstart/jogl-all-awt.jnlp" />
+        <extension name="jogl-all-awt" href="http://jogamp.org/deployment/webstart/jogl-all-awt.jnlp" />
     </resources>
     <applet-desc main-class="${jnlp.main.class}" name="${APPLICATION.TITLE}"
         width="${jnlp.applet.width}" height="${jnlp.applet.height}">

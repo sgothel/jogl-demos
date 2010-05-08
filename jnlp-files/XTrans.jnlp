@@ -3,8 +3,8 @@
       href="XTrans.jnlp">
   <information>
     <title>JOGL XTrans (Accelerated Transition) Demo - JOGL/Java2D Integration</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>XTrans Demo</description>
     <description kind="short">Demo showing OpenGL-accelerated animated transitions of Swing components using the Java2D/JOGL bridge.</description>
     <offline-allowed/>

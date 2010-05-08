@@ -3,8 +3,8 @@
       href="VertexBufferObject.jnlp">
   <information>
     <title>JOGL Vertex Buffer Object Demo</title>
-    <vendor>Sun Microsystems, Inc.</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>VertexBufferObject Demo</description>
     <description kind="short">NVidia's vertex_array_range demo ported to Java, JOGL, and ARB_vertex_buffer_object.</description>
     <offline-allowed/>

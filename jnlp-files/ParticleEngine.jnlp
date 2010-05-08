@@ -4,7 +4,7 @@
   <information>
     <title>JOGL Particle Engine Demo</title>
     <vendor>Ben Chappell</vendor>
-    <homepage href="http://jogl-demos.dev.java.net/"/>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
     <description>Particle Engine Demo</description>
     <description kind="short">Particle Engine demonstration written in Java using JOGL.</description>
     <offline-allowed/>
