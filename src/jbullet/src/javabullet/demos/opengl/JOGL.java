@@ -87,7 +87,7 @@ public class JOGL implements WindowListener, MouseListener {
             if(0!=(type&USE_AWT)) {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                 Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps, false);
                 window = GLWindow.create(nWindow);
             } else {
                 window = GLWindow.create(caps);

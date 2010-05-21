@@ -16,7 +16,8 @@ if [ $CPOK -eq 0 ] ; then
 else
     if [ $MOSX -eq 1 ] ; then
         X_ARGS="-XstartOnFirstThread"
+        C_ARG="com.jogamp.newt.util.MainThread"
     fi
 
-    java $X_ARGS -Djava.awt.headless=true com.jogamp.newt.util.MainThread $* 2>&1 | tee java-run-newt.log
+    java $X_ARGS -Djava.awt.headless=true $C_ARG $* 2>&1 | tee java-run-newt.log
 fi

@@ -95,7 +95,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
                 if(0!=(typeNewt&USE_AWT)) {
                     Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                     Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-                    Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                    Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps, false);
                     window = GLWindow.create(nWindow);
                 } else {
                     Display nDisplay = NewtFactory.createDisplay(null); // local display
