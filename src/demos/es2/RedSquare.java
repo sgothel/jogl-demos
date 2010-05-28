@@ -144,7 +144,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void shutdown() {
         try {
             // Shut things down cooperatively
-            window.destroy();
+            window.destroy(true);
             window = null;
             if(null!=nWindow) {
                 nWindow.destroy(true);
