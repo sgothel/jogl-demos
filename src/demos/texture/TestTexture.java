@@ -50,6 +50,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
@@ -72,6 +73,9 @@ import javax.swing.KeyStroke;
 /** Demonstrates simple use of the TextureIO texture loader. */
 
 public class TestTexture implements GLEventListener {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     new TestTexture().run(args);
   }

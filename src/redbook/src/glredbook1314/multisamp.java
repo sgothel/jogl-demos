@@ -23,6 +23,9 @@ import javax.media.opengl.glu.GLU;
 public class multisamp //
         extends GLSkeleton<GLCanvas>
         implements GLEventListener, KeyListener {
+    static {
+      GLProfile.initSingleton();
+    }
     private GLU glu;
     private boolean bgtoggle = true;
 

@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.media.nativewindow.Capabilities;
 import javax.media.opengl.DefaultGLCapabilitiesChooser;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesChooser;
 import javax.media.opengl.awt.GLCanvas;
@@ -50,6 +51,9 @@ public class GLCapsTableDemo
   implements
     GLCapabilitiesChooser
 {
+  static {
+    GLProfile.initSingleton();
+  }
   private String[] colNames =
   {"Pfd", "H/W", "DblBfr", "Stereo", // index, hwaccel, double, stereo
    "CBits", "cR", "cG", "cB", "cA", // color bits

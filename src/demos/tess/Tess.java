@@ -45,6 +45,7 @@ package demos.tess;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -73,6 +74,9 @@ import javax.media.opengl.glu.GLUtessellator;
 
 
 public class Tess {
+  static {
+    GLProfile.initSingleton();
+  }
     public static void main(String[] args) {
         try {
             Frame frame = new Frame("Tess Demo");

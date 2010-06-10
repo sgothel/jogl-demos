@@ -4,6 +4,7 @@ import demos.gears.Gears;
 import java.applet.Applet;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -15,6 +16,9 @@ import demos.devmaster.lesson1.SingleStaticSource;
     must be referenced from a web page via an &lt;applet&gt; tag. */
 
 public class GearsJOALApplet extends Applet {
+  static {
+    GLProfile.initSingleton();
+  }
   private Animator animator;
 
   public void init() {

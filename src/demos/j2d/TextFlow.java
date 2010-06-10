@@ -74,6 +74,9 @@ import com.jogamp.opengl.util.Animator;
     screen. */
 
 public class TextFlow extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
 
   public static void main(String[] args) {
 

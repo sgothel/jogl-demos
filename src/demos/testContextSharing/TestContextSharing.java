@@ -42,6 +42,7 @@ package demos.testContextSharing;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.util.Random;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -54,6 +55,9 @@ import javax.media.opengl.awt.GLCanvas;
 /** A simple demonstration of sharing of display lists between drawables. */
 
 public class TestContextSharing {
+  static {
+    GLProfile.initSingleton();
+  }
   private int gearDisplayList;
   private Frame delayedFrame;
 

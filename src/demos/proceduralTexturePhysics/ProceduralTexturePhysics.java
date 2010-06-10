@@ -50,6 +50,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -74,6 +75,9 @@ import javax.swing.JOptionPane;
  *
  */
 public class ProceduralTexturePhysics extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
 
     public static void main(String[] args) {
         GLCanvas canvas = new GLCanvas();

@@ -36,6 +36,7 @@ package demos.cubefbo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
@@ -48,6 +49,9 @@ import com.jogamp.opengl.util.FBObject;
 
 
 class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
+  static {
+    GLProfile.initSingleton();
+  }
 
     private static final int FBO_SIZE = 128;
 

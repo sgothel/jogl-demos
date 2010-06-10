@@ -28,6 +28,9 @@ import com.jogamp.opengl.util.Animator;
 
 public class Gears implements GLEventListener, MouseListener, MouseMotionListener {
   public static void main(String[] args) {
+    // RTFM .. essential for multithreading.
+    GLProfile.initSingleton();
+
     Frame frame = new Frame("Gear Demo");
     GLCanvas canvas = new GLCanvas();
     // GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());

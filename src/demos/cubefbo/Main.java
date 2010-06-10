@@ -36,6 +36,7 @@ package demos.cubefbo;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
@@ -43,6 +44,10 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 
 public class Main {
+
+  static {
+    GLProfile.initSingleton();
+  }
 
   public static void main(String[] args) {
 

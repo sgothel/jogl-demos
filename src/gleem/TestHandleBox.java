@@ -44,6 +44,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -57,6 +58,9 @@ import javax.media.opengl.glu.GLU;
 /** Tests the HandleBox Manip. */
 
 public class TestHandleBox {
+  static {
+    GLProfile.initSingleton();
+  }
 
   private static final int X_SIZE = 400;
   private static final int Y_SIZE = 400;

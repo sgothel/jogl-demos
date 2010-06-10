@@ -51,6 +51,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -75,6 +76,9 @@ import javax.swing.JOptionPane;
 */
 
 public class VertexProgWarp extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   private Frame    frame;
   private Animator animator;
   private volatile boolean quit;

@@ -20,6 +20,9 @@ import javax.media.opengl.glu.GLU;
 public class shadowmap //
         extends GLSkeleton<GLCanvas>
         implements GLEventListener, KeyListener {
+    static {
+      GLProfile.initSingleton();
+    }
     private GLU glu;
     private GLUT glut;
     private FPSAnimator animator;

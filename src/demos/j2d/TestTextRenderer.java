@@ -50,6 +50,7 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -63,6 +64,9 @@ import com.jogamp.opengl.util.Animator;
     with moving Java 2D-rendered text on top. */
 
 public class TestTextRenderer implements GLEventListener {
+  static {
+    GLProfile.initSingleton();
+  }
 
   public static void main(String[] args) {
     Frame frame = new Frame("Text Renderer Test");

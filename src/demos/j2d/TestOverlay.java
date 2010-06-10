@@ -54,6 +54,7 @@ import java.awt.event.WindowEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.text.DecimalFormat;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -65,6 +66,9 @@ import com.jogamp.opengl.util.Animator;
     with moving Java 2D-rendered text on top. */
 
 public class TestOverlay implements GLEventListener {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     Frame frame = new Frame("Java 2D Overlay Test");
     GLCapabilities caps = new GLCapabilities(null);

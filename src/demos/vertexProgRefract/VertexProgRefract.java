@@ -75,6 +75,9 @@ import javax.swing.JOptionPane;
 */
 
 public class VertexProgRefract extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
 
     GLCanvas canvas = new GLCanvas();

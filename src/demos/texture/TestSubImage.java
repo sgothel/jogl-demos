@@ -60,6 +60,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -84,6 +85,9 @@ import javax.swing.KeyStroke;
     Texture.updateSubImage(). */
 
 public class TestSubImage {
+  static {
+    GLProfile.initSingleton();
+  }
   private boolean  haveForcedImageType;
   private int      forcedImageType;
   private List     imageTypeMenuItems = new ArrayList();

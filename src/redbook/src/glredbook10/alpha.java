@@ -19,6 +19,9 @@ import javax.media.opengl.glu.GLU;
 public class alpha// 
         extends GLSkeleton<GLCanvas>
         implements GLEventListener, KeyListener {
+    static {
+      GLProfile.initSingleton();
+    }
 
     @Override
     protected GLCanvas createDrawable() {

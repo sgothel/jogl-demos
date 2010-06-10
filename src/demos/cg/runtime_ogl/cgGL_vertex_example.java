@@ -49,6 +49,9 @@ import java.io.*;
  */
 public class cgGL_vertex_example implements GLEventListener 
 {
+  static {
+    GLProfile.initSingleton();
+  }
   
   /******************************************************************************/
   /*** Static Data                                                            ***/
@@ -271,8 +274,10 @@ public class cgGL_vertex_example implements GLEventListener
 
   public static void main(String[] argv)
   {    
-    Frame frame = new Frame("NVidia Cg Toolkit \"cgGL_vertex_example\" demo");
+    // GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());
+    // GLCanvas canvas = new GLCanvas(caps);
     GLCanvas canvas = new GLCanvas();
+    Frame frame = new Frame("NVidia Cg Toolkit \"cgGL_vertex_example\" demo");
     canvas.addGLEventListener(new cgGL_vertex_example());
 
     frame.add(canvas);

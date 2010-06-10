@@ -45,6 +45,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -88,6 +89,9 @@ import javax.swing.JOptionPane;
     respectively. </P> */
 
 public class VertexArrayRange extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     boolean startSlow = false;
 

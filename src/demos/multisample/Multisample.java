@@ -45,6 +45,9 @@ import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 
 public class Multisample {
+  static {
+    GLProfile.initSingleton();
+  }
   private GLCanvas canvas;
 
   // Simple class to warn if results are not going to be as expected

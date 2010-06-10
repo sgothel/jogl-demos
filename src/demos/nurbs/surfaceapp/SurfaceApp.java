@@ -31,6 +31,7 @@ import javax.swing.ToolTipManager;
 
 import demos.nurbs.icons.*;
 import demos.nurbs.knotslidercomponent.JKnotSlider;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 
 /**
@@ -44,6 +45,9 @@ import javax.media.opengl.awt.GLCanvas;
 @SuppressWarnings("serial")
 public class SurfaceApp extends JFrame implements ActionListener
 {
+  static {
+    GLProfile.initSingleton();
+  }
 
     /**
      * X-coord editing component name

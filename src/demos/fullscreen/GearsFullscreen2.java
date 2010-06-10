@@ -10,6 +10,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 import javax.swing.JButton;
@@ -30,6 +31,10 @@ import javax.swing.ToolTipManager;
  */
 
 public class GearsFullscreen2 {
+  static {
+    GLProfile.initSingleton();
+  }
+
   private GraphicsDevice dev;
   private DisplayMode origMode;
   private boolean fullScreen;

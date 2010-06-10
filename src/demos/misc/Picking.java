@@ -22,6 +22,9 @@ import com.jogamp.opengl.util.Animator;
 
 public class Picking
 {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) 
   {
     new Picking();

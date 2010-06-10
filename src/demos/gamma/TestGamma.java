@@ -51,6 +51,10 @@ import com.jogamp.opengl.util.Gamma;
 
 
 public class TestGamma implements GLEventListener {
+  static {
+    GLProfile.initSingleton();
+  }
+
   private static void usage() {
     System.out.println("Usage: java TestGamma [gamma value] [brightness value] [contrast value]");
     System.exit(1);

@@ -53,6 +53,9 @@ import java.util.*;
  */
 public class runtime_ogl_vertex_fragment implements GLEventListener 
 {
+  static {
+    GLProfile.initSingleton();
+  }
 
   // Global variables: hold the Cg context that we're storing our programs
   // in as well as handles to the vertex and fragment program used in this

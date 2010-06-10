@@ -6,6 +6,7 @@
 package demos.printext;
 
 import java.awt.Frame;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -14,6 +15,9 @@ import javax.media.opengl.awt.GLCanvas;
 
 
 public class PrintExt {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     Frame frame = new Frame();
     GLCanvas canvas = new GLCanvas();

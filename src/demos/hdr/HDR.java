@@ -49,6 +49,9 @@ import javax.swing.JOptionPane;
 */
 
 public class HDR extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   private static String[] defaultArgs = {
     "demos/data/images/stpeters_cross.hdr",
     "512",

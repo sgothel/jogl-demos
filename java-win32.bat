@@ -1,11 +1,11 @@
 
-set J2RE_HOME=c:\jre1.6.0_19
-set JAVA_HOME=c:\jdk1.6.0_19
+set J2RE_HOME=c:\jre1.6.0_20_x32
+set JAVA_HOME=c:\jdk1.6.0_20_x32
 
-set JAR_DIR=jogl\lib
-set LIB_DIR=jogl\lib
+set JAR_DIR=..\jogl\build-win32\jar
+set LIB_DIR=..\jogl\build-win32\lib
 
-set CP_ALL=.;%JAR_DIR%\jogl.all.jar;%JAR_DIR%\nativewindow.all.jar;%JAR_DIR%\newt.all.jar;%JAR_DIR%\gluegen-rt.jar;jogl-demos.jar;jogl-demos-util.jar;jogl-demos-data.jar
+set CP_ALL=.;%JAR_DIR%\jogl.all.jar;%JAR_DIR%\nativewindow.all.jar;%JAR_DIR%\newt.all.jar;%JAR_DIR%\gluegen-rt.jar;build-win32\jogl-demos.jar;build-win32\jogl-demos-util.jar;build-win32\jogl-demos-data.jar
 
 echo CP_ALL %CP_ALL%
 

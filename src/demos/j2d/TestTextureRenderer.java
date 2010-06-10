@@ -70,6 +70,9 @@ import com.jogamp.opengl.util.Animator;
     underneath with moving Java 2D-rendered text on top. */
 
 public class TestTextureRenderer implements GLEventListener {
+  static {
+    GLProfile.initSingleton();
+  }
 
   public static void main(String[] args) {
 

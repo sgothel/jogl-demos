@@ -3,6 +3,7 @@ package demos.applets;
 import java.applet.*;
 import java.awt.*;
 import demos.gears.Gears;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -11,6 +12,9 @@ import com.jogamp.opengl.util.FPSAnimator;
     referenced from a web page via an &lt;applet&gt; tag. */
 
 public class GearsApplet extends Applet {
+  static {
+    GLProfile.initSingleton();
+  }
   private Animator animator;
 
   public void init() {

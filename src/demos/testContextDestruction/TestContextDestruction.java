@@ -50,6 +50,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
@@ -67,6 +68,9 @@ import javax.swing.JFrame;
     as a GLCanvas is added to and removed from its parent container. */
 
 public class TestContextDestruction {
+  static {
+    GLProfile.initSingleton();
+  }
   private int gearDisplayList;
   private Frame frame1, frame2;
   private Component frame1ContainedComponent;

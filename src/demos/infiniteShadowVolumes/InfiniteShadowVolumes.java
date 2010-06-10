@@ -55,6 +55,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -84,6 +85,9 @@ import javax.media.opengl.glu.GLU;
 */
 
 public class InfiniteShadowVolumes extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     GLCapabilities caps = new GLCapabilities(null);
     caps.setStencilBits(16);

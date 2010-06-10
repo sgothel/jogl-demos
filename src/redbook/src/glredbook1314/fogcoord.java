@@ -29,6 +29,9 @@ public class fogcoord//
         extends GLSkeleton<GLCanvas>
         implements GLEventListener, KeyListener {
  
+    static {
+      GLProfile.initSingleton();
+    }
     private GLU glu;
     private float f1, f2, f3;
     private KeyEvent key;

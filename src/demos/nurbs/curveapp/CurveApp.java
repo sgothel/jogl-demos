@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCanvas;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -40,6 +41,9 @@ import demos.nurbs.knotslidercomponent.JKnotSlider;
 @SuppressWarnings("serial")
 public class CurveApp extends JFrame implements ActionListener
 {
+  static {
+    GLProfile.initSingleton();
+  }
 
   /**
    * Name of X-coord editing component of actually selected control point

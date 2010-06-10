@@ -34,6 +34,9 @@ import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.glu.GLU;
 
 public class Snippet209 {
+  static {
+    GLProfile.initSingleton();
+  }
   static void drawTorus(GL2 gl, float r, float R, int nsides, int rings) {
     float ringDelta = 2.0f * (float) Math.PI / rings;
     float sideDelta = 2.0f * (float) Math.PI / nsides;

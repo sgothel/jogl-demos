@@ -55,6 +55,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -80,6 +81,9 @@ import javax.swing.JOptionPane;
 */
 
 public class HWShadowmapsSimple extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     final GLCanvas canvas = new GLCanvas();
     final HWShadowmapsSimple demo = new HWShadowmapsSimple();

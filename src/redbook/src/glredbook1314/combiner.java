@@ -30,6 +30,9 @@ import javax.media.opengl.glu.GLU;
 public class combiner// 
         extends GLSkeleton<GLJPanel>
         implements GLEventListener, KeyListener {
+    static {
+      GLProfile.initSingleton();
+    }
     private GLU glu;
     private static final int imageWidth = 8;
     private static final int imageHeight = 8;

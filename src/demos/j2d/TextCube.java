@@ -52,7 +52,6 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -66,6 +65,9 @@ import com.jogamp.opengl.util.Animator;
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
 public class TextCube extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   private float xAng;
   private float yAng;
   private GLU glu = new GLU();

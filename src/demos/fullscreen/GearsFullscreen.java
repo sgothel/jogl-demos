@@ -5,6 +5,7 @@ import java.awt.event.*;
 
 import demos.gears.Gears;
 import demos.util.*;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
@@ -21,6 +22,10 @@ import com.jogamp.opengl.util.Animator;
  */
 
 public class GearsFullscreen {
+  static {
+    GLProfile.initSingleton();
+  }
+
   private GraphicsDevice dev;
   private DisplayMode origMode;
   private boolean fullScreen;

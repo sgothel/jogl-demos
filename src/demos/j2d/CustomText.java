@@ -69,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -85,6 +86,9 @@ import javax.swing.JPanel;
     to do text filled with a linear Java 2D gradient. */
 
 public class CustomText extends Demo {
+  static {
+    GLProfile.initSingleton();
+  }
   public static void main(String[] args) {
     JFrame frame = new JFrame("Custom Text");
     frame.getContentPane().setLayout(new BorderLayout());
