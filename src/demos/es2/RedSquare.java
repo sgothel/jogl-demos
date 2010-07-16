@@ -31,6 +31,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         this.type=type;
     }
 
+    public void windowRepaint(WindowUpdateEvent e) { }
+
     public void windowResized(WindowEvent e) { }
 
     public void windowMoved(WindowEvent e) { }

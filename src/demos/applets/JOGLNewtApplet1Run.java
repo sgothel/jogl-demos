@@ -43,7 +43,6 @@ public class JOGLNewtApplet1Run extends Applet {
         }
         base = new JOGLNewtAppletBase(glEventListenerClazzName, 
                                       glSwapInterval,
-                                      false /* pumpMessages == handleWindowEvents */,
                                       glDebug,
                                       glTrace);
 

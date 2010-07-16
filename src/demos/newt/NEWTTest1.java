@@ -16,6 +16,10 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
         new NEWTTest1().run();
     }
 
+    public void windowRepaint(WindowUpdateEvent e) { 
+        System.err.println("windowRepaint "+e);
+    }
+
     public void windowResized(WindowEvent e) {
         System.err.println("windowResized "+e);
     }

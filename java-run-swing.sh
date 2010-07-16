@@ -3,8 +3,8 @@
 CPOK=0
 echo $CLASSPATH | grep jogl && CPOK=1
 
-# SWING_PROPS="-Dsun.java2d.noddraw=true -Dsun.java2d.opengl=true"
-SWING_PROPS_DBG="-Djnlp.jogl.debug.GLJPanel=true"
+#SWING_PROPS="-Dsun.java2d.noddraw=true -Dsun.java2d.opengl=true"
+#SWING_PROPS_DBG="-Djnlp.jogl.debug.GLJPanel=true"
 
 if [ $CPOK -eq 0 ] ; then
     # Only valid for autobuild .. otherwise run manually with build-dir

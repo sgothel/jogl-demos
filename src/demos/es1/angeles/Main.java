@@ -11,6 +11,7 @@ public class Main implements WindowListener, MouseListener {
     public boolean quit = false;
     public GLWindow window = null;
 
+    public void windowRepaint(WindowUpdateEvent e) { }
     public void windowResized(WindowEvent e) { }
     public void windowMoved(WindowEvent e) { }
     public void windowGainedFocus(WindowEvent e) { }

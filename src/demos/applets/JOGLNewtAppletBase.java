@@ -12,10 +12,9 @@ import com.jogamp.opengl.util.*;
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */
 
-public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseListener, GLEventListener {
+public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, MouseListener, GLEventListener {
     String glEventListenerClazzName;
     int glSwapInterval;
-    boolean handleWindowEvents;
     boolean glDebug;
     boolean glTrace;
 
@@ -26,13 +25,11 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
 
     public JOGLNewtAppletBase(String glEventListenerClazzName, 
                               int glSwapInterval,
-                              boolean handleWindowEvents,
                               boolean glDebug,
                               boolean glTrace) {
     
         this.glEventListenerClazzName=glEventListenerClazzName;
         this.glSwapInterval=glSwapInterval;
-        this.handleWindowEvents=handleWindowEvents;
         this.glDebug = glDebug;
         this.glTrace = glTrace;
     }
@@ -126,7 +123,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
             }
             glWindow.addKeyListener(this);
 
-            glWindow.setRunPumpMessages(handleWindowEvents);
             glWindow.enablePerfLog(true);
 
             // glAnimator = new FPSAnimator(canvas, 60);
@@ -195,21 +191,6 @@ public class JOGLNewtAppletBase implements WindowListener, KeyListener, MouseLis
     }
     public void dispose(GLAutoDrawable drawable) {
     }
-
-    // ***********************************************************************************
-    // ***********************************************************************************
-    // ***********************************************************************************
-
-    public void windowResized(WindowEvent e) {
-    }
-
-    public void windowMoved(WindowEvent e) {
-    }
-
-    public void windowDestroyNotify(WindowEvent e) {
-    }
-    public void windowGainedFocus(WindowEvent e) { }
-    public void windowLostFocus(WindowEvent e) { }
 
     // ***********************************************************************************
     // ***********************************************************************************

@@ -9,18 +9,10 @@ import com.jogamp.newt.*;
 import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
-public class GLNewtRun implements WindowListener, KeyListener, MouseListener {
+public class GLNewtRun extends WindowAdapter implements KeyListener, MouseListener {
 
     static GLWindow window;
     static volatile boolean quit = false;
-
-    public void windowResized(WindowEvent e) { }
-
-    public void windowMoved(WindowEvent e) { }
-
-    public void windowGainedFocus(WindowEvent e) { }
-
-    public void windowLostFocus(WindowEvent e) { }
 
     public void windowDestroyNotify(WindowEvent e) {
         quit = true;

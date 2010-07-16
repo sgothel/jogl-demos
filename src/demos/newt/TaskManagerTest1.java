@@ -29,6 +29,9 @@ public class TaskManagerTest1  implements WindowListener, KeyListener, MouseList
     Window window;
     Display display;
 
+    public void windowRepaint(WindowUpdateEvent e) { 
+        System.err.println("windowRepaint "+e);
+    }
     public void windowResized(WindowEvent e) {
         System.err.println("windowResized "+e);
     }
