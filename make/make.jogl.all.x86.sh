@@ -6,6 +6,6 @@
 
 ant \
     -Djogl.cg=1 \
-    -Duser.swt.jar=$HOME/.java/swt-3.5.2-gtk-linux-x86.jar \
+    -Duser.swt.jar=$HOME/.java/swt-3.6-gtk-linux-x86.jar \
     -Drootrel.build=build-x86 \
     $* 2>&1 | tee make.jogl.all.x86.log

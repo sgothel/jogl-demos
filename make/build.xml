@@ -21,6 +21,8 @@
       </not>
     </condition>
 
+    <property file="../${rootrel.build}/artifact.properties"/>
+
     <!-- 
        - Make sure that jogl-demos.jar is not on the CLASSPATH; this can
        - cause builds to fail since if this Java process has the jar file
@@ -259,7 +261,12 @@
         </jar>
     </target>
 
-    <target name="all" depends="init, all-desktop, all-gles" />
+    <target name="all" depends="init, all-desktop, all-gles, tag.build" />
+
+    <target name="tag.build">
+        <copy file="${jogl.root}/${rootrel.build}/artifact.properties" todir="../${rootrel.build}" overwrite="true"/>
+        <echo file="../${rootrel.build}/artifact.properties" message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' append="true"/>
+    </target>
 
     <target name="javadoc" depends="init">
         <mkdir dir="${javadoc}" />
