@@ -22,11 +22,7 @@
     </condition>
 
     <property file="../${rootrel.build}/artifact.properties"/>
-    <condition property="jogl-demos.build.number" value="manual-build">
-      <not>
-          <isset property="jogl-demos.build.number"/>
-      </not>
-    </condition>
+    <property name="jogl-demos.build.number" value="manual-build"/>
 
     <!-- 
        - Make sure that jogl-demos.jar is not on the CLASSPATH; this can
