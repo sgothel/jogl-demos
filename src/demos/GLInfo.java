@@ -170,6 +170,79 @@ public class GLInfo extends Thread implements GLEventListener {
         System.err.println(glp+"       GL_ARB_sync: "+gl.isExtensionAvailable("GL_ARB_sync"));
         System.err.println(glp+"           glFenceSync: "+gl.isFunctionAvailable("glFenceSync"));
         System.err.println(glp+"");
+        boolean complete33 = complete32 &&
+                   gl.isExtensionAvailable("GL_VERSION_3_3") &&
+                   gl.isExtensionAvailable("GL_ARB_shader_bit_encoding") &&
+                   gl.isExtensionAvailable("GL_ARB_blend_func_extended") &&
+                   gl.isExtensionAvailable("GL_ARB_explicit_attrib_location") &&
+                   gl.isExtensionAvailable("GL_ARB_occlusion_query2") &&
+                   gl.isExtensionAvailable("GL_ARB_sampler_objects") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_rgb10_a2ui") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_swizzle") &&
+                   gl.isExtensionAvailable("GL_ARB_timer_query") &&
+                   gl.isExtensionAvailable("GL_ARB_instanced_arrays") &&
+                   gl.isExtensionAvailable("GL_ARB_vertex_type_2_10_10_10_rev") ;
+        System.err.println(glp+"   GL_VERSION_3_3: "+gl.isExtensionAvailable("GL_VERSION_3_3")+", complete: "+complete33);
+        System.err.println(glp+"       GL_ARB_shader_bit_encoding: "+gl.isExtensionAvailable("GL_ARB_shader_bit_encoding"));
+        System.err.println(glp+"       GL_ARB_blend_func_extended: "+gl.isExtensionAvailable("GL_ARB_blend_func_extended"));
+        System.err.println(glp+"       GL_ARB_explicit_attrib_location: "+gl.isExtensionAvailable("GL_ARB_explicit_attrib_location"));
+        System.err.println(glp+"       GL_ARB_occlusion_query2: "+gl.isExtensionAvailable("GL_ARB_occlusion_query2"));
+        System.err.println(glp+"       GL_ARB_sampler_objects: "+gl.isExtensionAvailable("GL_ARB_sampler_objects"));
+        System.err.println(glp+"       GL_ARB_texture_rgb10_a2ui: "+gl.isExtensionAvailable("GL_ARB_texture_rgb10_a2ui"));
+        System.err.println(glp+"       GL_ARB_texture_swizzle: "+gl.isExtensionAvailable("GL_ARB_texture_swizzle"));
+        System.err.println(glp+"       GL_ARB_timer_query: "+gl.isExtensionAvailable("GL_ARB_timer_query"));
+        System.err.println(glp+"       GL_ARB_instanced_arrays: "+gl.isExtensionAvailable("GL_ARB_instanced_arrays"));
+        System.err.println(glp+"       GL_ARB_vertex_type_2_10_10_10_rev: "+gl.isExtensionAvailable("GL_ARB_vertex_type_2_10_10_10_rev"));
+        System.err.println(glp+"");
+        boolean complete40 = complete33 &&
+                   gl.isExtensionAvailable("GL_VERSION_4_0") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_query_lod") &&
+                   gl.isExtensionAvailable("GL_ARB_draw_buffers_blend") &&
+                   gl.isExtensionAvailable("GL_ARB_draw_indirect") &&
+                   gl.isExtensionAvailable("GL_ARB_gpu_shader5") &&
+                   gl.isExtensionAvailable("GL_ARB_gpu_shader_fp64") &&
+                   gl.isExtensionAvailable("GL_ARB_sample_shading") &&
+                   gl.isExtensionAvailable("GL_ARB_shader_subroutine") &&
+                   gl.isExtensionAvailable("GL_ARB_tessellation_shader") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_buffer_object_rgb32") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_cube_map_array") &&
+                   gl.isExtensionAvailable("GL_ARB_texture_gather") &&
+                   gl.isExtensionAvailable("GL_ARB_transform_feedback2") &&
+                   gl.isExtensionAvailable("GL_ARB_transform_feedback3") ;
+        System.err.println(glp+"   GL_VERSION_4_0: "+gl.isExtensionAvailable("GL_VERSION_4_0")+", complete: "+complete40);
+        System.err.println(glp+"       GL_ARB_texture_query_lod: "+gl.isExtensionAvailable("GL_ARB_texture_query_lod"));
+        System.err.println(glp+"       GL_ARB_draw_buffers_blend: "+gl.isExtensionAvailable("GL_ARB_draw_buffers_blend"));
+        System.err.println(glp+"       GL_ARB_draw_indirect: "+gl.isExtensionAvailable("GL_ARB_draw_indirect"));
+        System.err.println(glp+"       GL_ARB_gpu_shader5: "+gl.isExtensionAvailable("GL_ARB_gpu_shader5"));
+        System.err.println(glp+"       GL_ARB_gpu_shader_fp64: "+gl.isExtensionAvailable("GL_ARB_gpu_shader_fp64"));
+        System.err.println(glp+"       GL_ARB_sample_shading: "+gl.isExtensionAvailable("GL_ARB_sample_shading"));
+        System.err.println(glp+"       GL_ARB_shader_subroutine: "+gl.isExtensionAvailable("GL_ARB_shader_subroutine"));
+        System.err.println(glp+"       GL_ARB_tessellation_shader: "+gl.isExtensionAvailable("GL_ARB_tessellation_shader"));
+        System.err.println(glp+"       GL_ARB_texture_buffer_object_rgb32: "+gl.isExtensionAvailable("GL_ARB_texture_buffer_object_rgb32"));
+        System.err.println(glp+"       GL_ARB_texture_cube_map_array: "+gl.isExtensionAvailable("GL_ARB_texture_cube_map_array"));
+        System.err.println(glp+"       GL_ARB_texture_gather: "+gl.isExtensionAvailable("GL_ARB_texture_gather"));
+        System.err.println(glp+"       GL_ARB_transform_feedback2: "+gl.isExtensionAvailable("GL_ARB_transform_feedback2"));
+        System.err.println(glp+"       GL_ARB_transform_feedback3: "+gl.isExtensionAvailable("GL_ARB_transform_feedback3"));
+        System.err.println(glp+"");
+        System.err.println(glp+"   GL_AMD_vertex_shader_tessellator: "+gl.isExtensionAvailable("GL_AMD_vertex_shader_tessellator"));
+        System.err.println(glp+"       glTessellationFactorAMD: "+gl.isFunctionAvailable("glTessellationFactorAMD"));
+        System.err.println(glp+"");
+        boolean complete41 = complete40 &&
+                   gl.isExtensionAvailable("GL_VERSION_4_1") &&
+                   gl.isExtensionAvailable("GL_ARB_ES2_compatibility") &&
+                   gl.isExtensionAvailable("GL_ARB_get_program_binary") &&
+                   gl.isExtensionAvailable("GL_ARB_separate_shader_objects") &&
+                   gl.isExtensionAvailable("GL_ARB_shader_precision") &&
+                   gl.isExtensionAvailable("GL_ARB_vertex_attrib_64bit") &&
+                   gl.isExtensionAvailable("GL_ARB_viewport_array") ;
+        System.err.println(glp+"   GL_VERSION_4_1: "+gl.isExtensionAvailable("GL_VERSION_4_1")+", complete: "+complete41);
+        System.err.println(glp+"       GL_ARB_ES2_compatibility: "+gl.isExtensionAvailable("GL_ARB_ES2_compatibility"));
+        System.err.println(glp+"       GL_ARB_get_program_binary: "+gl.isExtensionAvailable("GL_ARB_get_program_binary"));
+        System.err.println(glp+"       GL_ARB_separate_shader_objects: "+gl.isExtensionAvailable("GL_ARB_separate_shader_objects"));
+        System.err.println(glp+"       GL_ARB_shader_precision: "+gl.isExtensionAvailable("GL_ARB_shader_precision"));
+        System.err.println(glp+"       GL_ARB_vertex_attrib_64bit: "+gl.isExtensionAvailable("GL_ARB_vertex_attrib_64bit"));
+        System.err.println(glp+"       GL_ARB_viewport_array: "+gl.isExtensionAvailable("GL_ARB_viewport_array"));
+        System.err.println(glp+"");
         System.err.println(glp+"   GL_AMD_vertex_shader_tessellator: "+gl.isExtensionAvailable("GL_AMD_vertex_shader_tessellator"));
         System.err.println(glp+"       glTessellationFactorAMD: "+gl.isFunctionAvailable("glTessellationFactorAMD"));
         System.err.println(glp+"");
