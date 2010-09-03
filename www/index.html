@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBliC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -23,24 +23,32 @@
             </div>
             <div id="main">
                 <div id="sidebar">
-                    <h3>Sponsors</h3>
-                    <ul>
-                        <li>
-                            <a href="http://c3d.com/">
-                                <img src="images/CCT-logo.png" border="0" vspace="8" width="160" align="left" alt="CCC/CCT"/>
-			    </a>
-			</li>
-                        <li>
-                            <a href="http://www.fh-landshut.de/">
-                                <img src="images/fh-landshut.png" border="0" vspace="8" width="160" align="left" alt="University of Applied Sciences Landshut"/>
-			    </a>
-			</li>
-                    </ul>
                     <h3>Community</h3>
                     <ul>
-                        <li><a href="forum.html">Forum/Mailing Lists</a></li>
-                        <li><a href="stream/">Streams</a></li>
-                        <li><a href="blog/">Blogs</a></li>
+                        <li><a href="../../forum.html">Forum/Mailing Lists</a></li>
+                        <li><a href="../../stream/">Streams</a></li>
+                        <li><a href="../../blog/">Blogs</a></li>
+                    </ul>
+                    <h3>Useful Links</h3>
+                    <ul>
+                        <li><a href="../../wiki/index.php/Jogl_Tutorial">JOGL Tutorial</a></li>
+                        <li><a href="../doc/readme.html">Demo Documentation</a></li>
+                        <li><a href="applettest-jnlp.html">JOGL JNLP Applet test incl. Applet-Launcher fallback</a></li>
+                        <li><a href="applettest.html">JOGL Applet-Launcher only test</a></li>
+                        <li><a href="applettest-joal.html">JOGL / JOAL Applet test</a></li>
+                        <li><a href="http://ak.kiet.le.googlepages.com/theredbookinjava.html">OpenGL Red Book examples using JOGL</a></li>
+                        <li><a href="http://pepijn.fab4.be/software/nehe-java-ports/">NeHe examples ported to JOGL</a></li>
+                        <!--
+                        <li>
+                            <a href="http://weblogs.java.net/blog/campbell/archive/2006/10/easy_2d3d_mixin.html">Chris
+                                Campbell's blog on 2D/3D Mixing</a>
+                        </li>
+                        <li>
+                            <a href="http://weblogs.java.net/blog/campbell/archive/2007/01/java_2d_and_jog.html">Chris
+                                Campbell's blog on Java 2D and JOGL</a>
+                        </li>
+                        -->
+                        <li><a href="http://fivedots.coe.psu.ac.th/~ad/jg/">Killer Game Programming in Java (with chapters on JOGL)</a></li>
                     </ul>
                     <h3>Featured</h3>
                     <ul>
@@ -64,111 +72,38 @@
 
                 <div id="text">
                 
-                <table border="0" cellpadding="0" cellspacing="1" width="100%">
-                    <tbody>
-                        <tr>
-                            <td valign="top" width="66%">
-                                <table border="0" cellpadding="5" cellspacing="1" width="100%">
-                                    <tbody>
-                                        <tr>
-                                            <td valign="top">
-                                                <table border="0" cellpadding="5" cellspacing="1" width="100%">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td valign="top" width="589">
-                                                                <div align="left"><strong>Overview</strong></div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td bgcolor="#ffffff" valign="top">
-                                                                <div align="justify"><p>The JOGL-Demos project contains Java programming language
-                                                                        demonstrations utilizing OpenGL through the JOGL API. Demonstrations exhibit
-                                                                        advanced functionality such as vertex and fragment programs, shadow maps and
-                                                                        hardware-accelerated
-                                                                        offscreen rendering via pbuffers. Most of the demos were ported from
-                                                                        C or C++, in which case a link to the original sources is provided.<br/>
-                                                                    </p>
+                <h3>Overview</h3>
+                <p>The JOGL-Demos project contains Java programming language
+                    demonstrations utilizing OpenGL through the JOGL API. Demonstrations exhibit
+                    advanced functionality such as vertex and fragment programs, shadow maps and
+                    hardware-accelerated offscreen rendering via pbuffers. Some of the demos were ported from
+                    C or C++, in which case a link to the original sources is provided.<br/>
+                </p>
 
-                                                                    <p>The demos below require <a
-                                                                            href="http://java.sun.com/products/javawebstart/">Java Web Start</a>,
-                                                                        which
-                                                                        is included in <a href="http://java.sun.com/j2se/1.4.2/">J2SE 1.4.2</a>;
-                                                                        click the images to launch the demos. Where there are no hardware or
-                                                                        operating
-                                                                        system requirements listed, the demos run on any vendor's graphics card
-                                                                        and on any of Solaris/SPARC, Solaris/x86, Linux/x86, Windows/x86, and
-                                                                        Macintosh OS X 10.3.<br/>
-                                                                    </p>
+                <p>The demos below require <a href="http://java.sun.com/products/javawebstart/">Java Web Start</a>,
+                    which
+                    is included in <a href="http://java.sun.com/j2se/1.4.2/">J2SE 1.4.2</a>;
+                    click the images to launch the demos. Where there are no hardware or
+                    operating
+                    system requirements listed, the demos run on any vendor's graphics card
+                    and on any of Solaris/SPARC, Solaris/x86, Linux/x86, Windows/x86, and
+                    Macintosh OS X 10.3.<br/>
+                </p>
 
-                                                                    <p> It is now possible to deploy unsigned applets using JOGL with no
-                                                                        manual installation of any software on the end user's machine! Please
-                                                                        see the following test pages for more information:</p>
-                                                                    <ul>
-                                                                        <li><a href="applettest-jnlp.html">JNLP Applet test page (standard JNLP
-                                                                                Applet with Applet-Launcher fallback)</a></li>
-                                                                        <li><a href="applettest.html">Applet-Launcher only test page (pls use
-                                                                                variant above)</a></li>
-                                                                        <li><a href="#NEWTAWTJNLPApplets">Simple NEWT JNLP AWT Applet's</a></li>
-                                                                    </ul>
-                                                                    <p>The source code for these demonstrations is available
-                                                                        via <a href="http://jogamp.org/wiki/index.php/Jogl_FAQ#Get_the_Source_Code">GIT</a>.<br/>
-                                                                    </p>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                            <td valign="top">
-                                <table border="0" cellpadding="5" cellspacing="1" width="100%">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <table border="0" cellpadding="5"
-                                                       cellspacing="1" width="100%">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td valign="top">
-                                                                <div align="left"><strong>Useful Links</strong></div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td valign="top" bgcolor="#ffffff">
-                                                                <ul>
-                                                                    <li><a href="http://jogamp.org/jogl/demos/doc/readme.html">Demo Documentation</a></li>
-                                                                    <li><a href="applettest-jnlp.html">JOGL JNLP Applet test incl. Applet-Launcher fallback</a></li>
-                                                                    <li><a href="applettest.html">JOGL Applet-Launcher only test</a></li>
-                                                                    <li><a href="applettest-joal.html">JOGL / JOAL Applet test</a></li>
-                                                                    <li><a href="http://ak.kiet.le.googlepages.com/theredbookinjava.html">OpenGL Red Book examples using JOGL</a></li>
-                                                                    <li><a href="http://pepijn.fab4.be/software/nehe-java-ports/">NeHe examples ported to JOGL</a></li>
-                                                                    <!--
-                                                                    <li>
-                                                                        <a href="http://weblogs.java.net/blog/campbell/archive/2006/10/easy_2d3d_mixin.html">Chris
-                                                                            Campbell's blog on 2D/3D Mixing</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="http://weblogs.java.net/blog/campbell/archive/2007/01/java_2d_and_jog.html">Chris
-                                                                            Campbell's blog on Java 2D and JOGL</a>
-                                                                    </li>
-                                                                    -->
-                                                                    <li><a href="http://fivedots.coe.psu.ac.th/~ad/jg/">Killer Game Programming in Java (with chapters on JOGL)</a></li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <p> It is now possible to deploy unsigned applets using JOGL with no
+                    manual installation of any software on the end user's machine! Please
+                    see the following test pages for more information:</p>
+                <ul>
+                    <li><a href="applettest-jnlp.html">JNLP Applet test page (standard JNLP
+                            Applet with Applet-Launcher fallback)</a></li>
+                    <li><a href="applettest.html">Applet-Launcher only test page (pls use
+                            variant above)</a></li>
+                    <li><a href="#NEWTAWTJNLPApplets">Simple NEWT JNLP AWT Applet's</a></li>
+                </ul>
+                <p>The source code for these demonstrations is available
+                    via <a href="http://jogamp.org/wiki/index.php/Jogl_FAQ#Get_the_Source_Code">GIT</a>.<br/>
+                </p>
+
                 <table border="0" cellpadding="5" cellspacing="1" width="100%">
                     <tbody>
                         <tr>
@@ -1112,10 +1047,10 @@
             </div>
             <div id="footer">
                 <div id="footer_left">
-                    <span xmlns:dc="http://purl.org/dc/elements/1.1/" property="dc:title">JogAmp.org</span>
-                    by <a xmlns:cc="http://creativecommons.org/ns#" href="http://jogamp.org" property="cc:attributionName" rel="cc:attributionURL">http://jogamp.org</a>
+                    <span>JogAmp.org</span>
+                    by <a href="http://jogamp.org">http://jogamp.org</a>
                     is licensed under a <br/>
-                    <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.
+                    <a href="http://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 License</a>.
                 </div>
             </div>
         </div>
