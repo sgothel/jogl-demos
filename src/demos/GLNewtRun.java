@@ -199,23 +199,25 @@ public class GLNewtRun extends WindowAdapter implements KeyListener, MouseListen
                     menuTest.add(new java.awt.Menu("External Frame Test - Menu"));
                     java.awt.Frame frame = new java.awt.Frame("External Frame Test");
                     frame.setMenuBar(menuTest);
-                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { frame }, nScreen, caps, undecorated);
+                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { frame }, nScreen, caps);
                 } else {
-                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps, undecorated);
+                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
                 }
             } else {
                 Display nDisplay = NewtFactory.createDisplay(null); // local display
                 Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
                 if(parented) {
-                    Window parent = NewtFactory.createWindow(nScreen, caps, undecorated);
+                    Window parent = NewtFactory.createWindow(nScreen, caps);
                     parent.setPosition(x_p, y_p);
                     parent.setSize(width+width/10, height+height/10);
                     parent.setVisible(true);
-                    nWindow = NewtFactory.createWindow(parent, caps, undecorated);
+                    nWindow = NewtFactory.createWindow(parent, caps);
                 } else {
-                    nWindow = NewtFactory.createWindow(nScreen, caps, undecorated);
+                    nWindow = NewtFactory.createWindow(nScreen, caps);
                 }
             }
+            nWindow.setUndecorated(undecorated);
+            nWindow.getScreen().setDestroyWhenUnused(true);
             window = GLWindow.create(nWindow);
 
             if(!setField(demo, "window", window)) {

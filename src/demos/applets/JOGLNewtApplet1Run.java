@@ -7,15 +7,17 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.KeyListener;
 
 import javax.media.opengl.*;
-import javax.media.nativewindow.*;
-import com.jogamp.newt.*;
+import com.jogamp.newt.awt.NewtCanvasAWT;
+import com.jogamp.newt.opengl.GLWindow;
+import java.awt.BorderLayout;
 
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */
 
 public class JOGLNewtApplet1Run extends Applet {
+    GLWindow glWindow;
+    NewtCanvasAWT newtCanvasAWT;
     JOGLNewtAppletBase base;
-    Window nWindow = null;
 
     public void init() {
         if(!(this instanceof Container)) {
@@ -48,15 +50,11 @@ public class JOGLNewtApplet1Run extends Applet {
 
         try {
             GLCapabilities caps = new GLCapabilities(GLProfile.get(glProfileName));
-            Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
-            Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-            nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { container }, 
-                                               nScreen, caps, true /* undecorated */);
-            // nWindow.setPosition(x, y);
-            // nWindow.setSize(container.getWidth(), container.getHeight());
-            if(null!=nWindow) {
-                base.init(nWindow);
-            }
+            glWindow = GLWindow.create(caps);
+            newtCanvasAWT = new NewtCanvasAWT(glWindow);
+            container.setLayout(new BorderLayout());
+            container.add(newtCanvasAWT, BorderLayout.CENTER);
+            base.init(glWindow);
             if(base.isValid()) {
                 GLEventListener glEventListener = base.getGLEventListener();
 
@@ -84,12 +82,11 @@ public class JOGLNewtApplet1Run extends Applet {
     }
 
     public void destroy() {
-        base.destroy(false); // no dispose events
+        glWindow.setVisible(false); // hide 1st
+        glWindow.reparentWindow(null); // get out of newtCanvasAWT
+        this.remove(newtCanvasAWT); // remove newtCanvasAWT
+        base.destroy(true); // destroy glWindow unrecoverable
         base=null;
-        if(null!=nWindow) {
-            nWindow.destroy();
-            nWindow=null;
-        }
     }
 }
 

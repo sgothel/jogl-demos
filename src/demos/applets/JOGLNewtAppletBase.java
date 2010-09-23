@@ -2,7 +2,6 @@ package demos.applets;
 
 import java.lang.reflect.*;
 
-import com.jogamp.newt.*;
 import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.GLWindow;
 
@@ -91,16 +90,14 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
         return false;
     }
 
-    public void init(Window nWindow) {
-        init(Thread.currentThread().getThreadGroup(), nWindow);
+    public void init(GLWindow glWindow) {
+        init(Thread.currentThread().getThreadGroup(), glWindow);
     }
 
-    public void init(ThreadGroup tg, Window nWindow) {
+    public void init(ThreadGroup tg, GLWindow glWindow) {
         glEventListener = createInstance(glEventListenerClazzName);
 
         try {
-            glWindow = GLWindow.create(nWindow);
-
             if(!setField(glEventListener, "window", glWindow)) {
                 setField(glEventListener, "glWindow", glWindow);
             }
@@ -147,8 +144,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
         }
     }
 
-    /** @param sendDisposeEvent should be false in a [time,reliable] critical shutdown */
-    public void destroy(boolean sendDisposeEvent) {
+    public void destroy(boolean unrecoverable) {
         isValid = false;
         if(null!=glAnimator) {
             glAnimator.stop();
@@ -156,7 +152,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
             glAnimator=null;
         }
         if(null!=glWindow) {
-            glWindow.destroy(sendDisposeEvent);
+            glWindow.destroy(unrecoverable);
             glWindow=null;
         }
     }

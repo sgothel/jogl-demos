@@ -33,9 +33,9 @@
 
 package demos.jrefract;
 
+import com.jogamp.opengl.util.AnimatorBase;
 import demos.common.Demo;
 import demos.common.DemoListener;
-import demos.hdr.HDR;
 import demos.hwShadowmapsSimple.HWShadowmapsSimple;
 import demos.infiniteShadowVolumes.InfiniteShadowVolumes;
 import demos.j2d.FlyingText;
@@ -58,7 +58,6 @@ import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
-import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
 import javax.swing.JCheckBox;
 import javax.swing.JDesktopPane;
@@ -90,7 +89,7 @@ import javax.swing.event.InternalFrameEvent;
 public class JRefract {
   private boolean useRegisterCombiners;
 
-  private Animator animator;
+  private AnimatorBase animator;
   private JDesktopPane desktop;
 
   public static void main(String[] args) {

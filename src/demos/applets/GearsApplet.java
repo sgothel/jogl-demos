@@ -5,8 +5,8 @@ import java.awt.*;
 import demos.gears.Gears;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
+import javax.media.opengl.GLAnimatorControl;
 
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */
@@ -15,7 +15,7 @@ public class GearsApplet extends Applet {
   static {
     GLProfile.initSingleton();
   }
-  private Animator animator;
+  private GLAnimatorControl animator;
 
   public void init() {
     setLayout(new BorderLayout());

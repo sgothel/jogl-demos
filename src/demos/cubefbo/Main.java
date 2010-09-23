@@ -39,8 +39,8 @@ import java.awt.event.WindowEvent;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
+import javax.media.opengl.GLAnimatorControl;
 
 
 public class Main {
@@ -63,7 +63,7 @@ public class Main {
     frame.add(canvas);
     frame.setSize(800, 480);
 
-    final Animator animator = new FPSAnimator(canvas, 60);
+    final GLAnimatorControl animator = new FPSAnimator(canvas, 60);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           // Run this on another thread than the AWT event queue to

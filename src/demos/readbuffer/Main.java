@@ -64,7 +64,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
 
             Display nDisplay = NewtFactory.createDisplay(null); // local display
             Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
-            Window nWindow = NewtFactory.createWindow(nScreen, capsOffscreen, false /* undecorated */);
+            Window nWindow = NewtFactory.createWindow(nScreen, capsOffscreen);
 
         GLWindow windowOffscreen = GLWindow.create(nWindow);
         windowOffscreen.enablePerfLog(true);
@@ -96,12 +96,12 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
                 if(0!=(typeNewt&USE_AWT)) {
                     Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
                     Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-                    Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps, false);
+                    Window nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
                     window = GLWindow.create(nWindow);
                 } else {
                     Display nDisplay = NewtFactory.createDisplay(null); // local display
                     Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
-                    Window nWindow = NewtFactory.createWindow(nScreen, caps, false /* undecorated */);
+                    Window nWindow = NewtFactory.createWindow(nScreen, caps);
                     window = GLWindow.create(nWindow);
                 }
 

@@ -96,6 +96,7 @@
         <property name="nativewindow.awt.jar"  value="${jogl.root}/${rootrel.build}/nativewindow/nativewindow.awt.jar" />
         <property name="newt.core.jar"       value="${jogl.root}/${rootrel.build}/newt/newt.core.jar" />
         <property name="newt.ogl.jar"        value="${jogl.root}/${rootrel.build}/newt/newt.ogl.jar" />
+        <property name="newt.awt.jar"        value="${jogl.root}/${rootrel.build}/newt/newt.awt.jar" />
         <property name="joal.jar"            value="../lib/joal.jar" />
         <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
         <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
@@ -162,6 +163,7 @@
             <pathelement location="${jogl.util.gldesktop.jar}" />
             <pathelement location="${newt.core.jar}" />
             <pathelement location="${newt.ogl.jar}" />
+            <pathelement location="${newt.awt.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${joal-demos.jar}" />
             <pathelement location="${gluegen-rt.jar}" />

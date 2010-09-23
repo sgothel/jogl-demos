@@ -115,7 +115,7 @@ public class TaskManagerTest2  implements WindowListener, KeyListener, MouseList
             Screen screen = NewtFactory.createScreen(display, 0);
             Window window = NewtFactory.createWindow(screen, caps);
             window.setTitle("GlassPrism");
-            window.setHandleDestroyNotify(false);
+            // window.setHandleDestroyNotify(false);
             window.setUndecorated(false);
             window.setSize(256, 256);
             window.addKeyListener(this);

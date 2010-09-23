@@ -15,7 +15,8 @@ if [ $CPOK -eq 0 ] ; then
     echo No JOGL in CLASSPATH
 else
     # D_ARGS="-Djogl.verbose=true -Dgluegen.debug.ProcAddressHelper=true -Dgluegen.debug.NativeLibrary=true -Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all"
-    D_ARGS="-Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all -Djogl.debug.GLSLState"
+    #D_ARGS="-Dnativewindow.debug=all -Djogl.debug=all -Dnewt.debug=all -Djogl.debug.GLSLState"
+    D_ARGS="-Dnewt.test.EDTMainThread=true -Dnewt.debug=all"
     if [ $MOSX -eq 1 ] ; then
         X_ARGS="-XstartOnFirstThread"
     fi

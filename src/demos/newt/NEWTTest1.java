@@ -92,7 +92,7 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
             Screen screen = NewtFactory.createScreen(display, 0);
             Window window = NewtFactory.createWindow(screen, caps);
             window.setTitle("GlassPrism");
-            window.setHandleDestroyNotify(false);
+            // window.setHandleDestroyNotify(false);
             window.setUndecorated(false);
             window.setSize(256, 256);
             window.addKeyListener(this);
@@ -105,7 +105,7 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
 
             while (running)
             {
-                display.pumpMessages();
+                display.dispatchMessages();
 
                 window.lockSurface();
                 try

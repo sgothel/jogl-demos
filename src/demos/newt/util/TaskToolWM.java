@@ -84,7 +84,7 @@ public class TaskToolWM {
 
                 // do it ..
                 if(null!=display) {
-                    display.pumpMessages();
+                    display.dispatchMessages();
                 }
             } catch (Throwable t) {
                 // handle errors ..

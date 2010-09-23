@@ -13,4 +13,21 @@
             </classpath>
         </java>
     </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="debug-selected-file-in-src">
+        <fail unless="debug.class">Must set property 'debug.class'</fail>
+        <path id="cp">
+            <pathelement path="../gluegen/build/gluegen-rt.jar:../jogl/build/nativewindow/nativewindow.all.jar:../jogl/build/jogl/jogl.all.jar:../jogl/build/newt/newt.all.jar:../joal/build/joal.jar"/>
+            <pathelement location="build"/>
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="jogl-demos" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <java classname="${debug.class}" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
 </project>
