@@ -133,8 +133,8 @@ public class Picking
           System.out.println("- - - - - - - - - - - -");
           System.out.println(" hit: " + (i + 1));
           names = buffer.get(offset); offset++;
-          z1 = (float) buffer.get(offset) / 0x7fffffff; offset++;
-          z2 = (float) buffer.get(offset) / 0x7fffffff; offset++;
+          z1 = (float) (buffer.get(offset)& 0xffffffffL) / 0x7fffffff; offset++;
+          z2 = (float) (buffer.get(offset)& 0xffffffffL) / 0x7fffffff; offset++;
           System.out.println(" number of names: " + names);
           System.out.println(" z1: " + z1);
           System.out.println(" z2: " + z2);
