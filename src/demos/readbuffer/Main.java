@@ -12,8 +12,8 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
     public boolean quit = false;
     public GLWindow window = null;
 
-    public void surfaceUpdated(Object updater, NativeWindow window, long when) {
-        if(null!=window) {
+    public void surfaceUpdated(Object updater, NativeSurface surface, long when) {
+        if(null!=surface) {
             this.window.display();
         }
     }
