@@ -59,9 +59,6 @@ import javax.media.opengl.glu.GLU;
 /** Tests the Translate1 Manip. */
 
 public class TestTranslate1 {
-  static {
-    GLProfile.initSingleton();
-  }
   private static final int X_SIZE = 400;
   private static final int Y_SIZE = 400;
 
@@ -143,6 +140,7 @@ public class TestTranslate1 {
   }
 
   public static void main(String[] args) {
+    GLProfile.initSingleton(true);
     Frame frame = new Frame("Translate1 Test");
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {

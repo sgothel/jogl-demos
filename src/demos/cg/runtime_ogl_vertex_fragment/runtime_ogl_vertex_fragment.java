@@ -53,10 +53,6 @@ import java.util.*;
  */
 public class runtime_ogl_vertex_fragment implements GLEventListener 
 {
-  static {
-    GLProfile.initSingleton();
-  }
-
   // Global variables: hold the Cg context that we're storing our programs
   // in as well as handles to the vertex and fragment program used in this
   // demo.
@@ -72,6 +68,13 @@ public class runtime_ogl_vertex_fragment implements GLEventListener
 
   public static void main(String[] argv)
   {    
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==argv.length || !argv[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     Frame frame = new Frame("Cg demo (runtime_ogl_vertex_fragment)");
     GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new runtime_ogl_vertex_fragment());

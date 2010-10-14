@@ -51,9 +51,6 @@ public class GLCapsTableDemo
   implements
     GLCapabilitiesChooser
 {
-  static {
-    GLProfile.initSingleton();
-  }
   private String[] colNames =
   {"Pfd", "H/W", "DblBfr", "Stereo", // index, hwaccel, double, stereo
    "CBits", "cR", "cG", "cB", "cA", // color bits
@@ -172,6 +169,13 @@ public class GLCapsTableDemo
    */
   public static void main(String[] args)
   {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     GLCapsTableDemo demo = new GLCapsTableDemo();
     demo.run(args);
   }

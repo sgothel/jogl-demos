@@ -59,10 +59,6 @@ import javax.media.opengl.glu.GLU;
 /** Tests the Examiner Viewer. */
 
 public class TestExaminerViewer {
-  static {
-    GLProfile.initSingleton();
-  }
-
   private static final int X_SIZE = 400;
   private static final int Y_SIZE = 400;
 
@@ -154,6 +150,7 @@ public class TestExaminerViewer {
   }
 
   public static void main(String[] args) {
+    GLProfile.initSingleton(true);
     Frame frame = new Frame("ExaminerViewer Test");
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {

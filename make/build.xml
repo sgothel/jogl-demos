@@ -170,8 +170,7 @@
             <pathelement location="${simple-xml.jar}" />
             <pathelement location="${swt.jar}" />
         </path>
-        <!-- For the time being we exclude the VertexArrayRange and HDR demos, which rely on NVIDIA-specific extensions -->
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes},demos/vertexArrayRange/**" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
+        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes}" source="1.4" target="1.4" debug="true" debuglevel="source,lines"
             includeantruntime="false">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />

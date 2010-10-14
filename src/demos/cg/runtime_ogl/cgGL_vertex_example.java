@@ -49,10 +49,6 @@ import java.io.*;
  */
 public class cgGL_vertex_example implements GLEventListener 
 {
-  static {
-    GLProfile.initSingleton();
-  }
-  
   /******************************************************************************/
   /*** Static Data                                                            ***/
   /******************************************************************************/
@@ -274,6 +270,13 @@ public class cgGL_vertex_example implements GLEventListener
 
   public static void main(String[] argv)
   {    
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==argv.length || !argv[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     // GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());
     // GLCanvas canvas = new GLCanvas(caps);
     GLCanvas canvas = new GLCanvas();

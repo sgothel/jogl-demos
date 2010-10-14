@@ -23,5 +23,7 @@
         <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp"/>
         <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/0.3.0/webstart/worldwind.jnlp"/>
     </resources>
-    <application-desc main-class="gov.nasa.worldwind.examples.ApplicationTemplate"/>
+    <application-desc main-class="gov.nasa.worldwind.examples.ApplicationTemplate">
+      <argument>NotFirstUIActionOnProcess</argument> 
+    </application-desc>
 </jnlp>

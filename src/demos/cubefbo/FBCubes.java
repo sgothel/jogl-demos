@@ -49,10 +49,6 @@ import com.jogamp.opengl.util.FBObject;
 
 
 class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
-  static {
-    GLProfile.initSingleton();
-  }
-
     private static final int FBO_SIZE = 128;
 
     public FBCubes () {

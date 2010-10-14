@@ -41,10 +41,6 @@ import demos.nurbs.knotslidercomponent.JKnotSlider;
 @SuppressWarnings("serial")
 public class CurveApp extends JFrame implements ActionListener
 {
-  static {
-    GLProfile.initSingleton();
-  }
-
   /**
    * Name of X-coord editing component of actually selected control point
    * Jméno komponenty pro editaci X-ové souřadnice aktuálního bodu
@@ -494,6 +490,13 @@ public class CurveApp extends JFrame implements ActionListener
    * 
    */
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new CurveApp();
 
   }

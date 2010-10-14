@@ -30,9 +30,6 @@ import javax.media.opengl.glu.GLU;
 public class combiner// 
         extends GLSkeleton<GLJPanel>
         implements GLEventListener, KeyListener {
-    static {
-      GLProfile.initSingleton();
-    }
     private GLU glu;
     private static final int imageWidth = 8;
     private static final int imageHeight = 8;
@@ -59,6 +56,14 @@ public class combiner//
     }
 
     public static void main(String[] args) {
+        // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+        // <application-desc main-class="demos.j2d.TextCube"/>
+        //   <argument>NotFirstUIActionOnProcess</argument>
+        // </application-desc>
+        // boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+        // GLProfile.initSingleton(firstUIActionOnProcess);
+        GLProfile.initSingleton(false); // just lazy to touch all html/jnlp's
+        
         combiner demo = new combiner();
 
         GLCapabilities caps = new GLCapabilities(null);

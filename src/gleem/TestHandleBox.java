@@ -58,10 +58,6 @@ import javax.media.opengl.glu.GLU;
 /** Tests the HandleBox Manip. */
 
 public class TestHandleBox {
-  static {
-    GLProfile.initSingleton();
-  }
-
   private static final int X_SIZE = 400;
   private static final int Y_SIZE = 400;
 
@@ -142,6 +138,7 @@ public class TestHandleBox {
   }
 
   public static void main(String[] args) {
+    GLProfile.initSingleton(true);
     Frame frame = new Frame("HandleBox Test");
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {

@@ -20,5 +20,7 @@
       <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
     </resources>
 
-  <application-desc main-class="demos.vertexProgRefract.VertexProgRefract"/>
+  <application-desc main-class="demos.vertexProgRefract.VertexProgRefract">
+   <argument>NotFirstUIActionOnProcess</argument> 
+  </application-desc>
 </jnlp>

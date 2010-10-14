@@ -52,7 +52,7 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import javax.media.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
 import javax.swing.JOptionPane;
 
 
@@ -89,10 +89,14 @@ import javax.swing.JOptionPane;
     respectively. </P> */
 
 public class VertexArrayRange extends Demo {
-  static {
-    GLProfile.initSingleton();
-  }
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     boolean startSlow = false;
 
     if (args.length > 1) {
@@ -113,6 +117,14 @@ public class VertexArrayRange extends Demo {
       demo.setFlag('v', false);   // VAR off
     }
     canvas.addGLEventListener(demo);
+
+    final VertexArrayRange f_demo = demo;
+    canvas.addKeyListener(new KeyAdapter() {
+        public void keyTyped(KeyEvent e) {
+          f_demo.dispatchKey(e.getKeyChar());
+        }
+      });
+
 
     final Animator animator = new Animator(canvas);
     animator.setRunAsFastAsPossible(true);
@@ -350,15 +362,9 @@ public class VertexArrayRange extends Demo {
     gl.glEnableClientState(GL2ES1.GL_NORMAL_ARRAY);
 
     computeElements();
-
-    drawable.addKeyListener(new KeyAdapter() {
-        public void keyTyped(KeyEvent e) {
-          dispatchKey(e.getKeyChar());
-        }
-      });
   }
 
-  private void allocateBuffersAndFences(GL gl) {
+  private void allocateBuffersAndFences(GL2 gl) {
     buffers = new VarBuffer[numBuffers];
     int[] fences = new int[1];
     for (int i = 0; i < numBuffers; i++) {
@@ -493,11 +499,11 @@ public class VertexArrayRange extends Demo {
 
     if (toggleVAR) {
       if (getFlag('v')) {
-        gl.glEnableClientState(GL2ES1.GL_VERTEX_ARRAY_RANGE_NV);
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY_RANGE_NV);
         gl.glVertexArrayRangeNV(bufferSize, bigArrayVar);
         bigArray = bigArrayVar;
       } else {
-        gl.glDisableClientState(GL2ES1.GL_VERTEX_ARRAY_RANGE_NV);
+        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY_RANGE_NV);
         bigArray = bigArraySystem;
       }
       toggleVAR = false;
@@ -621,13 +627,13 @@ public class VertexArrayRange extends Demo {
 
       for (int i = 0; i < elements.length; i++) {
         ++numDrawElementsCalls;
-        gl.glDrawElements(primitive, elements[i].capacity(), GL.GL_UNSIGNED_INT, elements[i]);
+        gl.glDrawElements(primitive, elements[i].capacity(), GL2.GL_UNSIGNED_INT, elements[i]);
         if(getFlag('f')) {
           gl.glFlush();
         }
       }
 
-      gl.glSetFenceNV(buffers[cur].fence, GL.GL_ALL_COMPLETED_NV);
+      gl.glSetFenceNV(buffers[cur].fence, GL2.GL_ALL_COMPLETED_NV);
     }
 
     gl.glPopMatrix();
@@ -661,7 +667,7 @@ public class VertexArrayRange extends Demo {
   // Unused routines
   public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
-  private void allocateBigArray(GL gl, boolean tryAgain) {
+  private void allocateBigArray(GL2 gl, boolean tryAgain) {
     float priority = .5f;
 
     bigArraySystem = setupBuffer(ByteBuffer.allocateDirect(bufferSize));

@@ -12,12 +12,10 @@ import javax.media.opengl.GLAnimatorControl;
     referenced from a web page via an &lt;applet&gt; tag. */
 
 public class GearsApplet extends Applet {
-  static {
-    GLProfile.initSingleton();
-  }
   private GLAnimatorControl animator;
 
   public void init() {
+    GLProfile.initSingleton(false);
     setLayout(new BorderLayout());
     GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Gears());

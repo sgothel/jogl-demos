@@ -34,9 +34,6 @@ import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.glu.GLU;
 
 public class Snippet209 {
-  static {
-    GLProfile.initSingleton();
-  }
   static void drawTorus(GL2 gl, float r, float R, int nsides, int rings) {
     float ringDelta = 2.0f * (float) Math.PI / rings;
     float sideDelta = 2.0f * (float) Math.PI / nsides;
@@ -65,6 +62,13 @@ public class Snippet209 {
   }
 
   public static void main(String [] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     final GLProfile gl2Profile = GLProfile.get(GLProfile.GL2);
     final Display display = new Display();
     Shell shell = new Shell(display);

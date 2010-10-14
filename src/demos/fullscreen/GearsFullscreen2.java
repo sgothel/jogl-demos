@@ -31,10 +31,6 @@ import javax.swing.ToolTipManager;
  */
 
 public class GearsFullscreen2 {
-  static {
-    GLProfile.initSingleton();
-  }
-
   private GraphicsDevice dev;
   private DisplayMode origMode;
   private boolean fullScreen;
@@ -44,6 +40,13 @@ public class GearsFullscreen2 {
   private int initHeight = 300;
 
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new GearsFullscreen2().run(args);
   }
 

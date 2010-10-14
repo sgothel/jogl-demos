@@ -45,9 +45,6 @@ import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 
 public class Multisample {
-  static {
-    GLProfile.initSingleton();
-  }
   private GLCanvas canvas;
 
   // Simple class to warn if results are not going to be as expected
@@ -76,6 +73,13 @@ public class Multisample {
   }
 
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new Multisample().run(args);
   }
 
@@ -126,6 +130,7 @@ public class Multisample {
 
   class Listener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
+      System.err.println("Info: "+drawable);
       GL2 gl = drawable.getGL().getGL2();
 
       gl.glClearColor(0, 0, 0, 0);

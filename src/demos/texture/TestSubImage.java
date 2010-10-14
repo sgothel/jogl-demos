@@ -85,9 +85,6 @@ import javax.swing.KeyStroke;
     Texture.updateSubImage(). */
 
 public class TestSubImage {
-  static {
-    GLProfile.initSingleton();
-  }
   private boolean  haveForcedImageType;
   private int      forcedImageType;
   private List     imageTypeMenuItems = new ArrayList();
@@ -328,6 +325,13 @@ public class TestSubImage {
   }
 
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new TestSubImage().run();
   }
 }

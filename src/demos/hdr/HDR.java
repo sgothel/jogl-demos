@@ -49,9 +49,6 @@ import javax.swing.JOptionPane;
 */
 
 public class HDR extends Demo {
-  static {
-    GLProfile.initSingleton();
-  }
   private static String[] defaultArgs = {
     "demos/data/images/stpeters_cross.hdr",
     "512",
@@ -134,6 +131,7 @@ public class HDR extends Demo {
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
   public static void main(String[] args) {
+    GLProfile.initSingleton(false);
 
     GLCanvas canvas = new GLCanvas();
     final HDR demo = new HDR();
@@ -260,8 +258,10 @@ public class HDR extends Demo {
   //
 
   public void shutdownDemo() {
-    ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
-    drawable.removeGLEventListener(this);
+    if(null!=drawable) {
+        ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
+        drawable.removeGLEventListener(this);
+    }
     super.shutdownDemo();
   }
 

@@ -76,9 +76,6 @@ import javax.swing.JOptionPane;
 */
 
 public class VertexProgWarp extends Demo {
-  static {
-    GLProfile.initSingleton();
-  }
   private Frame    frame;
   private Animator animator;
   private volatile boolean quit;
@@ -89,6 +86,13 @@ public class VertexProgWarp extends Demo {
   private int      frameCount;
 
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new VertexProgWarp().run(args);
   }
 
@@ -182,7 +186,7 @@ public class VertexProgWarp extends Demo {
     gl.glDisable(GL.GL_CULL_FACE);
 
     try {
-      initExtension(gl, "GL_vertex_program");
+      initExtension(gl, "GL_ARB_vertex_program");
     } catch (RuntimeException e) {
       shutdownDemo();
       throw(e);

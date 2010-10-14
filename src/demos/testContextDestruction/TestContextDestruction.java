@@ -68,9 +68,6 @@ import javax.swing.JFrame;
     as a GLCanvas is added to and removed from its parent container. */
 
 public class TestContextDestruction {
-  static {
-    GLProfile.initSingleton();
-  }
   private int gearDisplayList;
   private Frame frame1, frame2;
   private Component frame1ContainedComponent;
@@ -84,6 +81,13 @@ public class TestContextDestruction {
   private static final int BORDER_WIDTH = 6;
 
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new TestContextDestruction().run(args);
   }
 

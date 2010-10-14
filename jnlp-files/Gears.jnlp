@@ -19,5 +19,7 @@
       <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
     </resources>
 
-  <application-desc main-class="demos.gears.Gears"/>
+  <application-desc main-class="demos.gears.Gears">
+   <argument>NotFirstUIActionOnProcess</argument> 
+  </application-desc>
 </jnlp>

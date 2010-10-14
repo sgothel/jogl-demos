@@ -2,11 +2,12 @@ package demos.applets;
 
 import java.lang.reflect.*;
 
-import com.jogamp.newt.event.*;
-import com.jogamp.newt.opengl.GLWindow;
-
+import javax.media.nativewindow.NativeWindow;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
+
+import com.jogamp.newt.event.*;
+import com.jogamp.newt.opengl.GLWindow;
 
 /** Shows how to deploy an applet using JOGL. This demo must be
     referenced from a web page via an &lt;applet&gt; tag. */
@@ -21,6 +22,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
     GLWindow glWindow = null;
     Animator glAnimator=null;
     boolean isValid = false;
+    NativeWindow awtParent;
 
     public JOGLNewtAppletBase(String glEventListenerClazzName, 
                               int glSwapInterval,
@@ -95,6 +97,8 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
     }
 
     public void init(ThreadGroup tg, GLWindow glWindow) {
+        this.glWindow = glWindow;
+
         glEventListener = createInstance(glEventListenerClazzName);
 
         try {
@@ -134,6 +138,10 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
         if(isValid) {
             glWindow.setVisible(true);
             glAnimator.start();
+            awtParent = glWindow.getParent();
+            if(null==awtParent) {
+                throw new RuntimeException("Parent of GLWindow is null: "+glWindow);
+            }
         }
     }
 
@@ -193,13 +201,21 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
     // ***********************************************************************************
 
     public void keyPressed(KeyEvent e) { 
-        System.out.println(e);
     }
     public void keyReleased(KeyEvent e) { 
-        System.out.println(e);
     }
-    public void keyTyped(KeyEvent e) { 
-        System.out.println(e);
+    public void keyTyped(KeyEvent e) {
+       if(e.getKeyChar()=='d') {
+            glWindow.setUndecorated(!glWindow.isUndecorated());
+       } if(e.getKeyChar()=='f') {
+            glWindow.setFullscreen(!glWindow.isFullscreen());
+       } else if(e.getKeyChar()=='r') {
+            if(null == glWindow.getParent()) {
+                glWindow.reparentWindow(awtParent);
+            } else {
+                glWindow.reparentWindow(null);
+            }
+       }
     }
 
     // ***********************************************************************************
@@ -207,7 +223,6 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
     // ***********************************************************************************
 
     public void mouseClicked(MouseEvent e) {
-        System.out.println(" mouseevent: "+e);
     }
     public void mouseEntered(MouseEvent e) {
     }

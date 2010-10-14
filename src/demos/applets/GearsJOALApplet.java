@@ -16,12 +16,10 @@ import javax.media.opengl.GLAnimatorControl;
     must be referenced from a web page via an &lt;applet&gt; tag. */
 
 public class GearsJOALApplet extends Applet {
-  static {
-    GLProfile.initSingleton();
-  }
   private GLAnimatorControl animator;
 
   public void init() {
+    GLProfile.initSingleton(false);
     setLayout(new GridLayout(1, 2));
     GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Gears());

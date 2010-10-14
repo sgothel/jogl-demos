@@ -56,6 +56,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.media.opengl.GLProfile;
+import javax.media.opengl.GLPipelineFactory;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -81,10 +82,14 @@ import javax.swing.JOptionPane;
 */
 
 public class HWShadowmapsSimple extends Demo {
-  static {
-    GLProfile.initSingleton();
-  }
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     final GLCanvas canvas = new GLCanvas();
     final HWShadowmapsSimple demo = new HWShadowmapsSimple();
     canvas.addGLEventListener(demo);
@@ -205,8 +210,14 @@ public class HWShadowmapsSimple extends Demo {
   private int viewportY;
 
   public void init(GLAutoDrawable drawable) {
-    // Use debug pipeline
-    // drawable.setGL(new DebugGL(drawable.getGL().getGL2()));
+    // Use debug/trace pipeline
+    /**
+    GL _gl = drawable.getGL();
+    // Debug ..
+    _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2.class, _gl, null) );
+    // Trace ..
+    _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2.class, _gl, new Object[] { System.err } ) );
+    */
 
     GL2 gl = drawable.getGL().getGL2();
     glu = new GLU();

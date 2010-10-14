@@ -49,6 +49,7 @@ public class JOGLNewtApplet1Run extends Applet {
                                       glTrace);
 
         try {
+            GLProfile.initSingleton(false);
             GLCapabilities caps = new GLCapabilities(GLProfile.get(glProfileName));
             glWindow = GLWindow.create(caps);
             newtCanvasAWT = new NewtCanvasAWT(glWindow);

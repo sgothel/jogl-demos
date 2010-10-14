@@ -86,11 +86,13 @@ import javax.swing.JOptionPane;
 */
 
 public class VertexBufferObject extends Demo {
-  static {
-    GLProfile.initSingleton();
-  }
-
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
 
     boolean vboEnabled = true;
 

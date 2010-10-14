@@ -65,9 +65,6 @@ import com.jogamp.opengl.util.Animator;
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
 public class TextCube extends Demo {
-  static {
-    GLProfile.initSingleton();
-  }
   private float xAng;
   private float yAng;
   private GLU glu = new GLU();
@@ -77,6 +74,13 @@ public class TextCube extends Demo {
   private float textScaleFactor;
 
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     Frame frame = new Frame("Text Cube");
     frame.setLayout(new BorderLayout());
 

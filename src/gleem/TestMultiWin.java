@@ -60,9 +60,6 @@ import javax.media.opengl.glu.GLU;
 /** Tests viewing manipulators in multiple winodws. */
 
 public class TestMultiWin {
-  static {
-    GLProfile.initSingleton();
-  }
   private static final int X_SIZE = 400;
   private static final int Y_SIZE = 400;
 
@@ -170,6 +167,7 @@ public class TestMultiWin {
   }
 
   public static void main(String[] args) {
+    GLProfile.initSingleton(true);
     // Instantiate HandleBoxManip
     manip = new HandleBoxManip();
     manip.setTranslation(new Vec3f(0, 0, -10));

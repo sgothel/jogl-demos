@@ -19,9 +19,6 @@ import javax.media.opengl.glu.GLU;
 public class alpha// 
         extends GLSkeleton<GLCanvas>
         implements GLEventListener, KeyListener {
-    static {
-      GLProfile.initSingleton();
-    }
 
     @Override
     protected GLCanvas createDrawable() {
@@ -38,6 +35,14 @@ public class alpha//
      * mode, and handle input events.
      */
     public static void main(String[] args) {
+        // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+        // <application-desc main-class="demos.j2d.TextCube"/>
+        //   <argument>NotFirstUIActionOnProcess</argument>
+        // </application-desc>
+        // boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+        // GLProfile.initSingleton(firstUIActionOnProcess);
+        GLProfile.initSingleton(false); // just lazy to touch all html/jnlp's
+
         alpha demo = new alpha();
         //
         JFrame.setDefaultLookAndFeelDecorated(true);

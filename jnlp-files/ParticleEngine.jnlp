@@ -18,5 +18,7 @@
       <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
     </resources>
 
-  <application-desc main-class="demos.particles.engine.ControlWindow"/>
+  <application-desc main-class="demos.particles.engine.ControlWindow">
+   <argument>NotFirstUIActionOnProcess</argument> 
+  </application-desc>
 </jnlp>

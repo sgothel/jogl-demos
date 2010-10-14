@@ -45,10 +45,6 @@ import javax.media.opengl.awt.GLCanvas;
 @SuppressWarnings("serial")
 public class SurfaceApp extends JFrame implements ActionListener
 {
-  static {
-    GLProfile.initSingleton();
-  }
-
     /**
      * X-coord editing component name
      * Jméno komponenty pro editaci X-ové souřadnice aktuálního bodu
@@ -736,6 +732,13 @@ public class SurfaceApp extends JFrame implements ActionListener
    * 
    */
   public static void main(String[] args) {
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
+
     new SurfaceApp();
 
   }

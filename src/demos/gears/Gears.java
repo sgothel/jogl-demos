@@ -1,23 +1,15 @@
+
 package demos.gears;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.AWTGLAutoDrawable;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.awt.GLJPanel;
+import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
 import com.jogamp.opengl.util.Animator;
+import com.jogamp.newt.event.*;
+import com.jogamp.newt.event.awt.*;
+
+import java.awt.Component;
+import java.awt.Frame;
+import com.jogamp.newt.Window;
 
 /**
  * Gears.java <BR>
@@ -26,10 +18,21 @@ import com.jogamp.opengl.util.Animator;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 
-public class Gears implements GLEventListener, MouseListener, MouseMotionListener {
+public class Gears implements GLEventListener {
+  private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
+  private int gear1, gear2, gear3;
+  private float angle = 0.0f;
+
+  private int prevMouseX, prevMouseY;
+  private boolean mouseRButtonDown = false;
+
   public static void main(String[] args) {
-    // RTFM .. essential for multithreading.
-    GLProfile.initSingleton();
+    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
+    // <application-desc main-class="demos.j2d.TextCube"/>
+    //   <argument>NotFirstUIActionOnProcess</argument> 
+    // </application-desc>
+    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
+    GLProfile.initSingleton(firstUIActionOnProcess);
 
     Frame frame = new Frame("Gear Demo");
     GLCanvas canvas = new GLCanvas();
@@ -42,8 +45,8 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     frame.add(canvas);
     frame.setSize(300, 300);
     final Animator animator = new Animator(canvas);
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+    frame.addWindowListener(new java.awt.event.WindowAdapter() {
+        public void windowClosing(java.awt.event.WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
@@ -59,22 +62,18 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     animator.start();
   }
 
-  private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
-  private int gear1, gear2, gear3;
-  private float angle = 0.0f;
-
-  private int prevMouseX, prevMouseY;
-  private boolean mouseRButtonDown = false;
-
   public void init(GLAutoDrawable drawable) {
+    System.err.println("Gears: Init: "+drawable);
     // Use debug pipeline
     // drawable.setGL(new DebugGL(drawable.getGL()));
 
     GL2 gl = drawable.getGL().getGL2();
 
-    System.err.println("INIT GL IS: " + gl.getClass().getName());
-
     System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
+    System.err.println("INIT GL IS: " + gl.getClass().getName());
+    System.err.println("GL_VENDOR: " + gl.glGetString(GL2.GL_VENDOR));
+    System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
+    System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
 
     gl.setSwapInterval(1);
 
@@ -110,23 +109,26 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
             
     gl.glEnable(GL2.GL_NORMALIZE);
                 
-    if (drawable instanceof AWTGLAutoDrawable) {
-        AWTGLAutoDrawable awtDrawable = (AWTGLAutoDrawable) drawable;
-        awtDrawable.addMouseListener(this);
-        awtDrawable.addMouseMotionListener(this);
+    // MouseListener gearsMouse = new TraceMouseAdapter(new GearsMouseAdapter());
+    MouseListener gearsMouse = new GearsMouseAdapter();
+
+    if (drawable instanceof Component) {
+        Component comp = (Component) drawable;
+        new AWTMouseAdapter(gearsMouse).addTo(comp);
+    } else if (drawable instanceof Window) {
+        Window window = (Window) drawable;
+        window.addMouseListener(gearsMouse);
     }
   }
     
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    System.err.println("Gears: Reshape: "+x+"/"+y+" "+width+"x"+height);
     GL2 gl = drawable.getGL().getGL2();
 
     float h = (float)height / (float)width;
             
     gl.glMatrixMode(GL2.GL_PROJECTION);
 
-    System.err.println("GL_VENDOR: " + gl.glGetString(GL2.GL_VENDOR));
-    System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
-    System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
     gl.glLoadIdentity();
     gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -135,7 +137,7 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
   }
 
   public void dispose(GLAutoDrawable drawable) {
-    System.out.println("Gears.dispose: "+drawable);
+    System.err.println("Gears: Dispose");
   }
 
   public void display(GLAutoDrawable drawable) {
@@ -187,8 +189,6 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     // rotating the entire gear assembly
     gl.glPopMatrix();
   }
-
-  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
 
   public static void gear(GL2 gl,
                           float inner_radius,
@@ -306,41 +306,45 @@ public class Gears implements GLEventListener, MouseListener, MouseMotionListene
     gl.glEnd();
   }
 
-  // Methods required for the implementation of MouseListener
-  public void mouseEntered(MouseEvent e) {}
-  public void mouseExited(MouseEvent e) {}
+  class GearsMouseAdapter extends MouseAdapter {
+      public void mousePressed(MouseEvent e) {
+        prevMouseX = e.getX();
+        prevMouseY = e.getY();
+        if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
+          mouseRButtonDown = true;
+        }
+      }
+        
+      public void mouseReleased(MouseEvent e) {
+        if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
+          mouseRButtonDown = false;
+        }
+      }
+        
+      public void mouseDragged(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        int width=0, height=0;
+        Object source = e.getSource();
+        if(source instanceof Window) {
+            Window window = (Window) source;
+            width=window.getWidth();
+            height=window.getHeight();
+        } else if (source instanceof Component) {
+            Component comp = (Component) source;
+            width=comp.getWidth();
+            height=comp.getHeight();
+        } else {
+            throw new RuntimeException("Event source neither Window nor Component: "+source);
+        }
+        float thetaY = 360.0f * ( (float)(x-prevMouseX)/(float)width);
+        float thetaX = 360.0f * ( (float)(prevMouseY-y)/(float)height);
+        
+        prevMouseX = x;
+        prevMouseY = y;
 
-  public void mousePressed(MouseEvent e) {
-    prevMouseX = e.getX();
-    prevMouseY = e.getY();
-    if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
-      mouseRButtonDown = true;
-    }
+        view_rotx += thetaX;
+        view_roty += thetaY;
+      }
   }
-    
-  public void mouseReleased(MouseEvent e) {
-    if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
-      mouseRButtonDown = false;
-    }
-  }
-    
-  public void mouseClicked(MouseEvent e) {}
-    
-  // Methods required for the implementation of MouseMotionListener
-  public void mouseDragged(MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
-    Dimension size = e.getComponent().getSize();
-
-    float thetaY = 360.0f * ( (float)(x-prevMouseX)/(float)size.width);
-    float thetaX = 360.0f * ( (float)(prevMouseY-y)/(float)size.height);
-    
-    prevMouseX = x;
-    prevMouseY = y;
-
-    view_rotx += thetaX;
-    view_roty += thetaY;
-  }
-    
-  public void mouseMoved(MouseEvent e) {}
 }

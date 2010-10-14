@@ -3,6 +3,9 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>jogl-demos</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>jogl-demos</name>
             <properties>
@@ -10,9 +13,21 @@
             </properties>
             <folders>
                 <source-folder>
+                    <label>jogl-demos</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>src/redbook/src</label>
+                    <type>java</type>
+                    <location>src/redbook/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>src</label>
                     <type>java</type>
                     <location>src</location>
+                    <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -69,6 +84,10 @@
             <view>
                 <items>
                     <source-folder style="packages">
+                        <label>src/redbook/src</label>
+                        <location>src/redbook/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>src</label>
                         <location>src</location>
                     </source-folder>
@@ -90,6 +109,10 @@
                 <package-root>src</package-root>
                 <classpath mode="compile">../gluegen/build/gluegen-rt.jar:../jogl/build/nativewindow/nativewindow.all.jar:../jogl/build/jogl/jogl.all.jar:../jogl/build/newt/newt.all.jar:../joal/build/joal.jar</classpath>
                 <built-to>build</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>src/redbook/src</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
