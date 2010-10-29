@@ -193,15 +193,15 @@ public class GLNewtRun extends WindowAdapter implements KeyListener, MouseListen
             Window nWindow = null;
             if(useAWT) {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
+                Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
                 if(useAWTTestFrame) {
                     java.awt.MenuBar menuTest = new java.awt.MenuBar();
                     menuTest.add(new java.awt.Menu("External Frame Test - Menu"));
                     java.awt.Frame frame = new java.awt.Frame("External Frame Test");
                     frame.setMenuBar(menuTest);
-                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, new Object[] { frame }, nScreen, caps);
+                    nWindow = NewtFactory.createWindow(new Object[] { frame }, nScreen, caps);
                 } else {
-                    nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                    nWindow = NewtFactory.createWindow(nScreen, caps);
                 }
             } else {
                 Display nDisplay = NewtFactory.createDisplay(null); // local display

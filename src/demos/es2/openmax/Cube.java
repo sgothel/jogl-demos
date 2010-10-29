@@ -321,8 +321,8 @@ public class Cube implements GLEventListener {
             GLWindow window;
             if(0!=(type&USE_AWT)) {
                 Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(NativeWindowFactory.TYPE_AWT, nDisplay, 0); // screen 0
-                nWindow = NewtFactory.createWindow(NativeWindowFactory.TYPE_AWT, nScreen, caps);
+                Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
+                nWindow = NewtFactory.createWindow(nScreen, caps);
                 window = GLWindow.create(nWindow);
             } else {
                 window = GLWindow.create(caps);
