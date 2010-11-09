@@ -12,16 +12,25 @@
    -->
 <project name="JOGL.demos" default="all">
 
-    <property name="jogl.root" value="../../jogl" />
-    <property name="gluegen.root" value="../../gluegen" />
+    <!-- This is the version of jogl-demos you are building -->
+    <property name="jogl-demos_base_version" value="2.0"/>
+    <tstamp>
+       <format property="version.timestamp" pattern="yyyyMMddHHmm"/>
+    </tstamp>
+    <property name="jogl-demos.version" value="${jogl-demos_base_version}-${version.timestamp}" />
+
+    <property name="project.root"  value=".." />
+    <property name="jogl.root" value="${project.root}/../jogl" />
+    <property name="gluegen.root" value="${project.root}/../gluegen" />
 
     <condition property="rootrel.build" value="build">
       <not>
           <isset property="rootrel.build"/>
       </not>
     </condition>
+    <property name="build" location="${project.root}/${rootrel.build}" />
 
-    <property file="../${rootrel.build}/artifact.properties"/>
+    <property file="${build}/artifact.properties"/>
     <property name="jogl-demos.build.number" value="manual-build"/>
 
     <!-- 
@@ -97,18 +106,19 @@
         <property name="newt.core.jar"       value="${jogl.root}/${rootrel.build}/newt/newt.core.jar" />
         <property name="newt.ogl.jar"        value="${jogl.root}/${rootrel.build}/newt/newt.ogl.jar" />
         <property name="newt.awt.jar"        value="${jogl.root}/${rootrel.build}/newt/newt.awt.jar" />
-        <property name="joal.jar"            value="../lib/joal.jar" />
-        <property name="joal-demos.jar"      value="../lib/joal-demos.jar" />
-        <property name="simple-xml.jar"      value="../lib/simple-xml-1.1.1.jar" />
-        <property name="classes"             value="../${rootrel.build}/classes" />
-        <property name="src"                 value="../src" />
-        <property name="javadoc"             value="../javadoc" />
+        <property name="joal.jar"            value="${project.root}/lib/joal.jar" />
+        <property name="joal-demos.jar"      value="${project.root}/lib/joal-demos.jar" />
+        <property name="simple-xml.jar"      value="${project.root}/lib/simple-xml-1.1.1.jar" />
+        <property name="classes"             value="${project.root}/${rootrel.build}/classes" />
+        <property name="src"                 value="${project.root}/src" />
+        <property name="javadoc"             value="${project.root}/javadoc" />
         <property name="javadoc.link"        value="http://java.sun.com/j2se/1.4.2/docs/api/" />
         <property name="javadoc.link.jogl"   value="${jogl.root}/javadoc-public/" />
-        <property name="jogl.demos.jar"      value="../${rootrel.build}/jogl-demos.jar" />
-        <property name="jogl.demos.util.jar" value="../${rootrel.build}/jogl-demos-util.jar" />
-        <property name="jogl.demos.data.jar" value="../${rootrel.build}/jogl-demos-data.jar" />
-        <property name="jogl.demos.src.zip"  value="../${rootrel.build}/jogl-demos-src.zip" />
+        <property name="jogl.demos.jar"      value="${build}/jogl-demos.jar" />
+        <property name="jogl.demos.util.jar" value="${build}/jogl-demos-util.jar" />
+        <property name="jogl.demos.data.jar" value="${build}/jogl-demos-data.jar" />
+        <property name="archive.name"        value="jogl-demos-${jogl-demos.version}" />
+        <property name="archive"             value="${build}/${archive.name}" />
 
         <property name="jogl.redbook.excludes" value="redbook/**" />
 
@@ -122,15 +132,15 @@
             <classpath refid="jogl-demos.classpath" />
         </javac>
 	<!-- Copy icons to output dir -->
-        <copy todir="../${rootrel.build}">
+        <copy todir="${build}">
             <fileset dir="${src}">
                 <include name="demos/nurbs/icons/*.png" />
             </fileset>
         </copy>
 	<!-- Copy dependent libraries to output dir -->
-        <copy file="../lib/simple-xml-1.1.1.jar" todir="../${rootrel.build}" />
-        <copy file="../lib/stax-api-1.0.1.jar" todir="../${rootrel.build}" />
-        <copy file="../lib/stax-1.2.0.jar" todir="../${rootrel.build}" />
+        <copy file="../lib/simple-xml-1.1.1.jar" todir="${build}" />
+        <copy file="../lib/stax-api-1.0.1.jar" todir="${build}" />
+        <copy file="../lib/stax-1.2.0.jar" todir="${build}" />
     </target>
 
     <target name="redbook-javac">
@@ -212,17 +222,6 @@
                 <include name="demos/data/**" />
             </fileset>
         </jar>
-        <!-- Build a source archive as well -->
-        <antcall target="all-src-zip" inheritrefs="true" />
-    </target>
-
-    <target name="all-src-zip" unless="skipSourceZIP">
-        <delete file="${jogl.demos.src.zip}" />
-        <zip destfile="${jogl.demos.src.zip}"
-             basedir="../.."
-             includes="jogl-demos/doc/**,jogl-demos/make/**,jogl-demos/src/**,jogl-demos/lib/**"
-             excludes="**/*.class,**/*~"
-	     />
     </target>
 
     <target name="all-gles" if="isGLES">
@@ -263,11 +262,11 @@
         </jar>
     </target>
 
-    <target name="all" depends="init, all-desktop, all-gles, tag.build" />
+    <target name="all" depends="init, all-desktop, all-gles, tag.build, developer-zip-archive" />
 
     <target name="tag.build">
-        <copy file="${jogl.root}/${rootrel.build}/artifact.properties" todir="../${rootrel.build}" overwrite="true"/>
-        <echo file="../${rootrel.build}/artifact.properties" message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' append="true"/>
+        <copy file="${jogl.root}/${rootrel.build}/artifact.properties" todir="${build}" overwrite="true"/>
+        <echo file="${build}/artifact.properties" message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' append="true"/>
     </target>
 
     <target name="javadoc" depends="init">
@@ -285,8 +284,39 @@
 
     <target name="clean" depends="init">
         <delete includeEmptyDirs="true" quiet="true">
-            <fileset dir="../${rootrel.build}" />
+            <fileset dir="${build}" />
             <fileset dir="../javadoc" />
         </delete>
     </target>
+
+    <!-- ================================================================== -->
+    <!--
+       - Build the binary zip archive for developers.
+       - This must be called on one target.
+      -->
+
+    <target name="developer-zip-archive" depends="init" unless="build.noarchives">
+        <delete includeEmptyDirs="true" quiet="true" dir="${archive}" failonerror="false" />
+        <mkdir dir="${archive}" />
+        <copy file="${build}/artifact.properties" todir="${archive}"/>
+        <mkdir dir="${archive}/jar" />
+        <copy todir="${archive}/jar">
+            <fileset dir="${build}" includes="jogl-demos*.jar"/>
+        </copy>
+        <mkdir dir="${archive}/jnlp-files" />
+        <copy todir="${archive}/jnlp-files">
+            <fileset dir="${project.root}/jnlp-files" includes="*" />
+        </copy>
+        <mkdir dir="${archive}/www" />
+        <copy todir="${archive}/www">
+            <fileset dir="${project.root}/www" includes="*" />
+        </copy>
+        <delete quiet="true" file="${build}/${archive.name}.zip"/>
+        <zip destfile="${build}/${archive.name}.zip"
+             basedir="${build}"
+             includes="${archive.name}/**" />
+        <!-- Clean up after ourselves -->
+        <delete includeEmptyDirs="true" quiet="true" dir="${archive}" failonerror="false" />
+    </target>
+
  </project>
