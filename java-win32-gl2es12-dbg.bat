@@ -1,8 +1,6 @@
 
-set J2RE_HOME=c:\jre6
-set JAVA_HOME=c:\jdk6
-REM set J2RE_HOME=c:\jdk1.4.2_21
-REM set JAVA_HOME=c:\jdk1.4.2_21
+set J2RE_HOME=c:\jre1.6.0_22_x32
+set JAVA_HOME=c:\jdk1.6.0_22_x32
 
 set JAR_DIR=jogl\lib
 set LIB_DIR=jogl\lib

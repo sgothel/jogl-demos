@@ -82,7 +82,7 @@ public class GLInfo extends Thread implements GLEventListener {
             window.display();
 
             // Shut things down cooperatively
-            window.destroy(true);
+            window.destroy();
             System.out.println(glp+" GLInfo shut down cleanly.");
         } catch (Throwable t) {
             t.printStackTrace();

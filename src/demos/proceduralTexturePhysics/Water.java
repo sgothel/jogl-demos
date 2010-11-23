@@ -49,6 +49,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
@@ -203,7 +204,7 @@ public class Water {
                          String cubeMapFilenamePrefix,
                          String cubeMapFilenameSuffix,
                          GLAutoDrawable parentWindow) {
-    GLCapabilities caps = parentWindow.getChosenGLCapabilities();
+    GLCapabilities caps = (GLCapabilities) parentWindow.getChosenGLCapabilities().cloneMutable();
 
     loadInitialTexture(caps.getGLProfile(), initialMapFilename);
     tmpSpinFilename           = spinFilename;

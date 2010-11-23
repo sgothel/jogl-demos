@@ -152,7 +152,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
         }
     }
 
-    public void destroy(boolean unrecoverable) {
+    public void destroy() {
         isValid = false;
         if(null!=glAnimator) {
             glAnimator.stop();
@@ -160,7 +160,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
             glAnimator=null;
         }
         if(null!=glWindow) {
-            glWindow.destroy(unrecoverable);
+            glWindow.destroy();
             glWindow=null;
         }
     }

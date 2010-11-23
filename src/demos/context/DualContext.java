@@ -145,8 +145,9 @@ public class DualContext extends Canvas {
     GLProfile glp = GLProfile.getDefault(); // warm up ..
 
     AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
+    GLCapabilities caps = new GLCapabilities(glp);
     AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)
-         GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(new GLCapabilities(glp), null, screen);
+         GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(caps, caps, null, screen);
     final DualContext dc = new DualContext(config);
 
     frame.getContentPane().add(dc, BorderLayout.CENTER);

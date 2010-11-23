@@ -20,6 +20,8 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesChooser;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
+import javax.media.nativewindow.CapabilitiesImmutable;
+import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -68,17 +70,17 @@ public class GLCapsTableDemo
   private DefaultGLCapabilitiesChooser choiceExaminer = //
     new DefaultGLCapabilitiesChooser()
     {
-      public int chooseCapabilities(Capabilities _desired,
-                                    Capabilities[] _available,
+      public int chooseCapabilities(CapabilitiesImmutable _desired,
+                                    CapabilitiesImmutable[] _available,
                                     int windowSystemRecommendedChoice)
       {
-        GLCapabilities desired = (GLCapabilities) _desired;
-        GLCapabilities[] available = (GLCapabilities[]) _available;
+        GLCapabilitiesImmutable desired = (GLCapabilitiesImmutable) _desired;
+        GLCapabilitiesImmutable[] available = (GLCapabilitiesImmutable[]) _available;
         if ( available != null )
           for (int i = 0; i < available.length; i++) {
-            GLCapabilities c = available[i];
+            GLCapabilitiesImmutable c = available[i];
             if (c != null) {
-              GLCapsTableDemo.this.available.add((GLCapabilities) c.clone());
+              GLCapsTableDemo.this.available.add((GLCapabilities) c.cloneMutable());
               GLCapsTableDemo.this.indices.add(new Integer(i));
             }
           }
@@ -130,8 +132,8 @@ public class GLCapsTableDemo
    * @see javax.media.opengl.GLCapabilitiesChooser#chooseCapabilities(javax.media.nativewindow.Capabilities,
    *      javax.media.nativewindow.Capabilities[], int)
    */
-  public int chooseCapabilities(Capabilities desired,
-                                Capabilities[] available,
+  public int chooseCapabilities(CapabilitiesImmutable desired,
+                                CapabilitiesImmutable[] available,
                                 int windowSystemRecommendedChoice)
   {
     int row = capsTable.getSelectedRow();

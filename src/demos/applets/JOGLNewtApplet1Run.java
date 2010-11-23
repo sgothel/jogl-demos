@@ -86,7 +86,7 @@ public class JOGLNewtApplet1Run extends Applet {
         glWindow.setVisible(false); // hide 1st
         glWindow.reparentWindow(null); // get out of newtCanvasAWT
         this.remove(newtCanvasAWT); // remove newtCanvasAWT
-        base.destroy(true); // destroy glWindow unrecoverable
+        base.destroy(); // destroy glWindow unrecoverable
         base=null;
     }
 }

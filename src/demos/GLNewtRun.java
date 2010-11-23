@@ -217,7 +217,6 @@ public class GLNewtRun extends WindowAdapter implements KeyListener, MouseListen
                 }
             }
             nWindow.setUndecorated(undecorated);
-            nWindow.getScreen().setDestroyWhenUnused(true);
             window = GLWindow.create(nWindow);
 
             if(!setField(demo, "window", window)) {
