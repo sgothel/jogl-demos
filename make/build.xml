@@ -32,6 +32,9 @@
 
     <property file="${build}/artifact.properties"/>
     <property name="jogl-demos.build.number" value="manual-build"/>
+    <property name="jogl-demos.build.id"     value="${version.timestamp}"/>
+    <property name="jogl-demos.build.branch" value="master"/>
+    <property name="jogl-demos.build.commit" value="manual"/>
 
     <!-- 
        - Make sure that jogl-demos.jar is not on the CLASSPATH; this can
@@ -266,7 +269,10 @@
 
     <target name="tag.build">
         <copy file="${jogl.root}/${rootrel.build}/artifact.properties" todir="${build}" overwrite="true"/>
-        <echo file="${build}/artifact.properties" message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' append="true"/>
+        <echo message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' file="${build}/artifact.properties" append="true"/>
+        <echo message='jogl-demos.build.id=${jogl-demos.build.id}${line.separator}'         file="${build}/artifact.properties" append="true"/>
+        <echo message='jogl-demos.build.branch=${jogl-demos.build.branch}${line.separator}' file="${build}/artifact.properties" append="true"/>
+        <echo message='jogl-demos.build.commit=${jogl-demos.build.commit}${line.separator}' file="${build}/artifact.properties" append="true"/>
     </target>
 
     <target name="javadoc" depends="init">
