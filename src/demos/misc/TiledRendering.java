@@ -47,7 +47,8 @@ public class TiledRendering {
     }
 
     // Use a pbuffer for rendering
-    GLPbuffer pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(caps, null,
+    GLPbuffer pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(
+                                                                       null, caps, null,
                                                                        256, 256,
                                                                        null);
     

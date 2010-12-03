@@ -79,7 +79,7 @@ public class TextureConvert {
       System.out.println("Pbuffer support not available (required to run this demo)");
       System.exit(1);
     }
-    GLPbuffer pbuffer = GLDrawableFactory.getFactory(glp).createGLPbuffer(caps, null, 2, 2, null);
+    GLPbuffer pbuffer = GLDrawableFactory.getFactory(glp).createGLPbuffer(null, caps, null, 2, 2, null);
     pbuffer.getContext().makeCurrent();
     GL gl = pbuffer.getGL();
 
