@@ -49,6 +49,7 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.Animator;
 
 
 
@@ -76,6 +77,10 @@ public class TestContextSharing {
     Frame frame1 = new Frame("Canvas 1");
     frame1.setLayout(new BorderLayout());
     frame1.add(canvas1, BorderLayout.CENTER);
+    System.err.println("Showing init frame1");
+    frame1.setLocation(0, 0);
+    frame1.pack();
+    frame1.setVisible(true);
 
     GLCanvas canvas2 = new GLCanvas(null, null, canvas1.getContext(), null);
     canvas2.addGLEventListener(new Listener());
@@ -83,31 +88,15 @@ public class TestContextSharing {
     Frame frame2 = new Frame("Canvas 2");
     frame2.setLayout(new BorderLayout());
     frame2.add(canvas2, BorderLayout.CENTER);
+    System.err.println("Showing init frame2");
+    frame2.setLocation(frame1.getWidth(),0);
+    frame2.pack();
+    frame2.setVisible(true);
 
-    Random random = new Random(System.currentTimeMillis());
-    Frame frame;
-    if (random.nextBoolean()) {
-      frame = frame1;
-      delayedFrame = frame2;
-    } else {
-      frame = frame2;
-      delayedFrame = frame1;
-    }
-    System.err.println("Showing first frame");
-    frame.pack();
-    frame.setVisible(true);
-    new Thread(new Runnable() {
-        public void run() {
-          try {
-            Thread.sleep(1000);
-          } catch (InterruptedException e) {
-          }
-          System.err.println("Showing other frame");
-          delayedFrame.pack();
-          delayedFrame.setVisible(true);
-          delayedFrame.setLocation(256, 0);
-        }
-      }).start();
+    try {
+        Thread.sleep(10000);
+    } catch (InterruptedException e) { }
+
   }
 
   class Listener implements GLEventListener {
@@ -138,7 +127,7 @@ public class TestContextSharing {
 
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
-      System.err.println("Drawing display list " + gearDisplayList);
+      System.err.println("Drawing display list " + gearDisplayList + ", context: 0x" + Integer.toHexString(gl.getContext().hashCode()));
       gl.glCallList(gearDisplayList);
     }
 
@@ -170,6 +159,7 @@ public class TestContextSharing {
     gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, red, 0);
     gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
     gl.glEndList();
+    System.err.println(Thread.currentThread() + " Initialized display list " + gearDisplayList + ", context: 0x" + Integer.toHexString(gl.getContext().hashCode()));
   }
 
   private void gear(GL2 gl,
