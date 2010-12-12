@@ -15,6 +15,7 @@ public class GearsApplet extends Applet {
   private GLAnimatorControl animator;
 
   public void init() {
+    System.err.println("GearsApplet: init() - begin");
     GLProfile.initSingleton(false);
     setLayout(new BorderLayout());
     GLCanvas canvas = new GLCanvas();
@@ -22,14 +23,23 @@ public class GearsApplet extends Applet {
     canvas.setSize(getSize());
     add(canvas, BorderLayout.CENTER);
     animator = new FPSAnimator(canvas, 60);
+    System.err.println("GearsApplet: init() - end");
   }
 
   public void start() {
+    System.err.println("GearsApplet: start() - begin");
     animator.start();
+    System.err.println("GearsApplet: start() - end");
   }
 
   public void stop() {
     // FIXME: do I need to do anything else here?
+    System.err.println("GearsApplet: stop() - begin");
     animator.stop();
+    System.err.println("GearsApplet: stop() - end");
+  }
+
+  public void destroy() {
+    System.err.println("GearsApplet: destroy() - X");
   }
 }
