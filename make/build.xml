@@ -15,7 +15,7 @@
     <!-- This is the version of jogl-demos you are building -->
     <property name="jogl-demos_base_version" value="2.0"/>
     <tstamp>
-       <format property="version.timestamp" pattern="yyyyMMddHHmm"/>
+       <format property="version.timestamp" pattern="yyyyMMdd"/>
     </tstamp>
     <property name="jogl-demos.version" value="${jogl-demos_base_version}-${version.timestamp}" />
 
