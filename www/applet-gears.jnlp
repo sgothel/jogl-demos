@@ -12,8 +12,8 @@
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
       <property name="sun.java2d.noddraw" value="true"/>
-      <jar href="http://jogamp.org/deployment/webstart/jogl-demo/jogl-demos.jar" main="true"/>
-      <jar href="http://jogamp.org/deployment/webstart/jogl-demo/jogl-demos-util.jar"/>
+      <jar href="http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar" main="true"/>
+      <jar href="http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos-util.jar"/>
       <extension name="newt-all-awt" href="http://jogamp.org/deployment/webstart/newt-all-awt.jnlp" />
     </resources>
 
