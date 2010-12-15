@@ -5,10 +5,9 @@
 #    -Dc.compiler.debug=true 
 #    -Djogl.cg=1 \
 #    -Djogl.redbook=true \
-#    -DskipSourceZIP=true
+#    -Dbuild.noarchives=true
 
 ant \
-    -DskipSourceZIP=true \
     -Djogl.cg=1 \
     -Duser.swt.jar=$HOME/.java/swt.jar \
     -Drootrel.build=build-x86_64 \

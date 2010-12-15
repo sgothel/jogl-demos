@@ -37,7 +37,6 @@
     <property name="joal.root"     value="${project.root}/../joal" />
     <property name="joal.build"    value="${joal.root}/${rootrel.build}" />
 
-    <property file="${build}/artifact.properties"/>
     <property name="jogl-demos.build.number" value="manual-build"/>
     <property name="jogl-demos.build.id"     value="${version.timestamp}"/>
     <property name="jogl-demos.build.branch" value="master"/>
