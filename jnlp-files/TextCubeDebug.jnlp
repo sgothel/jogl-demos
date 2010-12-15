@@ -21,7 +21,7 @@
       <property name="jnlp.newt.debug" value="all"/>
       <jar href="jogl-demos.jar" main="true"/>
       <jar href="jogl-demos-util.jar" />
-      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
+      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" version="JOGAMP_VERSION" />
     </resources>
 
   <application-desc main-class="demos.j2d.TextCube">
