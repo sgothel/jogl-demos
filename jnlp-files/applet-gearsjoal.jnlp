@@ -14,6 +14,7 @@
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
       <property name="sun.java2d.noddraw" value="true"/>
       <jar href="jogl-demos.jar" main="true"/>
+      <jar href="jogl-demos-data.jar"/>
       <jar href="jogl-demos-util.jar"/>
       <extension name="newt-all-awt" href="JOGL_CODEBASE_TAG/newt-all-awt.jnlp" version="JOGAMP_VERSION" />
       <extension name="joal" href="JOAL_CODEBASE_TAG/joal.jnlp" version="JOGAMP_VERSION" />

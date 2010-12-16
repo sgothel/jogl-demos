@@ -55,6 +55,7 @@ import javax.swing.*;
  */
 
 public class SingleStaticSource {
+  static final String audioFile = "demos/data/sound/FancyPants.wav";
 
   public SingleStaticSource(boolean gui) {
     this(gui, null, true);
@@ -225,11 +226,18 @@ public class SingleStaticSource {
 
     // Load wav data into a buffer.
     al.alGenBuffers(1, buffer, 0);
-    if (al.alGetError() != AL.AL_NO_ERROR)
+    if (al.alGetError() != AL.AL_NO_ERROR) {
       throw new ALException("Error generating OpenAL buffers");
+    }
+
+    InputStream stream = SingleStaticSource.class.getClassLoader().getResourceAsStream(audioFile);
+    if(null == stream) {
+      throw new RuntimeException("File '"+audioFile+"' not found");
+    }
+    System.err.println("File "+audioFile+" opened");
 
     ALut.alutLoadWAVFile(
-      SingleStaticSource.class.getClassLoader().getResourceAsStream("demos/data/FancyPants.wav"),
+      stream,
       format,
       data,
       size,
