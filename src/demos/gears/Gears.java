@@ -7,6 +7,7 @@ import com.jogamp.opengl.util.Animator;
 import com.jogamp.newt.event.*;
 import com.jogamp.newt.event.awt.*;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Frame;
 import com.jogamp.newt.Window;
@@ -19,6 +20,9 @@ import com.jogamp.newt.Window;
  */
 
 public class Gears implements GLEventListener {
+  static {
+    GLProfile.initSingleton(false);
+  }
   private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
   private int gear1, gear2, gear3;
   private float angle = 0.0f;
@@ -31,20 +35,13 @@ public class Gears implements GLEventListener {
     // <application-desc main-class="demos.j2d.TextCube"/>
     //   <argument>NotFirstUIActionOnProcess</argument> 
     // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
+    // boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
 
     Frame frame = new Frame("Gear Demo");
-    GLCanvas canvas = new GLCanvas();
-    // GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());
-    // GLCanvas canvas = new GLCanvas(caps);
-
-    final Gears gears = new Gears();
-    canvas.addGLEventListener(gears);
-
-    frame.add(canvas);
     frame.setSize(300, 300);
-    final Animator animator = new Animator(canvas);
+    frame.setLayout(new BorderLayout());
+
+    final Animator animator = new Animator();
     frame.addWindowListener(new java.awt.event.WindowAdapter() {
         public void windowClosing(java.awt.event.WindowEvent e) {
           // Run this on another thread than the AWT event queue to
@@ -58,6 +55,18 @@ public class Gears implements GLEventListener {
             }).start();
         }
       });
+
+    GLCanvas canvas = new GLCanvas();
+    animator.add(canvas);
+    // GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());
+    // GLCanvas canvas = new GLCanvas(caps);
+
+    final Gears gears = new Gears();
+    canvas.addGLEventListener(gears);
+
+    frame.add(canvas, BorderLayout.CENTER);
+    frame.validate();
+
     frame.setVisible(true);
     animator.start();
   }

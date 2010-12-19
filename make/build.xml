@@ -30,6 +30,8 @@
 
     <property name="gluegen.root"  value="${project.root}/../gluegen" />
     <property name="gluegen.build" value="${gluegen.root}/${rootrel.build}" />
+    <!-- Pull in GlueGen cpptasks build file -->
+    <import file="${gluegen.root}/make/gluegen-cpptasks.xml" />
 
     <property name="jogl.root"     value="${project.root}/../jogl" />
     <property name="jogl.build"    value="${jogl.root}/${rootrel.build}" />
@@ -89,7 +91,7 @@
         <property name="swt.jar"            value="${user.swt.jar}"/>
     </target>
 
-    <target name="init" depends="java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
+    <target name="init" depends="gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
         <property name="jogl.core.jar"       value="${jogl.build}/jogl/jogl.core.jar" />
         <condition property="jogl.cg.jar"    value="${jogl.build}/jogl/jogl.cg.jar">
           <isset property="jogl.cg"/>
@@ -125,7 +127,7 @@
         <property name="jogl.demos.jar"      value="${build}/jogl-demos.jar" />
         <property name="jogl.demos.util.jar" value="${build}/jogl-demos-util.jar" />
         <property name="jogl.demos.data.jar" value="${build}/jogl-demos-data.jar" />
-        <property name="archive.name"        value="jogl-demos-${jogl-demos.version}" />
+        <property name="archive.name"        value="jogl-demos-${jogl-demos.version}-${os.and.arch}" />
         <property name="archive"             value="${build}/${archive.name}" />
 
         <property name="jogl.redbook.excludes" value="redbook/**" />
