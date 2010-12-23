@@ -37,6 +37,9 @@ public class NEWTTest1 implements WindowListener, KeyListener, MouseListener
         // stop running ..
         running = false;
     }
+    public void windowDestroyed(WindowEvent e) {
+        System.err.println("windowDestroyed "+e);
+    }
     boolean running = true;
 
     public void keyPressed(KeyEvent e) {

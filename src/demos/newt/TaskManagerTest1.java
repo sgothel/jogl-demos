@@ -51,6 +51,9 @@ public class TaskManagerTest1  implements WindowListener, KeyListener, MouseList
         eventMgr.stop();
         System.err.println("Window Event Listener DestroyNotify send stop request - DONE");
     }
+    public void windowDestroyed(WindowEvent e) {
+        System.err.println("windowDestroyed "+e);
+    }
     public void keyPressed(KeyEvent e) {
         System.err.println("keyPressed "+e);
     }

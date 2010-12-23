@@ -32,18 +32,16 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     }
 
     public void windowRepaint(WindowUpdateEvent e) { }
-
     public void windowResized(WindowEvent e) { }
-
     public void windowMoved(WindowEvent e) { }
-
     public void windowGainedFocus(WindowEvent e) { }
-
     public void windowLostFocus(WindowEvent e) { }
-
     public void windowDestroyNotify(WindowEvent e) {
         System.out.println("WINDOW-DESTROY NOTIFY "+Thread.currentThread()+" QUIT "+e);
         quit = true;
+    }
+    public void windowDestroyed(WindowEvent e) {
+        System.out.println("WINDOW-DESTROYED "+Thread.currentThread());
     }
 
     public void keyPressed(KeyEvent e) { 

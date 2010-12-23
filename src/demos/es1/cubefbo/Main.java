@@ -19,6 +19,7 @@ public class Main implements WindowListener, MouseListener {
     public void windowDestroyNotify(WindowEvent e) {
         quit = true;
     }
+    public void windowDestroyed(WindowEvent e) { }
 
     public void mouseClicked(MouseEvent e) {
         System.out.println("mouseevent: "+e);

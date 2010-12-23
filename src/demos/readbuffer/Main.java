@@ -27,6 +27,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
         System.err.println("********** quit **************");
         quit = true;
     }
+    public void windowDestroyed(WindowEvent e) { }
 
     public void mouseClicked(MouseEvent e) {
         System.out.println("mouseevent: "+e);
