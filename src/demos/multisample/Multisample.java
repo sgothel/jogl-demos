@@ -39,6 +39,7 @@
 
 package demos.multisample;
 
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 import javax.media.opengl.*;
@@ -50,11 +51,11 @@ public class Multisample {
   // Simple class to warn if results are not going to be as expected
   static class MultisampleChooser extends DefaultGLCapabilitiesChooser {
     public int chooseCapabilities(GLCapabilities desired,
-                                  GLCapabilities[] available,
+                                  List/*<GLCapabilitiesImmutable>*/ available,
                                   int windowSystemRecommendedChoice) {
       boolean anyHaveSampleBuffers = false;
-      for (int i = 0; i < available.length; i++) {
-        GLCapabilities caps = available[i];
+      for (int i = 0; i < available.size(); i++) {
+        GLCapabilitiesImmutable caps = (GLCapabilitiesImmutable) available.get(i);
         if (caps != null && caps.getSampleBuffers()) {
           anyHaveSampleBuffers = true;
           break;
@@ -63,8 +64,9 @@ public class Multisample {
       int selection = super.chooseCapabilities(desired, available, windowSystemRecommendedChoice);
       if (!anyHaveSampleBuffers) {
         System.err.println("WARNING: antialiasing will be disabled because none of the available pixel formats had it to offer");
-      } else {
-        if (!available[selection].getSampleBuffers()) {
+      } else if(selection>=0) {
+        GLCapabilitiesImmutable caps = (GLCapabilitiesImmutable) available.get(selection);
+        if (!caps.getSampleBuffers()) {
           System.err.println("WARNING: antialiasing will be disabled because the DefaultGLCapabilitiesChooser didn't supply it");
         }
       }

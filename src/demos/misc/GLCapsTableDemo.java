@@ -12,6 +12,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.ArrayList;
 import javax.media.nativewindow.Capabilities;
 import javax.media.opengl.DefaultGLCapabilitiesChooser;
@@ -71,14 +72,13 @@ public class GLCapsTableDemo
     new DefaultGLCapabilitiesChooser()
     {
       public int chooseCapabilities(CapabilitiesImmutable _desired,
-                                    CapabilitiesImmutable[] _available,
+                                    List/*<CapabilitiesImmutable>*/ available,
                                     int windowSystemRecommendedChoice)
       {
         GLCapabilitiesImmutable desired = (GLCapabilitiesImmutable) _desired;
-        GLCapabilitiesImmutable[] available = (GLCapabilitiesImmutable[]) _available;
-        if ( available != null )
-          for (int i = 0; i < available.length; i++) {
-            GLCapabilitiesImmutable c = available[i];
+        if ( available != null && available.size()>0 )
+          for (int i = 0; i < available.size(); i++) {
+            GLCapabilitiesImmutable c = (GLCapabilitiesImmutable) available.get(i);
             if (c != null) {
               GLCapsTableDemo.this.available.add((GLCapabilities) c.cloneMutable());
               GLCapsTableDemo.this.indices.add(new Integer(i));
@@ -133,7 +133,7 @@ public class GLCapsTableDemo
    *      javax.media.nativewindow.Capabilities[], int)
    */
   public int chooseCapabilities(CapabilitiesImmutable desired,
-                                CapabilitiesImmutable[] available,
+                                List/*<CapabilitiesImmutable>*/ available,
                                 int windowSystemRecommendedChoice)
   {
     int row = capsTable.getSelectedRow();
