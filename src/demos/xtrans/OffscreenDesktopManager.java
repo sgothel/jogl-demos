@@ -61,9 +61,9 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 // Internal JOGL API references
-import com.jogamp.opengl.impl.Debug;
+import jogamp.opengl.Debug;
 // FIXME: debugging only
-import com.jogamp.opengl.impl.awt.Java2D;
+import jogamp.opengl.awt.Java2D;
 
 // FIXME: we need a way to lock a portion of the off-screen back
 // buffer to be persistent for a while during component removals. It

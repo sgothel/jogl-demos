@@ -45,7 +45,7 @@ import java.util.*;
 import javax.swing.*;
 
 // Internal JOGL API references
-import com.jogamp.opengl.impl.Debug;
+import jogamp.opengl.Debug;
 
 /** A subclass of JDesktopPane which performs all of the rendering of
  * its child components into an off-screen buffer. Provides access to

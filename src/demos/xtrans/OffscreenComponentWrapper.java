@@ -46,9 +46,9 @@ import java.awt.Rectangle;
 import javax.swing.JComponent;
 
 // Internal JOGL API references
-import com.jogamp.opengl.impl.Debug;
+import jogamp.opengl.Debug;
 // FIXME: debugging only
-import com.jogamp.opengl.impl.awt.Java2D;
+import jogamp.opengl.awt.Java2D;
 
 /** Provides an interposition point where we can install a new
  * Graphics object in the rendering pipeline. Because lightweight
