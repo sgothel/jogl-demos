@@ -32,7 +32,7 @@
     <property name="gluegen.build" value="${gluegen.root}/${rootrel.build}" />
     <!-- Pull in GlueGen cpptasks build file -->
     <import file="${gluegen.root}/make/gluegen-cpptasks.xml" />
-    <import file="${gluegen.root}/make/gluegen-archivetasks.xml" />
+    <import file="${gluegen.root}/make/jogamp-archivetasks.xml" />
     <import file="${gluegen.root}/make/jogamp-env.xml" />
 
     <property name="jogl.root"     value="${project.root}/../jogl" />
