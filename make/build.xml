@@ -33,6 +33,7 @@
     <!-- Pull in GlueGen cpptasks build file -->
     <import file="${gluegen.root}/make/gluegen-cpptasks.xml" />
     <import file="${gluegen.root}/make/gluegen-archivetasks.xml" />
+    <import file="${gluegen.root}/make/jogamp-env.xml" />
 
     <property name="jogl.root"     value="${project.root}/../jogl" />
     <property name="jogl.build"    value="${jogl.root}/${rootrel.build}" />
@@ -92,7 +93,7 @@
         <property name="swt.jar"            value="${user.swt.jar}"/>
     </target>
 
-    <target name="init" depends="gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
+    <target name="init" depends="jogamp.env.init,gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
         <property name="jogl.core.jar"       value="${jogl.build}/jogl/jogl.core.jar" />
         <condition property="jogl.cg.jar"    value="${jogl.build}/jogl/jogl.cg.jar">
           <isset property="jogl.cg"/>
