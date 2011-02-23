@@ -5,7 +5,6 @@
 #    -Dc.compiler.debug=true 
 #    -Djogl.cg=1 \
 #    -Djogl.redbook=true \
-#    -Dbuild.noarchives=true
 
 ant \
     -Djogl.cg=1 \
