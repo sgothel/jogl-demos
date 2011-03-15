@@ -1,3 +1,5 @@
+package demos.dualDepthPeeling;
+
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -63,7 +65,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	public boolean g_useOQ = true;
 	public int[] g_queryId = new int[1];
 
-	public String MODEL_FILENAME = new String( "media/models/dragon.obj" );
+	public String MODEL_FILENAME = new String( "demos/dualDepthPeeling/media/models/dragon.obj" );
 	public String SHADER_PATH = new String( "src/dual_depth_peeling/shaders/" );
 
 	public GLSLProgramObject g_shaderDualInit;

@@ -1,3 +1,5 @@
+package demos.dualDepthPeeling;
+
 
 // Translated from C++ Version see below:
 //
@@ -116,7 +118,10 @@ public class GLSLProgramObject
 
 	public void attachVertexShader(GL2 gl, String filename)
 	{
-		URL fileURL = getClass().getClassLoader().getResource(File.separator + "shaders" + File.separator + filename);
+		URL fileURL = getClass().getClassLoader().getResource(
+				File.separator + "demos" +
+				File.separator + "dualDepthPeeling" +
+				File.separator + "shaders" + File.separator + filename);
 		if ( fileURL != null )
 		{
 			String content = "";
@@ -177,7 +182,10 @@ public class GLSLProgramObject
 
 	public void attachFragmentShader(GL2 gl, String filename)
 	{
-		URL fileURL = getClass().getClassLoader().getResource(File.separator + "shaders" + File.separator + filename);
+		URL fileURL = getClass().getClassLoader().getResource(
+				File.separator + "demos" +
+				File.separator + "dualDepthPeeling" +
+				File.separator + "shaders" + File.separator + filename);
 		if ( fileURL != null )
 		{
 			String content = "";
