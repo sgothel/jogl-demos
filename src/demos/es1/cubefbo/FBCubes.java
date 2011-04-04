@@ -45,7 +45,7 @@ public class FBCubes implements GLEventListener {
     public FBCubes () {
         cubeOuter = new Cube(true, false);
 
-        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE, FBObject.ATTR_DEPTH);
+        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE);
         cubeInner = new Cube(false, true);
 
         // JAU cubeMiddle = new Cube(true, false);
@@ -72,11 +72,13 @@ public class FBCubes implements GLEventListener {
             gl = gltrace;
         }*/
 
-        fbo1.init(gl);
-        //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE); // faster
-        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE); // GLES2 default
-        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_SHORT_5_5_5_1); // useless (1bit alpha)
-        //fbo1.init(gl, GL.GL_RGBA8, GL2.GL_BGRA, GL2.GL_UNSIGNED_INT_8_8_8_8_REV); // GL2 default
+        fbo1.init(gl, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0);
+        fbo1.attachDepthBuffer(gl, GL.GL_DEPTH_COMPONENT16);
+        //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // faster
+        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // GLES2 default
+        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_SHORT_5_5_5_1, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // useless (1bit alpha)
+        //fbo1.init(gl, GL.GL_RGBA8, GL2.GL_BGRA, GL2.GL_UNSIGNED_INT_8_8_8_8_REV, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // GL2 default
+        fbo1.unbind(gl);
         cubeInner.init(drawable);
         
         cubeOuter.init(drawable);
@@ -118,7 +120,6 @@ public class FBCubes implements GLEventListener {
         cubeOuter.reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
         fbo1.use(gl);
         cubeOuter.display(drawable);
-        fbo1.unbind(gl);
 
         gl.glDisable (gl.GL_TEXTURE_2D);
 

@@ -1,20 +1,26 @@
 
 package demos.gears;
 
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
-import com.jogamp.newt.event.*;
-import com.jogamp.newt.event.awt.*;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Frame;
 import com.jogamp.newt.Window;
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.MouseAdapter;
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.MouseListener;
+import com.jogamp.newt.event.awt.AWTKeyAdapter;
+import com.jogamp.newt.event.awt.AWTMouseAdapter;
 
 /**
  * Gears.java <BR>
- * author: Brian Paul (converted to Java by Ron Cemer and Sven Goethel) <P>
+ * author: Brian Paul (converted to Java by Ron Cemer and Sven Gothel) <P>
  *
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
@@ -24,11 +30,12 @@ public class Gears implements GLEventListener {
     GLProfile.initSingleton(false);
   }
   private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
-  private int gear1, gear2, gear3;
+  private int gear1=0, gear2=0, gear3=0;
   private float angle = 0.0f;
+  private int swapInterval;
 
-  private int prevMouseX, prevMouseY;
   private boolean mouseRButtonDown = false;
+  private int prevMouseX, prevMouseY;
 
   public static void main(String[] args) {
     // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
@@ -37,9 +44,9 @@ public class Gears implements GLEventListener {
     // </application-desc>
     // boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
 
-    Frame frame = new Frame("Gear Demo");
+    java.awt.Frame frame = new java.awt.Frame("Gear Demo");
     frame.setSize(300, 300);
-    frame.setLayout(new BorderLayout());
+    frame.setLayout(new java.awt.BorderLayout());
 
     final Animator animator = new Animator();
     frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -64,12 +71,41 @@ public class Gears implements GLEventListener {
     final Gears gears = new Gears();
     canvas.addGLEventListener(gears);
 
-    frame.add(canvas, BorderLayout.CENTER);
+    frame.add(canvas, java.awt.BorderLayout.CENTER);
     frame.validate();
 
     frame.setVisible(true);
     animator.start();
   }
+  
+  public Gears(int swapInterval) {
+    this.swapInterval = swapInterval;
+  }
+
+  public Gears() {
+    this.swapInterval = 1;
+  }
+  
+  public void setGears(int g1, int g2, int g3) {
+      gear1 = g1;
+      gear2 = g2;
+      gear3 = g3;
+  }
+
+  /**
+   * @return display list gear1
+   */
+  public int getGear1() { return gear1; }
+
+  /**
+   * @return display list gear2
+   */
+  public int getGear2() { return gear2; }
+
+  /**
+   * @return display list gear3
+   */
+  public int getGear3() { return gear3; }
 
   public void init(GLAutoDrawable drawable) {
     System.err.println("Gears: Init: "+drawable);
@@ -84,12 +120,10 @@ public class Gears implements GLEventListener {
     System.err.println("GL_RENDERER: " + gl.glGetString(GL2.GL_RENDERER));
     System.err.println("GL_VERSION: " + gl.glGetString(GL2.GL_VERSION));
 
-    gl.setSwapInterval(1);
-
     float pos[] = { 5.0f, 5.0f, 10.0f, 0.0f };
-    float red[] = { 0.8f, 0.1f, 0.0f, 1.0f };
-    float green[] = { 0.0f, 0.8f, 0.2f, 1.0f };
-    float blue[] = { 0.2f, 0.2f, 1.0f, 1.0f };
+    float red[] = { 0.8f, 0.1f, 0.0f, 0.7f };
+    float green[] = { 0.0f, 0.8f, 0.2f, 0.7f };
+    float blue[] = { 0.2f, 0.2f, 1.0f, 0.7f };
 
     gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, pos, 0);
     gl.glEnable(GL2.GL_CULL_FACE);
@@ -98,41 +132,61 @@ public class Gears implements GLEventListener {
     gl.glEnable(GL2.GL_DEPTH_TEST);
             
     /* make the gears */
-    gear1 = gl.glGenLists(1);
-    gl.glNewList(gear1, GL2.GL_COMPILE);
-    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, red, 0);
-    gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
-    gl.glEndList();
+    if(0>=gear1) {
+        gear1 = gl.glGenLists(1);
+        gl.glNewList(gear1, GL2.GL_COMPILE);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, red, 0);
+        gear(gl, 1.0f, 4.0f, 1.0f, 20, 0.7f);
+        gl.glEndList();
+        System.err.println("gear1 list created: "+gear1);
+    } else {
+        System.err.println("gear1 list reused: "+gear1);
+    }
             
-    gear2 = gl.glGenLists(1);
-    gl.glNewList(gear2, GL2.GL_COMPILE);
-    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, green, 0);
-    gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
-    gl.glEndList();
+    if(0>=gear2) {
+        gear2 = gl.glGenLists(1);
+        gl.glNewList(gear2, GL2.GL_COMPILE);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, green, 0);
+        gear(gl, 0.5f, 2.0f, 2.0f, 10, 0.7f);
+        gl.glEndList();
+        System.err.println("gear2 list created: "+gear2);
+    } else {
+        System.err.println("gear2 list reused: "+gear2);
+    }
             
-    gear3 = gl.glGenLists(1);
-    gl.glNewList(gear3, GL2.GL_COMPILE);
-    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, blue, 0);
-    gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
-    gl.glEndList();
+    if(0>=gear3) {
+        gear3 = gl.glGenLists(1);
+        gl.glNewList(gear3, GL2.GL_COMPILE);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE, blue, 0);
+        gear(gl, 1.3f, 2.0f, 0.5f, 10, 0.7f);
+        gl.glEndList();
+        System.err.println("gear3 list created: "+gear3);
+    } else {
+        System.err.println("gear3 list reused: "+gear3);
+    }
             
     gl.glEnable(GL2.GL_NORMALIZE);
                 
     // MouseListener gearsMouse = new TraceMouseAdapter(new GearsMouseAdapter());
-    MouseListener gearsMouse = new GearsMouseAdapter();
+    MouseListener gearsMouse = new GearsMouseAdapter();    
+    KeyListener gearsKeys = new GearsKeyAdapter();
 
-    if (drawable instanceof Component) {
-        Component comp = (Component) drawable;
-        new AWTMouseAdapter(gearsMouse).addTo(comp);
-    } else if (drawable instanceof Window) {
+    if (drawable instanceof Window) {
         Window window = (Window) drawable;
         window.addMouseListener(gearsMouse);
+        window.addKeyListener(gearsKeys);
+    } else if (GLProfile.isAWTAvailable() && drawable instanceof java.awt.Component) {
+        java.awt.Component comp = (java.awt.Component) drawable;
+        new AWTMouseAdapter(gearsMouse).addTo(comp);
+        new AWTKeyAdapter(gearsKeys).addTo(comp);
     }
   }
     
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    System.err.println("Gears: Reshape: "+x+"/"+y+" "+width+"x"+height);
+    System.err.println("Gears: Reshape "+x+"/"+y+" "+width+"x"+height);
     GL2 gl = drawable.getGL().getGL2();
+
+    gl.setSwapInterval(swapInterval);
 
     float h = (float)height / (float)width;
             
@@ -147,6 +201,7 @@ public class Gears implements GLEventListener {
 
   public void dispose(GLAutoDrawable drawable) {
     System.err.println("Gears: Dispose");
+    setGears(0, 0, 0);
   }
 
   public void display(GLAutoDrawable drawable) {
@@ -156,11 +211,14 @@ public class Gears implements GLEventListener {
     // Get the GL corresponding to the drawable we are animating
     GL2 gl = drawable.getGL().getGL2();
 
+    gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
     // Special handling for the case where the GLJPanel is translucent
     // and wants to be composited with other Java 2D content
-    if ((drawable instanceof GLJPanel) &&
-        !((GLJPanel) drawable).isOpaque() &&
-        ((GLJPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
+    if (GLProfile.isAWTAvailable() && 
+        (drawable instanceof javax.media.opengl.awt.GLJPanel) &&
+        !((javax.media.opengl.awt.GLJPanel) drawable).isOpaque() &&
+        ((javax.media.opengl.awt.GLJPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
       gl.glClear(GL2.GL_DEPTH_BUFFER_BIT);
     } else {
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
@@ -315,6 +373,21 @@ public class Gears implements GLEventListener {
     gl.glEnd();
   }
 
+  class GearsKeyAdapter extends KeyAdapter {      
+    public void keyPressed(KeyEvent e) {
+        int kc = e.getKeyCode();
+        if(KeyEvent.VK_LEFT == kc) {
+            view_roty -= 1;
+        } else if(KeyEvent.VK_RIGHT == kc) {
+            view_roty += 1;
+        } else if(KeyEvent.VK_UP == kc) {
+            view_rotx -= 1;
+        } else if(KeyEvent.VK_DOWN == kc) {
+            view_rotx += 1;
+        }
+    }
+  }
+  
   class GearsMouseAdapter extends MouseAdapter {
       public void mousePressed(MouseEvent e) {
         prevMouseX = e.getX();
@@ -339,8 +412,8 @@ public class Gears implements GLEventListener {
             Window window = (Window) source;
             width=window.getWidth();
             height=window.getHeight();
-        } else if (source instanceof Component) {
-            Component comp = (Component) source;
+        } else if (GLProfile.isAWTAvailable() && source instanceof java.awt.Component) {
+            java.awt.Component comp = (java.awt.Component) source;
             width=comp.getWidth();
             height=comp.getHeight();
         } else {

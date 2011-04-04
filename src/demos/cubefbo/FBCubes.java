@@ -55,16 +55,18 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         cubeInner = new CubeObject(false);
         cubeMiddle = new CubeObject(true);
         cubeOuter = new CubeObject(true);
-        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE, 0);
-        fbo2 = new FBObject(FBO_SIZE, FBO_SIZE, 0);
+        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE);
+        fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
     }
 
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         // drawable.setGL(new DebugGL2(gl));
         // gl = drawable.getGL().getGL2();
-        fbo1.init(gl);
-        fbo2.init(gl);
+        fbo1.init(gl, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
+        fbo1.unbind(gl);
+        fbo2.init(gl, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
+        fbo2.unbind(gl);
     }
 
     int x, y, width, height;
