@@ -403,7 +403,7 @@ public class CubeImmModeSink implements GLEventListener {
 
             window.addGLEventListener(this);
 
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);

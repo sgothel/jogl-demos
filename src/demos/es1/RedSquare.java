@@ -131,12 +131,12 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.addKeyListener(this);
             window.addGLEventListener(this);
 
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             // window.setFullscreen(true);
             window.setVisible(true);
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
 
             if(!oneThread) {
                 if(useAnimator) {
@@ -152,7 +152,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 } else {
                     do {
                         display();
-                    } while (!quit && window.getDuration() < 11000) ;
+                    } while (!quit && window.getTotalFPSDuration() < 11000) ;
                     shutdown();
                 }
             }
@@ -284,7 +284,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
         gl.glTranslatef(0, 0, -10);
-        float ang = ((float) window.getDuration() * 360.0f) / 4000.0f;
+        float ang = ((float) window.getTotalFPSDuration() * 360.0f) / 4000.0f;
         gl.glRotatef(ang, 0, 0, 1);
         gl.glRotatef(ang, 0, 1, 0);
 

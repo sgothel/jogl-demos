@@ -298,14 +298,14 @@ public class GLSpatial {
         int[] tmp = new int[1];
         gl.glGenBuffers(1, tmp, 0);
         vboName = tmp[0];
-
-        vArrayData = GLArrayDataWrapper.createFixed(gl, gl.GL_VERTEX_ARRAY, vComps, GL.GL_FLOAT, false,
-                                                    0, pBuffer, vboName, vOffset);
-        cArrayData = GLArrayDataWrapper.createFixed(gl, gl.GL_COLOR_ARRAY, cComps, GL.GL_FLOAT, false,
-                                                    0, pBuffer, vboName, cOffset);
+        
+        vArrayData = GLArrayDataWrapper.createFixed(gl.GL_VERTEX_ARRAY, vComps, GL.GL_FLOAT, false,
+                                                    0, pBuffer, vboName, vOffset, GL.GL_STATIC_DRAW);
+        cArrayData = GLArrayDataWrapper.createFixed(gl.GL_COLOR_ARRAY, cComps, GL.GL_FLOAT, false,
+                                                    0, pBuffer, vboName, cOffset, GL.GL_STATIC_DRAW);
         if(useNormalArray) {
-            nArrayData = GLArrayDataWrapper.createFixed(gl, gl.GL_NORMAL_ARRAY, nComps, GL.GL_FLOAT, false,
-                                                        0, pBuffer, vboName, nOffset);
+            nArrayData = GLArrayDataWrapper.createFixed(gl.GL_NORMAL_ARRAY, nComps, GL.GL_FLOAT, false,
+                                                        0, pBuffer, vboName, nOffset, GL.GL_STATIC_DRAW);
         }
     }
 

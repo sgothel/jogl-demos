@@ -68,7 +68,7 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
             Window nWindow = NewtFactory.createWindow(nScreen, capsOffscreen);
 
         GLWindow windowOffscreen = GLWindow.create(nWindow);
-        windowOffscreen.enablePerfLog(true);
+        windowOffscreen.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
         windowOffscreen.setSize(w, h);
         windowOffscreen.setVisible(true);
         return windowOffscreen;
@@ -139,11 +139,11 @@ public class Main implements WindowListener, MouseListener, SurfaceUpdatedListen
                 // System.out.println("...............................");
                 windowOffscreen.display();
                 if ( TEST_READBUFFER2SCREEN == typeTest ) {
-                    if ( windowOffscreen.getDuration() >= 10000) {
+                    if ( windowOffscreen.getTotalFPSDuration() >= 10000) {
                         break;
                     }
                 } else {
-                    if ( windowOffscreen.getTotalFrames() >= 10) {
+                    if ( windowOffscreen.getTotalFPSFrames() >= 10) {
                         break;
                     }
                 }

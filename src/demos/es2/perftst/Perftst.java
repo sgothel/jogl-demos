@@ -93,17 +93,17 @@ public class Perftst implements MouseListener, GLEventListener {
         pmvMatrix = new PMVMatrix();
 
         pmod.initShaderState(gl);
-        st = ShaderState.getCurrent();
+        st = ShaderState.getShaderState(gl);
 
         // Push the 1st uniform down the path 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.glUniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
+        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
 
@@ -111,7 +111,7 @@ public class Perftst implements MouseListener, GLEventListener {
         gl.glClearColor(0, 0, 0, 1);
         gl.glEnable(GL2ES2.GL_DEPTH_TEST);
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
 
         // Let's show the completed shader state ..
         System.out.println(st);
@@ -120,7 +120,7 @@ public class Perftst implements MouseListener, GLEventListener {
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         // Set location in front of camera
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
@@ -134,10 +134,10 @@ public class Perftst implements MouseListener, GLEventListener {
         GLUniformData ud = st.getUniform("mgl_PMVMatrix");
         if(null!=ud) {
             // same data object
-            st.glUniform(gl, ud);
+            st.uniform(gl, ud);
         } 
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
     }
 
     public void dispose(GLAutoDrawable drawable) {

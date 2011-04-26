@@ -37,6 +37,7 @@
 package demos.particles.engine;
 
 import javax.media.opengl.*;
+
 import com.jogamp.opengl.util.texture.*;
 import java.net.*;
 import java.util.*;
@@ -78,12 +79,12 @@ public class Engine {
     }
   }
     
-  public void init() {               
+  public void init(GL gl) {               
     try {
       ClassLoader c1 = this.getClass().getClassLoader();
       URL url = c1.getResource(path);
       texture = TextureIO.newTexture(url, false, null);
-      texture.enable();
+      texture.enable(gl);
     }
     catch(IOException e) {
       e.printStackTrace();

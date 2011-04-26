@@ -80,7 +80,7 @@ public class ReadBufferBase implements GLEventListener {
     }
 
     public void dispose(GLAutoDrawable drawable) {
-        readBufferUtil.dispose();
+        readBufferUtil.dispose(drawable.getGL());
     }
 
     public void display(GLAutoDrawable drawable) {

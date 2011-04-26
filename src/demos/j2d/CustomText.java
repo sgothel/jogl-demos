@@ -210,11 +210,11 @@ public class CustomText extends Demo {
     g.fillRect(1, 1, 1, 1);
     g.dispose();
     backgroundTexture = AWTTextureIO.newTexture(gl.getGLProfile(), bgImage, false);
-    backgroundTexture.bind();
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_WRAP_S,     GL.GL_REPEAT);
-    backgroundTexture.setTexParameteri(GL.GL_TEXTURE_WRAP_T,     GL.GL_REPEAT);
+    backgroundTexture.bind(gl);
+    backgroundTexture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+    backgroundTexture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+    backgroundTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_S,     GL.GL_REPEAT);
+    backgroundTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_T,     GL.GL_REPEAT);
 
     // Create the text renderer
     renderer = new TextRenderer(new Font("Serif", Font.PLAIN, 72), true, true,
@@ -299,8 +299,8 @@ public class CustomText extends Demo {
     gl.glLoadIdentity();
 
     // Draw the background texture
-    backgroundTexture.enable();
-    backgroundTexture.bind();
+    backgroundTexture.enable(gl);
+    backgroundTexture.bind(gl);
     TextureCoords coords = backgroundTexture.getImageTexCoords();
     int w = drawable.getWidth();
     int h = drawable.getHeight();
@@ -317,7 +317,7 @@ public class CustomText extends Demo {
     gl.glTexCoord2f(fw * coords.left(), fh * coords.top());
     gl.glVertex3f(0, h, 0);
     gl.glEnd();
-    backgroundTexture.disable();
+    backgroundTexture.disable(gl);
 
     // Render all text
     renderer.beginRendering(drawable.getWidth(), drawable.getHeight());

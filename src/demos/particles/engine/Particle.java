@@ -58,7 +58,7 @@ public class Particle {
     
   public void draw(GL2 gl, Texture texture, RGBA tendToColor) {
     adjust(tendToColor);
-    texture.bind();
+    texture.bind(gl);
     gl.glColor4f(rgba.r,rgba.g,rgba.b,rgba.a);
         
     gl.glBegin(GL2.GL_QUADS);

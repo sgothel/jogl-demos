@@ -338,13 +338,13 @@ public class Cube implements GLEventListener {
 
             window.addGLEventListener(this);
 
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);
             window.setVisible(true);
 
-            while (!quit && window.getDuration() < 31000) {
+            while (!quit && window.getTotalFPSDuration() < 31000) {
                 window.display();
             }
 

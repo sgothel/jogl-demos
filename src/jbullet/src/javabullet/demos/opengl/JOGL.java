@@ -101,7 +101,7 @@ public class JOGL implements WindowListener, MouseListener {
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_CURRENT); // default
             // window.setEventHandlerMode(GLWindow.EVENT_HANDLER_GL_NONE); // no current ..
 
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
             window.setFullscreen(true);
@@ -109,7 +109,7 @@ public class JOGL implements WindowListener, MouseListener {
             width = window.getWidth();
             height = window.getHeight();
 
-            while (!quit && window.getDuration() < 200000) {
+            while (!quit && window.getTotalFPSDuration() < 200000) {
                 window.display();
             }
 

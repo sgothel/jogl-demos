@@ -47,7 +47,7 @@ public abstract class PerfModule {
         // Let's manage all our states using ShaderState.
         st.attachShaderProgram(gl, sp);
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
     }
 
     public static final void put(Buffer buffer, int type, float v) {

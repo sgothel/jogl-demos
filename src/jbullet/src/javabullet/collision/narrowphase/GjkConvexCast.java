@@ -113,7 +113,7 @@ public class GjkConvexCast implements ConvexCast {
 				GjkPairDetector gjk = new GjkPairDetector(raySphere, convex, simplexSolver, penSolverPtr);
 
 				ClosestPointInput input = pointInputsPool.get();
-				input.init();
+				input.init(gl);
 				
 				input.transformA.set(sphereTr);
 				input.transformB.set(identityTrans);
@@ -162,7 +162,7 @@ public class GjkConvexCast implements ConvexCast {
 					GjkPairDetector gjk = new GjkPairDetector(raySphere, convex, simplexSolver, penSolverPtr);
 					
 					ClosestPointInput input = pointInputsPool.get();
-					input.init();
+					input.init(gl);
 					
 					input.transformA.set(sphereTr);
 					input.transformB.set(identityTrans);

@@ -299,10 +299,10 @@ public class VertexProgRefract extends Demo {
     gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, 3, 0.0f, 1.0f, 2.0f, 3.0f);    // misc constants
 
     try {
-      cubemap = Cubemap.loadFromStreams(getClass().getClassLoader(),
+      cubemap = Cubemap.loadFromStreams(gl,
+                                        getClass().getClassLoader(),
                                         "demos/data/cubemaps/uffizi_",
-                                        "png",
-                                        true);
+                                        "png", true);
     } catch (IOException e) {
       shutdownDemo();
       throw new RuntimeException(e);
@@ -403,15 +403,15 @@ public class VertexProgRefract extends Demo {
 
     // set texture transforms
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    cubemap.bind();
-    cubemap.enable();
+    cubemap.bind(gl);
+    cubemap.enable(gl);
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     viewer.updateInverseRotation(gl);
 
     gl.glActiveTexture(GL.GL_TEXTURE1);
-    cubemap.bind();
-    cubemap.enable();
+    cubemap.bind(gl);
+    cubemap.enable(gl);
     gl.glMatrixMode(GL.GL_TEXTURE);
     gl.glLoadIdentity();
     viewer.updateInverseRotation(gl);
@@ -617,8 +617,8 @@ public class VertexProgRefract extends Demo {
     gl.glDisable(GL.GL_TEXTURE_CUBE_MAP);
   
     gl.glActiveTexture(GL.GL_TEXTURE0);
-    cubemap.bind();
-    cubemap.enable();
+    cubemap.bind(gl);
+    cubemap.enable(gl);
 
     // This is a workaround for a driver bug on Mac OS X where the
     // normals are not being sent down to the hardware in

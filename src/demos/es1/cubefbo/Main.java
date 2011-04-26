@@ -76,7 +76,7 @@ public class Main implements WindowListener, MouseListener {
             window.addWindowListener(this);
             window.addMouseListener(this);
 
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             window.setSize(width, height);
             window.setFullscreen(false);
             window.setVisible(true);
@@ -85,7 +85,7 @@ public class Main implements WindowListener, MouseListener {
             FBCubes cubes = new FBCubes();
             window.addGLEventListener(cubes);
 
-            while ( !quit && window.getDuration() < 31000) {
+            while ( !quit && window.getTotalFPSDuration() < 31000) {
                 window.display();
             }
 

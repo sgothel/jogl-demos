@@ -58,7 +58,7 @@ public class DurationTimer {
     accumulatedTime += (curTime - startTime);
   }
 
-  public long getDuration() {
+  public long getTotalFPSDuration() {
     return accumulatedTime;
   }
 

@@ -240,8 +240,8 @@ public class HWShadowmapsSimple extends Demo {
       decal = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/decal_image.png"),
                                    true,
                                    TextureIO.PNG);
-      decal.setTexParameteri(GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
-      decal.setTexParameteri(GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+      decal.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+      decal.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
       light_image = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/nvlogo_spot.png"),
                                          true,
                                          TextureIO.PNG);
@@ -573,10 +573,10 @@ public class HWShadowmapsSimple extends Demo {
     gl.glMatrixMode(GL2.GL_MODELVIEW);
 
     gl.glDisable(GL2.GL_LIGHTING);
-    decal.bind();
-    decal.enable();
+    decal.bind(gl);
+    decal.enable(gl);
     gl.glCallList(quad);
-    decal.disable();
+    decal.disable(gl);
     gl.glEnable(GL2.GL_LIGHTING);
 
     texgen(gl, false);
@@ -647,8 +647,8 @@ public class HWShadowmapsSimple extends Demo {
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
 
-    light_image.bind();
-    light_image.enable();
+    light_image.bind(gl);
+    light_image.enable(gl);
     gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 
     gl.glActiveTexture(GL2.GL_TEXTURE0);
@@ -660,7 +660,7 @@ public class HWShadowmapsSimple extends Demo {
     render_scene(gl, cameraTransform, drawable, params);
 
     gl.glActiveTexture(GL2.GL_TEXTURE1);
-    light_image.disable();
+    light_image.disable(gl);
     gl.glActiveTexture(GL2.GL_TEXTURE0);
 
     render_manipulators(gl, cameraTransform, drawable, params);
@@ -694,8 +694,8 @@ public class HWShadowmapsSimple extends Demo {
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
 
-    light_image.bind();
-    light_image.enable();
+    light_image.bind(gl);
+    light_image.enable(gl);
     gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 
     // depth compare
@@ -729,7 +729,7 @@ public class HWShadowmapsSimple extends Demo {
     render_scene(gl, cameraTransform, drawable, params);
 
     gl.glActiveTexture(GL2.GL_TEXTURE1);
-    light_image.disable();
+    light_image.disable(gl);
     gl.glActiveTexture(GL2.GL_TEXTURE2);
     gl.glDisable(GL2.GL_TEXTURE_2D);
     gl.glActiveTexture(GL2.GL_TEXTURE0);
@@ -769,8 +769,8 @@ public class HWShadowmapsSimple extends Demo {
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
 
-    light_image.bind();
-    light_image.enable();
+    light_image.bind(gl);
+    light_image.enable(gl);
     gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 
     gl.glActiveTexture(GL2.GL_TEXTURE0);
@@ -785,7 +785,7 @@ public class HWShadowmapsSimple extends Demo {
     render_scene(gl, spotlightTransform, null, null);
 
     gl.glActiveTexture(GL2.GL_TEXTURE1);
-    light_image.disable();
+    light_image.disable(gl);
     gl.glActiveTexture(GL2.GL_TEXTURE0);
   }
 

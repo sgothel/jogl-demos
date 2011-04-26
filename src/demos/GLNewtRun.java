@@ -233,11 +233,11 @@ public class GLNewtRun extends WindowAdapter implements KeyListener, MouseListen
             window.setFullscreen(fullscreen);
             // Size OpenGL to Video Surface
             window.setVisible(true);
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
 
             do {
                 window.display();
-            } while (!quit && window.getDuration() < 20000) ;
+            } while (!quit && window.getTotalFPSDuration() < 20000) ;
 
             window.destroy();
 

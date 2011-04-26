@@ -75,7 +75,7 @@ public class Main implements WindowListener, MouseListener {
             window.addWindowListener(this);
             window.addMouseListener(this);
 
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             window.setSize(width, height);
             window.setFullscreen(true);
             window.setVisible(true);
@@ -97,7 +97,7 @@ public class Main implements WindowListener, MouseListener {
                 }
             } 
 
-            while (!quit && window.getDuration() < 215000) {
+            while (!quit && window.getTotalFPSDuration() < 215000) {
                 window.display();
             }
 

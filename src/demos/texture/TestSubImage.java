@@ -120,7 +120,7 @@ public class TestSubImage {
       if (convertedImage == null) {
         // Get rid of any previously allocated texture
         if (texture != null) {
-          texture.dispose();
+          texture.destroy(gl);
           texture = null;
         }
 
@@ -183,15 +183,15 @@ public class TestSubImage {
           yOrigin = texture.getHeight() - yOrigin;
         }
 
-        texture.updateSubImage(textureData, 0,
+        texture.updateSubImage(gl, textureData, 0,
                                union.x, yOrigin,
                                union.x, yOrigin,
                                union.width, union.height);
       }
 
       // Now draw one quad with the texture
-      texture.enable();
-      texture.bind();
+      texture.enable(gl);
+      texture.bind(gl);
       gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
       TextureCoords coords = texture.getImageTexCoords();
       gl.glBegin(GL2.GL_QUADS);
@@ -204,7 +204,7 @@ public class TestSubImage {
       gl.glTexCoord2f(coords.left(), coords.top());
       gl.glVertex3f(0, 1, 0);
       gl.glEnd();
-      texture.disable();
+      texture.disable(gl);
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}

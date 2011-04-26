@@ -169,17 +169,17 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         initShader(gl);
 
         // Push the 1st uniform down the path 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.glUniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
+        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
-        if(!st.glUniform(gl, new GLUniformData("mgl_ActiveTexture", 0))) {
+        if(!st.uniform(gl, new GLUniformData("mgl_ActiveTexture", 0))) {
             throw new GLException("Error setting mgl_ActiveTexture in shader: "+st);
         }
         gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -197,7 +197,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         }
 
         // Allocate vertex array
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(st, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         {
             // Fill them up
             FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
@@ -209,7 +209,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         vertices.seal(gl, true);
 
         // Allocate texcoord array
-        GLArrayDataServer texcoord = GLArrayDataServer.createGLSL(gl, "mgl_MultiTexCoord", 2, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer texcoord = GLArrayDataServer.createGLSL(st, "mgl_MultiTexCoord", 2, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         {
             // Fill them up
             FloatBuffer texcoordb = (FloatBuffer)texcoord.getBuffer();
@@ -220,7 +220,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         }
         texcoord.seal(gl, true);
 
-        GLArrayDataServer colors = GLArrayDataServer.createGLSL(gl, "mgl_Color",  4, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer colors = GLArrayDataServer.createGLSL(st, "mgl_Color",  4, gl.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         {
             // Fill them up
             FloatBuffer colorb = (FloatBuffer)colors.getBuffer();
@@ -235,7 +235,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         gl.glEnable(GL2ES2.GL_DEPTH_TEST);
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
 
         // Let's show the completed shader state ..
         System.out.println(st);
@@ -257,7 +257,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         // Set location in front of camera
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
@@ -272,10 +272,10 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         GLUniformData ud = st.getUniform("mgl_PMVMatrix");
         if(null!=ud) {
             // same data object
-            st.glUniform(gl, ud);
+            st.uniform(gl, ud);
         } 
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
     }
 
     public void dispose(GLAutoDrawable drawable) {
@@ -293,7 +293,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
     public void display(GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
@@ -312,7 +312,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
             GLUniformData ud = st.getUniform("mgl_PMVMatrix");
             if(null!=ud) {
                 // same data object
-                st.glUniform(gl, ud);
+                st.uniform(gl, ud);
             }
 
             if(!rotate) {
@@ -325,8 +325,8 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         if(null!=movie) {
             tex=movie.getNextTextureID();
             if(null!=tex) {
-                tex.enable();
-                tex.bind();
+                tex.enable(gl);
+                tex.bind(gl);
             }
         }
 
@@ -334,10 +334,10 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
 
         if(null!=tex) {
-            tex.disable();
+            tex.disable(gl);
         }
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {

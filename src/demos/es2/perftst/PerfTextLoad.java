@@ -57,9 +57,9 @@ public class PerfTextLoad extends PerfModule {
         // Vertices Data setup
         //
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(st, "mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
             vb.put(0f); vb.put(0f);
@@ -69,7 +69,7 @@ public class PerfTextLoad extends PerfModule {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer texCoords = GLArrayDataServer.createGLSL(gl, "mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer texCoords = GLArrayDataServer.createGLSL(st, "mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer cb = (FloatBuffer)texCoords.getBuffer();
             cb.put(0f); cb.put(0f);
@@ -86,12 +86,12 @@ public class PerfTextLoad extends PerfModule {
         tU[0] = System.currentTimeMillis();
         for(int j=0; j<numTextures; j++) {
             gl.glActiveTexture(j);
-            textures[j].updateImage(textDatas[0]);
+            textures[j].updateImage(gl, textDatas[0]);
             tU[j+1] = System.currentTimeMillis();
         }
 
         GLUniformData activeTexture = new GLUniformData("mgl_ActiveTexture", 0);
-        st.glUniform(gl, activeTexture);
+        st.uniform(gl, activeTexture);
     
         // 
         // run loops
@@ -116,14 +116,14 @@ public class PerfTextLoad extends PerfModule {
 
                 for(int k=0; k<numTextures; k++) {
                     gl.glActiveTexture(GL.GL_TEXTURE0+k);
-                    textures[k].enable();
-                    textures[k].bind();
+                    textures[k].enable(gl);
+                    textures[k].bind(gl);
                     activeTexture.setData(k);
-                    st.glUniform(gl, activeTexture);
+                    st.uniform(gl, activeTexture);
 
                     t1[i][j][k] = System.currentTimeMillis();
 
-                    textures[k].updateSubImage(textDatas[j], 0, 0, 0);
+                    textures[k].updateSubImage(gl, textDatas[j], 0, 0, 0);
 
                     t2[i][j][k] = System.currentTimeMillis();
 
@@ -189,11 +189,11 @@ public class PerfTextLoad extends PerfModule {
         }
         System.out.println("*****************************************************************");
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
 
         for(int i=0; i<numTextures; i++) {
-            textures[i].disable();
-            textures[i].dispose();
+            textures[i].disable(gl);
+            textures[i].destroy(gl);
             textures[i]=null;
         }
         for(int i=0; i<numObjs; i++) {

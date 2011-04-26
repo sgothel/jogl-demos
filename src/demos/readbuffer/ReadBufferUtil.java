@@ -88,9 +88,9 @@ public class ReadBufferUtil {
             gl.glReadPixels(0, 0, drawable.getWidth(), drawable.getHeight(), GL.GL_RGB, GL.GL_UNSIGNED_BYTE, readPixelBuffer);
             readPixelBuffer.rewind();
             if(newData) {
-                readTexture.updateImage(readTextureData);
+                readTexture.updateImage(gl, readTextureData);
             } else {
-                readTexture.updateSubImage(readTextureData, 0, 
+                readTexture.updateSubImage(gl, readTextureData, 0, 
                                            0, 0, // src offset
                                            0, 0, // dst offset
                                            drawable.getWidth(), drawable.getHeight());
@@ -99,8 +99,8 @@ public class ReadBufferUtil {
         }
     }
 
-    public void dispose() {
-        readTexture.dispose();
+    public void dispose(GL gl) {
+        readTexture.destroy(gl);
         readTextureData = null;
         readPixelBuffer.clear();
         readPixelBuffer = null;

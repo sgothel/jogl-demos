@@ -28,8 +28,8 @@ public class PerfVBOLoad extends PerfModule {
         float r=1f, g=1f, b=1f;
 
         for(int i=0; i<numObjs; i++) {
-            vertices[i] = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 3, dataType, true, numVertices, GL.GL_STATIC_DRAW);
-            vertices[i].setVBOUsage(useVBO);
+            vertices[i] = GLArrayDataServer.createGLSL(st, "mgl_Vertex", 3, dataType, true, numVertices, GL.GL_STATIC_DRAW);
+            vertices[i].setVBOEnabled(useVBO);
             {
                 Buffer verticeb = vertices[i].getBuffer();
                 for(int j=0; j<numVertices; j++) {
@@ -42,8 +42,8 @@ public class PerfVBOLoad extends PerfModule {
                     if(y>1f) { x=0f; y=0f; z+=0.01f; }
                 }
             }
-            colors[i] = GLArrayDataServer.createGLSL(gl, "mgl_Color",  4, dataType, true, numVertices, GL.GL_STATIC_DRAW);
-            colors[i].setVBOUsage(useVBO);
+            colors[i] = GLArrayDataServer.createGLSL(st, "mgl_Color",  4, dataType, true, numVertices, GL.GL_STATIC_DRAW);
+            colors[i].setVBOEnabled(useVBO);
             {
                 // Fill them up
                 Buffer colorb = colors[i].getBuffer();
@@ -74,7 +74,7 @@ public class PerfVBOLoad extends PerfModule {
         long[] tS = new long[loops];
 
         // Push the 1st uniform down the path 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         for(int i=0; i<loops; i++) {
             tC[i] = System.currentTimeMillis();
@@ -164,7 +164,7 @@ public class PerfVBOLoad extends PerfModule {
         }
         System.out.println("*****************************************************************");
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
 
         for(int i=0; i<numObjs; i++) {
             vertices[i].destroy(gl);

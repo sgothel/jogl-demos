@@ -118,12 +118,12 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             window.setSize(width, height);
             // window.setFullscreen(true);
             window.setVisible(true);
-            window.enablePerfLog(true);
+            window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
 
             if(!oneThread) {
                 do {
                     display();
-                } while (!quit && window.getDuration() < 20000) ;
+                } while (!quit && window.getTotalFPSDuration() < 20000) ;
 
                 shutdown();
             }
@@ -212,18 +212,18 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         initShader(gl);
 
         // Push the 1st uniform down the path 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.glUniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
+        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
         // Allocate vertex arrays
-        GLArrayDataClient vertices = GLArrayDataClient.createGLSL(gl, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
+        GLArrayDataClient vertices = GLArrayDataClient.createGLSL(st, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
             FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
@@ -234,7 +234,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
         vertices.seal(gl, true);
 
-        GLArrayDataClient colors = GLArrayDataClient.createGLSL(gl, "mgl_Color",  4, gl.GL_FLOAT, false, 4);
+        GLArrayDataClient colors = GLArrayDataClient.createGLSL(st, "mgl_Color",  4, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
             FloatBuffer colorb = (FloatBuffer)colors.getBuffer();
@@ -249,7 +249,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         gl.glClearColor(0, 0, 0, 1);
         gl.glEnable(GL2ES2.GL_DEPTH_TEST);
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
 
         // Let's show the completed shader state ..
         System.out.println(Thread.currentThread()+" "+st);
@@ -260,7 +260,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         // Set location in front of camera
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
@@ -271,10 +271,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         GLUniformData ud = st.getUniform("mgl_PMVMatrix");
         if(null!=ud) {
             // same data object
-            st.glUniform(gl, ud);
+            st.uniform(gl, ud);
         } 
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
     }
 
     public void dispose(GLAutoDrawable drawable) {
@@ -295,7 +295,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
 
@@ -303,20 +303,20 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
-        float ang = ((float) window.getDuration() * 360.0f) / 4000.0f;
+        float ang = ((float) window.getTotalFPSDuration() * 360.0f) / 4000.0f;
         pmvMatrix.glRotatef(ang, 0, 0, 1);
         pmvMatrix.glRotatef(ang, 0, 1, 0);
 
         GLUniformData ud = st.getUniform("mgl_PMVMatrix");
         if(null!=ud) {
             // same data object
-            st.glUniform(gl, ud);
+            st.uniform(gl, ud);
         } 
 
         // Draw a square
         gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {

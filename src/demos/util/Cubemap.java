@@ -62,10 +62,10 @@ public class Cubemap {
                                          GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
                                          GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
 
-  public static Texture loadFromStreams(ClassLoader scope,
+  public static Texture loadFromStreams(GL gl,
+                                        ClassLoader scope,
                                         String basename,
-                                        String suffix,
-                                        boolean mipmapped) throws IOException, GLException {
+                                        String suffix, boolean mipmapped) throws IOException, GLException {
     Texture cubemap = TextureIO.newTexture(GL.GL_TEXTURE_CUBE_MAP);
 
     for (int i = 0; i < suffixes.length; i++) {
@@ -76,7 +76,7 @@ public class Cubemap {
       if (data == null) {
         throw new IOException("Unable to load texture " + resourceName);
       }
-      cubemap.updateImage(data, targets[i]);
+      cubemap.updateImage(gl, data, targets[i]);
     }
 
     return cubemap;

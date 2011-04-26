@@ -185,13 +185,13 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
             tex=movie.getNextTextureID();
             if(null!=tex) {
                 System.out.println("Use: "+tex);
-                tex.enable();
-                tex.bind();
+                tex.enable(gl);
+                tex.bind(gl);
             }
         }
         cube.display(drawable);
         if(null!=tex) {
-            tex.disable();
+            tex.disable(gl);
         }
     }
 

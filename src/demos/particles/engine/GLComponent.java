@@ -106,7 +106,7 @@ public class GLComponent extends GLCanvas implements GLEventListener {
         
         animator.start();
         
-        engine.init();
+        engine.init(gl);
         
     }    
     

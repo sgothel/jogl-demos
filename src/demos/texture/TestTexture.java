@@ -184,7 +184,7 @@ public class TestTexture implements GLEventListener {
     if (flushTexture) {
       flushTexture = false;
       if (texture != null) {
-        texture.dispose();
+        texture.destroy(gl);
         texture = null;
       }
     }
@@ -193,7 +193,7 @@ public class TestTexture implements GLEventListener {
       newTexture = false;
 
       if (texture != null) {
-        texture.dispose();
+        texture.destroy(gl);
         texture = null;
       }
 
@@ -214,8 +214,8 @@ public class TestTexture implements GLEventListener {
     }
 
     if (texture != null) {
-      texture.enable();
-      texture.bind();
+      texture.enable(gl);
+      texture.bind(gl);
       gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
       TextureCoords coords = texture.getImageTexCoords();
 
@@ -229,7 +229,7 @@ public class TestTexture implements GLEventListener {
       gl.glTexCoord2f(coords.left(), coords.top());
       gl.glVertex3f(0, 1, 0);
       gl.glEnd();
-      texture.disable();
+      texture.disable(gl);
     }
   }
 

@@ -104,7 +104,7 @@ public class ConvexConvexAlgorithm extends CollisionAlgorithm {
 		ConvexShape min1 = (ConvexShape) body1.getCollisionShape();
 
 		ClosestPointInput input = pointInputsPool.get();
-		input.init();
+		input.init(gl);
 
 		// JAVA NOTE: original: TODO: if (dispatchInfo.m_useContinuous)
 		gjkPairDetector.setMinkowskiA(min0);

@@ -124,7 +124,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
             }
             glWindow.addKeyListener(this);
 
-            glWindow.enablePerfLog(true);
+            glWindow.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
 
             // glAnimator = new FPSAnimator(canvas, 60);
             glAnimator = new Animator(tg, glWindow);

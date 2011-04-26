@@ -35,9 +35,9 @@ public class PerfUniLoad extends PerfModule {
             throw new GLException("numArrayElem must be within 0.."+MAX_ARRAY_ELEM);
         }
 
-        st.glUseProgram(gl, true);
+        st.useProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(gl, "mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer vertices = GLArrayDataServer.createGLSL(st, "mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
             vb.put(0f); vb.put(0f); vb.put(0f);
@@ -47,7 +47,7 @@ public class PerfUniLoad extends PerfModule {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer colors = GLArrayDataServer.createGLSL(gl, "mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        GLArrayDataServer colors = GLArrayDataServer.createGLSL(st, "mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
             FloatBuffer cb = (FloatBuffer)colors.getBuffer();
             cb.put(0f); cb.put(0f); cb.put(0f); cb.put(1f);
@@ -103,7 +103,7 @@ public class PerfUniLoad extends PerfModule {
             t0[i] = System.currentTimeMillis();
 
             for(int j=0; j<numObjs; j++) {
-                st.glUniform(gl, dummyUni[j]);
+                st.uniform(gl, dummyUni[j]);
 
                 t1[i][j] = System.currentTimeMillis();
 
@@ -155,7 +155,7 @@ public class PerfUniLoad extends PerfModule {
         System.out.println("*****************************************************************");
 
 
-        st.glUseProgram(gl, false);
+        st.useProgram(gl, false);
 
         try {
             Thread.sleep(100);
