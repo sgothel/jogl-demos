@@ -72,7 +72,8 @@ public class FBCubes implements GLEventListener {
             gl = gltrace;
         }*/
 
-        fbo1.init(gl, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0);
+        fbo1.init(gl);
+        fbo1.attachTexture2D(gl, 0, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0);
         fbo1.attachDepthBuffer(gl, GL.GL_DEPTH_COMPONENT16);
         //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // faster
         //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // GLES2 default
@@ -115,12 +116,11 @@ public class FBCubes implements GLEventListener {
         gl.glFinish();
         fbo1.unbind(gl);
 
-        gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glEnable (gl.GL_TEXTURE_2D);
+        fbo1.use(gl, 0);
         cubeOuter.reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
-        fbo1.use(gl);
         cubeOuter.display(drawable);
-
+        fbo1.unuse(gl);
         gl.glDisable (gl.GL_TEXTURE_2D);
 
         // JAUFBObject tex = fbo1;

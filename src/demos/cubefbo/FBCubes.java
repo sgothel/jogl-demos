@@ -63,9 +63,11 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         GL2 gl = drawable.getGL().getGL2();
         // drawable.setGL(new DebugGL2(gl));
         // gl = drawable.getGL().getGL2();
-        fbo1.init(gl, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
+        fbo1.init(gl);
+        fbo1.attachTexture2D(gl, 0, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
         fbo1.unbind(gl);
-        fbo2.init(gl, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
+        fbo2.init(gl);
+        fbo2.attachTexture2D(gl, 0, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
         fbo2.unbind(gl);
     }
 
@@ -113,10 +115,10 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         for (int i = 0; i < MAX_ITER; i++) {
             rend.bind(gl);
             gl.glEnable (GL.GL_TEXTURE_2D);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, tex.getTextureName()); // to use it ..
+            tex.use(gl, 0);
             cubeMiddle.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
             cubeMiddle.display(gl, xRot, yRot);
-            gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+            tex.unuse(gl);
             gl.glDisable (GL.GL_TEXTURE_2D);
             rend.unbind(gl);
             FBObject tmp = tex;
@@ -132,10 +134,10 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         gl.glClearColor(0, 0, 0, 1);
 
         gl.glEnable (GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, tex.getTextureName()); // to use it ..
+        tex.use(gl, 0);
         cubeOuter.display(gl, xRot, yRot);
         //        System.out.println("display .. p8");
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+        tex.unuse(gl);
         gl.glDisable (GL.GL_TEXTURE_2D);
     }
 
