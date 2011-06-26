@@ -1,5 +1,7 @@
 package demos.es2.perftst;
 
+import com.jogamp.common.util.IOUtil;
+
 import java.nio.*;
 import java.io.*;
 import java.net.*;
@@ -36,7 +38,7 @@ public class PerfTextLoad extends PerfModule {
         try {
             for(int i=0; i<numObjs; i++) {
                 textName = "data/"+textBaseName+"."+(i+1)+".tga";
-                URL urlText = Locator.getResource(Perftst.class, textName);
+                URL urlText = IOUtil.getResource(Perftst.class, textName);
                 if(urlText==null) {
                     throw new RuntimeException("couldn't fetch "+textName);
                 }

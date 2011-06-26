@@ -1,6 +1,6 @@
 package demos.misc;
 
-import com.jogamp.opengl.util.FileUtil;
+import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.util.TGAWriter;
 import com.jogamp.opengl.util.awt.ImageUtil;
 import com.jogamp.opengl.util.gl2.TileRenderer;
@@ -106,7 +106,7 @@ public class TiledRendering {
       tga.close();
     } else {
       ImageUtil.flipImageVertically(img);
-      if (!ImageIO.write(img, FileUtil.getFileSuffix(file), file)) {
+      if (!ImageIO.write(img, IOUtil.getFileSuffix(file), file)) {
         System.err.println("Error writing file using ImageIO (unsupported file format?)");
       }
     }

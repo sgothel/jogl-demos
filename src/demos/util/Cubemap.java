@@ -39,7 +39,7 @@
 
 package demos.util;
 
-import com.jogamp.opengl.util.FileUtil;
+import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
@@ -72,7 +72,7 @@ public class Cubemap {
       String resourceName = basename + suffixes[i] + "." + suffix;
       TextureData data = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(), scope.getResourceAsStream(resourceName),
                                                   mipmapped,
-                                                  FileUtil.getFileSuffix(resourceName));
+                                                  IOUtil.getFileSuffix(resourceName));
       if (data == null) {
         throw new IOException("Unable to load texture " + resourceName);
       }

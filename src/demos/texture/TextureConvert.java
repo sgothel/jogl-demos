@@ -39,7 +39,7 @@
 
 package demos.texture;
 
-import com.jogamp.opengl.util.FileUtil;
+import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
@@ -84,7 +84,7 @@ public class TextureConvert {
     GL gl = pbuffer.getGL();
 
     boolean attemptCompression = false;
-    if (TextureIO.DDS.equals(FileUtil.getFileSuffix(outputFile))) {
+    if (TextureIO.DDS.equals(IOUtil.getFileSuffix(outputFile))) {
       if (gl.isExtensionAvailable("GL_EXT_texture_compression_s3tc") ||
           gl.isExtensionAvailable("GL_NV_texture_compression_vtc")) {
         attemptCompression = true;

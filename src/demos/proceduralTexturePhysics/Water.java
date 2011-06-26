@@ -33,7 +33,7 @@
 
 package demos.proceduralTexturePhysics;
 
-import com.jogamp.opengl.util.FileUtil;
+import com.jogamp.common.util.IOUtil;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
@@ -498,7 +498,7 @@ public class Water {
       initialMapData = TextureIO.newTextureData(glp,
                                                 getClass().getClassLoader().getResourceAsStream(initialMapFilename),
                                                 false,
-                                                FileUtil.getFileSuffix(initialMapFilename));
+                                                IOUtil.getFileSuffix(initialMapFilename));
     } catch (IOException e) {
       throw new GLException(e);
     }
@@ -1038,9 +1038,9 @@ public class Water {
 
     initialMapTex = TextureIO.newTexture(initialMapData);
     spinTex       = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream(spinFilename), false,
-                                         FileUtil.getFileSuffix(spinFilename));
+                                         IOUtil.getFileSuffix(spinFilename));
     dropletTex    = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream(dropletFilename), false,
-                                         FileUtil.getFileSuffix(dropletFilename));
+                                         IOUtil.getFileSuffix(dropletFilename));
 
     // load the cubemap texture
     cubemap = Cubemap.loadFromStreams(gl,
