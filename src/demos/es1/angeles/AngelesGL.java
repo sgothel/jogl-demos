@@ -86,7 +86,7 @@ public class AngelesGL implements GLEventListener {
 
         cComps = drawable.getGL().isGLES1() ? 4: 3;
 
-        this.gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        this.gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
         System.err.println("AngelesGL: "+this.gl);
         
         this.glu = GLU.createGLU();

@@ -122,7 +122,7 @@ public class MovieCube implements MouseListener, GLEventListener, OMXEventListen
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
         System.out.println(gl);
 
         gl.glGetError(); // flush error ..

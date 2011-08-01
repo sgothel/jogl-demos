@@ -167,7 +167,7 @@ public class CubeImmModeSink implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
 
         glu = GLU.createGLU();
 
