@@ -1,7 +1,7 @@
 #! /bin/sh
 
 function print_usage() {
-    echo "Usage: $0 {JOGL_ALL|JOGL_ALL_NOAWT|JOGL_ES1_MIN|JOGL_ES1_MAX|JOGL_ES2_MIN|JOGL_ES2_MAX|JOGL_GL2ES12_MIN|JOGL_GL2ES12_MAX|JOGL_GL2_MIN|JOGL_GL2_MAX} [jogl-build-dir]"
+    echo "Usage: $0 {JOGL_ALL|JOGL_ALL_NOAWT|JOGL_ALL_MOBILE} [jogl-build-dir]"
 }
 
 if [ -z "$1" ] ; then

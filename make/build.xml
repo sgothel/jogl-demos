@@ -94,31 +94,8 @@
     </target>
 
     <target name="init" depends="jogamp.env.init,gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
-        <property name="jogl.core.jar"       value="${jogl.build}/jogl/jogl.core.jar" />
-        <condition property="jogl.cg.jar"    value="${jogl.build}/jogl/jogl.cg.jar">
-          <isset property="jogl.cg"/>
-        </condition>
         <property name="gluegen-rt.jar"      value="${gluegen.build}/gluegen-rt.jar" />
-        <property name="jogl.gles12.jar"     value="${jogl.build}/jogl/jogl.gles12.jar" />
-        <property name="jogl.gles12.dbg.jar" value="${jogl.build}/jogl/jogl.gles12.dbg.jar" />
-        <property name="jogl.gles1.jar"      value="${jogl.build}/jogl/jogl.gles1.jar" />
-        <property name="jogl.gles1.dbg.jar"  value="${jogl.build}/jogl/jogl.gles1.dbg.jar" />
-        <property name="jogl.gles2.jar"      value="${jogl.build}/jogl/jogl.gles2.jar" />
-        <property name="jogl.gles2.dbg.jar"  value="${jogl.build}/jogl/jogl.gles2.dbg.jar" />
-        <property name="jogl.egl.jar"        value="${jogl.build}/jogl/jogl.egl.jar" />
-        <property name="jogl.gldesktop.jar"  value="${jogl.build}/jogl/jogl.gldesktop.jar" />
-        <property name="jogl.gldesktop.dbg.jar" value="${jogl.build}/jogl/jogl.gldesktop.dbg.jar" />
-        <property name="jogl.awt.jar"        value="${jogl.build}/jogl/jogl.awt.jar" />
-        <property name="jogl.util.jar"       value="${jogl.build}/jogl/jogl.util.jar" />
-        <property name="jogl.util.awt.jar"   value="${jogl.build}/jogl/jogl.util.awt.jar" />
-        <property name="jogl.util.fixedfuncemu.jar" value="${jogl.build}/jogl/jogl.util.fixedfuncemu.jar" />
-        <property name="jogl.util.gldesktop.jar" value="${jogl.build}/jogl/jogl.util.gldesktop.jar" />
-        <property name="nativewindow.core.jar" value="${jogl.build}/nativewindow/nativewindow.core.jar" />
-        <property name="nativewindow.x11.jar"  value="${jogl.build}/nativewindow/nativewindow.x11.jar" />
-        <property name="nativewindow.awt.jar"  value="${jogl.build}/nativewindow/nativewindow.awt.jar" />
-        <property name="newt.core.jar"       value="${jogl.build}/newt/newt.core.jar" />
-        <property name="newt.ogl.jar"        value="${jogl.build}/newt/newt.ogl.jar" />
-        <property name="newt.awt.jar"        value="${jogl.build}/newt/newt.awt.jar" />
+        <property name="jogl.all.jar"        value="${jogl.build}/jar/jogl.all.jar" />
         <property name="joal.jar"            value="${joal.build}/joal.jar" />
         <property name="simple-xml.jar"      value="${project.root}/lib/simple-xml-1.1.1.jar" />
         <property name="classes"             value="${build}/classes" />
@@ -167,26 +144,7 @@
     <target name="all-desktop" unless="isGLES">
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${nativewindow.core.jar}" />
-            <pathelement location="${nativewindow.x11.jar}" />
-            <pathelement location="${nativewindow.awt.jar}" />
-            <pathelement location="${jogl.core.jar}" />
-            <pathelement location="${jogl.cg.jar}" />
-            <pathelement location="${jogl.gles1.jar}" />
-            <pathelement location="${jogl.gles1.dbg.jar}" />
-            <pathelement location="${jogl.gles2.jar}" />
-            <pathelement location="${jogl.gles2.dbg.jar}" />
-            <pathelement location="${jogl.egl.jar}" />
-            <pathelement location="${jogl.gldesktop.jar}" />
-            <pathelement location="${jogl.gldesktop.dbg.jar}" />
-            <pathelement location="${jogl.awt.jar}" />
-            <pathelement location="${jogl.util.jar}" />
-            <pathelement location="${jogl.util.fixedfuncemu.jar}" />
-            <pathelement location="${jogl.util.awt.jar}" />
-            <pathelement location="${jogl.util.gldesktop.jar}" />
-            <pathelement location="${newt.core.jar}" />
-            <pathelement location="${newt.ogl.jar}" />
-            <pathelement location="${newt.awt.jar}" />
+            <pathelement location="${jogl.all.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
             <pathelement location="${simple-xml.jar}" />
@@ -240,19 +198,8 @@
         <echo message="classes destdir ${classes}" />
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${nativewindow.core.jar}" />
-            <pathelement location="${nativewindow.x11.jar}" />
-            <pathelement location="${jogl.core.jar}" />
-            <pathelement location="${jogl.gles1.jar}" />
-            <pathelement location="${jogl.gles1.dbg.jar}" />
-            <pathelement location="${jogl.gles2.jar}" />
-            <pathelement location="${jogl.gles2.dbg.jar}" />
-            <pathelement location="${jogl.egl.jar}" />
-            <pathelement location="${jogl.util.jar}" />
-            <pathelement location="${jogl.util.fixedfuncemu.jar}" />
+            <pathelement location="${jogl.all.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
-            <pathelement location="${newt.core.jar}" />
-            <pathelement location="${newt.ogl.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.5" debug="true" debuglevel="source,lines"
                includeantruntime="false">

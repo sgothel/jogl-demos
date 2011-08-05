@@ -14,7 +14,7 @@
       <property name="sun.java2d.noddraw" value="true"/>
       <jar href="http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar" main="true"/>
       <jar href="http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos-util.jar"/>
-      <extension name="newt-all-awt" href="http://jogamp.org/deployment/webstart/newt-all-awt.jnlp" />
+      <extension name="jogl-all-awt" href="http://jogamp.org/deployment/webstart/jogl-all-awt.jnlp" />
     </resources>
 
   <applet-desc 

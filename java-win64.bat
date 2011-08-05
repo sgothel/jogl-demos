@@ -5,7 +5,7 @@ set JAVA_HOME=c:\jdk1.6.0_22_x64
 set JAR_DIR=..\jogl\build-win64\jar
 set LIB_DIR=..\jogl\build-win64\lib
 
-set CP_ALL=.;%JAR_DIR%\jogl.all.jar;%JAR_DIR%\nativewindow.all.jar;%JAR_DIR%\newt.all.jar;%JAR_DIR%\gluegen-rt.jar;build-win64\jogl-demos.jar;build-win64\jogl-demos-util.jar;build-win64\jogl-demos-data.jar
+set CP_ALL=.;%JAR_DIR%\jogl.all.jar;%JAR_DIR%\gluegen-rt.jar;build-win64\jogl-demos.jar;build-win64\jogl-demos-util.jar;build-win64\jogl-demos-data.jar
 
 echo CP_ALL %CP_ALL%
 

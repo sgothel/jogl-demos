@@ -20,8 +20,7 @@
               max-heap-size="512m"/>
         <property name="sun.java2d.noddraw" value="true"/>
         <jar href="worldwind.jar" main="true"/>
-        <extension name="jogl-all-awt"
-                   href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" version="JOGAMP_VERSION"/>
+        <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" version="JOGAMP_VERSION"/>
     </resources>
     <application-desc main-class="worldwinddemo.BasicDemo">
       <argument>NotFirstUIActionOnProcess</argument> 
