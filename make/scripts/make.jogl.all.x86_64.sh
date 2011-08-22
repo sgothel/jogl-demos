@@ -1,7 +1,5 @@
 #! /bin/sh
 
-. ../../setenv-build-jogl-x86_64.sh
-
 #    -Dc.compiler.debug=true 
 #    -Djogl.cg=1 \
 #    -Djogl.redbook=true \

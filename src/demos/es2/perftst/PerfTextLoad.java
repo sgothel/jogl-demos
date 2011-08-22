@@ -129,7 +129,7 @@ public class PerfTextLoad extends PerfModule {
 
                     t2[i][j][k] = System.currentTimeMillis();
 
-                    gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, vertices.getElementNumber());
+                    gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, vertices.getElementCount());
 
                     t3[i][j][k] = System.currentTimeMillis();
                 }

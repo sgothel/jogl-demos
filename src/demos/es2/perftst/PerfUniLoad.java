@@ -107,7 +107,7 @@ public class PerfUniLoad extends PerfModule {
 
                 t1[i][j] = System.currentTimeMillis();
 
-                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices.getElementNumber());
+                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices.getElementCount());
 
                 t2[i][j] = System.currentTimeMillis();
             }

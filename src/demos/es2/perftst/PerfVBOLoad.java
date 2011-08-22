@@ -103,7 +103,7 @@ public class PerfVBOLoad extends PerfModule {
 
                 t2[i][j] = System.currentTimeMillis();
 
-                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices[j].getElementNumber());
+                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices[j].getElementCount());
 
                 if(numObjs>1) {
                     vertices[j].enableBuffer(gl, false);
@@ -127,10 +127,10 @@ public class PerfVBOLoad extends PerfModule {
             colors[0].enableBuffer(gl, false);
         }
 
-        int verticesElements = vertices[0].getElementNumber() * numObjs;
-        int verticesBytes    = verticesElements * vertices[0].getComponentSize()* vertices[0].getComponentNumber();
-        int colorsElements   = colors[0].getElementNumber()   * colors.length;
-        int colorsBytes      = colorsElements * colors[0].getComponentSize()* colors[0].getComponentNumber();
+        int verticesElements = vertices[0].getElementCount() * numObjs;
+        int verticesBytes    = verticesElements * vertices[0].getComponentSizeInBytes()* vertices[0].getComponentCount();
+        int colorsElements   = colors[0].getElementCount()   * colors.length;
+        int colorsBytes      = colorsElements * colors[0].getComponentSizeInBytes()* colors[0].getComponentCount();
 
         dt = 0;
         for(int i=1; i<loops; i++) {
@@ -139,8 +139,8 @@ public class PerfVBOLoad extends PerfModule {
 
         System.out.println("");
         System.out.println("Loops "+loops+", useVBO "+useVBO+", objects "+numObjs+", type "+getTypeName(dataType)+
-                           ", vertices p.o. "+vertices[0].getElementNumber()+
-                           ", colors p.o. "+colors[0].getElementNumber()+
+                           ", vertices p.o. "+vertices[0].getElementCount()+
+                           ", colors p.o. "+colors[0].getElementCount()+
                            ",\n total elements "+(verticesElements+colorsElements)+
                            ", total bytes "+(verticesBytes+colorsBytes)+", total time: "+dt +
                            "ms, fps(-1): "+(((loops-1)*1000)/dt)+
