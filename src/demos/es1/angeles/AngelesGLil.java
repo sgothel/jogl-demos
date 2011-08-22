@@ -299,12 +299,12 @@ public class GLSpatial {
         interlArray.flip();
 
         vArrayData = GLArrayDataWrapper.createFixed(gl.GL_VERTEX_ARRAY, vComps, GL.GL_FLOAT, false,
-                                                    bStride, pBuffer, vboName, vOffset, GL.GL_STATIC_DRAW);
+                                                    bStride, pBuffer, vboName, vOffset, GL.GL_STATIC_DRAW, GL.GL_ARRAY_BUFFER);
         cArrayData = GLArrayDataWrapper.createFixed(gl.GL_COLOR_ARRAY, cComps, GL.GL_FLOAT, false,
-                                                    bStride, pBuffer, vboName, cOffset, GL.GL_STATIC_DRAW);
+                                                    bStride, pBuffer, vboName, cOffset, GL.GL_STATIC_DRAW, GL.GL_ARRAY_BUFFER);
         if(useNormalArray) {
             nArrayData = GLArrayDataWrapper.createFixed(gl.GL_NORMAL_ARRAY, nComps, GL.GL_FLOAT, false,
-                                                        bStride, pBuffer, vboName, nOffset, GL.GL_STATIC_DRAW);
+                                                        bStride, pBuffer, vboName, nOffset, GL.GL_STATIC_DRAW, GL.GL_ARRAY_BUFFER);
         }
     }
 
