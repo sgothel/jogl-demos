@@ -223,7 +223,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
         // Allocate vertex arrays
-        GLArrayDataClient vertices = GLArrayDataClient.createGLSL(st, "mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
+        GLArrayDataClient vertices = GLArrayDataClient.createGLSL("mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
             FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
@@ -234,7 +234,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
         vertices.seal(gl, true);
 
-        GLArrayDataClient colors = GLArrayDataClient.createGLSL(st, "mgl_Color",  4, gl.GL_FLOAT, false, 4);
+        GLArrayDataClient colors = GLArrayDataClient.createGLSL("mgl_Color",  4, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
             FloatBuffer colorb = (FloatBuffer)colors.getBuffer();
