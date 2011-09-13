@@ -19,9 +19,9 @@
       <property name="jnlp.nativewindow.TraceLock" value="true"/>
       <property name="jnlp.jogl.debug" value="GLDrawable"/>
       <property name="jnlp.newt.debug" value="all"/>
-      <jar href="jogl-demos.jar" main="true"/>
-      <jar href="jogl-demos-util.jar" />
-      <jar href="jogl-demos-data.jar" />
+      <jar href="jar/jogl-demos.jar" main="true"/>
+      <jar href="jar/jogl-demos-util.jar" />
+      <jar href="jar/jogl-demos-data.jar" />
       <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
     </resources>
 

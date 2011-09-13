@@ -24,12 +24,10 @@ JNLP applet's one.
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
-               http://jogamp.org/deployment/webstart/newt.all.jar,
-               http://jogamp.org/deployment/webstart/nativewindow.all.jar,
-               http://jogamp.org/deployment/webstart/jogl.all.jar,
-               http://jogamp.org/deployment/webstart/gluegen-rt.jar,
-               http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar">
+      archive="http://jogamp.org/deployment/jogamp-current/jar/applet-launcher.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/gluegen-rt.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/jogl.all.jar,
+               http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" value="demos.applets.GearsApplet">
    <param name="subapplet.displayname" value="JOGL Gears Applet">
@@ -37,7 +35,7 @@ JNLP applet's one.
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="1">
    <param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/webstart/jogl-core.jnlp">
+          value="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp">
    <param name="java_arguments" value="-Dsun.java2d.noddraw=true">
    <param name="jnlp_href" value="applet-gears.jnlp">
 </applet>
@@ -51,11 +49,10 @@ The applet above is instantiated with the following code:
 &lt;applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
-               http://jogamp.org/deployment/webstart/nativewindow.all.jar,
-               http://jogamp.org/deployment/webstart/jogl.all.jar,
-               http://jogamp.org/deployment/webstart/gluegen-rt.jar,
-               http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar"&gt;
+      archive="http://jogamp.org/deployment/jogamp-current/jar/applet-launcher.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/gluegen-rt.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/jogl.all.jar,
+               http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos.jar"&gt;
    &lt;param name="codebase_lookup" value="false"&gt;
    &lt;param name="subapplet.classname" value="demos.applets.GearsApplet"&gt;
    &lt;param name="subapplet.displayname" value="JOGL Gears Applet"&gt;
@@ -63,7 +60,7 @@ The applet above is instantiated with the following code:
    &lt;param name="progressbar" value="true"&gt;
    &lt;param name="jnlpNumExtensions" value="1"&gt;
    &lt;param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/webstart/jogl-core.jnlp"&gt;
+          value="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp"&gt;
    &lt;param name="java_arguments" value="-Dsun.java2d.noddraw=true"&gt;
    &lt;param name="jnlp_href" value="applet-gears.jnlp"&gt;
 &lt;/applet&gt;
@@ -86,9 +83,9 @@ Where the referenced JNLP file <em>applet-gears.jnlp</em> looks as follow:
     &lt;resources&gt;
       &lt;j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/&gt;
       &lt;property name="sun.java2d.noddraw" value="true"/&gt;
-      &lt;jar href="http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar" main="true"/&gt;
-      &lt;jar href="http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos-util.jar"/&gt;
-      &lt;extension name="newt-all-awt" href="http://jogamp.org/deployment/webstart/newt-all-awt.jnlp" /&gt;
+      &lt;jar href="http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos.jar" main="true"/&gt;
+      &lt;jar href="http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos-util.jar"/&gt;
+      &lt;extension name="newt-all-awt" href="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp" /&gt;
     &lt;/resources&gt;
 
   &lt;applet-desc 

@@ -10,13 +10,11 @@
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
-               http://jogamp.org/deployment/webstart-next/newt.all.jar,
-               http://jogamp.org/deployment/webstart-next/nativewindow.all.jar,
-               http://jogamp.org/deployment/webstart-next/jogl.all.jar,
-               http://jogamp.org/deployment/webstart-next/gluegen-rt.jar,
-               http://jogamp.org/deployment/webstart-next/jogl-demos/jogl-demos.jar,
-               http://jogamp.org/deployment/webstart-next/joal.jar,
+      archive="http://jogamp.org/deployment/jogamp-next/jar/applet-launcher.jar,
+               http://jogamp.org/deployment/jogamp-next/jar/gluegen-rt.jar,
+               http://jogamp.org/deployment/jogamp-next/jar/jogl.all.jar,
+               http://jogamp.org/deployment/jogamp-next/jar/joal.jar,
+               http://jogamp.org/deployment/jogamp-next/jogl-demos/jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet">
    <param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet">
@@ -24,9 +22,9 @@
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="2">
    <param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/webstart-next/jogl-core.jnlp">
+          value="http://jogamp.org/deployment/jogamp-next/jogl-all-awt.jnlp">
    <param name="jnlpExtension2"
-          value="http://jogamp.org/deployment/webstart-next/joal.jnlp">
+          value="http://jogamp.org/deployment/jogamp-next/joal.jnlp">
 </applet>
 
 

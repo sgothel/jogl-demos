@@ -10,12 +10,10 @@
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
-               http://jogamp.org/deployment/webstart-next/newt.all.jar,
-               http://jogamp.org/deployment/webstart-next/nativewindow.all.jar,
-               http://jogamp.org/deployment/webstart-next/jogl.all.jar,
-               http://jogamp.org/deployment/webstart-next/gluegen-rt.jar,
-               http://jogamp.org/deployment/webstart-next/jogl-demos/jogl-demos.jar">
+      archive="http://jogamp.org/deployment/jogamp-next/jar/applet-launcher.jar,
+               http://jogamp.org/deployment/jogamp-next/jar/gluegen-rt.jar,
+               http://jogamp.org/deployment/jogamp-next/jar/jogl.all.jar,
+               http://jogamp.org/deployment/jogamp-next/jogl-demos/jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" value="demos.applets.GearsApplet">
    <param name="subapplet.displayname" value="JOGL Gears Applet">
@@ -23,7 +21,7 @@
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="1">
    <param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/webstart-next/jogl-core.jnlp">
+          value="http://jogamp.org/deployment/jogamp-next/jogl-all-awt.jnlp">
 </applet>
 
 

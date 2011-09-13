@@ -17,9 +17,9 @@
       <property name="sun.java2d.opengl" value="True"/>
       <!-- Temporary workaround for slowness in Windows NVidia drivers -->
       <!-- property name="swing.bufferPerWindow" value="false"/ -->
-      <jar href="jogl-demos.jar" main="true"/>
-      <jar href="jogl-demos-util.jar" />
-      <jar href="jogl-demos-data.jar" />
+      <jar href="jar/jogl-demos.jar" main="true"/>
+      <jar href="jar/jogl-demos-util.jar" />
+      <jar href="jar/jogl-demos-data.jar" />
       <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
     </resources>
 

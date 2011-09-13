@@ -12,9 +12,9 @@
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
       <property name="sun.java2d.noddraw" value="true"/>
-      <jar href="http://jogamp.org/deployment/webstart-next/jogl-demos/jogl-demos.jar" main="true"/>
-      <jar href="http://jogamp.org/deployment/webstart-next/jogl-demos/jogl-demos-util.jar"/>
-      <extension name="newt-all-awt" href="http://jogamp.org/deployment/webstart-next/newt-all-awt.jnlp" />
+      <jar href="http://jogamp.org/deployment/jogamp-next/jogl-demos/jar/jogl-demos.jar" main="true"/>
+      <jar href="http://jogamp.org/deployment/jogamp-next/jogl-demos/jar/jogl-demos-util.jar"/>
+      <extension name="newt-all-awt" href="http://jogamp.org/deployment/jogamp-next/newt-all-awt.jnlp" />
     </resources>
 
   <applet-desc 

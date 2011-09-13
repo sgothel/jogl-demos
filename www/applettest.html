@@ -23,12 +23,10 @@ as an applet:
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
-               http://jogamp.org/deployment/webstart/newt.all.jar,
-               http://jogamp.org/deployment/webstart/jogl.all.jar,
-               http://jogamp.org/deployment/webstart/nativewindow.all.jar,
-               http://jogamp.org/deployment/webstart/gluegen-rt.jar,
-               http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar">
+      archive="http://jogamp.org/deployment/jogamp-current/jar/applet-launcher.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/gluegen-rt.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/jogl.all.jar,
+               http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" value="demos.applets.GearsApplet">
    <param name="subapplet.displayname" value="JOGL Gears Applet">
@@ -36,7 +34,7 @@ as an applet:
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="1">
    <param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/webstart/jogl-core.jnlp">
+          value="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp">
 </applet>
 
 </P>
@@ -48,11 +46,10 @@ The applet above is instantiated with the following code:
 &lt;applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/util/applet-launcher.jar,
-               http://jogamp.org/deployment/webstart/nativewindow.all.jar,
-               http://jogamp.org/deployment/webstart/jogl.all.jar,
-               http://jogamp.org/deployment/webstart/gluegen-rt.jar,
-               http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar"&gt;
+      archive="http://jogamp.org/deployment/jogamp-current/jar/applet-launcher.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/gluegen-rt.jar,
+               http://jogamp.org/deployment/jogamp-current/jar/jogl.all.jar,
+               http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos.jar"&gt;
    &lt;param name="codebase_lookup" value="false"&gt;
    &lt;param name="subapplet.classname" value="demos.applets.GearsApplet"&gt;
    &lt;param name="subapplet.displayname" value="JOGL Gears Applet"&gt;
@@ -60,7 +57,7 @@ The applet above is instantiated with the following code:
    &lt;param name="progressbar" value="true"&gt;
    &lt;param name="jnlpNumExtensions" value="1"&gt;
    &lt;param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/webstart/jogl-core.jnlp"&gt;
+          value="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp"&gt;
 &lt;/applet&gt;
 </pre>
 
