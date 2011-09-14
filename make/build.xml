@@ -223,6 +223,8 @@
 
     <target name="all" depends="init, all-desktop, all-gles, tag.build, developer-zip-archive" />
 
+    <target name="all.ide" depends="init, all-desktop, all-gles" />
+
     <target name="tag.build">
         <copy file="${jogl.build}/artifact.properties" todir="${build}" overwrite="true"/>
         <echo message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' file="${build}/artifact.properties" append="true"/>

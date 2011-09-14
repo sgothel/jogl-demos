@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="redbook/|redbook/src/|jbullet/src/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/jbullet/src"/>
+	<classpathentry excluding="src/" kind="src" path="src/redbook"/>
+	<classpathentry kind="src" path="src/redbook/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Ant"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jogamp"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SWT"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>
