@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp href="jogl-newt-applet-runner.jnlp">
+<jnlp href="applet-redsquare-newtawt.jnlp">
   <information>
-    <title>JOGL NEWT JNLP Applet Runner</title>
+    <title>JOGL JNLP Applet RedSquare NEWT-AWT Demo</title>
     <vendor>JogAmp Community</vendor>
     <homepage href="http://jogamp.org/jogl-demos/"/>
-    <description>JOGL NEWT JNLP Applet Runner</description>
-    <!-- offline-allowed/-->
+    <description>RedSquare NEWT-AWT Demo</description>
+    <description kind="short">RedSquare NEWT-AWT Demo</description>
+    <offline-allowed/>
   </information>
-  <!-- update check="background" policy="always"/-->
 
     <resources>
       <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
       <property name="sun.java2d.noddraw" value="true"/>
       <jar href="../jar/jogl-demos.jar" main="true"/>
       <jar href="../jar/jogl-demos-util.jar"/>
-      <extension name="jogl-all-awt" href="http://jogamp.org/deployment/jogamp-next/jogl-all-awt.jnlp" />
+      <extension name="jogl-all-awt" href="../jogl-all-awt.jnlp" />
     </resources>
 
   <applet-desc 
-      name="JOGLNewtApplet2Run-Applet"
-      main-class="demos.applets.JOGLNewtApplet1Run"
+      name="RedSquare-NEWT-AWT-Applet"
+      main-class="demos.applets.RedSquareNEWTAWTApplet"
       width="640" 
       height="480">
   </applet-desc>

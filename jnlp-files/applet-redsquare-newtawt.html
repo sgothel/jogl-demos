@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<title>JOGL JNLP Applet Test NEXT</title>
+<title>JOGL JNLP Applet Test</title>
 </head>
 <body>
 
@@ -10,10 +10,10 @@
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="http://jogamp.org/deployment/jogamp-next/jar/applet-launcher.jar,
-               http://jogamp.org/deployment/jogamp-next/jar/gluegen-rt.jar,
-               http://jogamp.org/deployment/jogamp-next/jar/jogl.all.jar,
-               http://jogamp.org/deployment/jogamp-next/jogl-demos/jar/jogl-demos.jar">
+      archive="../jar/applet-launcher.jar,
+               ../jar/gluegen-rt.jar,
+               ../jar/jogl.all.jar,
+               jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" value="demos.applets.RedSquareNEWTAWTApplet">
    <param name="subapplet.displayname" value="JOGL RedSquare NEWT-AWT Applet">
@@ -21,9 +21,9 @@
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="1">
    <param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/jogamp-next/jogl-all-awt.jnlp">
+          value="../jogl-all-awt.jnlp">
    <param name="java_arguments" value="-Dsun.java2d.noddraw=true">
-   <param name="jnlp_href" value="applet-redsquare-newtawt-next.jnlp">
+   <param name="jnlp_href" value="applet-redsquare-newtawt.jnlp">
 </applet>
 
 </P>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp codebase="DEMO_CODEBASE_TAG" href="applet-gears.jnlp">
+<jnlp href="applet-gears.jnlp">
   <information>
     <title>JOGL JNLP Applet Gears Demo</title>
     <vendor>JogAmp Community</vendor>
@@ -15,7 +15,7 @@
       <property name="sun.java2d.noddraw" value="true"/>
       <jar href="jar/jogl-demos.jar" main="true"/>
       <jar href="jar/jogl-demos-util.jar"/>
-      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
+      <extension name="jogl-all-awt" href="../jogl-all-awt.jnlp" />
     </resources>
 
   <applet-desc 

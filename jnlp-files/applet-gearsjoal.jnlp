@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp codebase="DEMO_CODEBASE_TAG" href="applet-gearsjoal.jnlp">
+<jnlp href="applet-gearsjoal.jnlp">
   <information>
     <title>JOGL JNLP Applet GearsJOAL Demo</title>
     <vendor>JogAmp Community</vendor>
@@ -16,8 +16,8 @@
       <jar href="jar/jogl-demos.jar" main="true"/>
       <jar href="jar/jogl-demos-data.jar"/>
       <jar href="jar/jogl-demos-util.jar"/>
-      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
-      <extension name="joal" href="JOAL_CODEBASE_TAG/joal.jnlp" />
+      <extension name="jogl-all-awt" href="../jogl-all-awt.jnlp" />
+      <extension name="joal" href="../joal.jnlp" />
     </resources>
 
   <applet-desc 
