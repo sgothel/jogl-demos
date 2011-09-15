@@ -60,7 +60,7 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
         Object instance = null;
 
         try {
-            Class clazz = Class.forName(clazzName);
+            Class<?> clazz = Class.forName(clazzName);
             instance = clazz.newInstance();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -139,9 +139,6 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
             glWindow.setVisible(true);
             glAnimator.start();
             awtParent = glWindow.getParent();
-            if(null==awtParent) {
-                throw new RuntimeException("Parent of GLWindow is null: "+glWindow);
-            }
         }
     }
 
@@ -209,7 +206,9 @@ public class JOGLNewtAppletBase extends WindowAdapter implements KeyListener, Mo
             glWindow.setUndecorated(!glWindow.isUndecorated());
        } if(e.getKeyChar()=='f') {
             glWindow.setFullscreen(!glWindow.isFullscreen());
-       } else if(e.getKeyChar()=='r') {
+       } else if(e.getKeyChar()=='a') {
+            glWindow.setAlwaysOnTop(!glWindow.isAlwaysOnTop());
+       } else if(e.getKeyChar()=='r' && null!=awtParent) {
             if(null == glWindow.getParent()) {
                 glWindow.reparentWindow(awtParent);
             } else {
