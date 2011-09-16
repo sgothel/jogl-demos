@@ -10,11 +10,11 @@
 <applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
       width=600
       height=400
-      archive="../jar/applet-launcher.jar,
-               ../jar/gluegen-rt.jar,
-               ../jar/jogl.all.jar,
-               ../jar/joal.jar,
-               jar/jogl-demos.jar">
+      archive="JOGL_CODEBASE_TAG/jar/applet-launcher.jar,
+               JOGL_CODEBASE_TAG/jar/gluegen-rt.jar,
+               JOGL_CODEBASE_TAG/jar/jogl.all.jar,
+               JOGL_CODEBASE_TAG/jar/joal.jar,
+               DEMO_CODEBASE_TAG/jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
    <param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet">
    <param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet">
@@ -22,9 +22,9 @@
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="2">
    <param name="jnlpExtension1"
-          value="../jogl-all-awt.jnlp">
+          value="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp">
    <param name="jnlpExtension2"
-          value="../joal.jnlp">
+          value="JOGL_CODEBASE_TAG/joal.jnlp">
    <param name="java_arguments" value="-Dsun.java2d.noddraw=true">
    <param name="jnlp_href" value="applet-gearsjoal.jnlp">
 </applet>
