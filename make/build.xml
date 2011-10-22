@@ -96,6 +96,7 @@
     <target name="init" depends="jogamp.env.init,gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
         <property name="gluegen-rt.jar"      value="${gluegen.build}/gluegen-rt.jar" />
         <property name="jogl.all.jar"        value="${jogl.build}/jar/jogl.all.jar" />
+        <property name="jogl.cg.jar"         value="${jogl.build}/jar/atomic/jogl.cg.jar" />
         <property name="joal.jar"            value="${joal.build}/joal.jar" />
         <property name="simple-xml.jar"      value="${project.root}/lib/simple-xml-1.1.1.jar" />
         <property name="classes"             value="${build}/classes" />
@@ -145,6 +146,7 @@
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
             <pathelement location="${jogl.all.jar}" />
+            <pathelement location="${jogl.cg.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
             <pathelement location="${simple-xml.jar}" />
@@ -199,6 +201,7 @@
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
             <pathelement location="${jogl.all.jar}" />
+            <pathelement location="${jogl.cg.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
         </path>
         <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.5" debug="true" debuglevel="source,lines"

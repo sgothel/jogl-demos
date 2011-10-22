@@ -1,10 +1,10 @@
 #! /bin/sh
 
-. /devtools/etc/profile.ant
+SDIR=`dirname $0`
 
 #    -Dc.compiler.debug=true 
+#    -Djogl.cg=1 \
 
 ant -v \
-    -Djogl.cg=1 \
     -Drootrel.build=build-macosx \
     $* 2>&1 | tee make.jogl.all.macosx.log
