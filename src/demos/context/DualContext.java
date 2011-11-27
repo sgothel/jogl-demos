@@ -167,6 +167,6 @@ public class DualContext extends Canvas {
     if (config == null) {
       return null;
     }
-    return config.getGraphicsConfiguration();
+    return config.getAWTGraphicsConfiguration();
   }
 }
