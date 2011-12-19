@@ -17,7 +17,7 @@
       <jar href="jar/jogl-demos.jar" main="true"/>
       <jar href="jar/jogl-demos-util.jar" />
       <jar href="jar/jogl-demos-data.jar" />
-      <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" />
+      <extension name="jogl-all-awt-cg" href="JOGL_CODEBASE_TAG/jogl-all-awt-cg.jnlp" />
     </resources>
 
   <application-desc main-class="demos.hdr.HDR">
