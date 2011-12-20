@@ -7,27 +7,48 @@
 
 <P>
 
-<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
-      width=600
-      height=400
-      archive="JOGL_CODEBASE_TAG/jar/applet-launcher.jar,
-               JOGL_CODEBASE_TAG/jar/gluegen-rt.jar,
-               JOGL_CODEBASE_TAG/jar/jogl.all.jar,
-               JOGL_CODEBASE_TAG/jar/joal.jar,
-               DEMO_CODEBASE_TAG/jar/jogl-demos.jar">
+<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+      width="600" height="400">
+   <param name="code" value="org.jdesktop.applet.util.JNLPAppletLauncher">
+   <param name="archive" value="../jar/applet-launcher.jar,
+                                ../jar/gluegen-rt.jar,
+                                ../jar/jogl.all.jar,
+                                ../jar/joal.jar,
+                                jar/jogl-demos.jar">
    <param name="codebase_lookup" value="false">
-   <param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet">
-   <param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet">
+   <param name="subapplet.classname" value="demos.applets.GearsJOALApplet">
+   <param name="subapplet.displayname" value="JOGL / JOAL Gears Applet">
    <param name="noddraw.check" value="true">
    <param name="progressbar" value="true">
    <param name="jnlpNumExtensions" value="2">
-   <param name="jnlpExtension1"
-          value="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp">
-   <param name="jnlpExtension2"
-          value="JOGL_CODEBASE_TAG/joal.jnlp">
+   <param name="jnlpExtension1" value="../jogl-all-awt.jnlp">
+   <param name="jnlpExtension2" value="../joal.jnlp">
    <param name="java_arguments" value="-Dsun.java2d.noddraw=true">
    <param name="jnlp_href" value="applet-gearsjoal.jnlp">
-</applet>
+   <comment>
+     <embed code="org.jdesktop.applet.util.JNLPAppletLauncher"
+          width="600" height="400"
+          type="application/x-java-applet;version=1.6"
+          pluginspage="http://java.sun.com/javase/downloads/ea.jsp"
+          archive="../jar/applet-launcher.jar,
+                   ../jar/gluegen-rt.jar,
+                   ../jar/jogl.all.jar,
+                   ../jar/joal.jar,
+                   jar/jogl-demos.jar"
+          codebase_lookup="false"
+          subapplet.classname="demos.applets.GearsJOALApplet"
+          subapplet.displayname" value="JOGL / JOAL Gears Applet"
+          noddraw.check" value="true"
+          progressbar="true"
+          jnlpNumExtensions="2"
+          jnlpExtension1="../jogl-all-awt.jnlp"
+          jnlpExtension2="../joal.jnlp"
+          java_arguments="-Dsun.java2d.noddraw=true"
+          jnlp_href="applet-gearsjoal.jnlp">
+        <noembed>Sorry, no Java support detected.</noembed>
+     </embed>
+   </comment>
+</object>
 
 </P>
 <P>
@@ -35,27 +56,48 @@
 The applet above is instantiated with the following code:
 
 <pre>
-&lt;applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
-      width=600
-      height=400
-      archive="http://jogamp.org/deployment/jogamp-current/jar/applet-launcher.jar,
-               http://jogamp.org/deployment/jogamp-current/jar/gluegen-rt.jar,
-               http://jogamp.org/deployment/jogamp-current/jar/jogl.all.jar,
-               http://jogamp.org/deployment/jogamp-current/jar/joal.jar,
-               http://jogamp.org/deployment/jogamp-current/jogl-demos/jar/jogl-demos.jar"&gt;
+&lt;object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+      width="600" height="400"&gt;
+   &lt;param name="code" value="org.jdesktop.applet.util.JNLPAppletLauncher"&gt;
+   &lt;param name="archive" value="../jar/applet-launcher.jar,
+                                ../jar/gluegen-rt.jar,
+                                ../jar/jogl.all.jar,
+                                ../jar/joal.jar,
+                                jar/jogl-demos.jar"&gt;
    &lt;param name="codebase_lookup" value="false"&gt;
-   &lt;param name="subapplet.classname" VALUE="demos.applets.GearsJOALApplet"&gt;
-   &lt;param name="subapplet.displayname" VALUE="JOGL / JOAL Gears Applet"&gt;
+   &lt;param name="subapplet.classname" value="demos.applets.GearsJOALApplet"&gt;
+   &lt;param name="subapplet.displayname" value="JOGL / JOAL Gears Applet"&gt;
    &lt;param name="noddraw.check" value="true"&gt;
    &lt;param name="progressbar" value="true"&gt;
    &lt;param name="jnlpNumExtensions" value="2"&gt;
-   &lt;param name="jnlpExtension1"
-          value="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp"&gt;
-   &lt;param name="jnlpExtension2"
-          value="http://jogamp.org/deployment/jogamp-current/joal.jnlp"&gt;
+   &lt;param name="jnlpExtension1" value="../jogl-all-awt.jnlp"&gt;
+   &lt;param name="jnlpExtension2" value="../joal.jnlp"&gt;
    &lt;param name="java_arguments" value="-Dsun.java2d.noddraw=true"&gt;
    &lt;param name="jnlp_href" value="applet-gearsjoal.jnlp"&gt;
-&lt;/applet&gt;
+   &lt;comment&gt;
+     &lt;embed code="org.jdesktop.applet.util.JNLPAppletLauncher"
+          width="600" height="400"
+          type="application/x-java-applet;version=1.6"
+          pluginspage="http://java.sun.com/javase/downloads/ea.jsp"
+          archive="../jar/applet-launcher.jar,
+                   ../jar/gluegen-rt.jar,
+                   ../jar/jogl.all.jar,
+                   ../jar/joal.jar,
+                   jar/jogl-demos.jar"
+          codebase_lookup="false"
+          subapplet.classname="demos.applets.GearsJOALApplet"
+          subapplet.displayname" value="JOGL / JOAL Gears Applet"
+          noddraw.check" value="true"
+          progressbar="true"
+          jnlpNumExtensions="2"
+          jnlpExtension1="../jogl-all-awt.jnlp"
+          jnlpExtension2="../joal.jnlp"
+          java_arguments="-Dsun.java2d.noddraw=true"
+          jnlp_href="applet-gearsjoal.jnlp"&gt;
+        &lt;noembed&gt;Sorry, no Java support detected.&lt;/noembed&gt;
+     &lt;/embed&gt;
+   &lt;/comment&gt;
+&lt;/object&gt;
 </pre>
 
 </P>
