@@ -103,7 +103,8 @@
         <property name="src"                 value="${project.root}/src" />
         <property name="javadoc"             value="${project.root}/javadoc" />
         <!-- property name="javadoc.link" value="http://java.sun.com/j2se/1.4.2/docs/api/" /-->
-        <property name="javadoc.link" value="http://download.oracle.com/javase/1.5.0/docs/api/" />
+        <!--property name="javadoc.link" value="http://download.oracle.com/javase/1.5.0/docs/api/" /-->
+        <property name="javadoc.link"        value="http://docs.oracle.com/javase/6/docs/api/" />
         <property name="javadoc.link.jogl"   value="${jogl.root}/javadoc-public/" />
         <property name="jogl.demos.jar"      value="${build}/jogl-demos.jar" />
         <property name="jogl.demos.util.jar" value="${build}/jogl-demos-util.jar" />
@@ -116,9 +117,14 @@
     </target>
 
     <target name="nurbs" if="jogl.nurbs">
-        <!-- NOTE: this target requires a 1.5 javac to be on the PATH -->
-        <javac destdir="${classes}" includes="demos/nurbs/**" source="1.5" debug="true" debuglevel="source,lines"
-               includeantruntime="false">
+        <javac destdir="${classes}" 
+               includeAntRuntime="false"
+               includes="demos/nurbs/**" 
+               memoryMaximumSize="${javac.memorymax}"
+               source="${target.sourcelevel}" 
+               target="${target.targetlevel}" 
+               bootclasspath="${target.rt.jar}"
+               debug="${javacdebug}" debuglevel="${javacdebuglevel}">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -135,8 +141,13 @@
     </target>
 
     <target name="redbook-javac">
-        <javac destdir="${classes}" source="1.5" target="1.5" debug="true" debuglevel="source,lines"
-               includeantruntime="false">
+        <javac destdir="${classes}" 
+               includeantruntime="false"
+               memoryMaximumSize="${javac.memorymax}"
+               source="${target.sourcelevel}" 
+               target="${target.targetlevel}" 
+               bootclasspath="${target.rt.jar}"
+               debug="${javacdebug}" debuglevel="${javacdebuglevel}">
             <src path="${src}/redbook/src" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -152,8 +163,14 @@
             <pathelement location="${simple-xml.jar}" />
             <pathelement location="${swt.jar}" />
         </path>
-        <javac destdir="${classes}" excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes}" source="1.5" debug="true" debuglevel="source,lines"
-            includeantruntime="false">
+        <javac destdir="${classes}" 
+               excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes}" 
+               includeantruntime="false"
+               memoryMaximumSize="${javac.memorymax}"
+               source="${target.sourcelevel}" 
+               target="${target.targetlevel}" 
+               bootclasspath="${target.rt.jar}"
+               debug="${javacdebug}" debuglevel="${javacdebuglevel}">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -204,9 +221,14 @@
             <pathelement location="${jogl.cg.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
         </path>
-        <javac destdir="${classes}" includes="demos/GLInfo*,demos/es1/**,demos/es2/**" source="1.5" debug="true" debuglevel="source,lines"
-               includeantruntime="false">
-               bootclasspath="${gluegen.root}/make/lib/cdc_fp.jar">
+        <javac destdir="${classes}" 
+               includes="demos/GLInfo*,demos/es1/**,demos/es2/**" 
+               includeantruntime="false"
+               memoryMaximumSize="${javac.memorymax}"
+               source="${target.sourcelevel}" 
+               target="${target.targetlevel}" 
+               bootclasspath="${target.rt.jar}"
+               debug="${javacdebug}" debuglevel="${javacdebuglevel}">
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
@@ -238,8 +260,10 @@
 
     <target name="javadoc" depends="init">
         <mkdir dir="${javadoc}" />
-        <javadoc destdir="${javadoc}" windowtitle="JOGL Demos"
-                 source="1.5">
+        <javadoc destdir="${javadoc}" 
+                 windowtitle="JOGL Demos"
+                 source="${target.sourcelevel}"
+                 maxmemory="${javac.memorymax}" >
             <packageset dir="${src}">
                 <exclude name="demos/cg/**" />
             </packageset>

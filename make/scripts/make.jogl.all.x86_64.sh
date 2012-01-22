@@ -13,6 +13,9 @@ fi
 #    -Djogl.redbook=true \
 
 ant \
+    -Dtarget.sourcelevel=1.6 \
+    -Dtarget.targetlevel=1.6 \
+    -Dtarget.rt.jar=/opt-share/jre1.6.0_30/lib/rt.jar \
     -Djogl.cg=1 \
     -Duser.swt.jar=$SWT_CLASSPATH \
     -Drootrel.build=build-x86_64 \
