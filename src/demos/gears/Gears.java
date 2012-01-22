@@ -26,9 +26,6 @@ import com.jogamp.newt.event.awt.AWTMouseAdapter;
  */
 
 public class Gears implements GLEventListener {
-  static {
-    GLProfile.initSingleton(false);
-  }
   private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
   private int gear1=0, gear2=0, gear3=0;
   private float angle = 0.0f;
