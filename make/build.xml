@@ -121,6 +121,7 @@
                includeAntRuntime="false"
                includes="demos/nurbs/**" 
                memoryMaximumSize="${javac.memorymax}"
+               encoding="UTF-8"
                source="${target.sourcelevel}" 
                target="${target.targetlevel}" 
                bootclasspath="${target.rt.jar}"
@@ -144,6 +145,7 @@
         <javac destdir="${classes}" 
                includeantruntime="false"
                memoryMaximumSize="${javac.memorymax}"
+               encoding="UTF-8"
                source="${target.sourcelevel}" 
                target="${target.targetlevel}" 
                bootclasspath="${target.rt.jar}"
@@ -167,6 +169,7 @@
                excludes="${jogl.cg.excludes},demos/nurbs/**,${jogl.swt.excludes},jbullet/**,${jogl.redbook.excludes}" 
                includeantruntime="false"
                memoryMaximumSize="${javac.memorymax}"
+               encoding="UTF-8"
                source="${target.sourcelevel}" 
                target="${target.targetlevel}" 
                bootclasspath="${target.rt.jar}"
@@ -225,6 +228,7 @@
                includes="demos/GLInfo*,demos/es1/**,demos/es2/**" 
                includeantruntime="false"
                memoryMaximumSize="${javac.memorymax}"
+               encoding="UTF-8"
                source="${target.sourcelevel}" 
                target="${target.targetlevel}" 
                bootclasspath="${target.rt.jar}"
@@ -262,6 +266,7 @@
         <mkdir dir="${javadoc}" />
         <javadoc destdir="${javadoc}" 
                  windowtitle="JOGL Demos"
+                 encoding="UTF-8"
                  source="${target.sourcelevel}"
                  maxmemory="${javac.memorymax}" >
             <packageset dir="${src}">
