@@ -8,12 +8,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.nio.FloatBuffer;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
 import javax.media.opengl.*;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 
@@ -22,6 +19,9 @@ import javax.media.opengl.GLEventListener;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.ShaderCode;
+import com.jogamp.opengl.util.glsl.ShaderProgram;
+import com.jogamp.opengl.util.glsl.ShaderState;
 
 // Translated from C++ Version see below:
 //--------------------------------------------------------------------------------------
@@ -65,26 +65,45 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	public boolean g_useOQ = true;
 	public int[] g_queryId = new int[1];
 
-	public String MODEL_FILENAME = new String( "demos/dualDepthPeeling/media/models/dragon.obj" );
-	public String SHADER_PATH = new String( "src/dual_depth_peeling/shaders/" );
+	public String MODEL_FILENAME = new String( "media/models/dragon.obj" );
 
-	public GLSLProgramObject g_shaderDualInit;
-	public GLSLProgramObject g_shaderDualPeel;
-	public GLSLProgramObject g_shaderDualBlend;
-	public GLSLProgramObject g_shaderDualFinal;
+	public static final String s_FrontBlenderTex = "FrontBlenderTex";	
+	public static final String s_BackBlenderTex  = "BackBlenderTex";
+	public static final String s_DepthBlenderTex = "DepthBlenderTex";	
+	public static final String s_ColorTex        = "ColorTex";	
+	public static final String s_ColorTex0       = "ColorTex0";	
+	public static final String s_ColorTex1       = "ColorTex1";	
+	public static final String s_TempTex         = "TempTex";
+	public static final String s_BackgroundColor = "BackgroundColor";
+	
+	public GLUniformData g_FrontBlenderTexUnit;
+	public GLUniformData g_BackBlenderTexUnit;
+	public GLUniformData g_DepthBlenderTexUnit;
+	public GLUniformData g_ColorTexUnit;
+	public GLUniformData g_ColorTex0Unit;
+	public GLUniformData g_ColorTex1Unit;
+	public GLUniformData g_TempTexUnit;
+	public GLUniformData g_AlphaUni;
+	public GLUniformData g_backgroundColorUni;
 
-	public GLSLProgramObject g_shaderFrontInit;
-	public GLSLProgramObject g_shaderFrontPeel;
-	public GLSLProgramObject g_shaderFrontBlend;
-	public GLSLProgramObject g_shaderFrontFinal;
+	public ShaderState g_shaderState;
+	public ShaderProgram g_shaderDualInit;
+	public ShaderProgram g_shaderDualPeel;
+	public ShaderProgram g_shaderDualBlend;
+	public ShaderProgram g_shaderDualFinal;
 
-	public GLSLProgramObject g_shaderAverageInit;
-	public GLSLProgramObject g_shaderAverageFinal;
+	public ShaderProgram g_shaderFrontInit;
+	public ShaderProgram g_shaderFrontPeel;
+	public ShaderProgram g_shaderFrontBlend;
+	public ShaderProgram g_shaderFrontFinal;
 
-	public GLSLProgramObject g_shaderWeightedSumInit;
-	public GLSLProgramObject g_shaderWeightedSumFinal;
+	public ShaderProgram g_shaderAverageInit;
+	public ShaderProgram g_shaderAverageFinal;
 
-	public float[] g_opacity = new float[]{0.6f};
+	public ShaderProgram g_shaderWeightedSumInit;
+	public ShaderProgram g_shaderWeightedSumFinal;
+	
+	public float g_opacity = 0.6f;
 	public char g_mode = DUAL_PEELING_MODE;
 	public boolean g_showOsd = true;
 	public boolean g_bShowUI = true;
@@ -100,9 +119,9 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	public float[] g_rot = new float[]{0.0f, 45.0f};
 	public float[] g_pos = new float[]{0.0f, 0.0f, 2.0f};
 
-	float[] g_white = new float[]{1.0f,1.0f,1.0f};
-	float[] g_black = new float[]{0.0f};
-	float[] g_backgroundColor = g_white;
+	static final FloatBuffer g_white = Buffers.newDirectFloatBuffer(new float[]{1.0f,1.0f,1.0f});
+	static final FloatBuffer g_black = Buffers.newDirectFloatBuffer(new float[]{0.0f,0.0f,0.0f});
+	FloatBuffer g_backgroundColor = g_white;
 
 	public int[]  g_dualBackBlenderFboId = new int[1];
 	public int[]  g_dualPeelingSingleFboId = new int[1];
@@ -128,6 +147,8 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			GL2.GL_COLOR_ATTACHMENT5,
 			GL2.GL_COLOR_ATTACHMENT6
 	};
+	
+	boolean reloadShaders = false;
 
 	public DualDepthPeeling()
 	{
@@ -405,85 +426,89 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
         return m_kCanvas;
     }
 
+    ShaderProgram build(GL2ES2 gl, String basename, boolean link) {
+    	ShaderProgram sp = new ShaderProgram();
+    	ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, DualDepthPeeling.class,
+                "shader", null, basename);
+    	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, DualDepthPeeling.class,
+				  "shader", null, basename);
+    	sp.add(vp);
+    	sp.add(fp);
+    	if(link && !sp.link(gl, System.err)) {
+    		throw new GLException("Couldn't link program: "+sp);
+    	}    	
+    	return sp;
+    }
+    ShaderProgram build(GL2ES2 gl, String[] basenames, boolean link) {
+    	ShaderProgram sp = new ShaderProgram();
+		ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, basenames.length, DualDepthPeeling.class,
+				"shader", basenames, null, null);
+    	sp.add(vp);
+    	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, basenames.length, DualDepthPeeling.class,
+				  "shader", basenames, null, null);
+    	sp.add(fp);
+    	if(link && !sp.link(gl, System.err)) {
+    		throw new GLException("Couldn't link program: "+sp);
+    	}    	
+    	return sp;
+    }
+    
 	//--------------------------------------------------------------------------
 	void BuildShaders(GL2 gl)
 	{
 		System.err.println("\nloading shaders...\n");
 
-		g_shaderDualInit = new GLSLProgramObject();
-		g_shaderDualInit.attachVertexShader(gl, "dual_peeling_init_vertex.glsl");
-		g_shaderDualInit.attachFragmentShader(gl,  "dual_peeling_init_fragment.glsl");
-		g_shaderDualInit.link(gl);
+		g_shaderState = new ShaderState();
+		// g_shaderState.setVerbose(true);
+		
+		g_shaderDualInit = build(gl, "dual_peeling_init", true);
+		g_shaderDualPeel = build(gl, new String[] { "shade", "dual_peeling_peel" }, true);
+		g_shaderDualBlend = build(gl, "dual_peeling_blend", true);
+		g_shaderDualFinal = build(gl, "dual_peeling_final", true);
+				
+		g_shaderFrontInit = build(gl, new String[] { "shade", "front_peeling_init" }, true);
+		g_shaderFrontPeel = build(gl, new String[] { "shade", "front_peeling_peel" }, true);
+		g_shaderFrontBlend = build(gl, "front_peeling_blend", true);
+		g_shaderFrontFinal = build(gl, "front_peeling_final", true);
+		
+		g_shaderAverageInit = build(gl, new String[] { "shade", "wavg_init" }, true);
+		g_shaderAverageFinal = build(gl, "wavg_final", true);
+		
+		g_shaderWeightedSumInit = build(gl, new String[] { "shade", "wsum_init" }, true);		
+		g_shaderWeightedSumFinal = build(gl, "wsum_final", true);
+		
+		g_DepthBlenderTexUnit = new GLUniformData(s_DepthBlenderTex, 0);
+		g_shaderState.ownUniform(g_DepthBlenderTexUnit);
+		
+		g_FrontBlenderTexUnit = new GLUniformData(s_FrontBlenderTex, 1);
+		g_shaderState.ownUniform(g_FrontBlenderTexUnit);
+		
+		g_BackBlenderTexUnit = new GLUniformData(s_BackBlenderTex, 2);
+		g_shaderState.ownUniform(g_BackBlenderTexUnit);
+		
+		g_TempTexUnit = new GLUniformData(s_TempTex, 0);
+		g_shaderState.ownUniform(g_TempTexUnit); 
+		
+		g_AlphaUni = new GLUniformData("Alpha", g_opacity);
+		g_shaderState.ownUniform(g_AlphaUni);
 
-		g_shaderDualPeel = new GLSLProgramObject();
-		g_shaderDualPeel.attachVertexShader(gl,  "shade_vertex.glsl");
-		g_shaderDualPeel.attachVertexShader(gl,  "dual_peeling_peel_vertex.glsl");
-		g_shaderDualPeel.attachFragmentShader(gl,  "shade_fragment.glsl");
-		g_shaderDualPeel.attachFragmentShader(gl,  "dual_peeling_peel_fragment.glsl");
-		g_shaderDualPeel.link(gl);
-
-		g_shaderDualBlend = new GLSLProgramObject();
-		g_shaderDualBlend.attachVertexShader(gl,  "dual_peeling_blend_vertex.glsl");
-		g_shaderDualBlend.attachFragmentShader(gl,  "dual_peeling_blend_fragment.glsl");
-		g_shaderDualBlend.link(gl);
-
-		g_shaderDualFinal = new GLSLProgramObject();
-		g_shaderDualFinal.attachVertexShader(gl,  "dual_peeling_final_vertex.glsl");
-		g_shaderDualFinal.attachFragmentShader(gl,  "dual_peeling_final_fragment.glsl");
-		g_shaderDualFinal.link(gl);
-
-		g_shaderFrontInit = new GLSLProgramObject();
-		g_shaderFrontInit.attachVertexShader(gl,  "shade_vertex.glsl");
-		g_shaderFrontInit.attachVertexShader(gl,  "front_peeling_init_vertex.glsl");
-		g_shaderFrontInit.attachFragmentShader(gl,  "shade_fragment.glsl");
-		g_shaderFrontInit.attachFragmentShader(gl,  "front_peeling_init_fragment.glsl");
-		g_shaderFrontInit.link(gl);
-
-		g_shaderFrontPeel = new GLSLProgramObject();
-		g_shaderFrontPeel.attachVertexShader(gl,  "shade_vertex.glsl");
-		g_shaderFrontPeel.attachVertexShader(gl,  "front_peeling_peel_vertex.glsl");
-		g_shaderFrontPeel.attachFragmentShader(gl,  "shade_fragment.glsl");
-		g_shaderFrontPeel.attachFragmentShader(gl,  "front_peeling_peel_fragment.glsl");
-		g_shaderFrontPeel.link(gl);
-
-		g_shaderFrontBlend = new GLSLProgramObject();
-		g_shaderFrontBlend.attachVertexShader(gl,  "front_peeling_blend_vertex.glsl");
-		g_shaderFrontBlend.attachFragmentShader(gl,  "front_peeling_blend_fragment.glsl");
-		g_shaderFrontBlend.link(gl);
-
-		g_shaderFrontFinal = new GLSLProgramObject();
-		g_shaderFrontFinal.attachVertexShader(gl,  "front_peeling_final_vertex.glsl");
-		g_shaderFrontFinal.attachFragmentShader(gl,  "front_peeling_final_fragment.glsl");
-		g_shaderFrontFinal.link(gl);
-
-		g_shaderAverageInit = new GLSLProgramObject();
-		g_shaderAverageInit.attachVertexShader(gl,  "shade_vertex.glsl");
-		g_shaderAverageInit.attachVertexShader(gl,  "wavg_init_vertex.glsl");
-		g_shaderAverageInit.attachFragmentShader(gl,  "shade_fragment.glsl");
-		g_shaderAverageInit.attachFragmentShader(gl,  "wavg_init_fragment.glsl");
-		g_shaderAverageInit.link(gl);
-
-		g_shaderAverageFinal = new GLSLProgramObject();
-		g_shaderAverageFinal.attachVertexShader(gl,  "wavg_final_vertex.glsl");
-		g_shaderAverageFinal.attachFragmentShader(gl,  "wavg_final_fragment.glsl");
-		g_shaderAverageFinal.link(gl);
-
-		g_shaderWeightedSumInit = new GLSLProgramObject();
-		g_shaderWeightedSumInit.attachVertexShader(gl,  "shade_vertex.glsl");
-		g_shaderWeightedSumInit.attachVertexShader(gl,  "wsum_init_vertex.glsl");
-		g_shaderWeightedSumInit.attachFragmentShader(gl,  "shade_fragment.glsl");
-		g_shaderWeightedSumInit.attachFragmentShader(gl,  "wsum_init_fragment.glsl");
-		g_shaderWeightedSumInit.link(gl);
-
-		g_shaderWeightedSumFinal = new GLSLProgramObject();
-		g_shaderWeightedSumFinal.attachVertexShader(gl,  "wsum_final_vertex.glsl");
-		g_shaderWeightedSumFinal.attachFragmentShader(gl,  "wsum_final_fragment.glsl");
-		g_shaderWeightedSumFinal.link(gl);
+		g_backgroundColorUni = new GLUniformData(s_BackgroundColor, 3, g_backgroundColor);
+		g_shaderState.ownUniform(g_backgroundColorUni);
+		
+		g_ColorTexUnit = new GLUniformData(s_ColorTex, 0);
+		g_shaderState.ownUniform(g_ColorTexUnit);
+		
+		g_ColorTex0Unit = new GLUniformData(s_ColorTex0, 0);
+		g_shaderState.ownUniform(g_ColorTex0Unit);
+		
+		g_ColorTex1Unit = new GLUniformData(s_ColorTex1, 1);
+		g_shaderState.ownUniform(g_ColorTex1Unit);		
 	}
 
 	//--------------------------------------------------------------------------
 	void DestroyShaders(GL2 gl)
 	{
+		g_shaderState.release(gl, false, false, false);		
 		g_shaderDualInit.destroy(gl);
 		g_shaderDualPeel.destroy(gl);
 		g_shaderDualBlend.destroy(gl);
@@ -510,9 +535,6 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 	/** GLCanvas for Java/JOGL */
 	private GLCanvas m_kCanvas;
-
-	/** GL object from GLCanvas.getGL() used to access openGL calls. */
-	private GL2 m_kGL = null;
 
 	void InitGL()
 	{ 
@@ -553,9 +575,9 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 		gl.glBlendEquation(GL2.GL_MAX);
 
-		g_shaderDualInit.bind(gl);
+		g_shaderState.attachShaderProgram(gl, g_shaderDualInit, true);
 		DrawModel(gl);
-		g_shaderDualInit.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 
 		// ---------------------------------------------------------------------
 		// 2. Dual Depth Peeling + Blending
@@ -565,7 +587,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		// we use another render target to do the alpha blending
 		//glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, g_dualBackBlenderFboId);
 		gl.glDrawBuffer(g_drawBuffers[6]);
-		gl.glClearColor(g_backgroundColor[0], g_backgroundColor[1], g_backgroundColor[2], 0);
+		gl.glClearColor(g_backgroundColor.get(0), g_backgroundColor.get(1), g_backgroundColor.get(2), 0);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
 		int currId = 0;
@@ -591,12 +613,14 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			gl.glDrawBuffers(3, g_drawBuffers, bufId+0);
 			gl.glBlendEquation(GL2.GL_MAX);
 
-			g_shaderDualPeel.bind(gl);
-			g_shaderDualPeel.bindTextureRECT(gl,"DepthBlenderTex", g_dualDepthTexId[prevId], 0);
-			g_shaderDualPeel.bindTextureRECT(gl,"FrontBlenderTex", g_dualFrontBlenderTexId[prevId], 1);
-			g_shaderDualPeel.setUniform(gl,"Alpha", g_opacity, 1);
+			// uses g_DepthBlenderTexUnit
+			// uses g_FrontBlenderTexUnit
+			// uses g_AlphaUni			
+			g_shaderState.attachShaderProgram(gl, g_shaderDualPeel, true);
+			GLHelper.bindTextureRECT(gl, g_dualDepthTexId[prevId], g_DepthBlenderTexUnit.intValue());
+			GLHelper.bindTextureRECT(gl, g_dualFrontBlenderTexId[prevId], g_FrontBlenderTexUnit.intValue());
 			DrawModel(gl);
-			g_shaderDualPeel.unbind(gl);
+			g_shaderState.useProgram(gl, false);
 
 			// Full screen pass to alpha-blend the back color
 			gl.glDrawBuffer(g_drawBuffers[6]);
@@ -608,10 +632,11 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 				gl.glBeginQuery(GL2.GL_SAMPLES_PASSED, g_queryId[0]);
 			}
 
-			g_shaderDualBlend.bind(gl);
-			g_shaderDualBlend.bindTextureRECT(gl,"TempTex", g_dualBackTempTexId[currId], 0);
+			g_TempTexUnit.setData(0);
+			g_shaderState.attachShaderProgram(gl, g_shaderDualBlend, true);
+			GLHelper.bindTextureRECT(gl, g_dualBackTempTexId[currId], g_TempTexUnit.intValue());
 			gl.glCallList(g_quadDisplayList);
-			g_shaderDualBlend.unbind(gl);
+			g_shaderState.useProgram(gl, false);
 
 			if (g_useOQ) {
 				gl.glEndQuery(GL2.GL_SAMPLES_PASSED);
@@ -632,11 +657,13 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 		gl.glDrawBuffer(GL2.GL_BACK);
 
-		g_shaderDualFinal.bind(gl);
-		g_shaderDualFinal.bindTextureRECT(gl,"FrontBlenderTex", g_dualFrontBlenderTexId[currId], 1);
-		g_shaderDualFinal.bindTextureRECT(gl,"BackBlenderTex", g_dualBackBlenderTexId[0], 2);
+		// use g_FrontBlenderTexUnit
+		// use g_BackBlenderTexUnit		
+		g_shaderState.attachShaderProgram(gl, g_shaderDualFinal, true);
+		GLHelper.bindTextureRECT(gl, g_dualFrontBlenderTexId[currId], g_FrontBlenderTexUnit.intValue());
+		GLHelper.bindTextureRECT(gl, g_dualBackBlenderTexId[0], g_BackBlenderTexUnit.intValue());
 		gl.glCallList(g_quadDisplayList);
-		g_shaderDualFinal.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 	}
 
 	//--------------------------------------------------------------------------
@@ -654,10 +681,10 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 
-		g_shaderFrontInit.bind(gl);
-		g_shaderFrontInit.setUniform(gl,"Alpha", g_opacity, 1);
+		// uses g_AlphaUni			
+		g_shaderState.attachShaderProgram(gl, g_shaderFrontInit, true);
 		DrawModel(gl);
-		g_shaderFrontInit.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 
 		// ---------------------------------------------------------------------
 		// 2. Depth Peeling + Blending
@@ -681,11 +708,13 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 				gl.glBeginQuery(GL2.GL_SAMPLES_PASSED, g_queryId[0]);
 			}
 
-			g_shaderFrontPeel.bind(gl);
-			g_shaderFrontPeel.bindTextureRECT(gl,"DepthTex", g_frontDepthTexId[prevId], 0);
-			g_shaderFrontPeel.setUniform(gl,"Alpha", g_opacity, 1);
+			// uses g_DepthBlenderTexUnit
+			// uses g_FrontBlenderTexUnit
+			// uses g_AlphaUni			
+			g_shaderState.attachShaderProgram(gl, g_shaderDualPeel, true);			
+			GLHelper.bindTextureRECT(gl, g_frontDepthTexId[prevId], g_DepthBlenderTexUnit.intValue());
 			DrawModel(gl);
-			g_shaderFrontPeel.unbind(gl);
+			g_shaderState.useProgram(gl, false);
 
 			if (g_useOQ) {
 				gl.glEndQuery(GL2.GL_SAMPLES_PASSED);
@@ -702,10 +731,11 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			gl.glBlendFuncSeparate(GL2.GL_DST_ALPHA, GL2.GL_ONE,
 					GL2.GL_ZERO, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
-			g_shaderFrontBlend.bind(gl);
-			g_shaderFrontBlend.bindTextureRECT(gl,"TempTex", g_frontColorTexId[currId], 0);
+			// uses g_TempTexUnit
+			g_shaderState.attachShaderProgram(gl, g_shaderDualBlend, true);
+			GLHelper.bindTextureRECT(gl, g_frontColorTexId[currId], g_TempTexUnit.intValue());
 			gl.glCallList(g_quadDisplayList);
-			g_shaderFrontBlend.unbind(gl);
+			g_shaderState.useProgram(gl, false);
 
 			gl.glDisable(GL2.GL_BLEND);
 
@@ -726,11 +756,11 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glDrawBuffer(GL2.GL_BACK);
 		gl.glDisable(GL2.GL_DEPTH_TEST);
 
-		g_shaderFrontFinal.bind(gl);
-		g_shaderFrontFinal.setUniform(gl,"BackgroundColor", g_backgroundColor, 3);
-		g_shaderFrontFinal.bindTextureRECT(gl,"ColorTex", g_frontColorBlenderTexId[0], 0);
+		// uses g_backgroundColorUni
+		g_shaderState.attachShaderProgram(gl, g_shaderFrontFinal, true);
+		GLHelper.bindTextureRECT(gl, g_frontColorBlenderTexId[0], g_ColorTexUnit.intValue());
 		gl.glCallList(g_quadDisplayList);
-		g_shaderFrontFinal.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 	}
 
 	//--------------------------------------------------------------------------
@@ -752,10 +782,10 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
 		gl.glEnable(GL2.GL_BLEND);
 
-		g_shaderAverageInit.bind(gl);
-		g_shaderAverageInit.setUniform(gl,"Alpha", g_opacity, 1);
+		// uses g_AlphaUni			
+		g_shaderState.attachShaderProgram(gl, g_shaderAverageInit, true);
 		DrawModel(gl);
-		g_shaderAverageInit.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 
 		gl.glDisable(GL2.GL_BLEND);
 
@@ -767,12 +797,12 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 		gl.glDrawBuffer(GL2.GL_BACK);
 
-		g_shaderAverageFinal.bind(gl);
-		g_shaderAverageFinal.setUniform(gl,"BackgroundColor", g_backgroundColor, 3);
-		g_shaderAverageFinal.bindTextureRECT(gl,"ColorTex0", g_accumulationTexId[0], 0);
-		g_shaderAverageFinal.bindTextureRECT(gl,"ColorTex1", g_accumulationTexId[1], 1);
+		// uses g_backgroundColorUni
+		g_shaderState.attachShaderProgram(gl, g_shaderAverageFinal, true);
+		GLHelper.bindTextureRECT(gl, g_accumulationTexId[0], g_ColorTex0Unit.intValue());
+		GLHelper.bindTextureRECT(gl, g_accumulationTexId[1], g_ColorTex1Unit.intValue());
 		gl.glCallList(g_quadDisplayList);
-		g_shaderAverageFinal.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 	}
 
 	//--------------------------------------------------------------------------
@@ -794,10 +824,9 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
 		gl.glEnable(GL2.GL_BLEND);
 
-		g_shaderWeightedSumInit.bind(gl);
-		g_shaderWeightedSumInit.setUniform(gl,"Alpha", g_opacity, 1);
+		g_shaderState.attachShaderProgram(gl, g_shaderWeightedSumInit, true);
 		DrawModel(gl);
-		g_shaderWeightedSumInit.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 
 		gl.glDisable(GL2.GL_BLEND);
 
@@ -808,11 +837,10 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 		gl.glDrawBuffer(GL2.GL_BACK);
 
-		g_shaderWeightedSumFinal.bind(gl);
-		g_shaderWeightedSumFinal.setUniform(gl,"BackgroundColor", g_backgroundColor, 3);
-		g_shaderWeightedSumFinal.bindTextureRECT(gl,"ColorTex", g_accumulationTexId[0], 0);
+		g_shaderState.attachShaderProgram(gl, g_shaderWeightedSumFinal, true);
+		GLHelper.bindTextureRECT(gl, g_accumulationTexId[0], this.g_ColorTexUnit.intValue());
 		gl.glCallList(g_quadDisplayList);
-		g_shaderWeightedSumFinal.unbind(gl);
+		g_shaderState.useProgram(gl, false);
 	}
 
 
@@ -885,12 +913,13 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			break;
 		case 'b':
 			g_backgroundColor = (g_backgroundColor == g_white) ? g_black : g_white;
+			g_backgroundColorUni.setData(g_backgroundColor);
 			break;
 		case 'o':
 			g_showOsd = !g_showOsd;
 			break;
 		case 'r':
-			ReloadShaders(m_kGL);
+			reloadShaders = true;
 			break;
 		case '1':
 			g_mode = DUAL_PEELING_MODE;
@@ -905,43 +934,51 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			g_mode = WEIGHTED_SUM_MODE;
 			break;
 		case 'a':
-			g_opacity[0] -= 0.05;
-			g_opacity[0] = (float)Math.max(g_opacity[0], 0.0);
+			g_opacity -= 0.05;
+			g_opacity = (float)Math.max(g_opacity, 0.0);
+			g_AlphaUni.setData(g_opacity);
 			break;
 		case 'd':
-			g_opacity[0] += 0.05;
-			g_opacity[0] = (float)Math.min(g_opacity[0], 1.0);
+			g_opacity += 0.05;
+			g_opacity = (float)Math.min(g_opacity, 1.0);
+			g_AlphaUni.setData(g_opacity);
 			break;
 		}
 	}
 
 
 	@Override
-	public void display(GLAutoDrawable arg0) {	
-		GLU glu = GLU.createGLU(m_kGL);
+	public void display(GLAutoDrawable arg0) {
+		GL2 gl = arg0.getGL().getGL2();
+		
+		if(reloadShaders) {
+			reloadShaders = false;
+			ReloadShaders(gl);
+		}
+		GLU glu = GLU.createGLU(gl);
 		
 		g_numGeoPasses = 0;
 
-		m_kGL.glMatrixMode(GL2.GL_MODELVIEW);
-		m_kGL.glLoadIdentity();
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glLoadIdentity();
 		glu.gluLookAt(g_pos[0], g_pos[1], g_pos[2], g_pos[0], g_pos[1], 0, 0, 1, 0);
-		m_kGL.glRotatef(g_rot[0], 1, 0, 0);
-		m_kGL.glRotatef(g_rot[1], 0, 1, 0);
-		m_kGL.glTranslatef(g_bbTrans[0], g_bbTrans[1], g_bbTrans[2]);
-		m_kGL.glScalef(g_bbScale, g_bbScale, g_bbScale);
+		gl.glRotatef(g_rot[0], 1, 0, 0);
+		gl.glRotatef(g_rot[1], 0, 1, 0);
+		gl.glTranslatef(g_bbTrans[0], g_bbTrans[1], g_bbTrans[2]);
+		gl.glScalef(g_bbScale, g_bbScale, g_bbScale);
 
 		switch (g_mode) {
 		case DUAL_PEELING_MODE:
-			RenderDualPeeling(m_kGL);
+			RenderDualPeeling(gl);
 			break;
 		case F2B_PEELING_MODE:
-			RenderFrontToBackPeeling(m_kGL);
+			RenderFrontToBackPeeling(gl);
 			break;
 		case WEIGHTED_AVERAGE_MODE:
-			RenderAverageColors(m_kGL);
+			RenderAverageColors(gl);
 			break;
 		case WEIGHTED_SUM_MODE:
-			RenderWeightedSum(m_kGL);
+			RenderWeightedSum(gl);
 			break;
 		}
 
@@ -960,39 +997,35 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		System.err.println( "init" );
-		GL gl = drawable.setGL(new DebugGL2(drawable.getGL().getGL2()));
-		m_kGL = gl.getGL2();
-		//m_kGL = m_kCanvas.getGL().getGL2();
+		GL2 gl = drawable.getGL().getGL2();
 		
 		m_kCanvas.setAutoSwapBufferMode( false );
 
-
-
 		// Allocate render targets first
 		try {
-			InitDualPeelingRenderTargets(m_kGL);
+			InitDualPeelingRenderTargets(gl);
 		} catch ( GLException e )
 		{
 			try {
-				InitDualPeelingRenderTargets(m_kGL);
+				InitDualPeelingRenderTargets(gl);
 			} catch ( GLException e1 )
 			{
 				System.err.println( e1.getStackTrace() );
 			}
 		}
-		InitFrontPeelingRenderTargets(m_kGL);
-		InitAccumulationRenderTargets(m_kGL);
-		m_kGL.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+		InitFrontPeelingRenderTargets(gl);
+		InitAccumulationRenderTargets(gl);
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 
-		BuildShaders(m_kGL);
-		LoadModel(m_kGL, MODEL_FILENAME);
-		MakeFullScreenQuad(m_kGL);
+		BuildShaders(gl);
+		LoadModel(gl, MODEL_FILENAME);
+		MakeFullScreenQuad(gl);
 
-		m_kGL.glDisable(GL2.GL_CULL_FACE);
-		m_kGL.glDisable(GL2.GL_LIGHTING);
-		m_kGL.glDisable(GL2.GL_NORMALIZE);
+		gl.glDisable(GL2.GL_CULL_FACE);
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glDisable(GL2.GL_NORMALIZE);
 
-		m_kGL.glGenQueries(1, g_queryId, 0);
+		gl.glGenQueries(1, g_queryId, 0);
 	}
 
 
@@ -1023,7 +1056,6 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 
 		gl.glViewport(0, 0, g_imageWidth, g_imageHeight);
-
 	}
 
 

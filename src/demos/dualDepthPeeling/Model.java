@@ -27,6 +27,8 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Vector;
 
+import com.jogamp.common.util.IOUtil;
+
 
 public class Model {
 	//
@@ -94,7 +96,7 @@ public class Model {
 	//
 	//////////////////////////////////////////////////////////////
 	public boolean loadModelFromFile( String file ) {
-		URL fileURL = getClass().getClassLoader().getResource(File.separator + file);
+        URL fileURL = IOUtil.getResource(Model.class, file);        
 		if ( fileURL != null )
 		{
 			BufferedReader input = null;
