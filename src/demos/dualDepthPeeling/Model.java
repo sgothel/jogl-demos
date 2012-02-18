@@ -95,8 +95,8 @@ public class Model {
 	//  true, otherwise it returns false.
 	//
 	//////////////////////////////////////////////////////////////
-	public boolean loadModelFromFile( String file ) {
-        URL fileURL = IOUtil.getResource(Model.class, file);        
+	public boolean loadModelFromFile( Class<?> context, String file ) {
+        URL fileURL = IOUtil.getResource(context, file);        
 		if ( fileURL != null )
 		{
 			BufferedReader input = null;

@@ -197,7 +197,6 @@
                 <include name="demos/es2/perftst/data/**" />
                 <include name="demos/es2/openmax/shader/**" />
                 <include name="demos/dualDepthPeeling/shader/*" />
-                <include name="demos/dualDepthPeeling/media/models/*" />
             </fileset>
             <!-- Avoid requiring dependence on huge jogl-demos-data.jar for
                  particle engine demo -->
@@ -213,6 +212,9 @@
         </jar>
         <jar destfile="${jogl.demos.data.jar}">
             <fileset dir="${src}">
+                <include name="demos/data/**" />
+            </fileset>
+            <fileset dir="${classes}">
                 <include name="demos/data/**" />
             </fileset>
         </jar>

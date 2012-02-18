@@ -23,6 +23,8 @@ import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 
+import demos.data.DemosDataAnchor;
+
 // Translated from C++ Version see below:
 //--------------------------------------------------------------------------------------
 // Order Independent Transparency with Dual Depth Peeling
@@ -65,7 +67,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	public boolean g_useOQ = true;
 	public int[] g_queryId = new int[1];
 
-	public String MODEL_FILENAME = new String( "media/models/dragon.obj" );
+	public String MODEL_FILENAME = "models/dragon.obj";
 
 	public static final String s_FrontBlenderTex = "FrontBlenderTex";	
 	public static final String s_BackBlenderTex  = "BackBlenderTex";
@@ -366,7 +368,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		g_model = new Model();
 		System.err.println("loading OBJ...\n");
 
-		g_model.loadModelFromFile( model_filename );
+		g_model.loadModelFromFile(DemosDataAnchor.class, model_filename );
 
 		System.err.println("compiling mesh...\n");
 		g_model.compileModel();
