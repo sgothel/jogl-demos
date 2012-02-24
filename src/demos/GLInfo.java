@@ -4,7 +4,6 @@ import javax.media.opengl.*;
 import javax.media.nativewindow.*;
 
 import com.jogamp.newt.*;
-import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.*;
 
 public class GLInfo extends Thread implements GLEventListener {
@@ -94,8 +93,8 @@ public class GLInfo extends Thread implements GLEventListener {
         GLProfile glp = gl.getGLProfile();
 
         System.err.println(glp+" GL Profile Static: "+GLProfile.glAvailabilityToString());
-        System.err.println(glp+" GL Profile Static - MaxFixedFunc: "+GLProfile.getMaxFixedFunc());
-        System.err.println(glp+" GL Profile Static - MaxProgrammable: "+GLProfile.getMaxProgrammable());
+        System.err.println(glp+" GL Profile Static - MaxFixedFunc: "+GLProfile.getMaxFixedFunc(true));
+        System.err.println(glp+" GL Profile Static - MaxProgrammable: "+GLProfile.getMaxProgrammable(true));
         System.err.println(glp+" GLCapabilities POST: "+drawable.getChosenGLCapabilities());
         System.err.println(glp+" GL Profile: "+drawable.getGLProfile());
         System.err.println(glp+" GL:" + gl);

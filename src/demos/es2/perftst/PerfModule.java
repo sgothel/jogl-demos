@@ -22,9 +22,9 @@ public abstract class PerfModule {
         st = new ShaderState();
 
         // Create & Compile the shader objects
-        ShaderCode vp = ShaderCode.create(gl, gl.GL_VERTEX_SHADER, 1, Perftst.class,
+        ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, Perftst.class,
                                             "shader", "shader/bin", vShaderName);
-        ShaderCode fp = ShaderCode.create(gl, gl.GL_FRAGMENT_SHADER, 1, Perftst.class,
+        ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, Perftst.class,
                                             "shader", "shader/bin", fShaderName);
 
         // Create & Link the shader program
@@ -45,9 +45,7 @@ public abstract class PerfModule {
         System.out.println("shader creation: "+dt+" ms");
 
         // Let's manage all our states using ShaderState.
-        st.attachShaderProgram(gl, sp);
-
-        st.useProgram(gl, true);
+        st.attachShaderProgram(gl, sp, true);
     }
 
     public static final void put(Buffer buffer, int type, float v) {

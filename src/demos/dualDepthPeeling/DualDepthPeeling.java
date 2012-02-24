@@ -541,7 +541,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	void InitGL()
 	{ 
 
-	  	GLProfile kProfile = GLProfile.getMaxProgrammable();
+	  	GLProfile kProfile = GLProfile.getMaxProgrammable(true);
 		GLCapabilities kGlCapabilities = new GLCapabilities(kProfile);
 		kGlCapabilities.setHardwareAccelerated(true);
 		m_kCanvas = new GLCanvas(kGlCapabilities);

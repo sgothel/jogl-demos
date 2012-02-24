@@ -161,12 +161,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     PMVMatrix pmvMatrix;
 
     private void initShader(GL2ES2 gl) {
-        int tmpI;
-
         // Create & Compile the shader objects
-        ShaderCode rsVp = ShaderCode.create(gl, gl.GL_VERTEX_SHADER, 1, RedSquare.class,
+        ShaderCode rsVp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, RedSquare.class,
                                             "shader", "shader/bin", "redsquare");
-        ShaderCode rsFp = ShaderCode.create(gl, gl.GL_FRAGMENT_SHADER, 1, RedSquare.class,
+        ShaderCode rsFp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, RedSquare.class,
                                             "shader", "shader/bin", "redsquare");
 
         // Create & Link the shader program
@@ -179,7 +177,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
         // Let's manage all our states using ShaderState.
         st = new ShaderState();
-        st.attachShaderProgram(gl, sp);
+        st.attachShaderProgram(gl, sp, false);
     }
 
     public void init(GLAutoDrawable drawable) {

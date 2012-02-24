@@ -137,9 +137,9 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
         int tmpI;
 
         // Create & Compile the shader objects
-        ShaderCode rsVp = ShaderCode.create(gl, gl.GL_VERTEX_SHADER, 1, MovieSimple.class,
+        ShaderCode rsVp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, MovieSimple.class,
                                             "shader", "shader/bin", "moviesimple");
-        ShaderCode rsFp = ShaderCode.create(gl, gl.GL_FRAGMENT_SHADER, 1, MovieSimple.class,
+        ShaderCode rsFp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, MovieSimple.class,
                                             "shader", "shader/bin", "moviesimple");
 
         // Create & Link the shader program
@@ -152,7 +152,7 @@ public class MovieSimple implements MouseListener, GLEventListener, OMXEventList
 
         // Let's manage all our states using ShaderState.
         st = new ShaderState();
-        st.attachShaderProgram(gl, sp);
+        st.attachShaderProgram(gl, sp, false);
     }
 
     OMXInstance movie=null;
