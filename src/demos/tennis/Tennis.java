@@ -159,19 +159,19 @@ public class Tennis implements GLEventListener {
     //Load textures
     try {
         System.err.println("Loading texture...");
-        texture[0] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/TennisTop.png"),
+        texture[0] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/tennis/TennisTop.png"),
                 false,
                 TextureIO.PNG);
-        texture[1] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/TennisBottom.png"),
+        texture[1] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/tennis/TennisBottom.png"),
         		false,
                 TextureIO.PNG);
-        texture[2] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/TennisMyDesk.png"),
+        texture[2] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/tennis/TennisMyDesk.png"),
         		false,
                 TextureIO.PNG);
-        texture[3] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/TennisEnDesk.png"),
+        texture[3] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/tennis/TennisEnDesk.png"),
         		false,
                 TextureIO.PNG);
-        texture[4] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/images/Stars.png"),
+        texture[4] = TextureIO.newTexture(getClass().getClassLoader().getResourceAsStream("demos/data/tennis/Stars.png"),
         		false,
                 TextureIO.PNG);
         System.err.println("Texture0 estimated memory size = " + texture[0].getEstimatedMemorySize());

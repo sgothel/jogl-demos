@@ -3,7 +3,7 @@
    - Ant build for the JOGL demos. This build has been tested with ANT 1.5.3.
    -
    - In order for this build to succeed the resulting jar files from this build
-   - (jogl-demos.jar, jogl-demos-data.jar, jogl-demos-util.jar) must not be on
+   - (jogl-demos.jar, jogl-demos-data.jar, .., jogl-demos-util.jar) must not be on
    - the CLASSPATH.
    -
    - This build requires that the jogl project has been checked out into a sibling
@@ -109,6 +109,8 @@
         <property name="jogl.demos.jar"      value="${build}/jogl-demos.jar" />
         <property name="jogl.demos.util.jar" value="${build}/jogl-demos-util.jar" />
         <property name="jogl.demos.data.jar" value="${build}/jogl-demos-data.jar" />
+        <property name="jogl.demos.dualDepthPeeling.jar" value="${build}/jogl-demos-dualDepthPeeling.jar" />
+        <property name="jogl.demos.tennis.jar" value="${build}/jogl-demos-tennis.jar" />
         <property name="archive.name"        value="jogl-demos-${jogl-demos.version}-${os.and.arch}" />
         <property name="archive"             value="${build}/${archive.name}" />
 
@@ -183,6 +185,8 @@
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
                 <exclude name="demos/util/**" />
+                <exclude name="demos/dualDepthPeeling/**" />
+                <exclude name="demos/tennis/**" />
             </fileset>
             <fileset dir="${src}">
                 <include name="demos/cg/**/*.cg" />
@@ -196,7 +200,6 @@
                 <include name="demos/es2/perftst/shader/**" />
                 <include name="demos/es2/perftst/data/**" />
                 <include name="demos/es2/openmax/shader/**" />
-                <include name="demos/dualDepthPeeling/shader/*" />
             </fileset>
             <!-- Avoid requiring dependence on huge jogl-demos-data.jar for
                  particle engine demo -->
@@ -213,6 +216,37 @@
         <jar destfile="${jogl.demos.data.jar}">
             <fileset dir="${src}">
                 <include name="demos/data/**" />
+                <exclude name="demos/data/models/dragon.obj" />
+                <exclude name="demos/data/tennis/**" />
+            </fileset>
+            <fileset dir="${classes}">
+                <include name="demos/data/**" />
+            </fileset>
+        </jar>
+        <!-- due to size or usability .. create self packaged jars (code + data) -->
+        <jar destfile="${jogl.demos.dualDepthPeeling.jar}">
+            <fileset dir="${classes}">
+                <include name="demos/dualDepthPeeling/**" />
+            </fileset>
+            <fileset dir="${src}">
+                <include name="demos/dualDepthPeeling/shader/*" />
+            </fileset>
+            <fileset dir="${src}">
+                <include name="demos/data/models/dragon.obj" />
+            </fileset>
+            <fileset dir="${classes}">
+                <include name="demos/data/**" />
+            </fileset>
+        </jar>
+        <jar destfile="${jogl.demos.tennis.jar}">
+            <fileset dir="${classes}">
+                <include name="demos/tennis/**" />
+            </fileset>
+            <!--fileset dir="${src}">
+                <include name="demos/tennis/shader/*" />
+            </fileset!-->
+            <fileset dir="${src}">
+                <include name="demos/data/tennis/**" />
             </fileset>
             <fileset dir="${classes}">
                 <include name="demos/data/**" />
@@ -309,7 +343,7 @@
         </copy>
         <mkdir dir="${archive}/www" />
         <copy todir="${archive}/www">
-            <fileset dir="${project.root}/www" includes="*" />
+            <fileset dir="${project.root}/www" includes="*" excludes="*.7z"/>
         </copy>
         <archive.7z destfile="${build}/${archive.name}.7z"
              basedir="${build}"
