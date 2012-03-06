@@ -39,20 +39,32 @@
 
 package demos.context;
 
-import com.jogamp.opengl.util.gl2.GLUT;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.media.nativewindow.*;
-import javax.media.nativewindow.awt.*;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
+
+import javax.media.nativewindow.GraphicsConfigurationFactory;
+import javax.media.nativewindow.NativeWindow;
+import javax.media.nativewindow.NativeWindowFactory;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawable;
+import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+
+import com.jogamp.nativewindow.awt.AWTGraphicsConfiguration;
+import com.jogamp.nativewindow.awt.AWTGraphicsDevice;
+import com.jogamp.nativewindow.awt.AWTGraphicsScreen;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 
 
