@@ -9,9 +9,6 @@ import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.texture.*;
 
-import com.jogamp.newt.*;
-import com.jogamp.newt.opengl.*;
-
 public class PerfTextLoad extends PerfModule {
     static final int MAX_TEXTURE_ENGINES = 8;
 
@@ -38,12 +35,17 @@ public class PerfTextLoad extends PerfModule {
         try {
             for(int i=0; i<numObjs; i++) {
                 textName = "data/"+textBaseName+"."+(i+1)+".tga";
-                URL urlText = IOUtil.getResource(Perftst.class, textName);
-                if(urlText==null) {
+                URLConnection connText = IOUtil.getResource(Perftst.class, textName);
+                if(connText==null) {
                     throw new RuntimeException("couldn't fetch "+textName);
                 }
-                textDatas[i] = TextureIO.newTextureData(gl.getGLProfile(), urlText.openStream(), false, TextureIO.TGA);
-                System.out.println(textBaseName+": "+textDatas[i]);
+                final InputStream in = connText.getInputStream();
+                try {
+                    textDatas[i] = TextureIO.newTextureData(gl.getGLProfile(), in, false, TextureIO.TGA);
+                    System.out.println(textBaseName+": "+textDatas[i]);
+                } finally {
+                    IOUtil.close(in, false);
+                }
             }
 
             for(int i=0; i<numTextures; i++) {

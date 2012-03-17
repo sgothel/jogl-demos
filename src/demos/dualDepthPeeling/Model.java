@@ -17,11 +17,10 @@ package demos.dualDepthPeeling;
 
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URLConnection;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -96,13 +95,13 @@ public class Model {
 	//
 	//////////////////////////////////////////////////////////////
 	public boolean loadModelFromFile( Class<?> context, String file ) {
-        URL fileURL = IOUtil.getResource(context, file);        
-		if ( fileURL != null )
+        URLConnection conn = IOUtil.getResource(context, file);        
+		if ( conn != null )
 		{
 			BufferedReader input = null;
 			try {
 
-				input = new BufferedReader(new InputStreamReader(fileURL.openStream()));
+				input = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				String line = null;
 				float[] val = new float[4];
 				int[][] idx = new int[3][3];
@@ -215,11 +214,7 @@ public class Model {
 			} catch (NumberFormatException kIO) {
 				System.err.println("Problem reading the shader file " + file);
 			} finally {
-				try {
-					if (input != null) {
-						input.close();
-					}
-				} catch (IOException closee) {}
+                IOUtil.close(input, false);
 			}
 		}
 		return false;
