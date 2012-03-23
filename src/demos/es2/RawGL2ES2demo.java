@@ -68,8 +68,12 @@ import javax.media.opengl.awt.GLCanvas;
  * JOGL2 OpenGL ES 2 demo to expose and learn what the RAW OpenGL ES 2 API looks like.
  *
  * Compile, run and enjoy:
- * javac -cp jar/jogl.all.jar:jar/gluegen-rt.jar RawGL2ES2demo.java
- * java -cp jar/jogl.all.jar:jar/gluegen-rt.jar:. RawGL2ES2demo
+   wget http://jogamp.org/deployment/jogamp-test/archive/jogamp-all-platforms.7z
+   7z x jogamp-all-platforms.7z
+   cd jogamp-all-platforms
+   wget https://raw.github.com/xranby/jogl-demos/master/src/demos/es2/RawGL2ES2demo.java
+   javac -cp jar/jogl.all.jar:jar/gluegen-rt.jar RawGL2ES2demo.java
+   java -cp jar/jogl.all.jar:jar/gluegen-rt.jar:. RawGL2ES2demo
  * </p>
  *
  *
@@ -110,10 +114,14 @@ public class RawGL2ES2demo implements GLEventListener{
  * sent to the GPU driver for compilation.
  */
 static final String vertexShader =
+"#ifdef GL_ES \n" +
 "#version 100 \n" + // GLSL ES language version, GLSL ES section 3.4
                     // many GPU drivers require it.
 "precision mediump float; \n" + // Precision Qualifiers
 "precision mediump int; \n" +   // GLSL ES section 4.5.2
+"#else \n" +
+"#version 110 \n" + // Mesa X11 GL drivers require version 1.1
+"#endif \n" +
 
 "uniform mat4    uniform_Projection; \n" + // Incomming data used by
 "attribute vec4  attribute_Position; \n" + // the vertex shader
@@ -154,9 +162,13 @@ static final String vertexShader =
  * sent to the GPU driver for compilation.
  */
 static final String fragmentShader =
+"#ifdef GL_ES \n" +
 "#version 100 \n" +
 "precision mediump float; \n" +
 "precision mediump int; \n" +
+"#else \n" +
+"#version 110 \n" +
+"#endif \n" +
 
 "varying   vec4    varying_Color; \n" + //incomming varying data to the
                                         //frament shader
@@ -299,7 +311,7 @@ static final String fragmentShader =
         //Check compile status.
         int[] compiled = new int[1];
         gl.glGetShaderiv(vertShader, GL2ES2.GL_COMPILE_STATUS, compiled,0);
-        if(compiled[0]!=0){System.out.println("Horray! vertexShader compiled");}
+        if(compiled[0]!=0){System.out.println("Horray! vertex shader compiled");}
         else {
             int[] logLength = new int[1];
             gl.glGetShaderiv(vertShader, GL2ES2.GL_INFO_LOG_LENGTH, logLength, 0);
@@ -307,7 +319,8 @@ static final String fragmentShader =
             byte[] log = new byte[logLength[0]];
             gl.glGetShaderInfoLog(vertShader, logLength[0], (int[])null, 0, log, 0);
 
-            System.err.println("Error compiling the shader: " + new String(log));
+            System.err.println("Error compiling the vertex shader: " + new String(log));
+            System.exit(1);
         }
 
         //Compile the fragmentShader String into a program.
@@ -318,7 +331,7 @@ static final String fragmentShader =
 
         //Check compile status.
         gl.glGetShaderiv(fragShader, GL2ES2.GL_COMPILE_STATUS, compiled,0);
-        if(compiled[0]!=0){System.out.println("Horray! fragmentShader compiled");}
+        if(compiled[0]!=0){System.out.println("Horray! fragment shader compiled");}
         else {
             int[] logLength = new int[1];
             gl.glGetShaderiv(fragShader, GL2ES2.GL_INFO_LOG_LENGTH, logLength, 0);
@@ -326,7 +339,8 @@ static final String fragmentShader =
             byte[] log = new byte[logLength[0]];
             gl.glGetShaderInfoLog(fragShader, logLength[0], (int[])null, 0, log, 0);
 
-            System.err.println("Error compiling the shader: " + new String(log));
+            System.err.println("Error compiling the fragment shader: " + new String(log));
+            System.exit(1);
         }
 
         //Each shaderProgram must have
@@ -436,5 +450,6 @@ static final String fragmentShader =
         gl.glDetachShader(shaderProgram, fragShader);
         gl.glDeleteShader(fragShader);
         gl.glDeleteProgram(shaderProgram);
+        System.exit(0);
     }
 }
