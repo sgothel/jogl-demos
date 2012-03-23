@@ -81,7 +81,7 @@ public class RawGL2ES2demo implements GLEventListener{
 /* Introducing the OpenGL ES 2 Vertex shader
  *
  * The main loop inside the vertex shader gets executed
- * one time for each vertice.
+ * one time for each vertex.
  *
  *      vertex -> *       uniform data -> mat4 projection = ( 1, 0, 0, 0,
  *      (0,1,0)  / \                                          0, 1, 0, 0,
@@ -169,7 +169,7 @@ static final String fragmentShader =
 /* Introducing projection matrix helper functions
  *
  * OpenGL ES 2 vertex projection transformations gets applied inside the
- * vertex shader, all you have to calculate and supply a projection matrix.
+ * vertex shader, all you have to do are to calculate and supply a projection matrix.
  *
  * Its recomended to use the com/jogamp/opengl/util/PMVMatrix.java
  * import com.jogamp.opengl.util.PMVMatrix;
@@ -242,6 +242,20 @@ static final String fragmentShader =
     private int ModelViewProjectionMatrix_location;
 
     public static void main(String[] s){
+
+        /* This demo are based on the GL2ES2 GLProfile that allows hardware acceleration
+         * on both desktop OpenGL 2 and mobile OpenGL ES 2 devices.
+         * JogAmp JOGL will probe all the installed libGL.so, libEGL.so and libGLESv2.so librarys on
+         * the system to find which one provide hardware acceleration for your GPU device.
+         * Its common to find more than one version of these librarys installed on a system.
+         * For example on a ARM Linux system JOGL may find
+         * Hardware accelerated Nvidia tegra GPU drivers in: /usr/lib/nvidia-tegra/libEGL.so
+         * Software rendered Mesa Gallium driver in: /usr/lib/arm-linux-gnueabi/mesa-egl/libEGL.so.1
+         * Software rendered Mesa X11 in: /usr/lib/arm-linux-gnueabi/mesa/libGL.so
+         * Good news!: JOGL does all this probing for you all you have to do are to ask for
+         * the GLProfile you want to use.
+         */
+
         GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES2));
         GLWindow canvas = GLWindow.create(caps);
 
@@ -410,7 +424,7 @@ static final String fragmentShader =
         gl.glDrawArrays(GL2ES2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
         
         gl.glDisableVertexAttribArray(0); // Allow release of vertex position memory
-		gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory		
+        gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory		
     }
 
     public void dispose(GLAutoDrawable drawable){
