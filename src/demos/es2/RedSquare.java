@@ -162,10 +162,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     private void initShader(GL2ES2 gl) {
         // Create & Compile the shader objects
-        ShaderCode rsVp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, RedSquare.class,
-                                            "shader", "shader/bin", "redsquare");
-        ShaderCode rsFp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, RedSquare.class,
-                                            "shader", "shader/bin", "redsquare");
+        ShaderCode rsVp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, RedSquare.class,
+                                            "shader", "shader/bin", "redsquare", false);
+        ShaderCode rsFp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, RedSquare.class,
+                                            "shader", "shader/bin", "redsquare", false);
 
         // Create & Link the shader program
         ShaderProgram sp = new ShaderProgram();

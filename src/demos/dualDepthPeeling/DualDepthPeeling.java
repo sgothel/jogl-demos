@@ -430,10 +430,10 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
     ShaderProgram build(GL2ES2 gl, String basename, boolean link) {
     	ShaderProgram sp = new ShaderProgram();
-    	ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, DualDepthPeeling.class,
-                "shader", null, basename);
-    	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, DualDepthPeeling.class,
-				  "shader", null, basename);
+    	ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, DualDepthPeeling.class,
+                "shader", null, basename, false);
+    	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, DualDepthPeeling.class,
+				  "shader", null, basename, false);
     	sp.add(vp);
     	sp.add(fp);
     	if(link && !sp.link(gl, System.err)) {
@@ -444,10 +444,10 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
     ShaderProgram build(GL2ES2 gl, String[] basenames, boolean link) {
     	ShaderProgram sp = new ShaderProgram();
 		ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, basenames.length, DualDepthPeeling.class,
-				"shader", basenames, null, null);
+				"shader", basenames, null, null, false);
     	sp.add(vp);
     	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, basenames.length, DualDepthPeeling.class,
-				  "shader", basenames, null, null);
+				  "shader", basenames, null, null, false);
     	sp.add(fp);
     	if(link && !sp.link(gl, System.err)) {
     		throw new GLException("Couldn't link program: "+sp);

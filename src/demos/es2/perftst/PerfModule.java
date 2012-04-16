@@ -22,10 +22,10 @@ public abstract class PerfModule {
         st = new ShaderState();
 
         // Create & Compile the shader objects
-        ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, 1, Perftst.class,
-                                            "shader", "shader/bin", vShaderName);
-        ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, 1, Perftst.class,
-                                            "shader", "shader/bin", fShaderName);
+        ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, Perftst.class,
+                                            "shader", "shader/bin", vShaderName, false);
+        ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, Perftst.class,
+                                            "shader", "shader/bin", fShaderName, false);
 
         // Create & Link the shader program
         ShaderProgram sp = new ShaderProgram();
