@@ -50,9 +50,7 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
-import javax.media.opengl.GL;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLProfile;
@@ -74,13 +72,6 @@ public class TextCube extends Demo {
   private float textScaleFactor;
 
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     Frame frame = new Frame("Text Cube");
     frame.setLayout(new BorderLayout());
 
@@ -119,7 +110,7 @@ public class TextCube extends Demo {
     // them all fit on the faces of the cube
     Rectangle2D bounds = renderer.getBounds("Bottom");
     float w = (float) bounds.getWidth();
-    float h = (float) bounds.getHeight();
+    // float h = (float) bounds.getHeight();
     textScaleFactor = 1.0f / (w * 1.1f);
     fps = new FPSCounter(drawable, 36);
 

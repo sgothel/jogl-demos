@@ -61,7 +61,6 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
 
 
@@ -71,13 +70,6 @@ import com.jogamp.opengl.util.Animator;
 
 public class TestTextureRenderer implements GLEventListener {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     Frame frame = new Frame("Java 2D Renderer Test");
     GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     caps.setAlphaBits(8);
@@ -114,7 +106,6 @@ public class TestTextureRenderer implements GLEventListener {
   private Rectangle textBounds;
   private Rectangle fpsBounds;
   private String TEST_STRING = "Java 2D Text";
-  private GLU glu = new GLU();
   private long startTime;
   private int frameCount;
   private DecimalFormat format = new DecimalFormat("####.00");
@@ -194,8 +185,6 @@ public class TestTextureRenderer implements GLEventListener {
     } else if (tmpBounds.getMaxY() > drawable.getHeight()) {
       velocity.setY(-1.0f * Math.abs(velocity.y()));
     }
-
-    GL gl = drawable.getGL();
 
     // Prepare to draw from the renderer's texture
     renderer.beginOrthoRendering(drawable.getWidth(), drawable.getHeight());

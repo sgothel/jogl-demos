@@ -13,7 +13,6 @@ package demos.misc;
 import com.jogamp.common.nio.Buffers;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.Canvas.*;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
@@ -24,13 +23,6 @@ public class Picking
 {
   public static void main(String[] args) 
   {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     new Picking();
   }
   	
@@ -38,7 +30,6 @@ public class Picking
   {
     Frame frame = new Frame("Picking Example");
     GLCapabilities capabilities = new GLCapabilities(null);
-    GLDrawableFactory factory = GLDrawableFactory.getFactory(capabilities.getGLProfile());
     GLCanvas drawable = new GLCanvas(capabilities);
     final Renderer renderer = new Renderer();
     drawable.addGLEventListener(renderer);
@@ -66,12 +57,10 @@ public class Picking
     int mouse_x, mouse_y;
 	
     private GLU glu = new GLU();
-    private GLAutoDrawable gldrawable;
 		
     public void init(GLAutoDrawable drawable) 
     {
       GL2 gl = drawable.getGL().getGL2();
-      this.gldrawable = drawable;
       gl.glEnable(GL2.GL_CULL_FACE);
       gl.glEnable(GL2.GL_DEPTH_TEST);
       gl.glEnable(GL2.GL_NORMALIZE);
@@ -81,7 +70,6 @@ public class Picking
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) 
     {
       GL2 gl = drawable.getGL().getGL2();
-      float h = (float) height / (float) width;
       gl.glViewport(0, 0, width, height);
       gl.glMatrixMode(GL2.GL_PROJECTION);
       gl.glLoadIdentity();

@@ -45,9 +45,7 @@ package demos.tess;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -75,13 +73,6 @@ import javax.media.opengl.glu.GLUtessellator;
 
 public class Tess {
     public static void main(String[] args) {
-        // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-        // <application-desc main-class="demos.j2d.TextCube"/>
-        //   <argument>NotFirstUIActionOnProcess</argument> 
-        // </application-desc>
-        boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-        GLProfile.initSingleton(firstUIActionOnProcess);
-
         try {
             Frame frame = new Frame("Tess Demo");
             frame.setSize(500, 500);

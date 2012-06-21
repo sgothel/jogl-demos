@@ -25,6 +25,5 @@
     </resources>
 
   <application-desc main-class="demos.j2d.TextCube">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

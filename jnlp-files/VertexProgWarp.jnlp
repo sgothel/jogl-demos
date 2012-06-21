@@ -21,6 +21,5 @@
     </resources>
 
   <application-desc main-class="demos.vertexProgWarp.VertexProgWarp">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

@@ -42,6 +42,8 @@ package demos.multisample;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.media.nativewindow.CapabilitiesImmutable;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 
@@ -51,7 +53,7 @@ public class Multisample {
   // Simple class to warn if results are not going to be as expected
   static class MultisampleChooser extends DefaultGLCapabilitiesChooser {
     public int chooseCapabilities(GLCapabilities desired,
-                                  List/*<GLCapabilitiesImmutable>*/ available,
+                                  List<? extends CapabilitiesImmutable> available,
                                   int windowSystemRecommendedChoice) {
       boolean anyHaveSampleBuffers = false;
       for (int i = 0; i < available.size(); i++) {
@@ -75,13 +77,6 @@ public class Multisample {
   }
 
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     new Multisample().run(args);
   }
 

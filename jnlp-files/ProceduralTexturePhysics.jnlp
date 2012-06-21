@@ -21,6 +21,5 @@
     </resources>
 
   <application-desc main-class="demos.proceduralTexturePhysics.ProceduralTexturePhysics">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

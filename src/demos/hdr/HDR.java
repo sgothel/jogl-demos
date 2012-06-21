@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -131,8 +130,6 @@ public class HDR extends Demo {
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
   public static void main(String[] args) {
-    GLProfile.initSingleton(false);
-
     GLCanvas canvas = new GLCanvas();
     final HDR demo = new HDR();
 
@@ -271,8 +268,8 @@ public class HDR extends Demo {
 
   private float zNear = 0.1f;
   private float zFar  = 10.0f;
-  private boolean wire = false;
-  private boolean toggleWire = false;
+  // private boolean wire = false;
+  // private boolean toggleWire = false;
   private GLU glu = new GLU();
 
   public void init(GLAutoDrawable drawable) {
@@ -1058,7 +1055,7 @@ public class HDR extends Demo {
     // NOTE: need to instantiate CgPipeline reflectively to avoid
     // compile-time dependence (since Cg support might not be present)
     try {
-      Class cgPipelineClass = Class.forName("demos.hdr.CgPipeline");
+      Class<?> cgPipelineClass = Class.forName("demos.hdr.CgPipeline");
       pipeline = (Pipeline) cgPipelineClass.newInstance();
     } catch (Exception e) {
       throw new GLException(e);
@@ -1139,7 +1136,7 @@ public class HDR extends Demo {
     gl.glGenProgramsARB(1, tmp, 0);
     prog_id = tmp[0];
     gl.glBindProgramARB(target, prog_id);
-    int size = code.length();
+    // int size = code.length();
     gl.glProgramStringARB(target, GL2.GL_PROGRAM_FORMAT_ASCII_ARB, code.length(), code);
     int[] errPos = new int[1];
     gl.glGetIntegerv(GL2.GL_PROGRAM_ERROR_POSITION_ARB, errPos, 0);
@@ -1184,6 +1181,7 @@ public class HDR extends Demo {
     return (float) (Math.exp(-x*x/(2*s*s)) / (s*Math.sqrt(2*Math.PI)));
   }
 
+  /*
   private void dumpWeights(int n) {
     float s = n / 3.0f;
     float sum = 0.0f;
@@ -1194,7 +1192,7 @@ public class HDR extends Demo {
       System.err.println("" + x + ": " + w);
     }
     System.err.println("sum = " + sum);
-  }
+  } */
 
   // optimized version
   // pairs texture lookups, uses half precision
@@ -1266,9 +1264,10 @@ public class HDR extends Demo {
     shutdownDemo();
   }
 
+  /*
   private void printThreadName(String where) {
     System.err.println("In " + where + ": current thread = " + Thread.currentThread().getName());
-  }
+  } */
 
   private static void runExit(final Animator animator) {
     // Note: calling System.exit() synchronously inside the draw,

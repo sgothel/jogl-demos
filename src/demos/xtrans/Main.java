@@ -47,8 +47,6 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
 
-import javax.media.opengl.GLProfile;
-
 /** Demonstration showing off XTDesktopPane.
  *
  * @author Kenneth Russell
@@ -268,13 +266,6 @@ public class Main {
   }
 
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     new Main().run(args);
   }
 }

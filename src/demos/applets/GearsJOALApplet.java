@@ -19,7 +19,6 @@ public class GearsJOALApplet extends Applet {
   private GLAnimatorControl animator;
 
   public void init() {
-    GLProfile.initSingleton(false);
     setLayout(new GridLayout(1, 2));
     GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Gears());

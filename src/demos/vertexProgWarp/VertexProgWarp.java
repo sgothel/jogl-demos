@@ -51,7 +51,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -61,7 +60,6 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.GLBuffers;
 import javax.swing.JOptionPane;
 
 
@@ -76,23 +74,12 @@ import javax.swing.JOptionPane;
 */
 
 public class VertexProgWarp extends Demo {
-  private Frame    frame;
-  private Animator animator;
-  private volatile boolean quit;
-
   private GLAutoDrawable drawable;
   private DurationTimer timer = new DurationTimer();
   private boolean  firstRender = true;
   private int      frameCount;
 
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     new VertexProgWarp().run(args);
   }
 

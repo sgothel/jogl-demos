@@ -80,8 +80,6 @@ public class TestGamma implements GLEventListener {
   }
 
   public static void main(String[] args) {
-    GLProfile.initSingleton(true);
-
     if (args.length != 3) {
       usage();
     }

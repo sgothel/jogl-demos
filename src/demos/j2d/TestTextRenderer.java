@@ -50,7 +50,6 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -65,13 +64,6 @@ import com.jogamp.opengl.util.Animator;
 
 public class TestTextRenderer implements GLEventListener {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     Frame frame = new Frame("Text Renderer Test");
     GLCapabilities caps = new GLCapabilities(null);
     caps.setAlphaBits(8);
@@ -101,7 +93,7 @@ public class TestTextRenderer implements GLEventListener {
 
   private TextRenderer renderer;
   private Time time;
-  private Font font;
+  // private Font font;
   private Vec2f velocity = new Vec2f(100.0f, 150.0f);
   private Vec2f position;
   private String TEST_STRING = "Java 2D Text";
@@ -153,8 +145,6 @@ public class TestTextRenderer implements GLEventListener {
     } else if (position.y() + textHeight > drawable.getHeight()) {
       velocity.setY(-1.0f * Math.abs(velocity.y()));
     }      
-
-    GL gl = drawable.getGL();
 
     // Prepare to draw text
     renderer.beginRendering(drawable.getWidth(), drawable.getHeight());

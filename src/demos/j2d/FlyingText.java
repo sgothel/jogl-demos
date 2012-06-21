@@ -42,7 +42,6 @@ package demos.j2d;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import demos.common.Demo;
 import demos.util.FPSCounter;
@@ -65,9 +64,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
@@ -88,13 +85,6 @@ import javax.swing.event.ChangeListener;
 
 public class FlyingText extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     JFrame frame = new JFrame("Flying Text");
     frame.getContentPane().setLayout(new BorderLayout());
 
@@ -157,7 +147,7 @@ public class FlyingText extends Demo {
     String text;
   }
 
-  private List/*<TextInfo>*/ textInfo = new ArrayList/*<TextInfo>*/();
+  private List<TextInfo> textInfo = new ArrayList<TextInfo>();
   private int dropShadowDistance = DEFAULT_DROP_SHADOW_DIST;
   private Time time;
   private Texture backgroundTexture;
@@ -297,8 +287,8 @@ public class FlyingText extends Demo {
     // Update velocities and positions of all text
     float deltaT = (float) time.deltaT();
     Vec2f tmp = new Vec2f();
-    for (Iterator iter = textInfo.iterator(); iter.hasNext(); ) {
-      TextInfo info = (TextInfo) iter.next();
+    for (Iterator<TextInfo> iter = textInfo.iterator(); iter.hasNext(); ) {
+      TextInfo info = iter.next();
 
       // Randomize things a little bit at run time
       if (random.nextInt(1000) == 0) {
@@ -384,8 +374,8 @@ public class FlyingText extends Demo {
 
     // First render drop shadows
     renderer.setColor(0, 0, 0, 0.5f);
-    for (Iterator iter = textInfo.iterator(); iter.hasNext(); ) {
-      TextInfo info = (TextInfo) iter.next();
+    for (Iterator<TextInfo> iter = textInfo.iterator(); iter.hasNext(); ) {
+      TextInfo info = iter.next();
       gl.glLoadIdentity();
       gl.glTranslatef(info.position.x() + dropShadowDistance,
                       info.position.y() - dropShadowDistance,
@@ -397,8 +387,8 @@ public class FlyingText extends Demo {
     }
 
     // Now render the actual text
-    for (Iterator iter = textInfo.iterator(); iter.hasNext(); ) {
-      TextInfo info = (TextInfo) iter.next();
+    for (Iterator<TextInfo> iter = textInfo.iterator(); iter.hasNext(); ) {
+      TextInfo info = iter.next();
       gl.glLoadIdentity();
       gl.glTranslatef(info.position.x(),
                       info.position.y(),

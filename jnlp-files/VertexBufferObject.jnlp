@@ -20,6 +20,5 @@
     </resources>
 
   <application-desc main-class="demos.vertexBufferObject.VertexBufferObject">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

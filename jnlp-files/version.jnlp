@@ -18,6 +18,5 @@
     </resources>
 
   <application-desc main-class="demos.misc.VersionInfo">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

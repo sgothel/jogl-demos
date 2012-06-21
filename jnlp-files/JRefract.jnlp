@@ -25,6 +25,5 @@
     </resources>
 
   <application-desc main-class="demos.jrefract.JRefract">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

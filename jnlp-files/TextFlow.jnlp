@@ -20,6 +20,5 @@
     </resources>
 
   <application-desc main-class="demos.j2d.TextFlow">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

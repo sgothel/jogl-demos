@@ -24,6 +24,5 @@
     </resources>
 
   <application-desc main-class="demos.xtrans.Main">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

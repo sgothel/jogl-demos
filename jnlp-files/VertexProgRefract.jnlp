@@ -21,6 +21,5 @@
     </resources>
 
   <application-desc main-class="demos.vertexProgRefract.VertexProgRefract">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

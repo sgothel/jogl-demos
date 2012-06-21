@@ -56,7 +56,6 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
-import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
 import javax.swing.JOptionPane;
 
@@ -76,13 +75,6 @@ import javax.swing.JOptionPane;
 
 public class VertexProgRefract extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     GLCanvas canvas = new GLCanvas();
     final VertexProgRefract demo = new VertexProgRefract();
 
@@ -127,7 +119,6 @@ public class VertexProgRefract extends Demo {
   private int bunnydl;
   private int obj;
 
-  private GLU  glu  = new GLU();
   private GLUT glut = new GLUT();
 
   private GLAutoDrawable drawable;

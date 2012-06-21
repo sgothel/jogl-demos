@@ -20,6 +20,5 @@
     </resources>
 
   <application-desc main-class="demos.gears.Gears">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

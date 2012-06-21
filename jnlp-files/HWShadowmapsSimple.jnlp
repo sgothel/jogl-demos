@@ -21,6 +21,5 @@
     </resources>
 
   <application-desc main-class="demos.hwShadowmapsSimple.HWShadowmapsSimple">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

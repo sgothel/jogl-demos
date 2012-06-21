@@ -14,9 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
-import javax.media.nativewindow.Capabilities;
 import javax.media.opengl.DefaultGLCapabilitiesChooser;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesChooser;
 import javax.media.opengl.awt.GLCanvas;
@@ -60,12 +58,12 @@ public class GLCapsTableDemo
    "ABits", "aR", "aG", "aB", "aA", // accum bits
    "Z", "S", "AA|AAS", "PBuf(Float|RTT|RTTRec)"}; // depth, stencil, n
   // samples, pbuffer
-  private ArrayList/*<GLCapabilities>*/ available = new ArrayList/*<GLCapabilities>*/();
-  private ArrayList/*<Integer>*/ indices = new ArrayList/*<Integer>*/();
+  private ArrayList<GLCapabilities> available = new ArrayList<GLCapabilities>();
+  private ArrayList<Integer> indices = new ArrayList<Integer>();
   private Object[][] data;
   private JTable capsTable;
   private int desiredCapIndex; // pfd index
-  private int selected = desiredCapIndex;
+  // private int selected = desiredCapIndex;
   protected JPanel pane, pane2;
   private boolean updateLR;// leftright
   private DefaultGLCapabilitiesChooser choiceExaminer = //
@@ -171,13 +169,6 @@ public class GLCapsTableDemo
    */
   public static void main(String[] args)
   {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     GLCapsTableDemo demo = new GLCapsTableDemo();
     demo.run(args);
   }

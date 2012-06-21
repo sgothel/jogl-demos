@@ -54,7 +54,6 @@ import java.awt.event.WindowEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.text.DecimalFormat;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -67,13 +66,6 @@ import com.jogamp.opengl.util.Animator;
 
 public class TestOverlay implements GLEventListener {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     Frame frame = new Frame("Java 2D Overlay Test");
     GLCapabilities caps = new GLCapabilities(null);
     caps.setAlphaBits(8);

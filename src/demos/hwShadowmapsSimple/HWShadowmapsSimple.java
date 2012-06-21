@@ -55,10 +55,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.GLPipelineFactory;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -83,13 +79,6 @@ import javax.swing.JOptionPane;
 
 public class HWShadowmapsSimple extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     final GLCanvas canvas = new GLCanvas();
     final HWShadowmapsSimple demo = new HWShadowmapsSimple();
     canvas.addGLEventListener(demo);
@@ -155,12 +144,12 @@ public class HWShadowmapsSimple extends Demo {
       this.incr = incr;
     }
   };
-  private java.util.List/*<Tweak>*/ tweaks = new ArrayList();
+  private java.util.List<Tweak> tweaks = new ArrayList<Tweak>();
   private static final int R_COORDINATE_SCALE   = 0;
   private static final int R_COORDINATE_BIAS    = 1;
   private static final int POLYGON_OFFSET_SCALE = 2;
   private static final int POLYGON_OFFSET_BIAS  = 3;
-  private int curr_tweak;
+  // private int curr_tweak;
 
   // Texture objects
   private static final int TEX_SIZE = 1024;
@@ -470,8 +459,8 @@ public class HWShadowmapsSimple extends Demo {
 
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
-      gl.glPolygonOffset(((Tweak) tweaks.get(POLYGON_OFFSET_SCALE)).val,
-                         ((Tweak) tweaks.get(POLYGON_OFFSET_BIAS)).val);
+      gl.glPolygonOffset(tweaks.get(POLYGON_OFFSET_SCALE).val,
+                         tweaks.get(POLYGON_OFFSET_BIAS).val);
       gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
 
       render_scene_from_light_view(gl, drawable, 0, 0);
@@ -709,8 +698,8 @@ public class HWShadowmapsSimple extends Demo {
 
     gl.glMatrixMode(GL2.GL_TEXTURE);
     gl.glLoadIdentity();
-    gl.glTranslatef(.5f, .5f, ((Tweak) tweaks.get(R_COORDINATE_SCALE)).val);
-    gl.glScalef(.5f, .5f, ((Tweak) tweaks.get(R_COORDINATE_BIAS)).val);
+    gl.glTranslatef(.5f, .5f, tweaks.get(R_COORDINATE_SCALE).val);
+    gl.glScalef(.5f, .5f, tweaks.get(R_COORDINATE_BIAS).val);
     glu.gluPerspective(lightshaper_fovy, 1, lightshaper_zNear, lightshaper_zFar);
     applyTransform(gl, spotlightInverseTransform);
     gl.glMatrixMode(GL2.GL_MODELVIEW);

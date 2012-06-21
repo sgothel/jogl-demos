@@ -50,7 +50,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -76,13 +75,6 @@ import javax.swing.JOptionPane;
  */
 public class ProceduralTexturePhysics extends Demo {
     public static void main(String[] args) {
-        // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-        // <application-desc main-class="demos.j2d.TextCube"/>
-        //   <argument>NotFirstUIActionOnProcess</argument> 
-        // </application-desc>
-        boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-        GLProfile.initSingleton(firstUIActionOnProcess);
-
         GLCanvas canvas = new GLCanvas();
         final ProceduralTexturePhysics demo = new ProceduralTexturePhysics();
         canvas.addGLEventListener(demo);

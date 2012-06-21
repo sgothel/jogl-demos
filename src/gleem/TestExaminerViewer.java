@@ -44,7 +44,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -150,7 +149,6 @@ public class TestExaminerViewer {
   }
 
   public static void main(String[] args) {
-    GLProfile.initSingleton(true);
     Frame frame = new Frame("ExaminerViewer Test");
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {

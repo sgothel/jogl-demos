@@ -19,6 +19,5 @@
     </resources>
 
   <application-desc main-class="demos.particles.engine.ControlWindow">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

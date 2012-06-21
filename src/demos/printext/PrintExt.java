@@ -6,7 +6,6 @@
 package demos.printext;
 
 import java.awt.Frame;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -16,13 +15,6 @@ import javax.media.opengl.awt.GLCanvas;
 
 public class PrintExt {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     Frame frame = new Frame();
     GLCanvas canvas = new GLCanvas();
     canvas.addGLEventListener(new Listener());

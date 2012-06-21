@@ -50,10 +50,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -74,20 +71,11 @@ public class TestContextDestruction {
   private Component frame1RemovedComponent;
   private Component frame2ContainedComponent;
   private Component frame2RemovedComponent;
-  private GLCanvas canvas;
   private Canvas emptyCanvas;
-  private boolean frame1IsTarget = true;
   private float angle = 0.0f;
   private static final int BORDER_WIDTH = 6;
 
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     new TestContextDestruction().run(args);
   }
 

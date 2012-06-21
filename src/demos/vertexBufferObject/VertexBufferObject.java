@@ -47,13 +47,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
+
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
@@ -87,24 +88,11 @@ import javax.swing.JOptionPane;
 
 public class VertexBufferObject extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     boolean vboEnabled = true;
 
-    if (args.length > 1) {
-      usage();
-    }
-
-    if (args.length == 1) {
-      if (args[0].equals("-slow")) {
+    for(int i=0; i< args.length; i++) {
+      if (args[i].equals("-slow")) {
         vboEnabled = false;
-      } else {
-        usage();
       }
     }
     GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
@@ -138,9 +126,10 @@ public class VertexBufferObject extends Demo {
     animator.start();
   }
 
-  private static void usage() {
-    System.out.println("usage: java VertexBufferObject [-slow]");
-    System.out.println("-slow flag starts up using data in the Java heap");
+  private static void usage(String[] args) {
+	System.err.println("Given args: "+Arrays.asList(args));
+    System.err.println("usage: java VertexBufferObject [-slow]");
+    System.err.println("-slow flag starts up using data in the Java heap");
     System.exit(0);
   }
 

@@ -45,7 +45,6 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -167,7 +166,6 @@ public class TestMultiWin {
   }
 
   public static void main(String[] args) {
-    GLProfile.initSingleton(true);
     // Instantiate HandleBoxManip
     manip = new HandleBoxManip();
     manip.setTranslation(new Vec3f(0, 0, -10));

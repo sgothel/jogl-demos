@@ -42,7 +42,6 @@ package demos.j2d;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import demos.common.Demo;
 import demos.util.FPSCounter;
@@ -69,7 +68,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
@@ -87,13 +85,6 @@ import javax.swing.JPanel;
 
 public class CustomText extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     JFrame frame = new JFrame("Custom Text");
     frame.getContentPane().setLayout(new BorderLayout());
 
@@ -131,7 +122,7 @@ public class CustomText extends Demo {
   // Put a little physics on the text to make it look nicer
   private static final float INIT_ANG_VEL_MAG = 0.3f;
   private static final float INIT_VEL_MAG = 400.0f;
-  private static final int   DEFAULT_DROP_SHADOW_DIST = 20;
+  // private static final int   DEFAULT_DROP_SHADOW_DIST = 20;
 
   // Information about each piece of text
   private static class TextInfo {
@@ -144,7 +135,7 @@ public class CustomText extends Demo {
     String text;
   }
 
-  private List/*<TextInfo>*/ textInfo = new ArrayList/*<TextInfo>*/();
+  private List<TextInfo> textInfo = new ArrayList<TextInfo>();
   private Time time;
   private Texture backgroundTexture;
   private TextRenderer renderer;
@@ -255,8 +246,8 @@ public class CustomText extends Demo {
     // Update velocities and positions of all text
     float deltaT = (float) time.deltaT();
     Vec2f tmp = new Vec2f();
-    for (Iterator iter = textInfo.iterator(); iter.hasNext(); ) {
-      TextInfo info = (TextInfo) iter.next();
+    for (Iterator<TextInfo> iter = textInfo.iterator(); iter.hasNext(); ) {
+      TextInfo info = iter.next();
 
       // Randomize things a little bit at run time
       if (random.nextInt(1000) == 0) {
@@ -328,8 +319,8 @@ public class CustomText extends Demo {
 
     gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
 
-    for (Iterator iter = textInfo.iterator(); iter.hasNext(); ) {
-      TextInfo info = (TextInfo) iter.next();
+    for (Iterator<TextInfo> iter = textInfo.iterator(); iter.hasNext(); ) {
+      TextInfo info = iter.next();
       gl.glLoadIdentity();
       gl.glTranslatef(info.position.x(),
                       info.position.y(),

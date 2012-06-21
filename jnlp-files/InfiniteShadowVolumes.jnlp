@@ -21,6 +21,5 @@
     </resources>
 
   <application-desc main-class="demos.infiniteShadowVolumes.InfiniteShadowVolumes">
-   <argument>NotFirstUIActionOnProcess</argument> 
   </application-desc>
 </jnlp>

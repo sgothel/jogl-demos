@@ -49,15 +49,10 @@ import gleem.linalg.Vec3f;
 import gleem.linalg.Vec4f;
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -86,13 +81,6 @@ import javax.media.opengl.glu.GLU;
 
 public class InfiniteShadowVolumes extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     GLCapabilities caps = new GLCapabilities(null);
     caps.setStencilBits(16);
     final GLCanvas canvas = new GLCanvas(caps);

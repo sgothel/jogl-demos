@@ -41,32 +41,19 @@ package demos.testContextSharing;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.util.Random;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.DebugGL2;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
-
 
 
 /** A simple demonstration of sharing of display lists between drawables. */
 
 public class TestContextSharing {
   private int gearDisplayList;
-  private Frame delayedFrame;
 
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     new TestContextSharing().run(args);
   }
 

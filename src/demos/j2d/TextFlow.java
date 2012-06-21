@@ -61,7 +61,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
@@ -75,13 +74,6 @@ import com.jogamp.opengl.util.Animator;
 
 public class TextFlow extends Demo {
   public static void main(String[] args) {
-    // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
-    // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
-    // </application-desc>
-    boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
-    GLProfile.initSingleton(firstUIActionOnProcess);
-
     Frame frame = new Frame("Text Flow");
     frame.setLayout(new BorderLayout());
 
@@ -111,7 +103,7 @@ public class TextFlow extends Demo {
     animator.start();
   }
 
-  private List/*<String>*/ lines = new ArrayList();
+  private List<String> lines = new ArrayList<String>();
   private Time time;
   private TextRenderer renderer;
   private int curParagraph;
@@ -128,7 +120,7 @@ public class TextFlow extends Demo {
     FontRenderContext frc = renderer.getFontRenderContext();
     for (int i = 0; i < text.length; i++) {
       String paragraph = text[i];
-      Map attrs = new HashMap();
+      Map<TextAttribute, Font> attrs = new HashMap<TextAttribute, Font>();
       attrs.put(TextAttribute.FONT, renderer.getFont());
       AttributedString str = new AttributedString(paragraph, attrs);
       LineBreakMeasurer measurer = new LineBreakMeasurer(str.getIterator(), frc);

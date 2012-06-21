@@ -23,6 +23,5 @@
         <extension name="jogl-all-awt" href="JOGL_CODEBASE_TAG/jogl-all-awt.jnlp" version="JOGAMP_VERSION"/>
     </resources>
     <application-desc main-class="worldwinddemo.BasicDemo">
-      <argument>NotFirstUIActionOnProcess</argument> 
     </application-desc>
 </jnlp>
