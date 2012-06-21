@@ -104,7 +104,9 @@ public class VertexBufferObject extends Demo {
       if (args[0].equals("-slow")) {
         vboEnabled = false;
       } else {
-        usage();
+        if (!args[0].equals("NotFirstUIActionOnProcess")) {
+            usage();
+        }
       }
     }
     GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
