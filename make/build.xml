@@ -51,10 +51,10 @@
        - cause builds to fail since if this Java process has the jar file
        - open we can not overwrite it.
       -->
-    <target name="test.for.jogl.demos.jar">
-        <available property="jogl.demos.jar.on.class.path" classname="demos.gears.Gears" />
+    <target name="test.for.jogl-demos.jar">
+        <available property="jogl-demos.jar.on.class.path" classname="demos.gears.Gears" />
     </target>
-    <target name="java.class.path.validate" depends="test.for.jogl.demos.jar" if="jogl.demos.jar.on.class.path">
+    <target name="java.class.path.validate" depends="test.for.jogl-demos.jar" if="jogl-demos.jar.on.class.path">
         <fail>
         
     ******************************************************************
@@ -95,8 +95,8 @@
 
     <target name="init" depends="jogamp.env.init,gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
         <property name="gluegen-rt.jar"      value="${gluegen.build}/gluegen-rt.jar" />
-        <property name="jogl.all.jar"        value="${jogl.build}/jar/jogl.all.jar" />
-        <property name="jogl.cg.jar"         value="${jogl.build}/jar/atomic/jogl.cg.jar" />
+        <property name="jogl-all.jar"        value="${jogl.build}/jar/jogl-all.jar" />
+        <property name="jogl-cg.jar"         value="${jogl.build}/jar/atomic/jogl-cg.jar" />
         <property name="joal.jar"            value="${joal.build}/joal.jar" />
         <property name="simple-xml.jar"      value="${project.root}/lib/simple-xml-1.1.1.jar" />
         <property name="classes"             value="${build}/classes" />
@@ -106,11 +106,11 @@
         <!--property name="javadoc.link" value="http://download.oracle.com/javase/1.5.0/docs/api/" /-->
         <property name="javadoc.link"        value="http://docs.oracle.com/javase/6/docs/api/" />
         <property name="javadoc.link.jogl"   value="${jogl.root}/javadoc-public/" />
-        <property name="jogl.demos.jar"      value="${build}/jogl-demos.jar" />
-        <property name="jogl.demos.util.jar" value="${build}/jogl-demos-util.jar" />
-        <property name="jogl.demos.data.jar" value="${build}/jogl-demos-data.jar" />
-        <property name="jogl.demos.dualDepthPeeling.jar" value="${build}/jogl-demos-dualDepthPeeling.jar" />
-        <property name="jogl.demos.tennis.jar" value="${build}/jogl-demos-tennis.jar" />
+        <property name="jogl-demos.jar"      value="${build}/jogl-demos.jar" />
+        <property name="jogl-demos-util.jar" value="${build}/jogl-demos-util.jar" />
+        <property name="jogl-demos-data.jar" value="${build}/jogl-demos-data.jar" />
+        <property name="jogl-demos-dualDepthPeeling.jar" value="${build}/jogl-demos-dualDepthPeeling.jar" />
+        <property name="jogl-demos-tennis.jar" value="${build}/jogl-demos-tennis.jar" />
         <property name="archive.name"        value="jogl-demos-${jogl-demos.version}-${os.and.arch}" />
         <property name="archive"             value="${build}/${archive.name}" />
 
@@ -160,8 +160,8 @@
     <target name="all-desktop" unless="isGLES">
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${jogl.all.jar}" />
-            <pathelement location="${jogl.cg.jar}" />
+            <pathelement location="${jogl-all.jar}" />
+            <pathelement location="${jogl-cg.jar}" />
             <pathelement location="${joal.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
             <pathelement location="${simple-xml.jar}" />
@@ -181,7 +181,7 @@
         </javac>
         <antcall target="redbook-javac" inheritrefs="true" />
         <antcall target="nurbs" inheritrefs="true" />
-        <jar destfile="${jogl.demos.jar}">
+        <jar destfile="${jogl-demos.jar}">
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
                 <exclude name="demos/util/**" />
@@ -207,13 +207,13 @@
                 <include name="demos/particles/engine/images/*.jpg" />
             </fileset>
         </jar>
-        <jar destfile="${jogl.demos.util.jar}">
+        <jar destfile="${jogl-demos-util.jar}">
             <fileset dir="${classes}">
                 <include name="gleem/**" />
                 <include name="demos/util/**" />
             </fileset>
         </jar>
-        <jar destfile="${jogl.demos.data.jar}">
+        <jar destfile="${jogl-demos-data.jar}">
             <fileset dir="${src}">
                 <include name="demos/data/**" />
                 <exclude name="demos/data/models/dragon.obj" />
@@ -224,7 +224,7 @@
             </fileset>
         </jar>
         <!-- due to size or usability .. create self packaged jars (code + data) -->
-        <jar destfile="${jogl.demos.dualDepthPeeling.jar}">
+        <jar destfile="${jogl-demos-dualDepthPeeling.jar}">
             <fileset dir="${classes}">
                 <include name="demos/dualDepthPeeling/**" />
             </fileset>
@@ -238,7 +238,7 @@
                 <include name="demos/data/**" />
             </fileset>
         </jar>
-        <jar destfile="${jogl.demos.tennis.jar}">
+        <jar destfile="${jogl-demos-tennis.jar}">
             <fileset dir="${classes}">
                 <include name="demos/tennis/**" />
             </fileset>
@@ -258,8 +258,8 @@
         <echo message="classes destdir ${classes}" />
         <mkdir dir="${classes}" />
         <path id="jogl-demos.classpath">
-            <pathelement location="${jogl.all.jar}" />
-            <pathelement location="${jogl.cg.jar}" />
+            <pathelement location="${jogl-all.jar}" />
+            <pathelement location="${jogl-cg.jar}" />
             <pathelement location="${gluegen-rt.jar}" />
         </path>
         <javac destdir="${classes}" 
@@ -274,7 +274,7 @@
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
-        <jar destfile="${jogl.demos.jar}">
+        <jar destfile="${jogl-demos.jar}">
             <fileset dir="${classes}">
                 <include name="**" />
             </fileset>
