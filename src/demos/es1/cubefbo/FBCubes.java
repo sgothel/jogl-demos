@@ -33,11 +33,17 @@
 
 package demos.es1.cubefbo;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+
+import com.jogamp.opengl.FBObject;
+import com.jogamp.opengl.FBObject.Attachment;
+import com.jogamp.opengl.FBObject.TextureAttachment;
+import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
+
 import demos.es1.cube.Cube;
-import java.nio.*;
-import javax.media.opengl.*;
-import com.jogamp.opengl.util.FBObject;
-import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
 public class FBCubes implements GLEventListener {
     private static final int FBO_SIZE = 256;
@@ -45,7 +51,7 @@ public class FBCubes implements GLEventListener {
     public FBCubes () {
         cubeOuter = new Cube(true, false);
 
-        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE);
+        fbo1 = new FBObject();
         cubeInner = new Cube(false, true);
 
         // JAU cubeMiddle = new Cube(true, false);
@@ -56,29 +62,9 @@ public class FBCubes implements GLEventListener {
         GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
         System.out.println(gl);
 
-        gl.glGetError(); // flush error ..
-        /*
-        if(gl.isGLES2()) {
-            GLES2 gles2 = gl.getGLES2();
-
-            // Debug ..
-            //DebugGLES2 gldbg = new DebugGLES2(gles2);
-            //gles2.getContext().setGL(gldbg);
-            //gles2 = gldbg;
-
-            // Trace ..
-            //TraceGLES2 gltrace = new TraceGLES2(gles2, System.err);
-            gles2.getContext().setGL(gltrace);
-            gl = gltrace;
-        }*/
-
-        fbo1.init(gl);
-        fbo1.attachTexture2D(gl, 0, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0);
-        fbo1.attachDepthBuffer(gl, GL.GL_DEPTH_COMPONENT16);
-        //fbo1.init(gl, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // faster
-        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // GLES2 default
-        //fbo1.init(gl, GL.GL_RGBA, GL.GL_RGBA, GL.GL_UNSIGNED_SHORT_5_5_5_1, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // useless (1bit alpha)
-        //fbo1.init(gl, GL.GL_RGBA8, GL2.GL_BGRA, GL2.GL_UNSIGNED_INT_8_8_8_8_REV, GL2ES2.GL_NEAREST, GL2ES2.GL_NEAREST, 0, 0); // GL2 default
+        fbo1.reset(gl, FBO_SIZE, FBO_SIZE);
+        fbo1.attachTexture2D(gl, 0, true);
+        fbo1.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo1.unbind(gl);
         cubeInner.init(drawable);
         
@@ -116,12 +102,12 @@ public class FBCubes implements GLEventListener {
         gl.glFinish();
         fbo1.unbind(gl);
 
-        gl.glEnable (gl.GL_TEXTURE_2D);
-        fbo1.use(gl, 0);
+        gl.glEnable (GL.GL_TEXTURE_2D);
+        fbo1.use(gl, (TextureAttachment)fbo1.getColorbuffer(0));
         cubeOuter.reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
         cubeOuter.display(drawable);
         fbo1.unuse(gl);
-        gl.glDisable (gl.GL_TEXTURE_2D);
+        gl.glDisable (GL.GL_TEXTURE_2D);
 
         // JAUFBObject tex = fbo1;
         // JAU FBObject rend = fbo2;

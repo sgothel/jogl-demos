@@ -36,16 +36,14 @@ package demos.cubefbo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.FBObject;
 
+import com.jogamp.opengl.FBObject;
+import com.jogamp.opengl.FBObject.Attachment;
+import com.jogamp.opengl.FBObject.TextureAttachment;
 
 
 class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
@@ -55,19 +53,19 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         cubeInner = new CubeObject(false);
         cubeMiddle = new CubeObject(true);
         cubeOuter = new CubeObject(true);
-        fbo1 = new FBObject(FBO_SIZE, FBO_SIZE);
-        fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
+        fbo1 = new FBObject();
+        fbo2 = new FBObject();
     }
 
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        // drawable.setGL(new DebugGL2(gl));
-        // gl = drawable.getGL().getGL2();
-        fbo1.init(gl);
-        fbo1.attachTexture2D(gl, 0, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
+        fbo1.reset(gl, FBO_SIZE, FBO_SIZE);
+        fbo1.attachTexture2D(gl, 0, true);
+        fbo1.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo1.unbind(gl);
-        fbo2.init(gl);
-        fbo2.attachTexture2D(gl, 0, gl.GL_NEAREST, gl.GL_NEAREST, 0, 0);
+        fbo2.reset(gl, FBO_SIZE, FBO_SIZE);
+        fbo2.attachTexture2D(gl, 0, true);
+        fbo2.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo2.unbind(gl);
     }
 
@@ -115,7 +113,7 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         for (int i = 0; i < MAX_ITER; i++) {
             rend.bind(gl);
             gl.glEnable (GL.GL_TEXTURE_2D);
-            tex.use(gl, 0);
+            tex.use(gl, (TextureAttachment)tex.getColorbuffer(0));
             cubeMiddle.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
             cubeMiddle.display(gl, xRot, yRot);
             tex.unuse(gl);
@@ -134,7 +132,7 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         gl.glClearColor(0, 0, 0, 1);
 
         gl.glEnable (GL.GL_TEXTURE_2D);
-        tex.use(gl, 0);
+        tex.use(gl, (TextureAttachment)tex.getColorbuffer(0));
         cubeOuter.display(gl, xRot, yRot);
         //        System.out.println("display .. p8");
         tex.unuse(gl);
