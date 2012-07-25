@@ -49,6 +49,7 @@ import java.awt.event.ActionListener;
 import javax.media.nativewindow.GraphicsConfigurationFactory;
 import javax.media.nativewindow.NativeWindow;
 import javax.media.nativewindow.NativeWindowFactory;
+import javax.media.nativewindow.VisualIDHolder;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
@@ -85,7 +86,8 @@ public class DualContext extends Canvas {
 
   public DualContext(AWTGraphicsConfiguration config) {
     super(unwrap(config));
-    NativeWindow win = NativeWindowFactory.getFactory(getClass()).getNativeWindow(this, config);
+    NativeWindowFactory.getFactory(getClass());
+	NativeWindow win = NativeWindowFactory.getNativeWindow(this, config);
     GLCapabilities glCaps = (GLCapabilities) win.getGraphicsConfiguration().getNativeGraphicsConfiguration().getChosenCapabilities();
     drawable = GLDrawableFactory.getFactory(glCaps.getGLProfile()).createGLDrawable(win);
     context1 = drawable.createContext(null);
@@ -159,7 +161,7 @@ public class DualContext extends Canvas {
     AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
     GLCapabilities caps = new GLCapabilities(glp);
     AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)
-         GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(caps, caps, null, screen);
+         GraphicsConfigurationFactory.getFactory(AWTGraphicsDevice.class, caps.getClass()).chooseGraphicsConfiguration(caps, caps, null, screen, VisualIDHolder.VID_UNDEFINED);
     final DualContext dc = new DualContext(config);
 
     frame.getContentPane().add(dc, BorderLayout.CENTER);
