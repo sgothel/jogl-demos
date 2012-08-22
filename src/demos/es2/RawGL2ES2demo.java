@@ -35,7 +35,6 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import com.jogamp.newt.opengl.GLWindow;
 
-import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.opengl.util.GLArrayDataServer;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderState;
@@ -68,12 +67,12 @@ import javax.media.opengl.awt.GLCanvas;
  * JOGL2 OpenGL ES 2 demo to expose and learn what the RAW OpenGL ES 2 API looks like.
  *
  * Compile, run and enjoy:
-   wget http://jogamp.org/deployment/jogamp-test/archive/jogamp-all-platforms.7z
+   wget http://jogamp.org/deployment/jogamp-current/archive/jogamp-all-platforms.7z
    7z x jogamp-all-platforms.7z
    cd jogamp-all-platforms
    wget https://raw.github.com/xranby/jogl-demos/master/src/demos/es2/RawGL2ES2demo.java
-   javac -cp jar/jogl.all.jar:jar/gluegen-rt.jar RawGL2ES2demo.java
-   java -cp jar/jogl.all.jar:jar/gluegen-rt.jar:. RawGL2ES2demo
+   javac -cp jar/jogl-all.jar:jar/gluegen-rt.jar RawGL2ES2demo.java
+   java -cp jar/jogl-all.jar:jar/gluegen-rt.jar:. RawGL2ES2demo
  * </p>
  *
  *
@@ -114,13 +113,13 @@ public class RawGL2ES2demo implements GLEventListener{
  * sent to the GPU driver for compilation.
  */
 static final String vertexShader =
+// For GLSL 1 and 1.1 code i highly recomend to not include a 
+// GLSL ES language #version line, GLSL ES section 3.4
+// Many GPU drivers refuse to compile the shader if #version is different from
+// the drivers internal GLSL version.
 "#ifdef GL_ES \n" +
-"#version 100 \n" + // GLSL ES language version, GLSL ES section 3.4
-                    // many GPU drivers require it.
 "precision mediump float; \n" + // Precision Qualifiers
 "precision mediump int; \n" +   // GLSL ES section 4.5.2
-"#else \n" +
-"#version 110 \n" + // Mesa X11 GL drivers require version 1.1
 "#endif \n" +
 
 "uniform mat4    uniform_Projection; \n" + // Incomming data used by
@@ -163,17 +162,14 @@ static final String vertexShader =
  */
 static final String fragmentShader =
 "#ifdef GL_ES \n" +
-"#version 100 \n" +
 "precision mediump float; \n" +
 "precision mediump int; \n" +
-"#else \n" +
-"#version 110 \n" +
 "#endif \n" +
 
 "varying   vec4    varying_Color; \n" + //incomming varying data to the
                                         //frament shader
                                         //sent from the vertex shader
-"void main (void)\n" +
+"void main (void) \n" +
 "{ \n" +
 "  gl_FragColor = varying_Color; \n" +
 "} ";
@@ -190,7 +186,7 @@ static final String fragmentShader =
  * These helpers here are based on PMVMatrix code and common linear
  * algebra for matrix multiplication, translate and rotations.
  */
-    private void glMultMatrixf(final FloatBuffer a, final FloatBuffer b, FloatBuffer d) {
+    private void glMultMatrixf(FloatBuffer a, FloatBuffer b, FloatBuffer d) {
         final int aP = a.position();
         final int bP = b.position();
         final int dP = d.position();
@@ -204,13 +200,13 @@ static final String fragmentShader =
     }
 
     private float[] multiply(float[] a,float[] b){
-        float tmp[] = new float[16];
+        float[] tmp = new float[16];
         glMultMatrixf(FloatBuffer.wrap(a),FloatBuffer.wrap(b),FloatBuffer.wrap(tmp));
         return tmp;
     }
 
     private float[] translate(float[] m,float x,float y,float z){
-        float t[] = { 1.0f, 0.0f, 0.0f, 0.0f,
+        float[] t = { 1.0f, 0.0f, 0.0f, 0.0f,
                       0.0f, 1.0f, 0.0f, 0.0f,
                       0.0f, 0.0f, 1.0f, 0.0f,
                       x, y, z, 1.0f };
@@ -221,7 +217,7 @@ static final String fragmentShader =
         float s, c;
         s = (float)Math.sin(Math.toRadians(a));
         c = (float)Math.cos(Math.toRadians(a));
-        float r[] = {
+        float[] r = {
             x * x * (1.0f - c) + c,     y * x * (1.0f - c) + z * s, x * z * (1.0f - c) - y * s, 0.0f,
             x * y * (1.0f - c) - z * s, y * y * (1.0f - c) + c,     y * z * (1.0f - c) + x * s, 0.0f,
             x * z * (1.0f - c) + y * s, y * z * (1.0f - c) - x * s, z * z * (1.0f - c) + c,     0.0f,
@@ -236,7 +232,7 @@ static final String fragmentShader =
                            m[12]+" "+m[13]+" "+m[14]+" "+m[15]+"\n");
     }
 
-/* Introducing the GL2ES demo
+/* Introducing the GL2ES2 demo
  *
  * How to render a triangle using 424 lines of code using the RAW
  * OpenGL ES 2 API.
@@ -247,6 +243,9 @@ static final String fragmentShader =
     private double theta=0;
     private double s=0;
     private double c=0;
+    
+    private static int width=1920;
+    private static int height=1080;
 
     private int shaderProgram;
     private int vertShader;
@@ -269,22 +268,40 @@ static final String fragmentShader =
          */
 
         GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES2));
-        GLWindow canvas = GLWindow.create(caps);
+	// We may at this point tweak the caps and request a translucent drawable
+        caps.setBackgroundOpaque(false);
+        GLWindow glWindow = GLWindow.create(caps);
 
-        NewtCanvasAWT newtCanvas = new NewtCanvasAWT(canvas);
-        JFrame frame = new JFrame("RAW GL2ES Demo");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(300,300);
-        frame.add(newtCanvas);
-        //add some swing code if you like.
-        /* javax.swing.JButton b = new javax.swing.JButton();
-        b.setText("Hi");
-        frame.add(b); */
-        frame.setVisible(true);
+        /* You may combine the NEWT GLWindow inside existing Swing and AWT
+         * applications by encapsulating the glWindow inside a
+         * com.jogamp.newt.awt.NewtCanvasAWT canvas.
+         *
+         *  NewtCanvasAWT newtCanvas = new NewtCanvasAWT(glWindow);
+         *  JFrame frame = new JFrame("RAW GL2ES2 Demo inside a JFrame!");
+         *  frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         *  frame.setSize(width,height);
+         *  frame.add(newtCanvas);
+         *  // add some swing code if you like.
+         *  // javax.swing.JButton b = new javax.swing.JButton();
+         *  // b.setText("Hi");
+         *  // frame.add(b); 
+         *  frame.setVisible(true);
+         */
 
-        canvas.addGLEventListener(new RawGL2ES2demo());
-        FPSAnimator animator = new FPSAnimator(canvas,60);
-        animator.add(canvas);
+        // In this demo we prefer to setup and view the GLWindow directly
+        // this allows the demo to run on -Djava.awt.headless=true systems
+        glWindow.setTitle("Raw GL2ES2 Demo");
+        glWindow.setSize(width,height);
+        glWindow.setUndecorated(false);
+        glWindow.setPointerVisible(true);
+        glWindow.setVisible(true);
+
+        // Finally we connect the GLEventListener application code to the NEWT GLWindow.
+        // GLWindow will call the GLEventListener init, reshape, display and dispose
+        // functions when needed.
+        glWindow.addGLEventListener(new RawGL2ES2demo() /* GLEventListener */);
+        FPSAnimator animator = new FPSAnimator(glWindow,60);
+        animator.add(glWindow);
         animator.start();
     }
 
@@ -362,6 +379,16 @@ static final String fragmentShader =
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int z, int h) {
+        System.out.println("Window resized to width=" + z + " height=" + h);
+        width = z;
+        height = h;
+
+        // Get gl
+        GL2ES2 gl = drawable.getGL().getGL2ES2();
+
+        // Optional: Set viewport
+        // Render to a square at the center of the window.
+        gl.glViewport((width-height)/2,0,height,height);
     }
 
     public void display(GLAutoDrawable drawable) {
@@ -373,12 +400,11 @@ static final String fragmentShader =
         // Get gl
         GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        // Set viewport
-        //gl.glViewport(0,0,300,300);
-
         // Clear screen
-        gl.glClearColor(1, 0, 1, 1);  //Purple
-        gl.glClear(GL2ES2.GL_COLOR_BUFFER_BIT | GL2ES2.GL_DEPTH_BUFFER_BIT);
+        gl.glClearColor(1, 0, 1, 0.5f);  // Purple
+        gl.glClear(GL2ES2.GL_STENCIL_BUFFER_BIT |
+                   GL2ES2.GL_COLOR_BUFFER_BIT   |
+                   GL2ES2.GL_DEPTH_BUFFER_BIT   );
 
         // Use the shaderProgram that got linked during the init part.
         gl.glUseProgram(shaderProgram);
@@ -394,8 +420,8 @@ static final String fragmentShader =
          *
          */
 
-        float model_view_projection[];
-        float identity_matrix[] = {
+        float[] model_view_projection;
+        float[] identity_matrix = {
             1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
@@ -419,7 +445,7 @@ static final String fragmentShader =
          *    gl.glEnd();                            // Finished Drawing The Triangle
          */
 
-        float vertices[] = {  0.0f,  1.0f, 0.0f, //Top
+        float[] vertices = {  0.0f,  1.0f, 0.0f, //Top
                              -1.0f, -1.0f, 0.0f, //Bottom Left
                               1.0f, -1.0f, 0.0f  //Bottom Right
                                               };
@@ -427,12 +453,12 @@ static final String fragmentShader =
         gl.glVertexAttribPointer(0, 3, GL2ES2.GL_FLOAT, false, 0, FloatBuffer.wrap(vertices));
         gl.glEnableVertexAttribArray(0);
 
-        float colors[] = {    1.0f, 0.0f, 0.0f, //Top color (red)
-                              0.0f, 0.0f, 0.0f, //Bottom Left color (black)
-                              1.0f, 1.0f, 0.0f  //Bottom Right color (yellow)
-                                             };
+        float[] colors = {    1.0f, 0.0f, 0.0f, 1.0f, //Top color (red)
+                              0.0f, 0.0f, 0.0f, 1.0f, //Bottom Left color (black)
+                              1.0f, 1.0f, 0.0f, 0.9f  //Bottom Right color (yellow) with 10% transparence
+                                                   };
                                              
-        gl.glVertexAttribPointer(1, 3, GL2ES2.GL_FLOAT, false, 0, FloatBuffer.wrap(colors));
+        gl.glVertexAttribPointer(1, 4, GL2ES2.GL_FLOAT, false, 0, FloatBuffer.wrap(colors));
         gl.glEnableVertexAttribArray(1);
 
         gl.glDrawArrays(GL2ES2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
