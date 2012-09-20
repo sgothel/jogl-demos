@@ -32,24 +32,12 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
 import com.jogamp.newt.opengl.GLWindow;
 
-import com.jogamp.opengl.util.GLArrayDataServer;
-import com.jogamp.opengl.util.glsl.ShaderCode;
-import com.jogamp.opengl.util.glsl.ShaderState;
-import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.*;
 import com.jogamp.common.nio.Buffers;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.Buffer;
-
-import javax.swing.JFrame;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLCanvas;
 
 /**
  * <pre>
@@ -226,13 +214,6 @@ static final String fragmentShader =
             return multiply(m, r);
         }
 
-    private void printMatrix(float[] m){
-        System.out.println(m[0]+" "+m[1]+" "+m[2]+" "+m[3]+"\n"+
-                           m[4]+" "+m[5]+" "+m[6]+" "+m[7]+"\n"+
-                           m[8]+" "+m[9]+" "+m[10]+" "+m[11]+"\n"+
-                           m[12]+" "+m[13]+" "+m[14]+" "+m[15]+"\n");
-    }
-
 /* Introducing the GL2ES2 demo
  *
  * How to render a triangle using 424 lines of code using the RAW
@@ -243,7 +224,6 @@ static final String fragmentShader =
  */
     private double theta=0;
     private double s=0;
-    private double c=0;
     
     private static int width=1920;
     private static int height=1080;
@@ -396,7 +376,6 @@ static final String fragmentShader =
         // Update variables used in animation
         theta += 0.08;
         s = Math.sin(theta);
-        c = Math.cos(theta);
 
         // Get gl
         GL2ES2 gl = drawable.getGL().getGL2ES2();
