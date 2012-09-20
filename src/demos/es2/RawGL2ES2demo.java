@@ -40,6 +40,7 @@ import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.*;
+import com.jogamp.common.nio.Buffers;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -450,7 +451,17 @@ static final String fragmentShader =
                               1.0f, -1.0f, 0.0f  //Bottom Right
                                               };
 
-        gl.glVertexAttribPointer(0, 3, GL2ES2.GL_FLOAT, false, 0, FloatBuffer.wrap(vertices));
+
+        // Observe that the vertex data passed to glVertexAttribPointer must stay valid
+        // through the OpenGL rendering lifecycle.
+        // Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
+        // and thus can not get moved by the java garbage collector.
+        // Also we need to keep a reference to the NIO Direct buffer around up untill
+        // we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory. 
+        // I will here use the com.jogamp.common.nio.Buffers to quicly wrap the array in a Direct NIO buffer.
+        FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
+
+        gl.glVertexAttribPointer(0, 3, GL2ES2.GL_FLOAT, false, 0, fbVertices);
         gl.glEnableVertexAttribArray(0);
 
         float[] colors = {    1.0f, 0.0f, 0.0f, 1.0f, //Top color (red)
@@ -458,13 +469,19 @@ static final String fragmentShader =
                               1.0f, 1.0f, 0.0f, 0.9f  //Bottom Right color (yellow) with 10% transparence
                                                    };
                                              
-        gl.glVertexAttribPointer(1, 4, GL2ES2.GL_FLOAT, false, 0, FloatBuffer.wrap(colors));
+        FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
+
+        gl.glVertexAttribPointer(1, 4, GL2ES2.GL_FLOAT, false, 0, fbColors);
         gl.glEnableVertexAttribArray(1);
 
         gl.glDrawArrays(GL2ES2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
         
         gl.glDisableVertexAttribArray(0); // Allow release of vertex position memory
         gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory		
+        // It is only safe to let the garbage collector collect the vertices and colors 
+        // NIO buffers data after first calling glDisableVertexAttribArray.
+        fbVertices = null;
+        fbColors = null;
     }
 
     public void dispose(GLAutoDrawable drawable){
