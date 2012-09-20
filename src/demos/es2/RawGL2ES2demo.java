@@ -222,8 +222,9 @@ static final String fragmentShader =
  * yet it do take some extra lines of code to setup.
  *
  */
-    private double theta=0;
-    private double s=0;
+    private double t0 = System.currentTimeMillis();
+    private double theta;
+    private double s;
     
     private static int width=1920;
     private static int height=1080;
@@ -281,7 +282,7 @@ static final String fragmentShader =
         // GLWindow will call the GLEventListener init, reshape, display and dispose
         // functions when needed.
         glWindow.addGLEventListener(new RawGL2ES2demo() /* GLEventListener */);
-        FPSAnimator animator = new FPSAnimator(glWindow,60);
+        Animator animator = new Animator(glWindow);
         animator.add(glWindow);
         animator.start();
     }
@@ -374,7 +375,9 @@ static final String fragmentShader =
 
     public void display(GLAutoDrawable drawable) {
         // Update variables used in animation
-        theta += 0.08;
+        double t1 = System.currentTimeMillis();
+        theta += (t1-t0)*0.005f;
+        t0 = t1;
         s = Math.sin(theta);
 
         // Get gl
