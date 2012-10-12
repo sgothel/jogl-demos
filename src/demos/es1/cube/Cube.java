@@ -95,7 +95,7 @@ public class Cube implements GLEventListener {
             } catch (Exception e) {e.printStackTrace();} 
         }
 
-        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(_gl);
+        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(_gl, ShaderSelectionMode.AUTO, null);
 
         glu = GLU.createGLU();
 

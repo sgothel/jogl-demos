@@ -28,6 +28,7 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
+
 import java.nio.*;
 
 public class AngelesGL implements GLEventListener {
@@ -86,7 +87,7 @@ public class AngelesGL implements GLEventListener {
 
         cComps = drawable.getGL().isGLES1() ? 4: 3;
 
-        this.gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
+        this.gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL(), ShaderSelectionMode.AUTO, null);
         System.err.println("AngelesGL: "+this.gl);
         
         this.glu = GLU.createGLU();

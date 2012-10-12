@@ -213,7 +213,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             glTrace = false;
         }
 
-        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(_gl);
+        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(_gl, ShaderSelectionMode.AUTO, null);
         if(swapInterval>=0) {
             gl.setSwapInterval(swapInterval);
         }

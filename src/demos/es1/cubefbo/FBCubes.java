@@ -42,6 +42,7 @@ import com.jogamp.opengl.FBObject;
 import com.jogamp.opengl.FBObject.Attachment;
 import com.jogamp.opengl.FBObject.TextureAttachment;
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
+import com.jogamp.opengl.util.glsl.fixedfunc.ShaderSelectionMode;
 
 import demos.es1.cube.Cube;
 
@@ -59,7 +60,7 @@ public class FBCubes implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL(), ShaderSelectionMode.AUTO, null);
         System.out.println(gl);
 
         fbo1.reset(gl, FBO_SIZE, FBO_SIZE);

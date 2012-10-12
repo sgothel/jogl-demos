@@ -59,11 +59,12 @@ public class CubeImmModeSink implements GLEventListener {
         }
         
         if(vboCubeF==null) {
-            ImmModeSink vbo = ImmModeSink.createFixed(gl, GL.GL_STATIC_DRAW, 36,
+            ImmModeSink vbo = ImmModeSink.createFixed(36,
                                   3, GL.GL_SHORT,  // vertex
                                   4, GL.GL_FLOAT,  // color
                                   3, GL.GL_BYTE,  // normal
-                                  0, GL.GL_FLOAT); // texture
+                                  0, GL.GL_FLOAT, // texture
+                                  GL.GL_STATIC_DRAW);
 
             vbo.glBegin(GL.GL_TRIANGLES);
 
@@ -167,7 +168,7 @@ public class CubeImmModeSink implements GLEventListener {
     }
 
     public void init(GLAutoDrawable drawable) {
-        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
+        GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL(), ShaderSelectionMode.AUTO, null);
 
         glu = GLU.createGLU();
 
@@ -406,7 +407,7 @@ public class CubeImmModeSink implements GLEventListener {
             window.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, System.err);
             // Size OpenGL to Video Surface
             window.setSize(width, height);
-            window.setFullscreen(true);
+            // window.setFullscreen(true);
             window.setVisible(true);
 
             long curTime;
