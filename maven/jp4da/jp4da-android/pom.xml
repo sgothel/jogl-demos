@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.io7m.examples.jp4da</groupId>
+  <artifactId>jp4da-android</artifactId>
+  <version>1.0.0</version>
+  <name>jp4da-android</name>
+  <description>Android code</description>
+  <packaging>apk</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.io7m.examples.jp4da</groupId>
+      <artifactId>jp4da-core</artifactId>
+      <version>1.0.0</version>
+
+      <!--
+        The jp4da-core project depends on jogl-all in order to type-check/compile,
+        and therefore will be added as a transitive dependency of this project. However,
+        this is an Android package and wants to use the Android JOGL package. Obviously,
+        it's not possible to use both, so this exclusion tells Maven that the dependency
+        introduced by jp4da-core on JOGL should be ignored.
+        -->
+
+      <exclusions>
+        <exclusion>
+          <groupId>org.jogamp.jogl</groupId>
+          <artifactId>jogl-all</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>android</artifactId>
+      <version>1.6_r2</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Depend on the gluegen runtime Android package -->
+    <dependency>
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt-android</artifactId>
+      <version>2.0-rc11</version>
+    </dependency>
+    <!-- Depend on the correct natives for Android -->
+    <dependency>
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt</artifactId>
+      <version>2.0-rc11</version>
+      <classifier>natives-android-armv6</classifier>
+    </dependency>
+    <!-- Depend on the jogl Android package -->
+    <dependency>
+      <groupId>org.jogamp.jogl</groupId>
+      <artifactId>jogl-all-android</artifactId>
+      <version>2.0-rc11</version>
+    </dependency>
+    <!-- Depend on the correct natives for Android -->
+    <dependency>
+      <groupId>org.jogamp.jogl</groupId>
+      <artifactId>jogl-all</artifactId>
+      <version>2.0-rc11</version>
+      <classifier>natives-android-armv6</classifier>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+          <artifactId>android-maven-plugin</artifactId>
+          <version>3.4.2-SNAPSHOT</version>
+          <extensions>true</extensions>
+        </plugin>
+
+        <!-- Mark certain plugins as ignored in Eclipse. Has no effect on the build. -->
+        <plugin>
+        	<groupId>org.eclipse.m2e</groupId>
+        	<artifactId>lifecycle-mapping</artifactId>
+        	<version>1.0.0</version>
+        	<configuration>
+        		<lifecycleMappingMetadata>
+        			<pluginExecutions>
+        				<pluginExecution>
+        					<pluginExecutionFilter>
+        						<groupId>
+        							org.apache.maven.plugins
+        						</groupId>
+        						<artifactId>
+        							maven-dependency-plugin
+        						</artifactId>
+        						<versionRange>[2.6,)</versionRange>
+        						<goals>
+        							<goal>unpack</goal>
+        						</goals>
+        					</pluginExecutionFilter>
+        					<action>
+        						<ignore></ignore>
+        					</action>
+        				</pluginExecution>
+        			</pluginExecutions>
+        		</lifecycleMappingMetadata>
+        	</configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+
+      <!--
+        First, it's necessary to unpack the native libraries from the JOGL
+        and GlueGen jar files, into the correct "libs" directory. The "libs"
+        directory is then processed by the Android Maven plugin and placed
+        in the correct location in the APK for use.
+
+        Then, it's necessary to unpack assets from the JOGL jar file into
+        the "assets" directory. This directory is then processed by the
+        Android Maven plugin, as expected.
+        -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+
+          <!-- Unpack the JOGL natives -->
+
+          <execution>
+            <id>unpack-jogl-natives</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.jogamp.jogl</groupId>
+                  <artifactId>jogl-all</artifactId>
+                  <version>2.0-rc11</version>
+                  <classifier>natives-android-armv6</classifier>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.basedir}/libs/armeabi</outputDirectory>
+                  <includes>lib*.so</includes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+
+          <!-- Unpack the JOGL assets -->
+          <!-- In other words, copy anything from the jar file that isn't a class file -->
+
+          <execution>
+            <id>unpack-jogl-assets</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.jogamp.jogl</groupId>
+                  <artifactId>jogl-all-android</artifactId>
+                  <version>2.0-rc11</version>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.basedir}/assets</outputDirectory>
+                  <excludes>**/*.class</excludes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+
+          <!-- Unpack the GlueGen natives -->
+
+          <execution>
+            <id>unpack-gluegen-natives</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.jogamp.gluegen</groupId>
+                  <artifactId>gluegen-rt</artifactId>
+                  <version>2.0-rc11</version>
+                  <classifier>natives-android-armv6</classifier>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.basedir}/libs/armeabi</outputDirectory>
+                  <includes>lib*.so</includes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+        Next, because there have been files unpacked to non-standard
+        locations, it's necessary to tell the "clean" plugin to delete
+        the unpacked files (for the sake of keeping things tidy).
+        -->
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${project.basedir}/libs/armeabi</directory>
+              <includes>
+                <include>libgluegen-rt.so</include>
+                <include>libnewt.so</include>
+                <include>libjogl_mobile.so</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+
+            <!--
+              Note that if you don't use the "assets" directory
+              for anything else in your project, you can probably
+              just delete the whole thing, rather than picking
+              things carefully in the manner shown here.
+              -->
+
+            <fileset>
+              <directory>${project.basedir}/assets</directory>
+              <includes>
+                <include>META-INF/**</include>
+                <include>com/**</include>
+                <include>jogl/**</include>
+                <include>jogamp/**</include>
+                <include>javax/**</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <!--
+        The default behaviour for the Android Maven plugin is to
+        attempt to include everything that isn't a class file from every
+        dependency jar. Because we already manually included the assets
+        and native libraries using the "dependency" plugin above, it's
+        necessary to tell the Android Maven plugin to exclude the jar
+        files matching the given patterns from the inclusion process.
+
+        This saves roughly 4mb of redundant files from being included
+        in the final APK, at the time of writing.
+        -->
+
+      <plugin>
+        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+        <artifactId>android-maven-plugin</artifactId>
+        <configuration>
+          <sdk>
+            <platform>8</platform>
+          </sdk>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>apk</goal>
+            </goals>
+            <configuration>
+              <excludeJarResources>
+                <excludeJarResource>jogl-.*\.jar$</excludeJarResource>
+                <excludeJarResource>gluegen-rt-.*\.jar$</excludeJarResource>
+              </excludeJarResources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
