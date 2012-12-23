@@ -1,14 +1,25 @@
 package demos.es2.perftst;
 
-import javax.media.opengl.*;
-import javax.media.nativewindow.*;
+import javax.media.nativewindow.NativeWindowFactory;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.GLUniformData;
+import javax.media.opengl.fixedfunc.GLMatrixFunc;
 
-import com.jogamp.opengl.util.*;
-import com.jogamp.opengl.util.glsl.*;
-
-import com.jogamp.newt.*;
-import com.jogamp.newt.event.*;
-import com.jogamp.newt.opengl.*;
+import com.jogamp.newt.Display;
+import com.jogamp.newt.NewtFactory;
+import com.jogamp.newt.Screen;
+import com.jogamp.newt.Window;
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.MouseListener;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.util.PMVMatrix;
+import com.jogamp.opengl.util.glsl.ShaderState;
 
 public class Perftst implements MouseListener, GLEventListener {
 
@@ -86,21 +97,20 @@ public class Perftst implements MouseListener, GLEventListener {
 
         GL2ES2 gl = drawable.getGL().getGL2ES2();
         System.err.println("Entering initialization");
-        System.err.println("GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+        System.err.println("GL_VERSION=" + gl.glGetString(GL.GL_VERSION));
         System.err.println("GL_EXTENSIONS:");
-        System.err.println("  " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.println("  " + gl.glGetString(GL.GL_EXTENSIONS));
 
         pmvMatrix = new PMVMatrix();
 
-        pmod.initShaderState(gl);
-        st = ShaderState.getShaderState(gl);
+        st = pmod.initShaderState(gl);
 
         // Push the 1st uniform down the path 
         st.useProgram(gl, true);
 
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
         if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
@@ -123,11 +133,11 @@ public class Perftst implements MouseListener, GLEventListener {
         st.useProgram(gl, true);
 
         // Set location in front of camera
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glOrthof(0f, 1.0f, 0.0f, 1.0f, 1.0f, 100.0f);
 
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
 

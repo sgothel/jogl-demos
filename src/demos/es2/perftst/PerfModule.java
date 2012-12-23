@@ -1,22 +1,35 @@
 package demos.es2.perftst;
 
-import java.nio.*;
-import javax.media.opengl.*;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLException;
 
 import com.jogamp.opengl.math.FixedPoint;
-import com.jogamp.opengl.util.*;
-import com.jogamp.opengl.util.glsl.*;
+import com.jogamp.opengl.util.glsl.ShaderCode;
+import com.jogamp.opengl.util.glsl.ShaderProgram;
+import com.jogamp.opengl.util.glsl.ShaderState;
 
 public abstract class PerfModule {
 
-    public abstract void initShaderState(GL2ES2 gl);
+    public abstract ShaderState initShaderState(GL2ES2 gl);
 
     public abstract void run(GLAutoDrawable drawable, int loops);
 
     ShaderState st = null;
 
-    public void initShaderState(GL2ES2 gl, String vShaderName, String fShaderName) {
-        if(st!=null) return;
+    public ShaderState getShaderState() { return st; }
+    
+    public ShaderState initShaderState(GL2ES2 gl, String vShaderName, String fShaderName) {
+        if(st!=null) {
+        	return st;
+        }
 
         long t0, t1;
 
@@ -47,6 +60,8 @@ public abstract class PerfModule {
 
         // Let's manage all our states using ShaderState.
         st.attachShaderProgram(gl, sp, true);
+        
+        return st;
     }
 
     public static final void put(Buffer buffer, int type, float v) {

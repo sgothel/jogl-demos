@@ -4,6 +4,7 @@ import com.jogamp.common.nio.Buffers;
 import java.nio.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.ShaderState;
 
 
 public class PerfUniLoad extends PerfModule {
@@ -16,8 +17,8 @@ public class PerfUniLoad extends PerfModule {
     public PerfUniLoad() {
     }
 
-    public void initShaderState(GL2ES2 gl) {
-        initShaderState(gl, "uni-vert-col", "fcolor");
+    public ShaderState initShaderState(GL2ES2 gl) {
+        return initShaderState(gl, "uni-vert-col", "fcolor");
     }
 
     protected void runOneSet(GLAutoDrawable drawable, int numObjs, int numArrayElem, int loops) {

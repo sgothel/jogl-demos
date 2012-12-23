@@ -3,6 +3,7 @@ package demos.es2.perftst;
 import java.nio.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.ShaderState;
 
 
 public class PerfVBOLoad extends PerfModule {
@@ -10,8 +11,8 @@ public class PerfVBOLoad extends PerfModule {
     public PerfVBOLoad() {
     }
 
-    public void initShaderState(GL2ES2 gl) {
-        initShaderState(gl, "vbo-vert-col", "fcolor");
+    public ShaderState initShaderState(GL2ES2 gl) {
+        return initShaderState(gl, "vbo-vert-col", "fcolor");
     }
 
     protected void runOneSet(GLAutoDrawable drawable, int dataType, int numObjs, int numVertices, int loops, boolean useVBO) {

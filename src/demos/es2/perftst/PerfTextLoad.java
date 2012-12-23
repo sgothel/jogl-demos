@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.*;
 import javax.media.opengl.*;
 import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.*;
 
 public class PerfTextLoad extends PerfModule {
@@ -15,8 +16,8 @@ public class PerfTextLoad extends PerfModule {
     public PerfTextLoad() {
     }
 
-    public void initShaderState(GL2ES2 gl) {
-        initShaderState(gl, "vbo-vert-text", "ftext");
+    public ShaderState initShaderState(GL2ES2 gl) {
+        return initShaderState(gl, "vbo-vert-text", "ftext");
     }
 
     Texture[] textures = null;
