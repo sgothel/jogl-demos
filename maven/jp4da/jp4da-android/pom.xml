@@ -50,26 +50,26 @@
     <dependency>
       <groupId>org.jogamp.gluegen</groupId>
       <artifactId>gluegen-rt-android</artifactId>
-      <version>2.0-rc11</version>
+      <version>2.0-rc11post03</version>
     </dependency>
     <!-- Depend on the correct natives for Android -->
     <dependency>
       <groupId>org.jogamp.gluegen</groupId>
       <artifactId>gluegen-rt</artifactId>
-      <version>2.0-rc11</version>
+      <version>2.0-rc11post03</version>
       <classifier>natives-android-armv6</classifier>
     </dependency>
     <!-- Depend on the jogl Android package -->
     <dependency>
       <groupId>org.jogamp.jogl</groupId>
       <artifactId>jogl-all-android</artifactId>
-      <version>2.0-rc11</version>
+      <version>2.0-rc11post03</version>
     </dependency>
     <!-- Depend on the correct natives for Android -->
     <dependency>
       <groupId>org.jogamp.jogl</groupId>
       <artifactId>jogl-all</artifactId>
-      <version>2.0-rc11</version>
+      <version>2.0-rc11post03</version>
       <classifier>natives-android-armv6</classifier>
       <scope>runtime</scope>
     </dependency>
@@ -151,7 +151,7 @@
                 <artifactItem>
                   <groupId>org.jogamp.jogl</groupId>
                   <artifactId>jogl-all</artifactId>
-                  <version>2.0-rc11</version>
+                  <version>2.0-rc11post03</version>
                   <classifier>natives-android-armv6</classifier>
                   <overWrite>true</overWrite>
                   <outputDirectory>${project.basedir}/libs/armeabi</outputDirectory>
@@ -175,7 +175,7 @@
                 <artifactItem>
                   <groupId>org.jogamp.jogl</groupId>
                   <artifactId>jogl-all-android</artifactId>
-                  <version>2.0-rc11</version>
+                  <version>2.0-rc11post03</version>
                   <overWrite>true</overWrite>
                   <outputDirectory>${project.basedir}/assets</outputDirectory>
                   <excludes>**/*.class</excludes>
@@ -197,7 +197,7 @@
                 <artifactItem>
                   <groupId>org.jogamp.gluegen</groupId>
                   <artifactId>gluegen-rt</artifactId>
-                  <version>2.0-rc11</version>
+                  <version>2.0-rc11post03</version>
                   <classifier>natives-android-armv6</classifier>
                   <overWrite>true</overWrite>
                   <outputDirectory>${project.basedir}/libs/armeabi</outputDirectory>
