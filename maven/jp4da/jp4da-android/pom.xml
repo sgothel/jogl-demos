@@ -269,7 +269,7 @@
         <artifactId>android-maven-plugin</artifactId>
         <configuration>
           <sdk>
-            <platform>8</platform>
+            <platform>9</platform>
           </sdk>
         </configuration>
         <executions>
