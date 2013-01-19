@@ -26,6 +26,8 @@
  * or implied, of JogAmp Community.
  */
 
+package demos.es2;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES2;
 import javax.media.opengl.GLAutoDrawable;
@@ -282,7 +284,7 @@ static final String fragmentShader =
         // GLWindow will call the GLEventListener init, reshape, display and dispose
         // functions when needed.
         glWindow.addGLEventListener(new RawGL2ES2demo() /* GLEventListener */);
-        Animator animator = new Animator(glWindow);
+        Animator animator = new Animator();
         animator.add(glWindow);
         animator.start();
     }
