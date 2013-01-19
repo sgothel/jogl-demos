@@ -63,7 +63,7 @@ import java.nio.FloatBuffer;
    cd jogamp-all-platforms
    wget https://raw.github.com/xranby/jogl-demos/master/src/demos/es2/RawGL2ES2demo.java
    javac -cp jar/jogl-all.jar:jar/gluegen-rt.jar RawGL2ES2demo.java
-   java -cp jar/jogl-all.jar:jar/gluegen-rt.jar:. RawGL2ES2demo
+   java -cp jar/jogl-all.jar:jar/gluegen-rt.jar:. demos.es2.RawGL2ES2demo
  * </p>
  *
  *
