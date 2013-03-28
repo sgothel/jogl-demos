@@ -13,11 +13,6 @@
 <project name="JOGL.demos" default="all">
 
     <!-- This is the version of jogl-demos you are building -->
-    <property name="jogl-demos_base_version" value="2.0"/>
-    <tstamp>
-       <format property="version.timestamp" pattern="yyyyMMdd"/>
-    </tstamp>
-    <property name="jogl-demos.version" value="${jogl-demos_base_version}-${version.timestamp}" />
 
     <property name="project.root"  value=".." />
 
@@ -94,6 +89,8 @@
     </target>
 
     <target name="init" depends="jogamp.env.init,gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
+        <property name="jogl-demos.version"  value="${jogamp.version.base}-${version.timestamp}" />
+
         <property name="gluegen-rt.jar"      value="${gluegen.build}/gluegen-rt.jar" />
         <property name="jogl-all.jar"        value="${jogl.build}/jar/jogl-all.jar" />
         <property name="jogl-cg.jar"         value="${jogl.build}/jar/atomic/jogl-cg.jar" />

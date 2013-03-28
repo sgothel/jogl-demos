@@ -12,6 +12,7 @@ fi
 #    -Djogl.cg=1 \
 #    -Djogl.redbook=true \
 
+# BUILD_ARCHIVE=true \
 ant \
     -Dtarget.sourcelevel=1.6 \
     -Dtarget.targetlevel=1.6 \
