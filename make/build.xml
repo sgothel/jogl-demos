@@ -37,7 +37,6 @@
     <property name="joal.build"    value="${joal.root}/${rootrel.build}" />
 
     <property name="jogl-demos.build.number" value="manual-build"/>
-    <property name="jogl-demos.build.id"     value="${version.timestamp}"/>
     <property name="jogl-demos.build.branch" value="master"/>
     <property name="jogl-demos.build.commit" value="manual"/>
 
@@ -89,6 +88,7 @@
     </target>
 
     <target name="init" depends="jogamp.env.init,gluegen.cpptasks.detect.os,java.class.path.validate,setup.gles,setup.cg.excludes,skip.cg.excludes,init.swt">
+        <property name="jogl-demos.build.id" value="${version.timestamp}"/>
         <property name="jogl-demos.version"  value="${jogamp.version.base}-${version.timestamp}" />
 
         <property name="gluegen-rt.jar"      value="${gluegen.build}/gluegen-rt.jar" />
@@ -289,7 +289,7 @@
 
     <target name="all.ide" depends="init, all-desktop, all-gles" />
 
-    <target name="tag.build">
+    <target name="tag.build" depends="init">
         <copy file="${jogl.build}/artifact.properties" todir="${build}" overwrite="true"/>
         <echo message='jogl-demos.build.number=${jogl-demos.build.number}${line.separator}' file="${build}/artifact.properties" append="true"/>
         <echo message='jogl-demos.build.id=${jogl-demos.build.id}${line.separator}'         file="${build}/artifact.properties" append="true"/>
