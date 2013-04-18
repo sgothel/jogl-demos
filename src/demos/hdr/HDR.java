@@ -45,6 +45,9 @@ import javax.swing.JOptionPane;
 /** HDR demo by NVidia Corporation - Simon Green, sgreen@nvidia.com <P>
 
     Ported to Java by Kenneth Russell
+    
+    Currently not working due to loss of pbuffer attributes [floating point buffer, etc].
+    Need to evaluate proper floating point texture solution.
 */
 
 public class HDR extends Demo {
@@ -307,7 +310,6 @@ public class HDR extends Demo {
 
     GLCapabilities caps = new GLCapabilities(null);
     caps.setDoubleBuffered(false);
-    caps.setPbufferFloatingPointBuffers(true);
     caps.setRedBits(floatBits);
     caps.setGreenBits(floatBits);
     caps.setBlueBits(floatBits);
@@ -347,7 +349,6 @@ public class HDR extends Demo {
     blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur2_pbuffer_tex = tmp[0];
-    caps.setPbufferFloatingPointBuffers(false);
     caps.setRedBits(8);
     caps.setGreenBits(8);
     caps.setBlueBits(8);
@@ -605,10 +606,12 @@ public class HDR extends Demo {
       // FIXME: what about the ExaminerViewer?
       setPerspectiveProjection(gl, pbuffer_w, pbuffer_h);
 
+      @SuppressWarnings("deprecation")
       GLPbuffer pbuffer = (GLPbuffer) drawable;
-      int fpmode = pbuffer.getFloatingPointMode();
+      int fpmode = 0; // FIXME: pbuffer.getFloatingPointMode();
       int texmode = 0;
       switch (fpmode) {
+        /** FIXME
         case GLPbuffer.NV_FLOAT:
           System.err.println("Creating HILO cubemap");
           hdr_tex  = hdr.createCubemapHILO(gl, true);
@@ -626,10 +629,12 @@ public class HDR extends Demo {
           hdr_tex = hdr.createCubemap(gl, GL2.GL_RGB_FLOAT16_ATI);
           texmode = GL2.GL_RGBA_FLOAT16_ATI;
           break;
+        */
         default:
           throw new RuntimeException("Unexpected floating-point mode " + fpmode);
       }
 
+      /**
       if (useCg) {
         initCg(gl);
       } else {
@@ -637,7 +642,7 @@ public class HDR extends Demo {
       }
       initBlurCode(gl, blurWidth);
 
-      pipeline.initFloatingPointTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h);
+      pipeline.initFloatingPointTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h); */
     }
 
     public void display(GLAutoDrawable drawable) {

@@ -244,10 +244,12 @@ public class GLCapsTableDemo
         data[ pfd ][ 16 ] = "" + (cap.getSampleBuffers() ? t : f) + " | "
           + cap.getNumSamples();
         // concat p buffer nfo
+        /**
         String pbuf = (cap.getPbufferFloatingPointBuffers() ? "T |" : "F |");
         pbuf += (cap.getPbufferRenderToTexture() ? "T | " : "F | ");
         pbuf += (cap.getPbufferRenderToTextureRectangle() ? t : f);
-        data[ pfd ][ 17 ] = pbuf;
+        data[ pfd ][ 17 ] = pbuf; */
+        data[ pfd ][ 17 ] = "FFf";
       }
     JTable table = new JTable(data, colNames) {
         public boolean isCellEditable(int rowIndex, int colIndex) {
