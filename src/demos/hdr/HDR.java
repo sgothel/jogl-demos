@@ -48,6 +48,8 @@ import javax.swing.JOptionPane;
     
     Currently not working due to loss of pbuffer attributes [floating point buffer, etc].
     Need to evaluate proper floating point texture solution.
+    
+    http://www.opengl.org/wiki/Floating_point_and_mipmapping_and_filtering
 */
 
 public class HDR extends Demo {
