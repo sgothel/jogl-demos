@@ -44,9 +44,6 @@ public class GLNewtRun extends WindowAdapter implements KeyListener, MouseListen
     public void keyReleased(KeyEvent e) { 
         System.out.println(e);
     }
-    public void keyTyped(KeyEvent e) { 
-        System.out.println(e);
-    }
 
     public void mouseClicked(MouseEvent e) {
         System.out.println(" mouseevent: "+e);

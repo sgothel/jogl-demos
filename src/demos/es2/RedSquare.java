@@ -49,8 +49,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     }
     public void keyReleased(KeyEvent e) { 
         System.out.println("KEY-RELEASED "+Thread.currentThread()+" UNHANDLED "+e);
-    }
-    public void keyTyped(KeyEvent e) { 
+        if( !e.isPrintableKey() || e.isAutoRepeat() ) {
+            return;
+        }
         if(e.getKeyChar()=='f') {
             System.out.println("KEY-TYPED "+Thread.currentThread()+" FULLSCREEN "+e);
             window.setFullscreen(!window.isFullscreen());

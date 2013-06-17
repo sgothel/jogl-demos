@@ -60,9 +60,6 @@ public class TaskManagerTest1  implements WindowListener, KeyListener, MouseList
     public void keyReleased(KeyEvent e) {
         System.err.println("keyReleased "+e);
     }
-    public void keyTyped(KeyEvent e) {
-        System.err.println("keyTyped "+e);
-    }
     public void mouseClicked(MouseEvent e) {
         System.err.println("mouseClicked "+e);
     }

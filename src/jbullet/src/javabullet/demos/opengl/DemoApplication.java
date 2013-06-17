@@ -292,8 +292,6 @@ public abstract class DemoApplication
             keyboardCallback(e.getKeyChar());
         }
     }
-    public void keyTyped(KeyEvent e) {
-    }
 
     //
     // 
