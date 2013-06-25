@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>JOGL New Applet Gears</title>
+</head>
+<body>
+
+JOGL NApplet Gears
+<P>
+
+<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+      width="600" height="400">
+   <param name="code" value="demos.applets.GearsApplet">
+   <param name="archive" value="../jar/gluegen-rt.jar,
+                                ../jar/jogl-all.jar,
+                                jar/jogl-demos.jar">
+   <comment>
+     <embed code="demos.applets.GearsApplet"
+          width="600" height="400"
+          type="application/x-java-applet;version=1.6"
+          pluginspage="http://java.sun.com/javase/downloads/ea.jsp"
+          archive="../jar/gluegen-rt.jar,
+                   ../jar/jogl-all.jar,
+                   jar/jogl-demos.jar">
+        <noembed>Sorry, no Java support detected.</noembed>
+     </embed>
+   </comment>
+</object>
+
+</P>
+
+<P>
+
+Note that the jogl-demos.jar and joal-demos.jar files, which contain
+the applet's classes, <B>do not need to be signed</B>! JogAmp Community
+signs jogl, joal and gluegen JAR files, which contain JOGL, JOAL and
+supporting classes; this is the only Java code which needs to be
+signed in order to deploy applets using JOGL and JOAL and is the only
+certificate the end user must accept.
+
+</P>
+
+</body>
+</html>

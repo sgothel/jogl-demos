@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp href="applet-gears-debug.jnlp">
+  <information>
+    <title>JOGL JNLP Applet Gears Demo (debug)</title>
+    <vendor>JogAmp Community</vendor>
+    <homepage href="http://jogamp.org/jogl-demos/"/>
+    <description>Gears Demo </description>
+    <description kind="short">Brian Paul's Gears demo ported to Java and JOGL.</description>
+    <offline-allowed/>
+  </information>
+  <update check="background" policy="always"/>
+
+    <resources>
+      <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+      <property name="sun.java2d.noddraw" value="true"/>
+      <property name="jnlp.gluegen.debug.NativeLibrary" value="true"/>
+      <property name="jnlp.nativewindow.debug" value="all"/>
+      <property name="jnlp.nativewindow.TraceLock" value="true"/>
+      <property name="jnlp.jogl.debug" value="all"/>
+      <property name="jnlp.newt.debug" value="all"/>
+      <jar href="jar/jogl-demos.jar" main="true"/>
+      <jar href="jar/jogl-demos-util.jar"/>
+      <extension name="jogl-all-awt" href="../jogl-all-awt.jnlp" />
+    </resources>
+
+  <applet-desc 
+      name="Gears-Applet"
+      main-class="demos.applets.GearsApplet"
+      width="640" 
+      height="480">
+  </applet-desc>
+</jnlp>
