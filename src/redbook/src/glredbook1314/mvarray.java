@@ -11,6 +11,7 @@ import java.nio.IntBuffer;
 import javax.media.opengl.*;
 import javax.swing.JFrame;
 import com.jogamp.common.nio.PointerBuffer;
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.GLBuffers;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
@@ -49,6 +50,9 @@ public class mvarray //
 
     private int count[] = { 7, 6 };
 
+    private IntBuffer countBuf = //
+    Buffers.newDirectIntBuffer(count);
+
     // static GLvoid * indices[2] = {oneIndices, twoIndices};
     private PointerBuffer indices = PointerBuffer.allocateDirect(2);
 
@@ -86,7 +90,7 @@ public class mvarray //
         gl.glColor3f(1.0f, 1.0f, 1.0f);
 
         if (mde_bug)
-            gl.glMultiDrawElements(GL.GL_LINE_STRIP, count, 0,//
+            gl.glMultiDrawElements(GL.GL_LINE_STRIP, countBuf,//
                     GL.GL_UNSIGNED_BYTE, indices, 2);
         else {
             // workaround for glMultiDrawElem bug before July
