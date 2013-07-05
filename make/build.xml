@@ -79,11 +79,13 @@
     <target name="init.swt">
         <condition property="jogl.swt.excludes"
                    value="demos/swt/**">
-            <not>
-                <isset property="user.swt.jar" />
-            </not>
-        </condition>
-
+            <or>
+                <equals arg1="${user.swt.jar}" arg2="" />
+                <not>
+                    <isset property="user.swt.jar" />
+                </not>
+            </or>
+        </condition> 
         <property name="swt.jar"            value="${user.swt.jar}"/>
     </target>
 
