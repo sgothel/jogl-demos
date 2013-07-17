@@ -276,7 +276,7 @@ public class HWShadowmapsSimple extends Demo {
     GLCapabilities caps = new GLCapabilities(gl.getGLProfile());
     caps.setDoubleBuffered(false);
       
-    if (!GLDrawableFactory.getFactory(gl.getGLProfile()).canCreateGLPbuffer(null)) {
+    if (!GLDrawableFactory.getFactory(gl.getGLProfile()).canCreateGLPbuffer(null, gl.getGLProfile())) {
       unavailableExtension("Can not create pbuffer");
     }
     if (pbuffer != null) {
