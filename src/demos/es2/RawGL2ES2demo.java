@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 JogAmp Community. All rights reserved.
+ * Copyright 2012-2013 JogAmp Community. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -111,6 +111,12 @@ static final String vertexShader =
 // GLSL ES language #version line, GLSL ES section 3.4
 // Many GPU drivers refuse to compile the shader if #version is different from
 // the drivers internal GLSL version.
+
+"#if __VERSION__ >= 130\n" + // GLSL 130+ uses in and out
+"  #define attribute in\n" + // instead of attribute and varying 
+"  #define varying out\n" +  // used by OpenGL ES 3 and GL 3.3 and later. 
+"#endif\n" + 
+
 "#ifdef GL_ES \n" +
 "precision mediump float; \n" + // Precision Qualifiers
 "precision mediump int; \n" +   // GLSL ES section 4.5.2
@@ -155,6 +161,14 @@ static final String vertexShader =
  * sent to the GPU driver for compilation.
  */
 static final String fragmentShader =
+"#if __VERSION__ >= 130\n" +
+"  #define varying in\n" +
+"  out vec4 mgl_FragColor;\n" +
+"  #define texture2D texture\n" +
+"#else\n" +
+"  #define mgl_FragColor gl_FragColor\n" +
+"#endif\n" + 
+
 "#ifdef GL_ES \n" +
 "precision mediump float; \n" +
 "precision mediump int; \n" +
@@ -239,10 +253,12 @@ static final String fragmentShader =
     private int fragShader;
     private int ModelViewProjectionMatrix_location;
 
+    private int vboVertices, vboColors;
+
     public static void main(String[] s){
 
-        /* This demo are based on the GL2ES2 GLProfile that allows hardware acceleration
-         * on both desktop OpenGL 2 and mobile OpenGL ES 2 devices.
+        /* This demo are based on the GL2ES2 GLProfile that uses common hardware acceleration
+         * functionality of desktop OpenGL 3, 2 and mobile OpenGL ES 2 devices.
          * JogAmp JOGL will probe all the installed libGL.so, libEGL.so and libGLESv2.so librarys on
          * the system to find which one provide hardware acceleration for your GPU device.
          * Its common to find more than one version of these librarys installed on a system.
@@ -363,6 +379,19 @@ static final String fragmentShader =
         //Get a id number to the uniform_Projection matrix
         //so that we can update it.
         ModelViewProjectionMatrix_location = gl.glGetUniformLocation(shaderProgram, "uniform_Projection");
+
+        // GL2ES2 also includes the intersection of GL3 core
+        // GL3 core and later mandates that a "Vector Buffer Object" must
+        // be created and bound before calls such as gl.glDrawArrays is used.
+        // The VBO lines in this demo makes the code forward compatible with
+        // OpenGL 3 and ES 3 core and later where a default
+        // vector buffer object is deprecated.
+        // generate two VBO pointers / handles
+        // VBO is data buffers stored inside the graphics card memory
+        int[] vboHandle = new int[2];
+        gl.glGenBuffers(2, vboHandle, 0);
+        vboColors = vboHandle[0];
+        vboVertices = vboHandle[1];
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int z, int h) {
@@ -448,8 +477,24 @@ static final String fragmentShader =
         // I will here use the com.jogamp.common.nio.Buffers to quicly wrap the array in a Direct NIO buffer.
         FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
 
-        gl.glVertexAttribPointer(0, 3, GL2ES2.GL_FLOAT, false, 0, fbVertices);
+        // Select the VBO, GPU memory data, to use for vertices
+        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboVertices);
+
+        // transfer data to VBO, this perform the copy of data from CPU -> GPU memory
+        int numBytes = vertices.length * 4;
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
+
+        // Associate Vertex attribute 0 with the last bound VBO
+        gl.glVertexAttribPointer(0 /* the vertex attribute */, 3,
+                                 GL2ES2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+                                 0 /* The bound VBO data offset */);
+
+        // VBO
+        // gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, 0); // You can unbind the VBO after it have been associated using glVertexAttribPointer
+
         gl.glEnableVertexAttribArray(0);
+
+
 
         float[] colors = {    1.0f, 0.0f, 0.0f, 1.0f, //Top color (red)
                               0.0f, 0.0f, 0.0f, 1.0f, //Bottom Left color (black)
@@ -458,7 +503,16 @@ static final String fragmentShader =
                                              
         FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
 
-        gl.glVertexAttribPointer(1, 4, GL2ES2.GL_FLOAT, false, 0, fbColors);
+        // Select the VBO, GPU memory data, to use for colors 
+        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboColors);
+        numBytes = colors.length * 4;
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbColors, GL.GL_STATIC_DRAW);
+
+        // Associate Vertex attribute 1 with the last bound VBO
+        gl.glVertexAttribPointer(1 /* the vertex attribute */, 4 /* four possitions used for each vertex */,
+                                 GL2ES2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+                                 0 /* The bound VBO data offset */);
+
         gl.glEnableVertexAttribArray(1);
 
         gl.glDrawArrays(GL2ES2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
