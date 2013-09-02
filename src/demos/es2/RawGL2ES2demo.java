@@ -106,15 +106,17 @@ public class RawGL2ES2demo implements GLEventListener{
  * http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
  * sent to the GPU driver for compilation.
  */
-static final String vertexShader =
+private String vertexShaderString =
 // For GLSL 1 and 1.1 code i highly recomend to not include a 
 // GLSL ES language #version line, GLSL ES section 3.4
 // Many GPU drivers refuse to compile the shader if #version is different from
 // the drivers internal GLSL version.
+//
+// This demo use GLSL version 1.1 (the implicit version)
 
 "#if __VERSION__ >= 130\n" + // GLSL 130+ uses in and out
 "  #define attribute in\n" + // instead of attribute and varying 
-"  #define varying out\n" +  // used by OpenGL ES 3 and GL 3.3 and later. 
+"  #define varying out\n" +  // used by OpenGL 3 core and later. 
 "#endif\n" + 
 
 "#ifdef GL_ES \n" +
@@ -160,13 +162,12 @@ static final String vertexShader =
  * http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
  * sent to the GPU driver for compilation.
  */
-static final String fragmentShader =
+private String fragmentShaderString =
 "#if __VERSION__ >= 130\n" +
 "  #define varying in\n" +
 "  out vec4 mgl_FragColor;\n" +
 "  #define texture2D texture\n" +
-"#else\n" +
-"  #define mgl_FragColor gl_FragColor\n" +
+"  #define gl_FragColor mgl_FragColor\n" +
 "#endif\n" + 
 
 "#ifdef GL_ES \n" +
@@ -235,7 +236,7 @@ static final String fragmentShader =
 
 /* Introducing the GL2ES2 demo
  *
- * How to render a triangle using 424 lines of code using the RAW
+ * How to render a triangle using ~500 lines of code using the RAW
  * OpenGL ES 2 API.
  * The Programmable pipeline in OpenGL ES 2 are both fast and flexible
  * yet it do take some extra lines of code to setup.
@@ -253,6 +254,7 @@ static final String fragmentShader =
     private int fragShader;
     private int ModelViewProjectionMatrix_location;
 
+    int[] vboHandles;
     private int vboVertices, vboColors;
 
     public static void main(String[] s){
@@ -317,13 +319,40 @@ static final String fragmentShader =
         System.err.println("GL_RENDERER: " + gl.glGetString(GL.GL_RENDERER));
         System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
 
-        //Create shaders
-        //OpenGL ES retuns a index id to be stored for future reference.
+        /* The initialization below will use the OpenGL ES 2 API directly
+         * to setup the two shader programs that will be run on the GPU.
+         *
+         * Its recommended to use the jogamp/opengl/util/glsl/ classes
+         * import com.jogamp.opengl.util.glsl.ShaderCode;
+         * import com.jogamp.opengl.util.glsl.ShaderProgram;
+         * import com.jogamp.opengl.util.glsl.ShaderState; 
+         * to simplify shader customization, compile and loading.
+         *
+         * You may also want to look at the JOGL RedSquareES2 demo
+         * http://jogamp.org/git/?p=jogl.git;a=blob;f=src/test/com/jogamp/opengl/test/junit/jogl/demos/es2/RedSquareES2.java;hb=HEAD#l78
+         * to see how the shader customization, compile and loading is done
+         * using the recommended JogAmp GLSL utility classes.
+         */ 
+
+        // Make the shader strings compatible with OpenGL 3 core if needed
+        // GL2ES2 also includes the intersection of GL3 core 
+        // The default implicit GLSL version 1.1 is now depricated in GL3 core
+        // GLSL 1.3 is the minimum version that now has to be explicitly set.
+        // This allows the shaders to compile using the latest
+        // desktop OpenGL 3 and 4 drivers.
+        if(gl.isGL3core()){
+            System.out.println("GL3 core detected: explicit add #version 130 to shaders");
+            vertexShaderString = "#version 130\n"+vertexShaderString;
+            fragmentShaderString = "#version 130\n"+fragmentShaderString;
+	}
+
+        // Create GPU shader handles
+        // OpenGL ES retuns a index id to be stored for future reference.
         vertShader = gl.glCreateShader(GL2ES2.GL_VERTEX_SHADER);
         fragShader = gl.glCreateShader(GL2ES2.GL_FRAGMENT_SHADER);
 
         //Compile the vertexShader String into a program.
-        String[] vlines = new String[] { vertexShader };
+        String[] vlines = new String[] { vertexShaderString };
         int[] vlengths = new int[] { vlines[0].length() };
         gl.glShaderSource(vertShader, vlines.length, vlines, vlengths, 0);
         gl.glCompileShader(vertShader);
@@ -344,7 +373,7 @@ static final String fragmentShader =
         }
 
         //Compile the fragmentShader String into a program.
-        String[] flines = new String[] { fragmentShader };
+        String[] flines = new String[] { fragmentShaderString };
         int[] flengths = new int[] { flines[0].length() };
         gl.glShaderSource(fragShader, flines.length, flines, flengths, 0);
         gl.glCompileShader(fragShader);
@@ -380,18 +409,20 @@ static final String fragmentShader =
         //so that we can update it.
         ModelViewProjectionMatrix_location = gl.glGetUniformLocation(shaderProgram, "uniform_Projection");
 
-        // GL2ES2 also includes the intersection of GL3 core
-        // GL3 core and later mandates that a "Vector Buffer Object" must
-        // be created and bound before calls such as gl.glDrawArrays is used.
-        // The VBO lines in this demo makes the code forward compatible with
-        // OpenGL 3 and ES 3 core and later where a default
-        // vector buffer object is deprecated.
-        // generate two VBO pointers / handles
-        // VBO is data buffers stored inside the graphics card memory
-        int[] vboHandle = new int[2];
-        gl.glGenBuffers(2, vboHandle, 0);
-        vboColors = vboHandle[0];
-        vboVertices = vboHandle[1];
+        /* GL2ES2 also includes the intersection of GL3 core
+         * GL3 core and later mandates that a "Vector Buffer Object" must
+         * be created and bound before calls such as gl.glDrawArrays is used.
+         * The VBO lines in this demo makes the code forward compatible with
+         * OpenGL 3 and ES 3 core and later where a default
+         * vector buffer object is deprecated.
+         *
+         * Generate two VBO pointers / handles
+         * VBO is data buffers stored inside the graphics card memory.
+         */
+        vboHandles = new int[2];
+        gl.glGenBuffers(2, vboHandles, 0);
+        vboColors = vboHandles[0];
+        vboVertices = vboHandles[1];
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int z, int h) {
@@ -483,6 +514,7 @@ static final String fragmentShader =
         // transfer data to VBO, this perform the copy of data from CPU -> GPU memory
         int numBytes = vertices.length * 4;
         gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
+        fbVertices = null; // It is OK to release CPU vertices memory after transfer to GPU
 
         // Associate Vertex attribute 0 with the last bound VBO
         gl.glVertexAttribPointer(0 /* the vertex attribute */, 3,
@@ -507,6 +539,7 @@ static final String fragmentShader =
         gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboColors);
         numBytes = colors.length * 4;
         gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbColors, GL.GL_STATIC_DRAW);
+        fbColors = null; // It is OK to release CPU color memory after transfer to GPU
 
         // Associate Vertex attribute 1 with the last bound VBO
         gl.glVertexAttribPointer(1 /* the vertex attribute */, 4 /* four possitions used for each vertex */,
@@ -519,10 +552,8 @@ static final String fragmentShader =
         
         gl.glDisableVertexAttribArray(0); // Allow release of vertex position memory
         gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory		
-        // It is only safe to let the garbage collector collect the vertices and colors 
-        // NIO buffers data after first calling glDisableVertexAttribArray.
-        fbVertices = null;
-        fbColors = null;
+
+        gl.glDeleteBuffers(2, vboHandles, 0); // Release VBO, color and vertices, buffer GPU memory.
     }
 
     public void dispose(GLAutoDrawable drawable){
