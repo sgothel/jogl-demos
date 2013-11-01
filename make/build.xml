@@ -180,7 +180,7 @@
         </javac>
         <antcall target="redbook-javac" inheritrefs="true" />
         <antcall target="nurbs" inheritrefs="true" />
-        <jar destfile="${jogl-demos.jar}">
+        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos.jar}">
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
                 <exclude name="demos/util/**" />
@@ -206,13 +206,13 @@
                 <include name="demos/particles/engine/images/*.jpg" />
             </fileset>
         </jar>
-        <jar destfile="${jogl-demos-util.jar}">
+        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-util.jar}">
             <fileset dir="${classes}">
                 <include name="gleem/**" />
                 <include name="demos/util/**" />
             </fileset>
         </jar>
-        <jar destfile="${jogl-demos-data.jar}">
+        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-data.jar}">
             <fileset dir="${src}">
                 <include name="demos/data/**" />
                 <exclude name="demos/data/models/dragon.obj" />
@@ -223,7 +223,7 @@
             </fileset>
         </jar>
         <!-- due to size or usability .. create self packaged jars (code + data) -->
-        <jar destfile="${jogl-demos-dualDepthPeeling.jar}">
+        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-dualDepthPeeling.jar}">
             <fileset dir="${classes}">
                 <include name="demos/dualDepthPeeling/**" />
             </fileset>
@@ -237,7 +237,7 @@
                 <include name="demos/data/**" />
             </fileset>
         </jar>
-        <jar destfile="${jogl-demos-tennis.jar}">
+        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-tennis.jar}">
             <fileset dir="${classes}">
                 <include name="demos/tennis/**" />
             </fileset>
@@ -273,7 +273,7 @@
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
-        <jar destfile="${jogl-demos.jar}">
+        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos.jar}">
             <fileset dir="${classes}">
                 <include name="**" />
             </fileset>
