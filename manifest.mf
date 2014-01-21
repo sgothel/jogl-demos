@@ -4,3 +4,4 @@ Implementation-Title: Java Bindings for OpenGL Tests
 Implementation-Vendor: JogAmp Community
 Implementation-URL: http://jogamp.org/
 Implementation-Vendor-Id: com.jogamp
+Permissions: all-permissions
