@@ -5,42 +5,24 @@
 </head>
 <body>
 
-JOGL JNLP Applet Test w/ JNLPAppletLauncher fallback and debug
+JOGL JNLP Applet Test w/ NApplet fallback and debug
 <P>
 
 <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
       width="600" height="400">
-   <param name="code" value="org.jdesktop.applet.util.JNLPAppletLauncher">
-   <param name="archive" value="../jar/applet-launcher.jar,
-                                ../jar/gluegen-rt.jar,
+   <param name="code" value="demos.applets.GearsApplet">
+   <param name="archive" value="../jar/gluegen-rt.jar,
                                 ../jar/jogl-all.jar,
                                 jar/jogl-demos.jar">
-   <param name="codebase_lookup" value="false">
-   <param name="subapplet.classname" value="demos.applets.GearsApplet">
-   <param name="subapplet.displayname" value="JOGL Gears Applet">
-   <param name="noddraw.check" value="true">
-   <param name="progressbar" value="true">
-   <param name="jnlpNumExtensions" value="1">
-   <param name="jnlpExtension1" value="../jogl-all-awt.jnlp">
-   <param name="java_arguments" value="-Dsun.java2d.noddraw=true">
    <param name="jnlp_href" value="applet-gears-debug.jnlp">
    <comment>
-     <embed code="org.jdesktop.applet.util.JNLPAppletLauncher"
+     <embed code="demos.applets.GearsApplet"
           width="600" height="400"
           type="application/x-java-applet;version=1.6"
           pluginspage="http://java.sun.com/javase/downloads/ea.jsp"
-          archive="../jar/applet-launcher.jar,
-                   ../jar/gluegen-rt.jar,
+          archive="../jar/gluegen-rt.jar,
                    ../jar/jogl-all.jar,
                    jar/jogl-demos.jar"
-          codebase_lookup="false"
-          subapplet.classname="demos.applets.GearsApplet"
-          subapplet.displayname" value="JOGL Gears Applet"
-          noddraw.check" value="true"
-          progressbar="true"
-          jnlpNumExtensions="1"
-          jnlpExtension1="../jogl-all-awt.jnlp"
-          java_arguments="-Dsun.java2d.noddraw=true"
           jnlp_href="applet-gears-debug.jnlp">
         <noembed>Sorry, no Java support detected.</noembed>
      </embed>

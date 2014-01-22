@@ -12,6 +12,9 @@ fi
 #    -Djogl.cg=1 \
 #    -Djogl.redbook=true \
 
+#export JOGAMP_JAR_CODEBASE="Codebase: *.jogamp.org"
+export JOGAMP_JAR_CODEBASE="Codebase: *.goethel.localnet"
+
 # BUILD_ARCHIVE=true \
 ant \
     -Dtarget.sourcelevel=1.6 \

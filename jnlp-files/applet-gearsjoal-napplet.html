@@ -33,14 +33,17 @@ JOGL NApplet GearsJOAL
 
 </P>
 <P>
-
-Note that the jogl-demos.jar and joal-demos.jar files, which contain
-the applet's classes, <B>do not need to be signed</B>! JogAmp Community
-signs jogl, joal and gluegen JAR files, which contain JOGL, JOAL and
-supporting classes; this is the only Java code which needs to be
-signed in order to deploy applets using JOGL and JOAL and is the only
-certificate the end user must accept.
-
+<del>
+Note that the jogl-demos.jar, which contains the GearsApplet class,
+<B>does not need to be signed</B>! JogAmp Community signs
+jogl-all.jar and gluegen-rt.jar, which contain the
+JOGL's supporting classes; this is the only
+Java code which needs to be signed in order to deploy applets using
+JOGL and is the only certificate the end user must accept.
+</del><br/>
+Sadly, due to Oracle's Java Applet Plugin update 7u51,
+unsigned applets are no more allowed and hence the 
+Applet sandbox is being taken away.
 </P>
 
 </body>

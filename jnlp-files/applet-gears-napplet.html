@@ -5,8 +5,10 @@
 </head>
 <body>
 
-JOGL NApplet Gears
-<P>
+<p>
+The Applet is launched as an <a href="http://jogamp.org/jogl/doc/deployment/JOGL-DEPLOYMENT.html#NApplets">NApplet</a>.
+</p>
+<p>
 
 <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
       width="600" height="400">
@@ -27,17 +29,46 @@ JOGL NApplet Gears
    </comment>
 </object>
 
-</P>
+</p>
 
-<P>
+<p>
 
-Note that the jogl-demos.jar and joal-demos.jar files, which contain
-the applet's classes, <B>do not need to be signed</B>! JogAmp Community
-signs jogl, joal and gluegen JAR files, which contain JOGL, JOAL and
-supporting classes; this is the only Java code which needs to be
-signed in order to deploy applets using JOGL and JOAL and is the only
-certificate the end user must accept.
+The applet above is instantiated with the following code:
 
+<pre>
+&lt;object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+      width="600" height="400"&gt;
+   &lt;param name="code" value="demos.applets.GearsApplet"&gt;
+   &lt;param name="archive" value="../jar/gluegen-rt.jar,
+                                ../jar/jogl-all.jar,
+                                jar/jogl-demos.jar"&gt;
+   &lt;comment&gt;
+     &lt;embed code="demos.applets.GearsApplet"
+          width="600" height="400"
+          type="application/x-java-applet;version=1.6"
+          pluginspage="http://java.sun.com/javase/downloads/ea.jsp"
+          archive="../jar/gluegen-rt.jar,
+                   ../jar/jogl-all.jar,
+                   jar/jogl-demos.jar"&gt;
+        &lt;noembed&gt;Sorry, no Java support detected.&lt;/noembed&gt;
+     &lt;/embed&gt;
+   &lt;/comment&gt;
+&lt;/object&gt;
+</pre>
+</p>
+
+<p>
+<del>
+Note that the jogl-demos.jar, which contains the GearsApplet class,
+<B>does not need to be signed</B>! JogAmp Community signs
+jogl.jar and gluegen-rt.jar, which contain the
+JOGL's supporting classes; this is the only
+Java code which needs to be signed in order to deploy applets using
+JOGL and is the only certificate the end user must accept.
+</del><br/>
+Sadly, due to Oracle's Java Applet Plugin update 7u51,
+unsigned applets are no more allowed and hence the 
+Applet sandbox is being taken away.
 </P>
 
 </body>

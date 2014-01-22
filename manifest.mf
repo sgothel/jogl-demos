@@ -1,7 +1,12 @@
 Manifest-Version: 1.0
 Application-Name: Java Bindings for OpenGL Test
 Implementation-Title: Java Bindings for OpenGL Tests
+Implementation-Version: @VERSION@
+Implementation-Build: @BUILD_VERSION@
+Implementation-Branch: @SCM_BRANCH@
+Implementation-Commit: @SCM_COMMIT@
 Implementation-Vendor: JogAmp Community
 Implementation-URL: http://jogamp.org/
 Implementation-Vendor-Id: com.jogamp
 Permissions: all-permissions
+@JAR_CODEBASE_TAG@

@@ -115,6 +115,18 @@
 
         <property name="jogl.redbook.excludes" value="redbook/**" />
 
+        <copy file="${project.root}/manifest.mf"
+            tofile="${build}/manifest.mf"
+            overwrite="true">
+            <filterset>
+                <filter token="VERSION" value="${jogamp.version}"/>
+                <filter token="BUILD_VERSION" value="${jogl-demos.version}"/>
+                <filter token="SCM_BRANCH" value="${jogl-demos.build.branch}"/>
+                <filter token="SCM_COMMIT" value="${jogl-demos.build.commit}"/>
+                <filter token="BASEVERSION" value="${jogamp.version.base}"/>
+                <filter token="JAR_CODEBASE_TAG" value="${jogamp.jar.codebase}"/>
+            </filterset>
+        </copy>
     </target>
 
     <target name="nurbs" if="jogl.nurbs">
@@ -180,7 +192,7 @@
         </javac>
         <antcall target="redbook-javac" inheritrefs="true" />
         <antcall target="nurbs" inheritrefs="true" />
-        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos.jar}">
+        <jar manifest="${build}/manifest.mf" destfile="${jogl-demos.jar}">
             <fileset dir="${classes}">
                 <exclude name="gleem/**" />
                 <exclude name="demos/util/**" />
@@ -206,13 +218,13 @@
                 <include name="demos/particles/engine/images/*.jpg" />
             </fileset>
         </jar>
-        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-util.jar}">
+        <jar manifest="${build}/manifest.mf" destfile="${jogl-demos-util.jar}">
             <fileset dir="${classes}">
                 <include name="gleem/**" />
                 <include name="demos/util/**" />
             </fileset>
         </jar>
-        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-data.jar}">
+        <jar manifest="${build}/manifest.mf" destfile="${jogl-demos-data.jar}">
             <fileset dir="${src}">
                 <include name="demos/data/**" />
                 <exclude name="demos/data/models/dragon.obj" />
@@ -223,7 +235,7 @@
             </fileset>
         </jar>
         <!-- due to size or usability .. create self packaged jars (code + data) -->
-        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-dualDepthPeeling.jar}">
+        <jar manifest="${build}/manifest.mf" destfile="${jogl-demos-dualDepthPeeling.jar}">
             <fileset dir="${classes}">
                 <include name="demos/dualDepthPeeling/**" />
             </fileset>
@@ -237,7 +249,7 @@
                 <include name="demos/data/**" />
             </fileset>
         </jar>
-        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos-tennis.jar}">
+        <jar manifest="${build}/manifest.mf" destfile="${jogl-demos-tennis.jar}">
             <fileset dir="${classes}">
                 <include name="demos/tennis/**" />
             </fileset>
@@ -273,7 +285,7 @@
             <src path="${src}" />
             <classpath refid="jogl-demos.classpath" />
         </javac>
-        <jar manifest="${project.root}/manifest.mf" destfile="${jogl-demos.jar}">
+        <jar manifest="${build}/manifest.mf" destfile="${jogl-demos.jar}">
             <fileset dir="${classes}">
                 <include name="**" />
             </fileset>
