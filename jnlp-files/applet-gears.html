@@ -13,7 +13,7 @@ otherwise it shall fallback to <a href="http://jogamp.org/jogl/doc/deployment/JO
 
 <p>
 Note that it is important for the startup time to have the same JVM arguments in the applet tags,
-as well as within the JNLP applet description, here see property <em>sun.java2d.noddraw</em>. <br>
+as well as within the JNLP applet description. <br>
 Only if JVM arguments of the JNLP applet description are satisfied by the applet tag's JVM,<br>
 the plugin will not need to start a new JVM. OF course, the applet tag's JVM spec may exceed the
 JNLP applet's one.
@@ -90,7 +90,6 @@ Where the referenced JNLP file <em>applet-gears.jnlp</em> looks as follow:
 
     &lt;resources&gt;
       &lt;j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/&gt;
-      &lt;property name="sun.java2d.noddraw" value="true"/&gt;
       &lt;jar href="jar/jogl-demos.jar" main="true"/&gt;
       &lt;jar href="jar/jogl-demos-util.jar"/&gt;
       &lt;extension name="jogl-all-awt" href="../jogl-all-awt.jnlp" /&gt;
