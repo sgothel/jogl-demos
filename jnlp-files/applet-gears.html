@@ -87,10 +87,6 @@ Where the referenced JNLP file <em>applet-gears.jnlp</em> looks as follow:
     &lt;offline-allowed/&gt;
   &lt;/information&gt;
   &lt;update check="background" policy="always"/&gt;
-  &lt;security&gt;
-    &lt;all-permissions/&gt;
-  &lt;/security&gt;
-
 
     &lt;resources&gt;
       &lt;j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/&gt;
@@ -120,8 +116,12 @@ Java code which needs to be signed in order to deploy applets using
 JOGL and is the only certificate the end user must accept.
 </del><br/>
 Sadly, due to Oracle's Java Applet Plugin update 7u51,
-unsigned applets are no more allowed and hence the 
-Applet sandbox is being taken away.
+unsigned applets are no more allowed and effectively 
+lower the bar to create user applets with raised privileges.<br/>
+Hence JogAmp Community <b>signs</b> jogl-all.jar and gluegen-rt.jar, which contain the
+JOGL's supporting classes as well as jogl-demos.jar, which contains the GearsApplet class.<br/>
+jogl-demos.jar's manifest file uses <i>Permissions: sandbox</i>
+to <b>not raise privileges</b>.
 </p>
 
 </body>
