@@ -9,4 +9,6 @@ Implementation-Vendor: JogAmp Community
 Implementation-URL: http://jogamp.org/
 Implementation-Vendor-Id: com.jogamp
 Permissions: sandbox
+Application-Library-Allowable-Codebase: *
 @JAR_CODEBASE_TAG@
+
