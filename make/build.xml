@@ -96,7 +96,7 @@
         <property name="gluegen-rt.jar"      value="${gluegen.build}/gluegen-rt.jar" />
         <property name="jogl-all.jar"        value="${jogl.build}/jar/jogl-all.jar" />
         <property name="jogl-cg.jar"         value="${jogl.build}/jar/atomic/jogl-cg.jar" />
-        <property name="joal.jar"            value="${joal.build}/joal.jar" />
+        <property name="joal.jar"            value="${joal.build}/jar/joal.jar" />
         <property name="simple-xml.jar"      value="${project.root}/lib/simple-xml-1.1.1.jar" />
         <property name="classes"             value="${build}/classes" />
         <property name="src"                 value="${project.root}/src" />
