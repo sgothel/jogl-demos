@@ -105,7 +105,7 @@ public class Perftst implements MouseListener, GLEventListener {
 
         st = pmod.initShaderState(gl);
 
-        // Push the 1st uniform down the path 
+        // Push the 1st uniform down the path
         st.useProgram(gl, true);
 
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -145,7 +145,7 @@ public class Perftst implements MouseListener, GLEventListener {
         if(null!=ud) {
             // same data object
             st.uniform(gl, ud);
-        } 
+        }
 
         st.useProgram(gl, false);
     }
@@ -155,7 +155,6 @@ public class Perftst implements MouseListener, GLEventListener {
 
         st.destroy(gl);
         st=null;
-        pmvMatrix.destroy();
         pmvMatrix=null;
         quit=true;
     }
@@ -177,7 +176,7 @@ public class Perftst implements MouseListener, GLEventListener {
 
         for(int i=args.length-1; i>=0; i--) {
             if(args[i].equals("-awt")) {
-                type |= USE_AWT; 
+                type |= USE_AWT;
             }
             if(args[i].equals("-test") && i+1<args.length ) {
                 tstName = args[i+1];

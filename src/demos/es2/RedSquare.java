@@ -18,9 +18,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public GLWindow window;
     private GLProfile glp;
     private boolean quit = false;
-    private String glprofile;
-    private int type;
-    
+    private final String glprofile;
+    private final int type;
+
     public RedSquare() {
         this(null, USE_NEWT);
     }
@@ -44,10 +44,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.out.println("WINDOW-DESTROYED "+Thread.currentThread());
     }
 
-    public void keyPressed(KeyEvent e) { 
+    public void keyPressed(KeyEvent e) {
         System.out.println("KEY-PRESSED "+Thread.currentThread()+" UNHANDLED "+e);
     }
-    public void keyReleased(KeyEvent e) { 
+    public void keyReleased(KeyEvent e) {
         System.out.println("KEY-RELEASED "+Thread.currentThread()+" UNHANDLED "+e);
         if( !e.isPrintableKey() || e.isAutoRepeat() ) {
             return;
@@ -71,7 +71,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                     window.setFullscreen(!window.isFullscreen());
                 }
                 break;
-            default: 
+            default:
                 quit=true;
                 break;
         }
@@ -210,7 +210,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
         initShader(gl);
 
-        // Push the 1st uniform down the path 
+        // Push the 1st uniform down the path
         st.useProgram(gl, true);
 
         pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
@@ -243,7 +243,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
         }
         colors.seal(gl, true);
-        
+
         // OpenGL Render Settings
         gl.glClearColor(0, 0, 0, 1);
         gl.glEnable(GL2ES2.GL_DEPTH_TEST);
@@ -271,7 +271,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         if(null!=ud) {
             // same data object
             st.uniform(gl, ud);
-        } 
+        }
 
         st.useProgram(gl, false);
     }
@@ -284,7 +284,6 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
         st.destroy(gl);
         st=null;
-        pmvMatrix.destroy();
         pmvMatrix=null;
         System.out.println(Thread.currentThread()+" RedSquare.dispose: FIN");
     }
@@ -302,7 +301,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
-        float ang = ((float) window.getTotalFPSDuration() * 360.0f) / 4000.0f;
+        float ang = (window.getTotalFPSDuration() * 360.0f) / 4000.0f;
         pmvMatrix.glRotatef(ang, 0, 0, 1);
         pmvMatrix.glRotatef(ang, 0, 1, 0);
 
@@ -310,7 +309,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         if(null!=ud) {
             // same data object
             st.uniform(gl, ud);
-        } 
+        }
 
         // Draw a square
         gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
@@ -343,7 +342,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             } else if(args[i].equals("-1thread")) {
                 oneThread=true;
             } else if(args[i].equals("-awt")) {
-                type |= USE_AWT; 
+                type |= USE_AWT;
             } else if(args[i].startsWith("-GL")) {
                 threads.add(new RedSquare(args[i].substring(1), type));
             }
