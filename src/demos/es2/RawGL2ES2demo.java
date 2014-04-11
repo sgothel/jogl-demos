@@ -107,7 +107,7 @@ public class RawGL2ES2demo implements GLEventListener{
  * sent to the GPU driver for compilation.
  */
 private String vertexShaderString =
-// For GLSL 1 and 1.1 code i highly recomend to not include a 
+// For GLSL 1 and 1.1 code i highly recomend to not include a
 // GLSL ES language #version line, GLSL ES section 3.4
 // Many GPU drivers refuse to compile the shader if #version is different from
 // the drivers internal GLSL version.
@@ -115,9 +115,9 @@ private String vertexShaderString =
 // This demo use GLSL version 1.1 (the implicit version)
 
 "#if __VERSION__ >= 130\n" + // GLSL 130+ uses in and out
-"  #define attribute in\n" + // instead of attribute and varying 
-"  #define varying out\n" +  // used by OpenGL 3 core and later. 
-"#endif\n" + 
+"  #define attribute in\n" + // instead of attribute and varying
+"  #define varying out\n" +  // used by OpenGL 3 core and later.
+"#endif\n" +
 
 "#ifdef GL_ES \n" +
 "precision mediump float; \n" + // Precision Qualifiers
@@ -168,7 +168,7 @@ private String fragmentShaderString =
 "  out vec4 mgl_FragColor;\n" +
 "  #define texture2D texture\n" +
 "  #define gl_FragColor mgl_FragColor\n" +
-"#endif\n" + 
+"#endif\n" +
 
 "#ifdef GL_ES \n" +
 "precision mediump float; \n" +
@@ -245,7 +245,7 @@ private String fragmentShaderString =
     private double t0 = System.currentTimeMillis();
     private double theta;
     private double s;
-    
+
     private static int width=1920;
     private static int height=1080;
 
@@ -254,8 +254,9 @@ private String fragmentShaderString =
     private int fragShader;
     private int ModelViewProjectionMatrix_location;
 
+    static final int COLOR_IDX = 0;
+    static final int VERTICES_IDX = 1;
     int[] vboHandles;
-    private int vboVertices, vboColors;
 
     public static void main(String[] s){
 
@@ -273,7 +274,7 @@ private String fragmentShaderString =
          */
 
         GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES2));
-	// We may at this point tweak the caps and request a translucent drawable
+        // We may at this point tweak the caps and request a translucent drawable
         caps.setBackgroundOpaque(false);
         GLWindow glWindow = GLWindow.create(caps);
 
@@ -289,7 +290,7 @@ private String fragmentShaderString =
          *  // add some swing code if you like.
          *  // javax.swing.JButton b = new javax.swing.JButton();
          *  // b.setText("Hi");
-         *  // frame.add(b); 
+         *  // frame.add(b);
          *  frame.setVisible(true);
          */
 
@@ -325,17 +326,17 @@ private String fragmentShaderString =
          * Its recommended to use the jogamp/opengl/util/glsl/ classes
          * import com.jogamp.opengl.util.glsl.ShaderCode;
          * import com.jogamp.opengl.util.glsl.ShaderProgram;
-         * import com.jogamp.opengl.util.glsl.ShaderState; 
+         * import com.jogamp.opengl.util.glsl.ShaderState;
          * to simplify shader customization, compile and loading.
          *
          * You may also want to look at the JOGL RedSquareES2 demo
          * http://jogamp.org/git/?p=jogl.git;a=blob;f=src/test/com/jogamp/opengl/test/junit/jogl/demos/es2/RedSquareES2.java;hb=HEAD#l78
          * to see how the shader customization, compile and loading is done
          * using the recommended JogAmp GLSL utility classes.
-         */ 
+         */
 
         // Make the shader strings compatible with OpenGL 3 core if needed
-        // GL2ES2 also includes the intersection of GL3 core 
+        // GL2ES2 also includes the intersection of GL3 core
         // The default implicit GLSL version 1.1 is now depricated in GL3 core
         // GLSL 1.3 is the minimum version that now has to be explicitly set.
         // This allows the shaders to compile using the latest
@@ -344,7 +345,7 @@ private String fragmentShaderString =
             System.out.println("GL3 core detected: explicit add #version 130 to shaders");
             vertexShaderString = "#version 130\n"+vertexShaderString;
             fragmentShaderString = "#version 130\n"+fragmentShaderString;
-	}
+        }
 
         // Create GPU shader handles
         // OpenGL ES retuns a index id to be stored for future reference.
@@ -421,8 +422,6 @@ private String fragmentShaderString =
          */
         vboHandles = new int[2];
         gl.glGenBuffers(2, vboHandles, 0);
-        vboColors = vboHandles[0];
-        vboVertices = vboHandles[1];
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int z, int h) {
@@ -476,7 +475,7 @@ private String fragmentShaderString =
             0.0f, 0.0f, 0.0f, 1.0f,
         };
         model_view_projection =  translate(identity_matrix,0.0f,0.0f, -0.1f);
-        model_view_projection =  rotate(model_view_projection,(float)30f*(float)s,1.0f,0.0f,1.0f);
+        model_view_projection =  rotate(model_view_projection,30f*(float)s,1.0f,0.0f,1.0f);
 
         // Send the final projection matrix to the vertex shader by
         // using the uniform location id obtained during the init part.
@@ -504,12 +503,12 @@ private String fragmentShaderString =
         // Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
         // and thus can not get moved by the java garbage collector.
         // Also we need to keep a reference to the NIO Direct buffer around up untill
-        // we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory. 
+        // we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory.
         // I will here use the com.jogamp.common.nio.Buffers to quicly wrap the array in a Direct NIO buffer.
         FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
 
         // Select the VBO, GPU memory data, to use for vertices
-        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboVertices);
+        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboHandles[VERTICES_IDX]);
 
         // transfer data to VBO, this perform the copy of data from CPU -> GPU memory
         int numBytes = vertices.length * 4;
@@ -532,11 +531,12 @@ private String fragmentShaderString =
                               0.0f, 0.0f, 0.0f, 1.0f, //Bottom Left color (black)
                               1.0f, 1.0f, 0.0f, 0.9f  //Bottom Right color (yellow) with 10% transparence
                                                    };
-                                             
+
         FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
 
-        // Select the VBO, GPU memory data, to use for colors 
-        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboColors);
+        // Select the VBO, GPU memory data, to use for colors
+        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vboHandles[COLOR_IDX]);
+
         numBytes = colors.length * 4;
         gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbColors, GL.GL_STATIC_DRAW);
         fbColors = null; // It is OK to release CPU color memory after transfer to GPU
@@ -549,17 +549,17 @@ private String fragmentShaderString =
         gl.glEnableVertexAttribArray(1);
 
         gl.glDrawArrays(GL2ES2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
-        
-        gl.glDisableVertexAttribArray(0); // Allow release of vertex position memory
-        gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory		
 
-        gl.glDeleteBuffers(2, vboHandles, 0); // Release VBO, color and vertices, buffer GPU memory.
+        gl.glDisableVertexAttribArray(0); // Allow release of vertex position memory
+        gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory
     }
 
     public void dispose(GLAutoDrawable drawable){
         System.out.println("cleanup, remember to release shaders");
         GL2ES2 gl = drawable.getGL().getGL2ES2();
         gl.glUseProgram(0);
+        gl.glDeleteBuffers(2, vboHandles, 0); // Release VBO, color and vertices, buffer GPU memory.
+        vboHandles = null;
         gl.glDetachShader(shaderProgram, vertShader);
         gl.glDeleteShader(vertShader);
         gl.glDetachShader(shaderProgram, fragShader);
