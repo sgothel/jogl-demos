@@ -43,9 +43,9 @@ else
 fi
 
 if [ $AUTOBUILD -eq 0 ] ; then
-    gpf=`find ../gluegen/make -name dynlink-unix.cfg`
+    gpf=`find ../gluegen/make -name jogamp-env.xml`
     if [ -z "$gpf" ] ; then
-        gpf=`find .. -name dynlink-unix.cfg`
+        gpf=`find .. -name jogamp-env.xml`
     fi
     if [ -z "$gpf" ] ; then
         echo GLUEGEN_BUILDDIR not found
