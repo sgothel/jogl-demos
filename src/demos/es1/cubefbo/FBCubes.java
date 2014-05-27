@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,7 +28,7 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  */
 
 package demos.es1.cubefbo;
@@ -59,7 +59,8 @@ public class FBCubes implements GLEventListener {
         // JAU fbo2 = new FBObject(FBO_SIZE, FBO_SIZE);
     }
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
         GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL(), ShaderSelectionMode.AUTO, null);
         System.out.println(gl);
 
@@ -68,11 +69,12 @@ public class FBCubes implements GLEventListener {
         fbo1.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo1.unbind(gl);
         cubeInner.init(drawable);
-        
+
         cubeOuter.init(drawable);
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         cubeOuter.reshape(drawable, x, y, width, height);
     }
 
@@ -84,7 +86,8 @@ public class FBCubes implements GLEventListener {
         this.yRot = yRot;
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
         fbo1.destroy(gl);
         fbo1=null;
@@ -94,7 +97,8 @@ public class FBCubes implements GLEventListener {
         cubeOuter=null;
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
 
         fbo1.bind(gl);
@@ -105,7 +109,7 @@ public class FBCubes implements GLEventListener {
 
         gl.glEnable (GL.GL_TEXTURE_2D);
         fbo1.use(gl, (TextureAttachment)fbo1.getColorbuffer(0));
-        cubeOuter.reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
+        cubeOuter.reshape(drawable, 0, 0, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
         cubeOuter.display(drawable);
         fbo1.unuse(gl);
         gl.glDisable (GL.GL_TEXTURE_2D);
@@ -145,7 +149,7 @@ public class FBCubes implements GLEventListener {
 
     public void displayChanged(javax.media.opengl.GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
-    
+
     float time = 0.0f;
     Cube cubeInner=null;
     // JAU Cube cubeMiddle=null;

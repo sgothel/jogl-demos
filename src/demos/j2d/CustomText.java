@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2006 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,26 +28,19 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
 package demos.j2d;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import demos.common.Demo;
-import demos.util.FPSCounter;
-import demos.util.SystemTime;
-import demos.util.Time;
 import gleem.linalg.Vec2f;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -68,16 +61,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import com.jogamp.opengl.util.Animator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+
+import demos.common.Demo;
+import demos.util.FPSCounter;
+import demos.util.SystemTime;
+import demos.util.Time;
 
 
 /** Illustrates more advanced use of the TextRenderer class; shows how
@@ -103,12 +107,14 @@ public class CustomText extends Demo {
 
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
           new Thread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
               }
@@ -135,12 +141,12 @@ public class CustomText extends Demo {
     String text;
   }
 
-  private List<TextInfo> textInfo = new ArrayList<TextInfo>();
+  private final List<TextInfo> textInfo = new ArrayList<TextInfo>();
   private Time time;
   private Texture backgroundTexture;
   private TextRenderer renderer;
-  private Random random = new Random();
-  private GLU glu = new GLU();
+  private final Random random = new Random();
+  private final GLU glu = new GLU();
   private int width;
   private int height;
 
@@ -153,14 +159,16 @@ public class CustomText extends Demo {
     JPanel panel = new JPanel();
     JButton button = new JButton("Less Text");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           lessText();
         }
       });
     panel.add(button);
     button = new JButton("More Text");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           moreText();
         }
       });
@@ -188,7 +196,8 @@ public class CustomText extends Demo {
     }
   }
 
-  public void init(GLAutoDrawable drawable) {
+  @Override
+public void init(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
 
     // Create the background texture
@@ -214,8 +223,8 @@ public class CustomText extends Demo {
     // Create the FPS counter
     fps = new FPSCounter(drawable, 36);
 
-    width = drawable.getWidth();
-    height = drawable.getWidth();
+    width = drawable.getSurfaceWidth();
+    height = drawable.getSurfaceWidth();
 
     // Compute maximum width of text we're going to draw to avoid
     // popping in/out at edges
@@ -237,10 +246,12 @@ public class CustomText extends Demo {
     gl.setSwapInterval(0);
   }
 
-  public void dispose(GLAutoDrawable drawable) {
+  @Override
+public void dispose(GLAutoDrawable drawable) {
   }
 
-  public void display(GLAutoDrawable drawable) {
+  @Override
+public void display(GLAutoDrawable drawable) {
     time.update();
 
     // Update velocities and positions of all text
@@ -270,14 +281,14 @@ public class CustomText extends Demo {
       // Use maxTextWidth to avoid popping in/out at edges
       // Would be better to do oriented bounding rectangle computation
       if (info.position.x() < -maxTextWidth) {
-        info.position.setX(info.position.x() + drawable.getWidth() + 2 * maxTextWidth);
-      } else if (info.position.x() > drawable.getWidth() + maxTextWidth) {
-        info.position.setX(info.position.x() - drawable.getWidth() - 2 * maxTextWidth);
+        info.position.setX(info.position.x() + drawable.getSurfaceWidth() + 2 * maxTextWidth);
+      } else if (info.position.x() > drawable.getSurfaceWidth() + maxTextWidth) {
+        info.position.setX(info.position.x() - drawable.getSurfaceWidth() - 2 * maxTextWidth);
       }
       if (info.position.y() < -maxTextWidth) {
-        info.position.setY(info.position.y() + drawable.getHeight() + 2 * maxTextWidth);
-      } else if (info.position.y() > drawable.getHeight() + maxTextWidth) {
-        info.position.setY(info.position.y() - drawable.getHeight() - 2 * maxTextWidth);
+        info.position.setY(info.position.y() + drawable.getSurfaceHeight() + 2 * maxTextWidth);
+      } else if (info.position.y() > drawable.getSurfaceHeight() + maxTextWidth) {
+        info.position.setY(info.position.y() - drawable.getSurfaceHeight() - 2 * maxTextWidth);
       }
     }
 
@@ -285,7 +296,7 @@ public class CustomText extends Demo {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     gl.glMatrixMode(GL2ES1.GL_PROJECTION);
     gl.glLoadIdentity();
-    glu.gluOrtho2D(0, drawable.getWidth(), 0, drawable.getHeight());
+    glu.gluOrtho2D(0, drawable.getSurfaceWidth(), 0, drawable.getSurfaceHeight());
     gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
     gl.glLoadIdentity();
 
@@ -293,8 +304,8 @@ public class CustomText extends Demo {
     backgroundTexture.enable(gl);
     backgroundTexture.bind(gl);
     TextureCoords coords = backgroundTexture.getImageTexCoords();
-    int w = drawable.getWidth();
-    int h = drawable.getHeight();
+    int w = drawable.getSurfaceWidth();
+    int h = drawable.getSurfaceHeight();
     float fw = w / 100.0f;
     float fh = h / 100.0f;
     gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
@@ -311,7 +322,7 @@ public class CustomText extends Demo {
     backgroundTexture.disable(gl);
 
     // Render all text
-    renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
+    renderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
 
     // Note we're doing some slightly fancy stuff to position the text.
     // We tell the text renderer to render the text at the origin, and
@@ -336,7 +347,8 @@ public class CustomText extends Demo {
     fps.draw();
   }
 
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  @Override
+public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     this.width = width;
     this.height = height;
   }
@@ -387,10 +399,10 @@ public class CustomText extends Demo {
   private static final Color DROP_SHADOW_COLOR = new Color(0, 0, 0, 0.5f);
 
   class CustomRenderDelegate implements TextRenderer.RenderDelegate {
-    private float gradientSize;
-    private int dropShadowDepth;
-    private Color color1;
-    private Color color2;
+    private final float gradientSize;
+    private final int dropShadowDepth;
+    private final Color color1;
+    private final Color color2;
 
 
     CustomRenderDelegate(float gradientSize, int dropShadowDepth, Color color1, Color color2) {
@@ -400,31 +412,36 @@ public class CustomText extends Demo {
       this.color2 = color2;
     }
 
-    public boolean intensityOnly() {
+    @Override
+	public boolean intensityOnly() {
       return false;
     }
 
-    public Rectangle2D getBounds(CharSequence str,
+    @Override
+	public Rectangle2D getBounds(CharSequence str,
                                  Font font,
                                  FontRenderContext frc) {
       return getBounds(str.toString(), font, frc);
     }
 
-    public Rectangle2D getBounds(String str,
+    @Override
+	public Rectangle2D getBounds(String str,
                                  Font font,
                                  FontRenderContext frc) {
       return getBounds(font.createGlyphVector(frc, str), frc);
     }
 
-    public Rectangle2D getBounds(GlyphVector gv, FontRenderContext frc) {
+    @Override
+	public Rectangle2D getBounds(GlyphVector gv, FontRenderContext frc) {
       Rectangle2D stringBounds = gv.getPixelBounds(frc, 0, 0);
       return new Rectangle2D.Double(stringBounds.getX(),
                                     stringBounds.getY(),
                                     stringBounds.getWidth() + dropShadowDepth,
                                     stringBounds.getHeight() + dropShadowDepth);
     }
-    
-    public void drawGlyphVector(Graphics2D graphics, GlyphVector str, int x, int y) {
+
+    @Override
+	public void drawGlyphVector(Graphics2D graphics, GlyphVector str, int x, int y) {
       graphics.setColor(DROP_SHADOW_COLOR);
       graphics.drawGlyphVector(str, x + dropShadowDepth, y + dropShadowDepth);
       graphics.setColor(Color.WHITE);
@@ -434,7 +451,8 @@ public class CustomText extends Demo {
       graphics.drawGlyphVector(str, x, y);
     }
 
-    public void draw(Graphics2D graphics, String str, int x, int y) {
+    @Override
+	public void draw(Graphics2D graphics, String str, int x, int y) {
       graphics.setColor(DROP_SHADOW_COLOR);
       graphics.drawString(str, x + dropShadowDepth, y + dropShadowDepth);
       graphics.setColor(Color.WHITE);

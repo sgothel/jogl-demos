@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2006 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,21 +28,17 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
 package demos.j2d;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
-import demos.common.Demo;
-import demos.util.SystemTime;
-import demos.util.Time;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Frame;
@@ -57,12 +53,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
+
 import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.awt.TextRenderer;
+
+import demos.common.Demo;
+import demos.util.SystemTime;
+import demos.util.Time;
 
 
 /** Illustrates both the TextRenderer's capability for handling
@@ -87,12 +90,14 @@ public class TextFlow extends Demo {
     frame.setSize(512, 512);
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
           new Thread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
               }
@@ -103,15 +108,15 @@ public class TextFlow extends Demo {
     animator.start();
   }
 
-  private List<String> lines = new ArrayList<String>();
+  private final List<String> lines = new ArrayList<String>();
   private Time time;
   private TextRenderer renderer;
   private int curParagraph;
-  private float x = 30;
+  private final float x = 30;
   private float y;
-  private float velocity = 100;  // pixels/sec
+  private final float velocity = 100;  // pixels/sec
   private int lineSpacing;
-  private int EXTRA_LINE_SPACING = 5;
+  private final int EXTRA_LINE_SPACING = 5;
 
   private void reflow(float width) {
     lines.clear();
@@ -140,40 +145,43 @@ public class TextFlow extends Demo {
     }
     lineSpacing = (int) ((float) lineSpacing / (float) numLines) + EXTRA_LINE_SPACING;
   }
-  
-  public void init(GLAutoDrawable drawable) {
+
+  @Override
+public void init(GLAutoDrawable drawable) {
     renderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 36), true, false);
     time = new SystemTime();
     ((SystemTime) time).rebase();
   }
 
-  public void dispose(GLAutoDrawable drawable) {
+  @Override
+public void dispose(GLAutoDrawable drawable) {
     renderer = null;
     time = null;
   }
 
-  public void display(GLAutoDrawable drawable) {
+  @Override
+public void display(GLAutoDrawable drawable) {
     time.update();
 
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-    
+
     float deltaT = (float) time.deltaT();
     y += velocity * deltaT;
 
     // Draw text starting at the specified paragraph
     int paragraph = 0;
     float curY = y;
-    renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
+    renderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
     boolean renderedOne = false;
     for (int i = 0; i < lines.size(); i++) {
-      String line = (String) lines.get(i);
+      String line = lines.get(i);
       if (line == null) {
         ++paragraph;
         if (paragraph >= curParagraph) {
           // If this paragraph has scrolled off the top of the screen,
           // don't draw it the next frame
-          if (paragraph > curParagraph && curY > drawable.getHeight()) {
+          if (paragraph > curParagraph && curY > drawable.getSurfaceHeight()) {
             ++curParagraph;
             y = curY;
           }
@@ -182,7 +190,7 @@ public class TextFlow extends Demo {
       } else {
         if (paragraph >= curParagraph) {
           curY -= lineSpacing;
-          if (curY < drawable.getHeight() + lineSpacing) {
+          if (curY < drawable.getSurfaceHeight() + lineSpacing) {
             renderer.draw(line, (int) x, (int) curY);
             renderedOne = true;
           }
@@ -201,7 +209,8 @@ public class TextFlow extends Demo {
     }
   }
 
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  @Override
+public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     reflow(Math.max(100, width - 60));
   }
 

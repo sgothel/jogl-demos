@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2003 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,11 +28,11 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
@@ -50,14 +50,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+
+import com.jogamp.opengl.util.Animator;
 
 
 
@@ -104,12 +106,13 @@ public class TestContextDestruction {
     frame2.pack();
     frame2.setVisible(true);
     frame2.setLocation(256 + BORDER_WIDTH, 0);
-    
+
     JFrame uiFrame = new JFrame("Controls");
     uiFrame.getContentPane().setLayout(new GridLayout(3, 1));
     JButton button = new JButton("Toggle Frame 1's component");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           if (frame1ContainedComponent == null) {
             frame1ContainedComponent = frame1RemovedComponent;
             frame1RemovedComponent = null;
@@ -124,7 +127,8 @@ public class TestContextDestruction {
     uiFrame.getContentPane().add(button);
     button = new JButton("Swap Frame 1's and Frame 2's components");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           System.out.println("Swapping Frame 1's and Frame 2's components");
           Component t1 = null, t2 = null;
           t1 = frame1ContainedComponent;
@@ -151,7 +155,8 @@ public class TestContextDestruction {
     uiFrame.getContentPane().add(button);
     button = new JButton("Toggle Frame 2's component");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           if (frame2ContainedComponent == null) {
             frame2ContainedComponent = frame2RemovedComponent;
             frame2RemovedComponent = null;
@@ -170,12 +175,14 @@ public class TestContextDestruction {
 
     final Animator animator = new Animator(canvas);
     WindowListener windowListener = new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
           new Thread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
               }
@@ -189,7 +196,8 @@ public class TestContextDestruction {
   }
 
   class Listener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
 
       System.out.println("Listener.init()");
 
@@ -209,14 +217,16 @@ public class TestContextDestruction {
 
       gl.glEnable(GL2.GL_NORMALIZE);
 
-      reshape(drawable, 0, 0, drawable.getWidth(), drawable.getHeight());
+      reshape(drawable, 0, 0, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
       System.out.println("Listener.dispose()");
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       angle += 2.0f;
 
       GL2 gl = drawable.getGL().getGL2();
@@ -229,12 +239,13 @@ public class TestContextDestruction {
       gl.glPopMatrix();
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
       System.out.println("Listener.reshape()");
       GL2 gl = drawable.getGL().getGL2();
 
       float h = (float)height / (float)width;
-            
+
       gl.glMatrixMode(GL2.GL_PROJECTION);
       gl.glLoadIdentity();
       gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
@@ -278,9 +289,9 @@ public class TestContextDestruction {
     r0 = inner_radius;
     r1 = outer_radius - tooth_depth / 2.0f;
     r2 = outer_radius + tooth_depth / 2.0f;
-            
+
     da = 2.0f * (float) Math.PI / teeth / 4.0f;
-            
+
     gl.glShadeModel(GL2.GL_FLAT);
 
     gl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -311,7 +322,7 @@ public class TestContextDestruction {
         gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw back face */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
@@ -323,7 +334,7 @@ public class TestContextDestruction {
         gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw back sides of teeth */
     gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
@@ -335,7 +346,7 @@ public class TestContextDestruction {
         gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw outward faces of teeth */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i < teeth; i++)
@@ -364,9 +375,9 @@ public class TestContextDestruction {
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), width * 0.5f);
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
     gl.glEnd();
-    
+
     gl.glShadeModel(GL2.GL_SMOOTH);
-    
+
     /* draw inside radius cylinder */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)

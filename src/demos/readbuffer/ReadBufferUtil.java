@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,15 +28,17 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  */
 
 package demos.readbuffer;
 
-import com.jogamp.opengl.util.GLBuffers;
-import java.nio.*;
-import javax.media.opengl.*;
+import java.nio.Buffer;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GLDrawable;
+
+import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 
@@ -57,7 +59,7 @@ public class ReadBufferUtil {
     }
 
     public void fetchOffscreenTexture(GLDrawable drawable, GL gl) {
-        int readPixelSize = drawable.getWidth() * drawable.getHeight() * 3 ; // RGB
+        int readPixelSize = drawable.getSurfaceWidth() * drawable.getSurfaceHeight() * 3 ; // RGB
         boolean newData = false;
         if(readPixelSize>readPixelSizeLast) {
             readPixelBuffer = GLBuffers.newDirectGLBuffer(GL.GL_UNSIGNED_BYTE, readPixelSize);
@@ -67,11 +69,11 @@ public class ReadBufferUtil {
                            gl.getGLProfile(),
                            // gl.isGL2GL3()?gl.GL_RGBA:gl.GL_RGB,
                            gl.GL_RGB,
-                           drawable.getWidth(), drawable.getHeight(),
-                           0, 
+                           drawable.getSurfaceWidth(), drawable.getSurfaceHeight(),
+                           0,
                            gl.GL_RGB,
                            gl.GL_UNSIGNED_BYTE,
-                           false, false, 
+                           false, false,
                            false /* flip */,
                            readPixelBuffer,
                            null /* Flusher */);
@@ -85,15 +87,15 @@ public class ReadBufferUtil {
         }
         if(null!=readPixelBuffer) {
             readPixelBuffer.clear();
-            gl.glReadPixels(0, 0, drawable.getWidth(), drawable.getHeight(), GL.GL_RGB, GL.GL_UNSIGNED_BYTE, readPixelBuffer);
+            gl.glReadPixels(0, 0, drawable.getSurfaceWidth(), drawable.getSurfaceHeight(), GL.GL_RGB, GL.GL_UNSIGNED_BYTE, readPixelBuffer);
             readPixelBuffer.rewind();
             if(newData) {
                 readTexture.updateImage(gl, readTextureData);
             } else {
-                readTexture.updateSubImage(gl, readTextureData, 0, 
+                readTexture.updateSubImage(gl, readTextureData, 0,
                                            0, 0, // src offset
                                            0, 0, // dst offset
-                                           drawable.getWidth(), drawable.getHeight());
+                                           drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
             }
             readPixelBuffer.rewind();
         }

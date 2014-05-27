@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2007 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,24 +28,26 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
 package demos.util;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
-import com.jogamp.opengl.util.texture.Texture;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
+
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLException;
+
+import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.texture.Texture;
 
 
 
@@ -60,9 +62,9 @@ public class FPSCounter {
   public static final int LOWER_RIGHT = 4;
 
   private int textLocation = LOWER_RIGHT;
-  private GLDrawable drawable;
-  private TextRenderer renderer;
-  private DecimalFormat format = new DecimalFormat("####.00");
+  private final GLDrawable drawable;
+  private final TextRenderer renderer;
+  private final DecimalFormat format = new DecimalFormat("####.00");
   private int frameCount;
   private long startTime;
   private String fpsText;
@@ -70,7 +72,7 @@ public class FPSCounter {
   private int fpsWidth;
   private int fpsHeight;
   private int fpsOffset;
-  
+
   /** Creates a new FPSCounter with the given font size. An OpenGL
       context must be current at the time the constructor is called.
 
@@ -157,7 +159,7 @@ public class FPSCounter {
 
     if (++frameCount >= 100) {
       long endTime = System.currentTimeMillis();
-      float fps = 100.0f / (float) (endTime - startTime) * 1000;
+      float fps = 100.0f / (endTime - startTime) * 1000;
       recomputeFPSSize(fps);
       frameCount = 0;
       startTime = System.currentTimeMillis();
@@ -166,19 +168,19 @@ public class FPSCounter {
     }
 
     if (fpsText != null) {
-      renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
+      renderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
       // Figure out the location at which to draw the text
       int x = 0;
       int y = 0;
       switch (textLocation) {
         case UPPER_LEFT:
           x = fpsOffset;
-          y = drawable.getHeight() - fpsHeight - fpsOffset;
+          y = drawable.getSurfaceHeight() - fpsHeight - fpsOffset;
           break;
 
         case UPPER_RIGHT:
-          x = drawable.getWidth() - fpsWidth - fpsOffset;
-          y = drawable.getHeight() - fpsHeight - fpsOffset;
+          x = drawable.getSurfaceWidth() - fpsWidth - fpsOffset;
+          y = drawable.getSurfaceHeight() - fpsHeight - fpsOffset;
           break;
 
         case LOWER_LEFT:
@@ -187,7 +189,7 @@ public class FPSCounter {
           break;
 
         case LOWER_RIGHT:
-          x = drawable.getWidth() - fpsWidth - fpsOffset;
+          x = drawable.getSurfaceWidth() - fpsWidth - fpsOffset;
           y = fpsOffset;
           break;
       }

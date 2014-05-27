@@ -32,15 +32,13 @@
  */
 package demos.proceduralTexturePhysics;
 
-import demos.common.Demo;
-import demos.common.DemoListener;
-import demos.util.DurationTimer;
 import gleem.BSphere;
 import gleem.BSphereProvider;
 import gleem.CameraParameters;
 import gleem.ExaminerViewer;
 import gleem.ManipManager;
 import gleem.linalg.Vec3f;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
@@ -50,15 +48,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
 import javax.swing.JOptionPane;
+
+import com.jogamp.opengl.util.Animator;
+
+import demos.common.Demo;
+import demos.common.DemoListener;
+import demos.util.DurationTimer;
 
 /**
  * Water demonstration by NVidia Corporation - <a href =
@@ -81,24 +85,28 @@ public class ProceduralTexturePhysics extends Demo {
 
         canvas.addKeyListener(new KeyAdapter() {
 
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 demo.dispatchKey(e.getKeyChar());
             }
         });
 
         canvas.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
+            @Override
+			public void mousePressed(MouseEvent e) {
                 demo.dispatchMousePress(e);
             }
 
-            public void mouseReleased(MouseEvent e) {
+            @Override
+			public void mouseReleased(MouseEvent e) {
                 demo.dispatchMouseRelease(e);
             }
         });
 
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
 
-            public void mouseDragged(MouseEvent e) {
+            @Override
+			public void mouseDragged(MouseEvent e) {
                 demo.dispatchMouseDrag(e);
             }
         });
@@ -106,11 +114,13 @@ public class ProceduralTexturePhysics extends Demo {
         final Animator animator = new Animator(canvas);
         demo.setDemoListener(new DemoListener() {
 
-            public void shutdownDemo() {
+            @Override
+			public void shutdownDemo() {
                 runExit(animator);
             }
 
-            public void repaint() {
+            @Override
+			public void repaint() {
             }
         });
 
@@ -124,7 +134,8 @@ public class ProceduralTexturePhysics extends Demo {
 
         frame.addWindowListener(new WindowAdapter() {
 
-            public void windowClosing(WindowEvent e) {
+            @Override
+			public void windowClosing(WindowEvent e) {
                 runExit(animator);
             }
         });
@@ -132,7 +143,8 @@ public class ProceduralTexturePhysics extends Demo {
         animator.start();
     }
 
-    public void shutdownDemo() {
+    @Override
+	public void shutdownDemo() {
         viewer.detach();
         ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
         drawable.removeGLEventListener(this);
@@ -144,18 +156,19 @@ public class ProceduralTexturePhysics extends Demo {
     private GLAutoDrawable drawable;
     private Water water = new Water();
     private volatile ExaminerViewer viewer;
-    private boolean[] b = new boolean[256];
+    private final boolean[] b = new boolean[256];
     private boolean doViewAll = true;
-    private float zNear = 0.1f;
-    private float zFar = 10.0f;
+    private final float zNear = 0.1f;
+    private final float zFar = 10.0f;
     private DurationTimer timer = new DurationTimer();
     private boolean firstRender = true;
     private int frameCount;
-    private float blurIncrement = 0.01f;
-    private float bumpIncrement = 0.01f;
-    private float frequencyIncrement = 0.1f;
+    private final float blurIncrement = 0.01f;
+    private final float bumpIncrement = 0.01f;
+    private final float frequencyIncrement = 0.1f;
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
         water.destroy();
         water.initialize("demos/data/images/nvfixed.tga",
                 "demos/data/images/nvspin.tga",
@@ -198,7 +211,8 @@ public class ProceduralTexturePhysics extends Demo {
             viewer.setAutoRedrawMode(false);
             viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
 
-                public BSphere getBoundingSphere() {
+                @Override
+				public BSphere getBoundingSphere() {
                     return new BSphere(new Vec3f(0, 0, 0), 1.2f);
                 }
             });
@@ -210,14 +224,16 @@ public class ProceduralTexturePhysics extends Demo {
         }
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
         water.destroy();
         water = null;
         viewer = null;
         timer = null;
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
         if (++frameCount == 30) {
             timer.stop();
             System.err.println("Frames per second: " + (30.0f / timer.getDurationAsSeconds()));
@@ -240,8 +256,8 @@ public class ProceduralTexturePhysics extends Demo {
         ManipManager.getManipManager().render((AWTGLAutoDrawable) drawable, gl);
 
         if (drawing) {
-            int w = drawable.getWidth();
-            int h = drawable.getHeight();
+            int w = drawable.getSurfaceWidth();
+            int h = drawable.getSurfaceHeight();
             water.addDroplet(new Water.Droplet(2 * (mousePosX / (float) w - 0.5f),
                     -2 * (mousePosY / (float) h - 0.5f),
                     0.08f));
@@ -252,7 +268,8 @@ public class ProceduralTexturePhysics extends Demo {
         water.draw(gl, params.getOrientation().inverse());
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     }
 
     // Unused routines
@@ -260,11 +277,11 @@ public class ProceduralTexturePhysics extends Demo {
     }
 
     private void setFlag(char key, boolean val) {
-        b[((int) key) & 0xFF] = val;
+        b[(key) & 0xFF] = val;
     }
 
     private boolean getFlag(char key) {
-        return b[((int) key) & 0xFF];
+        return b[(key) & 0xFF];
     }
 
     private void checkExtension(GL gl, String extensionName) {
@@ -415,7 +432,8 @@ public class ProceduralTexturePhysics extends Demo {
         // exit routine in another thread.
         new Thread(new Runnable() {
 
-            public void run() {
+            @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
             }

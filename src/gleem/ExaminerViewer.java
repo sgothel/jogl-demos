@@ -39,13 +39,20 @@
 
 package gleem;
 
-import java.awt.Dimension;
-import java.awt.event.*;
-import java.util.*;
+import gleem.linalg.Mat4f;
+import gleem.linalg.MathUtil;
+import gleem.linalg.Rotf;
+import gleem.linalg.Vec3f;
 
-import gleem.linalg.*;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+
+import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.awt.AWTGLAutoDrawable;
 
 /** <P> This is an application-level class, not part of the
     manipulator hierarchy. It is an example of how you might integrate
@@ -89,29 +96,31 @@ public class ExaminerViewer {
   private int lastY;
 
   /** Camera parameters */
-  private float minFocalDist = 1.0f;
-  private Vec3f dolly        = new Vec3f(0, 0, 10); // Amount we have "backed up" from focal point
-  private Vec3f center       = new Vec3f(0, 0,  0); // Position of focal point in world coordinates
+  private final float minFocalDist = 1.0f;
+  private final Vec3f dolly        = new Vec3f(0, 0, 10); // Amount we have "backed up" from focal point
+  private final Vec3f center       = new Vec3f(0, 0,  0); // Position of focal point in world coordinates
   private Rotf  orientation  = new Rotf();
   private Vec3f upVector     = null;
   private float rotateSpeed       = 1.0f;
-  private float minRotateSpeed    = 0.0001f;
+  private final float minRotateSpeed    = 0.0001f;
   private float dollySpeed        = 2.0f;
-  private float minDollySpeed     = 0.0001f;
+  private final float minDollySpeed     = 0.0001f;
   private float zNear             = 1.0f;
   private float zFar              = 100.0f;
   private float vertFOVScale      = 1.0f;
-  private CameraParameters params = new CameraParameters();
+  private final CameraParameters params = new CameraParameters();
 
   /** Our bounding sphere provider (for viewAll()) */
   private BSphereProvider provider;
 
-  private MouseMotionAdapter mouseMotionListener = new MouseMotionAdapter() {
-      public void mouseDragged(MouseEvent e) {
+  private final MouseMotionAdapter mouseMotionListener = new MouseMotionAdapter() {
+      @Override
+	public void mouseDragged(MouseEvent e) {
         motionMethod(e, e.getX(), e.getY());
       }
 
-      public void mouseMoved(MouseEvent e) {
+      @Override
+	public void mouseMoved(MouseEvent e) {
         if (interactionUnderway && iOwnInteraction) {
           // Hack for AWT behavior where Ctrl + Alt + Left mouse button is treated
           // as motion instead of drag
@@ -122,21 +131,27 @@ public class ExaminerViewer {
       }
     };
 
-  private MouseAdapter mouseListener = new MouseAdapter() {
-      public void mousePressed(MouseEvent e) {
+  private final MouseAdapter mouseListener = new MouseAdapter() {
+      @Override
+	public void mousePressed(MouseEvent e) {
         mouseMethod(e, e.getModifiersEx(), true, e.getX(), e.getY());
       }
 
-      public void mouseReleased(MouseEvent e) {
+      @Override
+	public void mouseReleased(MouseEvent e) {
         mouseMethod(e, e.getModifiersEx(), false, e.getX(), e.getY());
       }
     };
 
-  private GLEventListener glListener = new GLEventListener() {
-      public void init(GLAutoDrawable drawable) {}
-      public void display(GLAutoDrawable drawable) {}
-      public void dispose(GLAutoDrawable drawable) { }
-      public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  private final GLEventListener glListener = new GLEventListener() {
+      @Override
+	public void init(GLAutoDrawable drawable) {}
+      @Override
+	public void display(GLAutoDrawable drawable) {}
+      @Override
+	public void dispose(GLAutoDrawable drawable) { }
+      @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         reshapeMethod(width, height);
       }
       public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
@@ -170,7 +185,7 @@ public class ExaminerViewer {
     this.window = null;
     this.provider = null;
   }
-  
+
   /** Call this at the end of your display() method to cause the
       Modelview matrix to be recomputed for the next frame. */
   public void update(GL2 gl) {
@@ -377,8 +392,8 @@ public class ExaminerViewer {
     button1Down = false;
     button2Down = false;
 
-    int xSize = window.getWidth();
-    int ySize = window.getHeight();
+    int xSize = window.getSurfaceWidth();
+    int ySize = window.getSurfaceHeight();
     params.setOrientation(orientation);
     params.setPosition(computePosition(new Vec3f()));
     params.setForwardDirection(Vec3f.NEG_Z_AXIS);
@@ -395,7 +410,7 @@ public class ExaminerViewer {
     } else {
       int dx = x - lastX;
       int dy = y - lastY;
-  
+
       lastX = x;
       lastY = y;
 
@@ -412,7 +427,7 @@ public class ExaminerViewer {
         (button2Down && !button1Down && !button3Down);
       boolean doZoom =
         (button3Down && !button1Down && !button2Down);
-      
+
       // Hack to allow us to use Ctrl + Alt + LMB to translate so
       // that we can do that gesture on the trackpad
       if (e.isControlDown() && (doRotation || doZoom ||

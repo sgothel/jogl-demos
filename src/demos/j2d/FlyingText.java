@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2006 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,26 +28,19 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
 package demos.j2d;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import demos.common.Demo;
-import demos.util.FPSCounter;
-import demos.util.SystemTime;
-import demos.util.Time;
 import gleem.linalg.Vec2f;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -64,18 +57,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import com.jogamp.opengl.util.Animator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+
+import demos.common.Demo;
+import demos.util.FPSCounter;
+import demos.util.SystemTime;
+import demos.util.Time;
 
 
 
@@ -103,12 +107,14 @@ public class FlyingText extends Demo {
 
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
           new Thread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
               }
@@ -147,13 +153,13 @@ public class FlyingText extends Demo {
     String text;
   }
 
-  private List<TextInfo> textInfo = new ArrayList<TextInfo>();
+  private final List<TextInfo> textInfo = new ArrayList<TextInfo>();
   private int dropShadowDistance = DEFAULT_DROP_SHADOW_DIST;
   private Time time;
   private Texture backgroundTexture;
   private TextRenderer renderer;
-  private Random random = new Random();
-  private GLU glu = new GLU();
+  private final Random random = new Random();
+  private final GLU glu = new GLU();
   private int width;
   private int height;
 
@@ -166,7 +172,8 @@ public class FlyingText extends Demo {
     JPanel panel = new JPanel();
     JButton button = new JButton("Less Text");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           lessText();
         }
       });
@@ -176,14 +183,16 @@ public class FlyingText extends Demo {
                                        getMaxDropShadowDistance(),
                                        getDropShadowDistance());
     slider.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
+        @Override
+		public void stateChanged(ChangeEvent e) {
           setDropShadowDistance(slider.getValue());
         }
       });
     panel.add(slider);
     button = new JButton("More Text");
     button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           moreText();
         }
       });
@@ -227,7 +236,8 @@ public class FlyingText extends Demo {
     dropShadowDistance = dist;
   }
 
-  public void init(GLAutoDrawable drawable) {
+  @Override
+public void init(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
     // Create the background texture
     BufferedImage bgImage = new BufferedImage(2, 2, BufferedImage.TYPE_BYTE_GRAY);
@@ -251,8 +261,8 @@ public class FlyingText extends Demo {
     // Create the FPS counter
     fps = new FPSCounter(drawable, 36);
 
-    width = drawable.getWidth();
-    height = drawable.getWidth();
+    width = drawable.getSurfaceWidth();
+    height = drawable.getSurfaceHeight();
 
     // Compute maximum width of text we're going to draw to avoid
     // popping in/out at edges
@@ -274,14 +284,16 @@ public class FlyingText extends Demo {
     gl.setSwapInterval(0);
   }
 
-  public void dispose(GLAutoDrawable drawable) {
+  @Override
+public void dispose(GLAutoDrawable drawable) {
     backgroundTexture = null;
     renderer = null;
     fps = null;
     time = null;
   }
 
-  public void display(GLAutoDrawable drawable) {
+  @Override
+public void display(GLAutoDrawable drawable) {
     time.update();
 
     // Update velocities and positions of all text
@@ -323,14 +335,14 @@ public class FlyingText extends Demo {
       // Use maxTextWidth to avoid popping in/out at edges
       // Would be better to do oriented bounding rectangle computation
       if (info.position.x() < -maxTextWidth) {
-        info.position.setX(info.position.x() + drawable.getWidth() + 2 * maxTextWidth);
-      } else if (info.position.x() > drawable.getWidth() + maxTextWidth) {
-        info.position.setX(info.position.x() - drawable.getWidth() - 2 * maxTextWidth);
+        info.position.setX(info.position.x() + drawable.getSurfaceWidth() + 2 * maxTextWidth);
+      } else if (info.position.x() > drawable.getSurfaceWidth() + maxTextWidth) {
+        info.position.setX(info.position.x() - drawable.getSurfaceWidth() - 2 * maxTextWidth);
       }
       if (info.position.y() < -maxTextWidth) {
-        info.position.setY(info.position.y() + drawable.getHeight() + 2 * maxTextWidth);
-      } else if (info.position.y() > drawable.getHeight() + maxTextWidth) {
-        info.position.setY(info.position.y() - drawable.getHeight() - 2 * maxTextWidth);
+        info.position.setY(info.position.y() + drawable.getSurfaceHeight() + 2 * maxTextWidth);
+      } else if (info.position.y() > drawable.getSurfaceHeight() + maxTextWidth) {
+        info.position.setY(info.position.y() - drawable.getSurfaceHeight() - 2 * maxTextWidth);
       }
     }
 
@@ -338,7 +350,7 @@ public class FlyingText extends Demo {
     gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
-    glu.gluOrtho2D(0, drawable.getWidth(), 0, drawable.getHeight());
+    glu.gluOrtho2D(0, drawable.getSurfaceWidth(), 0, drawable.getSurfaceHeight());
     gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
 
@@ -346,8 +358,8 @@ public class FlyingText extends Demo {
     backgroundTexture.enable(gl);
     backgroundTexture.bind(gl);
     TextureCoords coords = backgroundTexture.getImageTexCoords();
-    int w = drawable.getWidth();
-    int h = drawable.getHeight();
+    int w = drawable.getSurfaceWidth();
+    int h = drawable.getSurfaceHeight();
     float fw = w / 100.0f;
     float fh = h / 100.0f;
     gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
@@ -364,7 +376,7 @@ public class FlyingText extends Demo {
     backgroundTexture.disable(gl);
 
     // Render all text
-    renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
+    renderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
 
     // Note we're doing some slightly fancy stuff to position the text.
     // We tell the text renderer to render the text at the origin, and
@@ -406,7 +418,8 @@ public class FlyingText extends Demo {
     fps.draw();
   }
 
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  @Override
+public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     this.width = width;
     this.height = height;
   }

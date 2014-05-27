@@ -33,11 +33,6 @@
 
 package demos.hwShadowmapsSimple;
 
-import com.jogamp.opengl.util.gl2.GLUT;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
-import demos.common.Demo;
-import demos.common.DemoListener;
 import gleem.BSphere;
 import gleem.BSphereProvider;
 import gleem.CameraParameters;
@@ -47,6 +42,7 @@ import gleem.ManipManager;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import gleem.linalg.Vec3f;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
@@ -55,6 +51,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -66,6 +63,13 @@ import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JOptionPane;
+
+import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+
+import demos.common.Demo;
+import demos.common.DemoListener;
 
 
 /** This demo is a simple illustration of ARB_shadow and ARB_depth_texture. <P>
@@ -84,17 +88,20 @@ public class HWShadowmapsSimple extends Demo {
     canvas.addGLEventListener(demo);
 
     canvas.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
+        @Override
+		public void keyPressed(KeyEvent e) {
           demo.dispatchKey(e.getKeyChar());
           demo.demoListener.repaint();
         }
       });
 
     demo.setDemoListener(new DemoListener() {
-        public void shutdownDemo() {
+        @Override
+		public void shutdownDemo() {
           runExit();
         }
-        public void repaint() {
+        @Override
+		public void repaint() {
           canvas.repaint();
         }
       });
@@ -108,7 +115,8 @@ public class HWShadowmapsSimple extends Demo {
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           runExit();
         }
       });
@@ -118,7 +126,8 @@ public class HWShadowmapsSimple extends Demo {
   // Internals only below this point
   //
 
-  public void shutdownDemo() {
+  @Override
+public void shutdownDemo() {
     ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
     drawable.removeGLEventListener(this);
     super.shutdownDemo();
@@ -129,9 +138,9 @@ public class HWShadowmapsSimple extends Demo {
   private GLU  glu;
   private GLUT glut;
 
-  private float[] light_ambient   = { 0, 0, 0, 0 };
-  private float[] light_intensity = { 1, 1, 1, 1 };
-  private float[] light_pos       = { 0, 0, 0, 1 };
+  private final float[] light_ambient   = { 0, 0, 0, 0 };
+  private final float[] light_intensity = { 1, 1, 1, 1 };
+  private final float[] light_pos       = { 0, 0, 0, 1 };
 
   static class Tweak {
     String name;
@@ -144,7 +153,7 @@ public class HWShadowmapsSimple extends Demo {
       this.incr = incr;
     }
   };
-  private java.util.List<Tweak> tweaks = new ArrayList<Tweak>();
+  private final java.util.List<Tweak> tweaks = new ArrayList<Tweak>();
   private static final int R_COORDINATE_SCALE   = 0;
   private static final int R_COORDINATE_BIAS    = 1;
   private static final int POLYGON_OFFSET_SCALE = 2;
@@ -175,9 +184,9 @@ public class HWShadowmapsSimple extends Demo {
   private int geometry;
 
   // Shadowing light
-  private float lightshaper_fovy  = 60.0f;
-  private float lightshaper_zNear = 0.5f;
-  private float lightshaper_zFar  = 5.0f;
+  private final float lightshaper_fovy  = 60.0f;
+  private final float lightshaper_zNear = 0.5f;
+  private final float lightshaper_zFar  = 5.0f;
 
   // Manipulators
   private GLAutoDrawable drawable;
@@ -185,20 +194,21 @@ public class HWShadowmapsSimple extends Demo {
   private boolean  doViewAll = true;
   //  private float    zNear = 0.5f;
   //  private float    zFar  = 5.0f;
-  private float    zNear = 0.5f;
-  private float    zFar  = 50.0f;
+  private final float    zNear = 0.5f;
+  private final float    zFar  = 50.0f;
   private HandleBoxManip object;
   private HandleBoxManip spotlight;
-  private Mat4f cameraPerspective = new Mat4f();
-  private Mat4f cameraTransform = new Mat4f();
-  private Mat4f cameraInverseTransform = new Mat4f();
-  private Mat4f spotlightTransform = new Mat4f();
-  private Mat4f spotlightInverseTransform = new Mat4f();
-  private Mat4f objectTransform = new Mat4f();
+  private final Mat4f cameraPerspective = new Mat4f();
+  private final Mat4f cameraTransform = new Mat4f();
+  private final Mat4f cameraInverseTransform = new Mat4f();
+  private final Mat4f spotlightTransform = new Mat4f();
+  private final Mat4f spotlightInverseTransform = new Mat4f();
+  private final Mat4f objectTransform = new Mat4f();
   private int viewportX;
   private int viewportY;
 
-  public void init(GLAutoDrawable drawable) {
+  @Override
+public void init(GLAutoDrawable drawable) {
     // Use debug/trace pipeline
     /**
     GL _gl = drawable.getGL();
@@ -222,7 +232,7 @@ public class HWShadowmapsSimple extends Demo {
       e.printStackTrace();
       throw(e);
     }
-      
+
     gl.glClearColor(.5f, .5f, .5f, .5f);
 
     try {
@@ -275,7 +285,7 @@ public class HWShadowmapsSimple extends Demo {
     // init pbuffer
     GLCapabilities caps = new GLCapabilities(gl.getGLProfile());
     caps.setDoubleBuffered(false);
-      
+
     if (!GLDrawableFactory.getFactory(gl.getGLProfile()).canCreateGLPbuffer(null, gl.getGLProfile())) {
       unavailableExtension("Can not create pbuffer");
     }
@@ -307,7 +317,8 @@ public class HWShadowmapsSimple extends Demo {
     viewer = new ExaminerViewer();
     viewer.setUpVector(Vec3f.Y_AXIS);
     viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
-        public BSphere getBoundingSphere() {
+        @Override
+		public BSphere getBoundingSphere() {
           return new BSphere(object.getTranslation(), 2.0f);
         }
       });
@@ -326,12 +337,14 @@ public class HWShadowmapsSimple extends Demo {
 
   }
 
-  public void dispose(GLAutoDrawable drawable) {
+  @Override
+public void dispose(GLAutoDrawable drawable) {
     glu = null;
     glut = null;
   }
 
-  public void display(GLAutoDrawable drawable) {
+  @Override
+public void display(GLAutoDrawable drawable) {
     viewer.update();
 
     // Grab these values once per render to avoid multithreading
@@ -385,7 +398,8 @@ public class HWShadowmapsSimple extends Demo {
   }
 
   // Unused routines
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  @Override
+public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     viewportX = x;
     viewportY = y;
   }
@@ -428,7 +442,8 @@ public class HWShadowmapsSimple extends Demo {
   }
 
   class PbufferListener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       // Use debug pipeline
       // drawable.setGL(new DebugGL(drawable.getGL()));
 
@@ -438,7 +453,7 @@ public class HWShadowmapsSimple extends Demo {
 
       int[] depth_bits = new int[1];
       gl.glGetIntegerv(GL2.GL_DEPTH_BITS, depth_bits, 0);
-        
+
       if (depth_bits[0] == 16)  depth_format = GL2.GL_DEPTH_COMPONENT16;
       else                      depth_format = GL2.GL_DEPTH_COMPONENT24;
 
@@ -451,10 +466,12 @@ public class HWShadowmapsSimple extends Demo {
       fullyInitialized = true;
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
@@ -466,7 +483,7 @@ public class HWShadowmapsSimple extends Demo {
       render_scene_from_light_view(gl, drawable, 0, 0);
 
       gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
-    
+
       gl.glBindTexture(GL2.GL_TEXTURE_2D, light_view_depth);
 
       // trying different ways of getting the depth info over
@@ -474,7 +491,8 @@ public class HWShadowmapsSimple extends Demo {
     }
 
     // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
@@ -624,7 +642,7 @@ public class HWShadowmapsSimple extends Demo {
 
     gl.glPushMatrix();
     applyTransform(gl, cameraInverseTransform);
-    eye_linear_texgen(gl);    
+    eye_linear_texgen(gl);
     texgen(gl, true);
     gl.glPopMatrix();
 
@@ -643,7 +661,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
-    gl.glViewport(viewportX, viewportY, drawable.getWidth(), drawable.getHeight());
+    gl.glViewport(viewportX, viewportY, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
     applyTransform(gl, cameraPerspective);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
@@ -671,7 +689,7 @@ public class HWShadowmapsSimple extends Demo {
 
     gl.glPushMatrix();
     applyTransform(gl, cameraInverseTransform);
-    eye_linear_texgen(gl);    
+    eye_linear_texgen(gl);
     texgen(gl, true);
     gl.glPopMatrix();
 
@@ -692,7 +710,7 @@ public class HWShadowmapsSimple extends Demo {
 
     gl.glPushMatrix();
     applyTransform(gl, cameraInverseTransform);
-    eye_linear_texgen(gl);    
+    eye_linear_texgen(gl);
     texgen(gl, true);
     gl.glPopMatrix();
 
@@ -707,12 +725,12 @@ public class HWShadowmapsSimple extends Demo {
     gl.glBindTexture(GL2.GL_TEXTURE_2D, light_view_depth);
     gl.glEnable(GL2.GL_TEXTURE_2D);
     gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-    
+
     gl.glActiveTexture(GL2.GL_TEXTURE0);
 
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
-    gl.glViewport(viewportX, viewportY, drawable.getWidth(), drawable.getHeight());
+    gl.glViewport(viewportX, viewportY, drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
     applyTransform(gl, cameraPerspective);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
     render_scene(gl, cameraTransform, drawable, params);
@@ -729,7 +747,7 @@ public class HWShadowmapsSimple extends Demo {
   }
 
   private void largest_square_power_of_two_viewport(GL2 gl, GLAutoDrawable drawable, int viewportX, int viewportY) {
-    float min = Math.min(drawable.getWidth(), drawable.getHeight());
+    float min = Math.min(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
     float log2min = (float) Math.log(min) / (float) Math.log(2.0);
     float pow2 = (float) Math.floor(log2min);
     int size = 1 << (int) pow2;
@@ -747,7 +765,7 @@ public class HWShadowmapsSimple extends Demo {
     gl.glActiveTexture(GL2.GL_TEXTURE1);
 
     gl.glPushMatrix();
-    eye_linear_texgen(gl);    
+    eye_linear_texgen(gl);
     texgen(gl, true);
     gl.glPopMatrix();
 
@@ -806,13 +824,13 @@ public class HWShadowmapsSimple extends Demo {
 
     m.set(0, 0, (right - left) / (2 * zNear));
     m.set(0, 3, (right + left) / (2 * zNear));
-	
+
     m.set(1, 1, (top - bottom) / (2 * zNear));
     m.set(1, 3, (top + bottom) / (2 * zNear));
 
     m.set(2, 2,  0);
     m.set(2, 3, -1);
-	
+
     m.set(3, 2, -(zFar - zNear) / (2 * zFar * zNear));
     m.set(3, 3,  (zFar + zNear) / (2 * zFar * zNear));
 
@@ -826,7 +844,8 @@ public class HWShadowmapsSimple extends Demo {
     // routines cause a global AWT lock to be grabbed. Run the
     // exit routine in another thread.
     new Thread(new Runnable() {
-        public void run() {
+        @Override
+		public void run() {
           System.exit(0);
         }
       }).start();

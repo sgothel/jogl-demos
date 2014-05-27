@@ -6,7 +6,6 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
 
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.KeyAdapter;
@@ -17,6 +16,7 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.awt.AWTKeyAdapter;
 import com.jogamp.newt.event.awt.AWTMouseAdapter;
+import com.jogamp.opengl.util.Animator;
 
 /**
  * Gears.java <BR>
@@ -26,10 +26,11 @@ import com.jogamp.newt.event.awt.AWTMouseAdapter;
  */
 
 public class Gears implements GLEventListener {
-  private float view_rotx = 20.0f, view_roty = 30.0f, view_rotz = 0.0f;
+  private float view_rotx = 20.0f, view_roty = 30.0f;
+private final float view_rotz = 0.0f;
   private int gear1=0, gear2=0, gear3=0;
   private float angle = 0.0f;
-  private int swapInterval;
+  private final int swapInterval;
 
   private boolean mouseRButtonDown = false;
   private int prevMouseX, prevMouseY;
@@ -37,7 +38,7 @@ public class Gears implements GLEventListener {
   public static void main(String[] args) {
     // set argument 'NotFirstUIActionOnProcess' in the JNLP's application-desc tag for example
     // <application-desc main-class="demos.j2d.TextCube"/>
-    //   <argument>NotFirstUIActionOnProcess</argument> 
+    //   <argument>NotFirstUIActionOnProcess</argument>
     // </application-desc>
     // boolean firstUIActionOnProcess = 0==args.length || !args[0].equals("NotFirstUIActionOnProcess") ;
 
@@ -47,12 +48,14 @@ public class Gears implements GLEventListener {
 
     final Animator animator = new Animator();
     frame.addWindowListener(new java.awt.event.WindowAdapter() {
-        public void windowClosing(java.awt.event.WindowEvent e) {
+        @Override
+		public void windowClosing(java.awt.event.WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
           new Thread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
               }
@@ -74,7 +77,7 @@ public class Gears implements GLEventListener {
     frame.setVisible(true);
     animator.start();
   }
-  
+
   public Gears(int swapInterval) {
     this.swapInterval = swapInterval;
   }
@@ -82,7 +85,7 @@ public class Gears implements GLEventListener {
   public Gears() {
     this.swapInterval = 1;
   }
-  
+
   public void setGears(int g1, int g2, int g3) {
       gear1 = g1;
       gear2 = g2;
@@ -104,7 +107,8 @@ public class Gears implements GLEventListener {
    */
   public int getGear3() { return gear3; }
 
-  public void init(GLAutoDrawable drawable) {
+  @Override
+public void init(GLAutoDrawable drawable) {
     System.err.println("Gears: Init: "+drawable);
     // Use debug pipeline
     // drawable.setGL(new DebugGL(drawable.getGL()));
@@ -127,7 +131,7 @@ public class Gears implements GLEventListener {
     gl.glEnable(GL2.GL_LIGHTING);
     gl.glEnable(GL2.GL_LIGHT0);
     gl.glEnable(GL2.GL_DEPTH_TEST);
-            
+
     /* make the gears */
     if(0>=gear1) {
         gear1 = gl.glGenLists(1);
@@ -139,7 +143,7 @@ public class Gears implements GLEventListener {
     } else {
         System.err.println("gear1 list reused: "+gear1);
     }
-            
+
     if(0>=gear2) {
         gear2 = gl.glGenLists(1);
         gl.glNewList(gear2, GL2.GL_COMPILE);
@@ -150,7 +154,7 @@ public class Gears implements GLEventListener {
     } else {
         System.err.println("gear2 list reused: "+gear2);
     }
-            
+
     if(0>=gear3) {
         gear3 = gl.glGenLists(1);
         gl.glNewList(gear3, GL2.GL_COMPILE);
@@ -161,11 +165,11 @@ public class Gears implements GLEventListener {
     } else {
         System.err.println("gear3 list reused: "+gear3);
     }
-            
+
     gl.glEnable(GL2.GL_NORMALIZE);
-                
+
     // MouseListener gearsMouse = new TraceMouseAdapter(new GearsMouseAdapter());
-    MouseListener gearsMouse = new GearsMouseAdapter();    
+    MouseListener gearsMouse = new GearsMouseAdapter();
     KeyListener gearsKeys = new GearsKeyAdapter();
 
     if (drawable instanceof Window) {
@@ -178,15 +182,16 @@ public class Gears implements GLEventListener {
         new AWTKeyAdapter(gearsKeys).addTo(comp);
     }
   }
-    
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+
+  @Override
+public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     System.err.println("Gears: Reshape "+x+"/"+y+" "+width+"x"+height);
     GL2 gl = drawable.getGL().getGL2();
 
     gl.setSwapInterval(swapInterval);
 
     float h = (float)height / (float)width;
-            
+
     gl.glMatrixMode(GL2.GL_PROJECTION);
 
     gl.glLoadIdentity();
@@ -196,12 +201,14 @@ public class Gears implements GLEventListener {
     gl.glTranslatef(0.0f, 0.0f, -40.0f);
   }
 
-  public void dispose(GLAutoDrawable drawable) {
+  @Override
+public void dispose(GLAutoDrawable drawable) {
     System.err.println("Gears: Dispose");
     setGears(0, 0, 0);
   }
 
-  public void display(GLAutoDrawable drawable) {
+  @Override
+public void display(GLAutoDrawable drawable) {
     // Turn the gears' teeth
     angle += 2.0f;
 
@@ -212,7 +219,7 @@ public class Gears implements GLEventListener {
 
     // Special handling for the case where the GLJPanel is translucent
     // and wants to be composited with other Java 2D content
-    if (GLProfile.isAWTAvailable() && 
+    if (GLProfile.isAWTAvailable() &&
         (drawable instanceof javax.media.opengl.awt.GLJPanel) &&
         !((javax.media.opengl.awt.GLJPanel) drawable).isOpaque() &&
         ((javax.media.opengl.awt.GLJPanel) drawable).shouldPreserveColorBufferIfTranslucent()) {
@@ -220,35 +227,35 @@ public class Gears implements GLEventListener {
     } else {
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
     }
-            
+
     // Rotate the entire assembly of gears based on how the user
     // dragged the mouse around
     gl.glPushMatrix();
     gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
     gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
     gl.glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
-            
+
     // Place the first gear and call its display list
     gl.glPushMatrix();
     gl.glTranslatef(-3.0f, -2.0f, 0.0f);
     gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
     gl.glCallList(gear1);
     gl.glPopMatrix();
-            
+
     // Place the second gear and call its display list
     gl.glPushMatrix();
     gl.glTranslatef(3.1f, -2.0f, 0.0f);
     gl.glRotatef(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
     gl.glCallList(gear2);
     gl.glPopMatrix();
-            
+
     // Place the third gear and call its display list
     gl.glPushMatrix();
     gl.glTranslatef(-3.1f, 4.2f, 0.0f);
     gl.glRotatef(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
     gl.glCallList(gear3);
     gl.glPopMatrix();
-            
+
     // Remember that every push needs a pop; this one is paired with
     // rotating the entire gear assembly
     gl.glPopMatrix();
@@ -269,9 +276,9 @@ public class Gears implements GLEventListener {
     r0 = inner_radius;
     r1 = outer_radius - tooth_depth / 2.0f;
     r2 = outer_radius + tooth_depth / 2.0f;
-            
+
     da = 2.0f * (float) Math.PI / teeth / 4.0f;
-            
+
     gl.glShadeModel(GL2.GL_FLAT);
 
     gl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -302,7 +309,7 @@ public class Gears implements GLEventListener {
         gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw back face */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
@@ -314,7 +321,7 @@ public class Gears implements GLEventListener {
         gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw back sides of teeth */
     gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
@@ -326,7 +333,7 @@ public class Gears implements GLEventListener {
         gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw outward faces of teeth */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i < teeth; i++)
@@ -355,9 +362,9 @@ public class Gears implements GLEventListener {
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), width * 0.5f);
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
     gl.glEnd();
-    
+
     gl.glShadeModel(GL2.GL_SMOOTH);
-    
+
     /* draw inside radius cylinder */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
@@ -370,8 +377,9 @@ public class Gears implements GLEventListener {
     gl.glEnd();
   }
 
-  class GearsKeyAdapter extends KeyAdapter {      
-    public void keyPressed(KeyEvent e) {
+  class GearsKeyAdapter extends KeyAdapter {
+    @Override
+	public void keyPressed(KeyEvent e) {
         int kc = e.getKeyCode();
         if(KeyEvent.VK_LEFT == kc) {
             view_roty -= 1;
@@ -384,31 +392,38 @@ public class Gears implements GLEventListener {
         }
     }
   }
-  
+
   class GearsMouseAdapter extends MouseAdapter {
-      public void mousePressed(MouseEvent e) {
+      @Override
+	public void mousePressed(MouseEvent e) {
         prevMouseX = e.getX();
         prevMouseY = e.getY();
         if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
           mouseRButtonDown = true;
         }
       }
-        
-      public void mouseReleased(MouseEvent e) {
+
+      @Override
+	public void mouseReleased(MouseEvent e) {
         if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
           mouseRButtonDown = false;
         }
       }
-        
-      public void mouseDragged(MouseEvent e) {
+
+      @Override
+	public void mouseDragged(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         int width=0, height=0;
         Object source = e.getSource();
         if(source instanceof Window) {
             Window window = (Window) source;
-            width=window.getWidth();
-            height=window.getHeight();
+            width=window.getSurfaceWidth();
+            height=window.getSurfaceHeight();
+        } else if(source instanceof GLAutoDrawable) {
+        	GLAutoDrawable glad = (GLAutoDrawable) source;
+            width=glad.getSurfaceWidth();
+            height=glad.getSurfaceHeight();
         } else if (GLProfile.isAWTAvailable() && source instanceof java.awt.Component) {
             java.awt.Component comp = (java.awt.Component) source;
             width=comp.getWidth();
@@ -418,7 +433,7 @@ public class Gears implements GLEventListener {
         }
         float thetaY = 360.0f * ( (float)(x-prevMouseX)/(float)width);
         float thetaX = 360.0f * ( (float)(prevMouseY-y)/(float)height);
-        
+
         prevMouseX = x;
         prevMouseY = y;
 

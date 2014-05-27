@@ -3,21 +3,26 @@ package glredbook10;
 /**
  * Draws some text in using GlyphVector.<br>
  * This example is my replacement for xfont.c.
- * 
+ *
  * @author Kiet Le (Java port) Ported to JOGL 2.x by Claudio Eduardo Goes
  */
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
 
-import javax.swing.*;
-
-
-import javax.media.opengl.*;
-
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLJPanel;
+import javax.swing.JFrame;
 
 public class jfont //
         extends GLSkeleton<GLJPanel>
@@ -54,21 +59,23 @@ public class jfont //
         this.frame = frame;
     }
 
-    public void init(GLAutoDrawable drawable) {
-        GL2 gl = drawable.getGL().getGL2(); 
+    @Override
+	public void init(GLAutoDrawable drawable) {
+        GL2 gl = drawable.getGL().getGL2();
         //
 
         gl.glShadeModel(GL2.GL_FLAT);
         gl.glEnable(GL2.GL_POLYGON_SMOOTH);
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
         //
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
         gl.glPushMatrix();
-        gl.glTranslatef(frame.getWidth() / 2 - frame.getWidth() / 4, //
-                frame.getHeight() / 2, 0);
+        gl.glTranslatef(drawable.getSurfaceWidth() / 2 - drawable.getSurfaceWidth() / 4, //
+        				drawable.getSurfaceHeight() / 2, 0);
         // GL has lower left origin compare java's upper left
         gl.glScalef(5, -5, 0);
 
@@ -86,13 +93,14 @@ public class jfont //
         gl.glFlush();
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
         GL2 gl = drawable.getGL().getGL2();
         //
         gl.glViewport(0, 0, w, h);
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrtho(0, (float) w, 0, (float) h, -1.0, 1.0);
+        gl.glOrtho(0, w, 0, h, -1.0, 1.0);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
@@ -136,10 +144,12 @@ public class jfont //
         gl.glEnd();
     }
 
-    public void keyTyped(KeyEvent key) {
+    @Override
+	public void keyTyped(KeyEvent key) {
     }
 
-    public void keyPressed(KeyEvent key) {
+    @Override
+	public void keyPressed(KeyEvent key) {
         switch (key.getKeyCode()) {
         case KeyEvent.VK_ESCAPE:
             System.exit(0);
@@ -150,11 +160,13 @@ public class jfont //
         }
     }
 
-    public void keyReleased(KeyEvent key) {
+    @Override
+	public void keyReleased(KeyEvent key) {
     }
 
-    public void dispose(GLAutoDrawable arg0) {
-         
+    @Override
+	public void dispose(GLAutoDrawable arg0) {
+
     }
 
 }
