@@ -32,7 +32,6 @@ private final float view_rotz = 0.0f;
   private float angle = 0.0f;
   private final int swapInterval;
 
-  private boolean mouseRButtonDown = false;
   private int prevMouseX, prevMouseY;
 
   public static void main(String[] args) {
@@ -178,8 +177,8 @@ public void init(GLAutoDrawable drawable) {
         window.addKeyListener(gearsKeys);
     } else if (GLProfile.isAWTAvailable() && drawable instanceof java.awt.Component) {
         java.awt.Component comp = (java.awt.Component) drawable;
-        new AWTMouseAdapter(gearsMouse).addTo(comp);
-        new AWTKeyAdapter(gearsKeys).addTo(comp);
+        new AWTMouseAdapter(gearsMouse, drawable).addTo(comp);
+        new AWTKeyAdapter(gearsKeys, drawable).addTo(comp);
     }
   }
 
@@ -398,22 +397,16 @@ public void display(GLAutoDrawable drawable) {
 	public void mousePressed(MouseEvent e) {
         prevMouseX = e.getX();
         prevMouseY = e.getY();
-        if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
-          mouseRButtonDown = true;
-        }
       }
 
       @Override
 	public void mouseReleased(MouseEvent e) {
-        if ((e.getModifiers() & e.BUTTON3_MASK) != 0) {
-          mouseRButtonDown = false;
-        }
       }
 
       @Override
 	public void mouseDragged(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
+        final int x = e.getX();
+        final int y = e.getY();
         int width=0, height=0;
         Object source = e.getSource();
         if(source instanceof Window) {
