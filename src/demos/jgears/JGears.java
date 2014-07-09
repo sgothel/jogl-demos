@@ -1,7 +1,6 @@
 package demos.jgears;
 
 
-import demos.gears.Gears;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -17,14 +16,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+
 import javax.imageio.ImageIO;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
-import com.jogamp.opengl.util.Animator;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import com.jogamp.opengl.util.Animator;
+
+import demos.gears.Gears;
 
 /**
  * JGears.java <BR>
@@ -39,7 +42,7 @@ public class JGears extends GLJPanel {
   private int frameCount;
   private float fps;
   private static Font fpsFont = new Font("SansSerif", Font.BOLD, 24);
-  private DecimalFormat format = new DecimalFormat("####.00");
+  private final DecimalFormat format = new DecimalFormat("####.00");
   private BufferedImage javaImage;
   private BufferedImage openglImage;
 
@@ -47,9 +50,9 @@ public class JGears extends GLJPanel {
     caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
     caps.setAlphaBits(8);
   }
-  
+
   public JGears() {
-    super(caps, null, null);
+    super(caps, null);
     addGLEventListener(new Gears());
     try {
       InputStream in = JGears.class.getClassLoader().getResourceAsStream("demos/data/images/java_logo.png");
@@ -65,7 +68,8 @@ public class JGears extends GLJPanel {
   }
 
 
-  public void paintComponent(Graphics g) {
+  @Override
+public void paintComponent(Graphics g) {
     super.paintComponent(g);
     if (startTime == 0) {
       startTime = System.currentTimeMillis();
@@ -73,7 +77,7 @@ public class JGears extends GLJPanel {
 
     if (++frameCount == 30) {
       long endTime = System.currentTimeMillis();
-      fps = 30.0f / (float) (endTime - startTime) * 1000;
+      fps = 30.0f / (endTime - startTime) * 1000;
       frameCount = 0;
       startTime = System.currentTimeMillis();
     }
@@ -96,7 +100,8 @@ public class JGears extends GLJPanel {
   // Helper routine for various demos
   public static JPanel createGradientPanel() {
     JPanel gradientPanel = new JPanel() {
-        public void paintComponent(Graphics g) {
+        @Override
+		public void paintComponent(Graphics g) {
           ((Graphics2D) g).setPaint(new GradientPaint(0, 0, Color.WHITE,
                                                       getWidth(), getHeight(), Color.DARK_GRAY));
           g.fillRect(0, 0, getWidth(), getHeight());
@@ -129,7 +134,8 @@ public class JGears extends GLJPanel {
 
     final JCheckBox checkBox = new JCheckBox("Transparent", true);
     checkBox.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
           drawable.setOpaque(!checkBox.isSelected());
         }
       });
@@ -138,12 +144,14 @@ public class JGears extends GLJPanel {
     frame.setSize(300, 300);
     final Animator animator = new Animator(drawable);
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           // Run this on another thread than the AWT event queue to
           // make sure the call to Animator.stop() completes before
           // exiting
           new Thread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
                 animator.stop();
                 System.exit(0);
               }

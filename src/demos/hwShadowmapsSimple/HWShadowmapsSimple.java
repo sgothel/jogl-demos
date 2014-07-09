@@ -58,7 +58,8 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.GLPbuffer;
+import javax.media.opengl.GLOffscreenAutoDrawable;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
@@ -133,7 +134,7 @@ public void shutdownDemo() {
     super.shutdownDemo();
   }
 
-  private GLPbuffer pbuffer;
+  private GLOffscreenAutoDrawable pbuffer;
 
   private GLU  glu;
   private GLUT glut;
@@ -285,6 +286,7 @@ public void init(GLAutoDrawable drawable) {
     // init pbuffer
     GLCapabilities caps = new GLCapabilities(gl.getGLProfile());
     caps.setDoubleBuffered(false);
+    caps.setPBuffer(true);
 
     if (!GLDrawableFactory.getFactory(gl.getGLProfile()).canCreateGLPbuffer(null, gl.getGLProfile())) {
       unavailableExtension("Can not create pbuffer");
@@ -293,7 +295,8 @@ public void init(GLAutoDrawable drawable) {
       pbuffer.destroy();
       pbuffer = null;
     }
-    pbuffer = GLDrawableFactory.getFactory(gl.getGLProfile()).createGLPbuffer(null, caps, null, TEX_SIZE, TEX_SIZE, drawable.getContext());
+    pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createOffscreenAutoDrawable(null, caps, null, TEX_SIZE, TEX_SIZE);
+    pbuffer.setSharedContext(drawable.getContext());
     pbuffer.addGLEventListener(new PbufferListener());
 
     doViewAll = true;

@@ -1,10 +1,6 @@
 package demos.misc;
 
 
-import javax.swing.border.TitledBorder;
-import javax.swing.table.TableColumn;
-
-import demos.gears.Gears;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
@@ -12,15 +8,15 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.media.nativewindow.CapabilitiesImmutable;
 import javax.media.opengl.DefaultGLCapabilitiesChooser;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesChooser;
-import javax.media.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.FPSAnimator;
-import javax.media.nativewindow.CapabilitiesImmutable;
 import javax.media.opengl.GLCapabilitiesImmutable;
+import javax.media.opengl.awt.GLCanvas;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,6 +24,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.TableColumn;
+
+import com.jogamp.opengl.util.FPSAnimator;
+
+import demos.gears.Gears;
 
 /*******************************************************************************
  * @file GLCapsTableDemo.java
@@ -52,24 +54,25 @@ public class GLCapsTableDemo
   implements
     GLCapabilitiesChooser
 {
-  private String[] colNames =
+  private final String[] colNames =
   {"Pfd", "H/W", "DblBfr", "Stereo", // index, hwaccel, double, stereo
    "CBits", "cR", "cG", "cB", "cA", // color bits
    "ABits", "aR", "aG", "aB", "aA", // accum bits
    "Z", "S", "AA|AAS", "PBuf(Float|RTT|RTTRec)"}; // depth, stencil, n
   // samples, pbuffer
-  private ArrayList<GLCapabilities> available = new ArrayList<GLCapabilities>();
-  private ArrayList<Integer> indices = new ArrayList<Integer>();
+  private final ArrayList<GLCapabilities> available = new ArrayList<GLCapabilities>();
+  private final ArrayList<Integer> indices = new ArrayList<Integer>();
   private Object[][] data;
   private JTable capsTable;
   private int desiredCapIndex; // pfd index
   // private int selected = desiredCapIndex;
   protected JPanel pane, pane2;
   private boolean updateLR;// leftright
-  private DefaultGLCapabilitiesChooser choiceExaminer = //
+  private final DefaultGLCapabilitiesChooser choiceExaminer = //
     new DefaultGLCapabilitiesChooser()
     {
-      public int chooseCapabilities(CapabilitiesImmutable _desired,
+      @Override
+	public int chooseCapabilities(CapabilitiesImmutable _desired,
                                     List/*<CapabilitiesImmutable>*/ available,
                                     int windowSystemRecommendedChoice)
       {
@@ -102,21 +105,21 @@ public class GLCapsTableDemo
         return desiredCapIndex;
       }
     };
-  private GraphicsDevice device = GraphicsEnvironment
+  private final GraphicsDevice device = GraphicsEnvironment
     .getLocalGraphicsEnvironment().getDefaultScreenDevice();
   private JSplitPane canvasPane;
 
   private GLCanvas canvas;
   private GLCanvas canvas2;
-  private Gears topRenderer = new Gears(), bottomRenderer = new Gears();
+  private final Gears topRenderer = new Gears(), bottomRenderer = new Gears();
   private FPSAnimator animator;
-  private Dimension defdim = new Dimension(512, 256);
-  private String visTip = "If no gears are visible, it may be that the "
+  private final Dimension defdim = new Dimension(512, 256);
+  private final String visTip = "If no gears are visible, it may be that the "
     + "current desktop color resolution doesn't match "
     + "the GLCapabilities chosen. Check CBits column.";
 
   /**
-	 
+
   */
   public GLCapsTableDemo()
   {
@@ -126,17 +129,18 @@ public class GLCapsTableDemo
 
   /**
    * (non-Javadoc)
-   * 
+   *
    * @see javax.media.opengl.GLCapabilitiesChooser#chooseCapabilities(javax.media.nativewindow.Capabilities,
    *      javax.media.nativewindow.Capabilities[], int)
    */
-  public int chooseCapabilities(CapabilitiesImmutable desired,
+  @Override
+public int chooseCapabilities(CapabilitiesImmutable desired,
                                 List/*<CapabilitiesImmutable>*/ available,
                                 int windowSystemRecommendedChoice)
   {
     int row = capsTable.getSelectedRow();
     if ( 0> row || row >= indices.size() ) return windowSystemRecommendedChoice;
-    int desiredCapIndex = ((Integer) indices.get(row)).intValue();
+    int desiredCapIndex = indices.get(row).intValue();
     if ( updateLR )
       {
         pane.setBorder(BorderFactory
@@ -181,7 +185,7 @@ public class GLCapsTableDemo
     // Hack: use multisampled capabilities to pick up more detailed information on Windows
     GLCapabilities multisampledCaps = new GLCapabilities(null);
     multisampledCaps.setSampleBuffers(true);
-    canvas = new GLCanvas(multisampledCaps, choiceExaminer, null, device);
+    canvas = new GLCanvas(multisampledCaps, choiceExaminer, device);
 
     // initially start w/ 2 canvas of default caps
     // canvas = new GLCanvas(null, choiceExaminer, null, device);
@@ -190,7 +194,7 @@ public class GLCapsTableDemo
     //    canvas.setPreferredSize(defdim);
     //    canvas.setMaximumSize(defdim);
     animator = new FPSAnimator(canvas, 30);
-    canvas2 = new GLCanvas(null, null, null, device);
+    canvas2 = new GLCanvas(null, null, device);
     canvas2.addGLEventListener(bottomRenderer);
     canvas2.setSize(defdim);
     //    canvas2.setPreferredSize(defdim);
@@ -220,7 +224,7 @@ public class GLCapsTableDemo
         data[ pfd ][ 1 ] = "" + (cap.getHardwareAccelerated() ? f : f);
         data[ pfd ][ 2 ] = "" + (cap.getDoubleBuffered() ? t : f);
         data[ pfd ][ 3 ] = "" + (cap.getStereo() ? t : f);
-        int r = cap.getRedBits(), // 
+        int r = cap.getRedBits(), //
           g = cap.getGreenBits(), //
           b = cap.getBlueBits(), //
           a = cap.getAlphaBits();
@@ -252,7 +256,8 @@ public class GLCapsTableDemo
         data[ pfd ][ 17 ] = "FFf";
       }
     JTable table = new JTable(data, colNames) {
-        public boolean isCellEditable(int rowIndex, int colIndex) {
+        @Override
+		public boolean isCellEditable(int rowIndex, int colIndex) {
           return false;
         }
       };
@@ -279,7 +284,8 @@ public class GLCapsTableDemo
     final JButton spawn2 = new JButton("Respawn Right");
     ActionListener recap = new ActionListener()
       {
-        public void actionPerformed(final ActionEvent act)
+        @Override
+		public void actionPerformed(final ActionEvent act)
         {
           animator.stop();
           if ( act.getSource() == spawn )
@@ -302,7 +308,8 @@ public class GLCapsTableDemo
             }
           new Thread()
           {
-            public void run()
+            @Override
+			public void run()
             {
               animator.start();
             }
@@ -322,8 +329,8 @@ public class GLCapsTableDemo
   private GLCanvas newCanvas(boolean mycap, boolean top)
   {
     GLCanvas surface = null;
-    if ( !mycap ) surface = new GLCanvas(null, choiceExaminer, null, device);
-    else surface = new GLCanvas(null, this, null, device);
+    if ( !mycap ) surface = new GLCanvas(null, choiceExaminer, device);
+    else surface = new GLCanvas(null, this, device);
     if ( top ) surface.addGLEventListener(topRenderer);
     else surface.addGLEventListener(bottomRenderer);
     surface.setSize(defdim);// otherwise, no show; mixin' light-heavy containers
@@ -335,7 +342,8 @@ public class GLCapsTableDemo
   {
     new Thread()
     {
-      public void run()
+      @Override
+	public void run()
       {
         animator.stop();
       }

@@ -1,13 +1,5 @@
 package demos.hdr;
 
-import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.gl2.GLUT;
-import demos.common.Demo;
-import demos.common.DemoListener;
-import demos.util.DurationTimer;
-import demos.util.ObjReader;
-import demos.util.SystemTime;
-import demos.util.Time;
 import gleem.BSphere;
 import gleem.BSphereProvider;
 import gleem.CameraParameters;
@@ -16,6 +8,7 @@ import gleem.ManipManager;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
 import gleem.linalg.Vec3f;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
@@ -26,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -34,21 +28,31 @@ import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.GLPbuffer;
+import javax.media.opengl.GLOffscreenAutoDrawable;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.AWTGLAutoDrawable;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JOptionPane;
 
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.gl2.GLUT;
+
+import demos.common.Demo;
+import demos.common.DemoListener;
+import demos.util.DurationTimer;
+import demos.util.ObjReader;
+import demos.util.SystemTime;
+import demos.util.Time;
+
 
 /** HDR demo by NVidia Corporation - Simon Green, sgreen@nvidia.com <P>
 
     Ported to Java by Kenneth Russell
-    
+
     Currently not working due to loss of pbuffer attributes [floating point buffer, etc].
     Need to evaluate proper floating point texture solution.
-    
+
     http://www.opengl.org/wiki/Floating_point_and_mipmapping_and_filtering
 */
 
@@ -70,19 +74,19 @@ public class HDR extends Demo {
   private ObjReader model;
   private Pipeline pipeline;
 
-  private GLUT glut = new GLUT();
+  private final GLUT glut = new GLUT();
 
-  private boolean[] b = new boolean[256];
-  
+  private final boolean[] b = new boolean[256];
+
   private ExaminerViewer viewer;
   private boolean doViewAll = true;
 
-  private DurationTimer timer = new DurationTimer();
+  private final DurationTimer timer = new DurationTimer();
   private boolean  firstRender = true;
   private int      frameCount;
 
-  private Time  time = new SystemTime();
-  private float animRate = (float) Math.toRadians(-12.0f); // Radians / sec
+  private final Time  time = new SystemTime();
+  private final float animRate = (float) Math.toRadians(-12.0f); // Radians / sec
 
   private String hdrFilename;
   private int win_w;
@@ -99,16 +103,16 @@ public class HDR extends Demo {
   private int modelno = 4;
   private int numModels = 5;
 
-  private boolean hilo = false;
+  private final boolean hilo = false;
   private int hdr_tex;
   private int hdr_tex2;
   private int gamma_tex;
   private int vignette_tex;
 
-  private GLPbuffer pbuffer;
-  private GLPbuffer blur_pbuffer;
-  private GLPbuffer blur2_pbuffer;
-  private GLPbuffer tonemap_pbuffer;
+  private GLOffscreenAutoDrawable pbuffer;
+  private GLOffscreenAutoDrawable blur_pbuffer;
+  private GLOffscreenAutoDrawable blur2_pbuffer;
+  private GLOffscreenAutoDrawable tonemap_pbuffer;
   // Texture objects for these pbuffers
   private int       pbuffer_tex;
   private int       blur_pbuffer_tex;
@@ -129,7 +133,7 @@ public class HDR extends Demo {
 
   private float exposure = 32.0f;
 
-  private float[] identityMatrix = { 1.0f, 0.0f, 0.0f, 0.0f,
+  private final float[] identityMatrix = { 1.0f, 0.0f, 0.0f, 0.0f,
                                      0.0f, 1.0f, 0.0f, 0.0f,
                                      0.0f, 0.0f, 1.0f, 0.0f,
                                      0.0f, 0.0f, 0.0f, 1.0f };
@@ -141,31 +145,35 @@ public class HDR extends Demo {
     canvas.addGLEventListener(demo);
 
     canvas.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
+        @Override
+		public void keyPressed(KeyEvent e) {
           demo.dispatchKey(e.getKeyCode(), e.getKeyChar());
         }
       });
 
     final Animator animator = new Animator(canvas);
     demo.setDemoListener(new DemoListener() {
-        public void shutdownDemo() {
+        @Override
+		public void shutdownDemo() {
           runExit(animator);
         }
-        public void repaint() {}
+        @Override
+		public void repaint() {}
       });
     demo.setup(args);
 
     Frame frame = new Frame("High Dynamic Range Rendering Demo");
     frame.setLayout(new BorderLayout());
     canvas.setSize(demo.getPreferredWidth(), demo.getPreferredHeight());
-    
+
     frame.add(canvas, BorderLayout.CENTER);
     frame.pack();
     frame.setVisible(true);
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           runExit(animator);
         }
       });
@@ -259,7 +267,8 @@ public class HDR extends Demo {
   // Internals only below this point
   //
 
-  public void shutdownDemo() {
+  @Override
+public void shutdownDemo() {
     if(null!=drawable) {
         ManipManager.getManipManager().unregisterWindow((AWTGLAutoDrawable) drawable);
         drawable.removeGLEventListener(this);
@@ -271,13 +280,14 @@ public class HDR extends Demo {
   // Listener for main window
   //
 
-  private float zNear = 0.1f;
-  private float zFar  = 10.0f;
+  private final float zNear = 0.1f;
+  private final float zFar  = 10.0f;
   // private boolean wire = false;
   // private boolean toggleWire = false;
-  private GLU glu = new GLU();
+  private final GLU glu = new GLU();
 
-  public void init(GLAutoDrawable drawable) {
+  @Override
+public void init(GLAutoDrawable drawable) {
     initComplete = false;
     //      printThreadName("init for Listener");
 
@@ -317,6 +327,7 @@ public class HDR extends Demo {
     caps.setBlueBits(floatBits);
     caps.setAlphaBits(floatAlphaBits);
     caps.setDepthBits(floatDepthBits);
+    caps.setPBuffer(true);
     int[] tmp = new int[1];
     if (!GLDrawableFactory.getFactory(GLProfile.getDefault()).canCreateGLPbuffer(null, caps.getGLProfile())) {
       unavailableExtension("Can not create pbuffer");
@@ -338,16 +349,20 @@ public class HDR extends Demo {
       tonemap_pbuffer = null;
     }
 
-    GLContext parentContext = drawable.getContext();
-    pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(null, caps, null, pbuffer_w, pbuffer_h, parentContext);
+    final GLContext parentContext = drawable.getContext();
+    pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createOffscreenAutoDrawable(null, caps, null, pbuffer_w, pbuffer_h);
+    pbuffer.setSharedContext(parentContext);
     pbuffer.addGLEventListener(new PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     pbuffer_tex = tmp[0];
-    blur_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(null, caps, null, blur_w, blur_h, parentContext);
+
+    blur_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createOffscreenAutoDrawable(null, caps, null, blur_w, blur_h);
+    blur_pbuffer.setSharedContext(parentContext);
     blur_pbuffer.addGLEventListener(new BlurPbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur_pbuffer_tex = tmp[0];
-    blur2_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(null, caps, null, blur_w, blur_h, parentContext);
+    blur2_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createOffscreenAutoDrawable(null, caps, null, blur_w, blur_h);
+    blur2_pbuffer.setSharedContext(parentContext);
     blur2_pbuffer.addGLEventListener(new Blur2PbufferListener());
     gl.glGenTextures(1, tmp, 0);
     blur2_pbuffer_tex = tmp[0];
@@ -355,11 +370,12 @@ public class HDR extends Demo {
     caps.setGreenBits(8);
     caps.setBlueBits(8);
     caps.setDepthBits(24);
-    tonemap_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createGLPbuffer(null, caps, null, pbuffer_w, pbuffer_h, parentContext);
+    tonemap_pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createOffscreenAutoDrawable(null, caps, null, pbuffer_w, pbuffer_h);
+    tonemap_pbuffer.setSharedContext(parentContext);
     tonemap_pbuffer.addGLEventListener(new TonemapPbufferListener());
     gl.glGenTextures(1, tmp, 0);
     tonemap_pbuffer_tex = tmp[0];
-      
+
     doViewAll = true;
 
     // Register the window with the ManipManager
@@ -372,7 +388,8 @@ public class HDR extends Demo {
     viewer.setAutoRedrawMode(false);
     viewer.setNoAltKeyMode(true);
     viewer.attach((AWTGLAutoDrawable) drawable, new BSphereProvider() {
-        public BSphere getBoundingSphere() {
+        @Override
+		public BSphere getBoundingSphere() {
           return new BSphere(new Vec3f(0, 0, 0), 1.0f);
         }
       });
@@ -381,10 +398,12 @@ public class HDR extends Demo {
     initComplete = true;
   }
 
-  public void dispose(GLAutoDrawable drawable) {
+  @Override
+public void dispose(GLAutoDrawable drawable) {
   }
 
-  public void display(GLAutoDrawable drawable) {
+  @Override
+public void display(GLAutoDrawable drawable) {
     //      printThreadName("display for Listener");
 
     if (!initComplete) {
@@ -454,7 +473,8 @@ public class HDR extends Demo {
     Thread.yield();
   }
 
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+  @Override
+public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     setOrthoProjection(drawable.getGL().getGL2(), x, y, width, height);
     win_w = width;
     win_h = height;
@@ -519,7 +539,7 @@ public class HDR extends Demo {
     case KeyEvent.VK_O:
       modelno = (modelno + 1) % numModels;
       break;
-          
+
     case KeyEvent.VK_V:
       doViewAll = true;
       break;
@@ -558,7 +578,7 @@ public class HDR extends Demo {
     int[] tmp = new int[1];
     gl.glGenTextures(1, tmp, 0);
     int texid = tmp[0];
-      
+
     gl.glBindTexture(GL2.GL_TEXTURE_RECTANGLE_ARB, texid);
     gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_ARB, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
     gl.glTexParameteri(GL2.GL_TEXTURE_RECTANGLE_ARB, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
@@ -597,7 +617,8 @@ public class HDR extends Demo {
   //
 
   class PbufferListener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -609,9 +630,9 @@ public class HDR extends Demo {
       setPerspectiveProjection(gl, pbuffer_w, pbuffer_h);
 
       @SuppressWarnings("deprecation")
-      GLPbuffer pbuffer = (GLPbuffer) drawable;
+      GLOffscreenAutoDrawable pbuffer = (GLOffscreenAutoDrawable) drawable;
       int fpmode = 0; // FIXME: pbuffer.getFloatingPointMode();
-      int texmode = 0;
+      // int texmode = 0;
       switch (fpmode) {
         /** FIXME
         case GLPbuffer.NV_FLOAT:
@@ -647,7 +668,8 @@ public class HDR extends Demo {
       pipeline.initFloatingPointTexture(gl, pbuffer_tex, pbuffer_w, pbuffer_h); */
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for PbufferListener");
 
       GL2 gl = drawable.getGL().getGL2();
@@ -659,9 +681,11 @@ public class HDR extends Demo {
     }
 
     // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-    public void dispose(GLAutoDrawable drawable) {}
+    @Override
+	public void dispose(GLAutoDrawable drawable) {}
 
     //----------------------------------------------------------------------
     // Internals only below this point
@@ -686,7 +710,7 @@ public class HDR extends Demo {
       } else {
         gl.glDisable(GL2.GL_MULTISAMPLE);
       }
-  
+
       if (!b['e']) {
         // draw background
         pipeline.enableFragmentProgram(gl, skybox_fprog);
@@ -791,7 +815,8 @@ public class HDR extends Demo {
   }
 
   class BlurPbufferListener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for BlurPbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -804,7 +829,8 @@ public class HDR extends Demo {
       pipeline.initFloatingPointTexture(gl, blur_pbuffer_tex, blur_w, blur_h);
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for BlurPbufferListener");
 
       GL2 gl = drawable.getGL().getGL2();
@@ -819,13 +845,16 @@ public class HDR extends Demo {
     }
 
     // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-    public void dispose(GLAutoDrawable drawable) {}
+    @Override
+	public void dispose(GLAutoDrawable drawable) {}
   }
 
   class Blur2PbufferListener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       //      printThreadName("init for Blur2PbufferListener");
 
       //      drawable.setGL(new DebugGL(drawable.getGL()));
@@ -837,7 +866,8 @@ public class HDR extends Demo {
       pipeline.initFloatingPointTexture(gl, blur2_pbuffer_tex, blur_w, blur_h);
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       //      printThreadName("display for Blur2PbufferListener");
 
       GL2 gl = drawable.getGL().getGL2();
@@ -859,7 +889,7 @@ public class HDR extends Demo {
         gl.glActiveTexture(GL2.GL_TEXTURE0);
         pipeline.bindTexture(gl, blur_pbuffer_tex);
         glowPass(gl);
-        
+
       } else {
         throw new RuntimeException("Illegal value of blur2Pass: " + blur2Pass);
       }
@@ -868,13 +898,16 @@ public class HDR extends Demo {
     }
 
     // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-    public void dispose(GLAutoDrawable drawable) {}
+    @Override
+	public void dispose(GLAutoDrawable drawable) {}
   }
 
   class TonemapPbufferListener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 
       setOrthoProjection(gl, 0, 0, pbuffer_w, pbuffer_h);
@@ -882,7 +915,8 @@ public class HDR extends Demo {
       pipeline.initTexture(gl, tonemap_pbuffer_tex, pbuffer_w, pbuffer_h);
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 
       toneMappingPass(gl);
@@ -891,9 +925,11 @@ public class HDR extends Demo {
     }
 
     // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
-    public void dispose(GLAutoDrawable drawable) {}
+    @Override
+	public void dispose(GLAutoDrawable drawable) {}
   }
 
   //----------------------------------------------------------------------
@@ -910,7 +946,7 @@ public class HDR extends Demo {
     gl.glLoadIdentity();
     gl.glViewport(x, y, w, h);
   }
-    
+
   private void setPerspectiveProjection(GL2 gl, int w, int h) {
     // FIXME: what about ExaminerViewer?
     gl.glMatrixMode(GL2.GL_PROJECTION);
@@ -1057,7 +1093,7 @@ public class HDR extends Demo {
   // Cg and blur code initialization
   //
 
-  private String shaderRoot = "demos/hdr/shaders/";
+  private final String shaderRoot = "demos/hdr/shaders/";
   private void initCg(GL2 gl) {
     // NOTE: need to instantiate CgPipeline reflectively to avoid
     // compile-time dependence (since Cg support might not be present)
@@ -1208,7 +1244,7 @@ public class HDR extends Demo {
 
     float sum = 0;
     for(int i=-n; i<=n; i++) {
-      float weight = gaussian(3.0f*i / (float) n, 1.0f);
+      float weight = gaussian(3.0f*i / n, 1.0f);
       sum += weight;
     }
     System.err.println("sum = " + sum);
@@ -1216,8 +1252,8 @@ public class HDR extends Demo {
     buf.append("!!ARBfp1.0\n");
     buf.append("TEMP H0, H1, H2;\n");
     for(int i=-n; i<=n; i+=2) {
-      float weight = gaussian(3.0f*i / (float) n, 1.0f) / sum;
-      float weight2 = gaussian(3.0f*(i+1) / (float) n, 1.0f) / sum;
+      float weight = gaussian(3.0f*i / n, 1.0f) / sum;
+      float weight2 = gaussian(3.0f*(i+1) / n, 1.0f) / sum;
 
       int x_offset, y_offset, x_offset2, y_offset2;
       if (vertical) {
@@ -1283,7 +1319,8 @@ public class HDR extends Demo {
     // routines cause a global AWT lock to be grabbed. Run the
     // exit routine in another thread.
     new Thread(new Runnable() {
-        public void run() {
+        @Override
+		public void run() {
           animator.stop();
           System.exit(0);
         }

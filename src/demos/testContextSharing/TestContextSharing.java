@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2003 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,11 +28,11 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
@@ -41,6 +41,7 @@ package demos.testContextSharing;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
+
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -69,7 +70,8 @@ public class TestContextSharing {
     frame1.pack();
     frame1.setVisible(true);
 
-    GLCanvas canvas2 = new GLCanvas(null, null, canvas1.getContext(), null);
+    GLCanvas canvas2 = new GLCanvas(null, null, null);
+    canvas2.setSharedContext(canvas1.getContext());
     canvas2.addGLEventListener(new Listener());
     canvas2.setSize(256, 256);
     Frame frame2 = new Frame("Canvas 2");
@@ -88,7 +90,8 @@ public class TestContextSharing {
 
   class Listener implements GLEventListener {
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
 
       GL2 gl = drawable.getGL().getGL2();
 
@@ -106,10 +109,12 @@ public class TestContextSharing {
       gl.glEnable(GL2.GL_NORMALIZE);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 
       gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
@@ -118,11 +123,12 @@ public class TestContextSharing {
       gl.glCallList(gearDisplayList);
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
       GL2 gl = drawable.getGL().getGL2();
 
       float h = (float)height / (float)width;
-            
+
       gl.glMatrixMode(GL2.GL_PROJECTION);
       gl.glLoadIdentity();
       gl.glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
@@ -164,9 +170,9 @@ public class TestContextSharing {
     r0 = inner_radius;
     r1 = outer_radius - tooth_depth / 2.0f;
     r2 = outer_radius + tooth_depth / 2.0f;
-            
+
     da = 2.0f * (float) Math.PI / teeth / 4.0f;
-            
+
     gl.glShadeModel(GL2.GL_FLAT);
 
     gl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -197,7 +203,7 @@ public class TestContextSharing {
         gl.glVertex3f(r1 * (float)Math.cos(angle + 3.0f * da), r1 * (float)Math.sin(angle + 3.0f * da), width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw back face */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)
@@ -209,7 +215,7 @@ public class TestContextSharing {
         gl.glVertex3f(r0 * (float)Math.cos(angle), r0 * (float)Math.sin(angle), -width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw back sides of teeth */
     gl.glBegin(GL2.GL_QUADS);
     for (i = 0; i < teeth; i++)
@@ -221,7 +227,7 @@ public class TestContextSharing {
         gl.glVertex3f(r1 * (float)Math.cos(angle), r1 * (float)Math.sin(angle), -width * 0.5f);
       }
     gl.glEnd();
-    
+
     /* draw outward faces of teeth */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i < teeth; i++)
@@ -250,9 +256,9 @@ public class TestContextSharing {
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), width * 0.5f);
     gl.glVertex3f(r1 * (float)Math.cos(0), r1 * (float)Math.sin(0), -width * 0.5f);
     gl.glEnd();
-    
+
     gl.glShadeModel(GL2.GL_SMOOTH);
-    
+
     /* draw inside radius cylinder */
     gl.glBegin(GL2.GL_QUAD_STRIP);
     for (i = 0; i <= teeth; i++)

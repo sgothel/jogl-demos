@@ -1,18 +1,38 @@
 package demos.es1;
 
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.media.nativewindow.NativeWindowFactory;
+import javax.media.opengl.FPSCounter;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GL2ES2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLPipelineFactory;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.glu.GLU;
+
 import com.jogamp.common.nio.Buffers;
-import java.nio.*;
-import java.util.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import javax.media.nativewindow.*;
-
-import com.jogamp.opengl.util.*;
-import com.jogamp.opengl.util.glsl.fixedfunc.*;
-
-import com.jogamp.newt.*;
-import com.jogamp.newt.event.*;
-import com.jogamp.newt.opengl.*;
+import com.jogamp.newt.Display;
+import com.jogamp.newt.NewtFactory;
+import com.jogamp.newt.Screen;
+import com.jogamp.newt.Window;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.MouseListener;
+import com.jogamp.newt.event.WindowEvent;
+import com.jogamp.newt.event.WindowListener;
+import com.jogamp.newt.event.WindowUpdateEvent;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
+import com.jogamp.opengl.util.glsl.fixedfunc.ShaderSelectionMode;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
@@ -24,8 +44,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     private GLProfile glp;
     private GLU glu;
     private boolean quit = false;
-    private String glprofile;
-    private int type;
+    private final String glprofile;
+    private final int type;
     Animator glAnimator=null;
 
     public RedSquare() {
@@ -38,29 +58,38 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         this.type=type;
     }
 
-    public void windowRepaint(WindowUpdateEvent e) {
+    @Override
+	public void windowRepaint(WindowUpdateEvent e) {
     }
-    public void windowResized(WindowEvent e) {
+    @Override
+	public void windowResized(WindowEvent e) {
     }
-    public void windowMoved(WindowEvent e) {
+    @Override
+	public void windowMoved(WindowEvent e) {
     }
-    public void windowDestroyNotify(WindowEvent e) {
+    @Override
+	public void windowDestroyNotify(WindowEvent e) {
         System.out.println("WINDOW-DESTROY NOTIFY "+Thread.currentThread()+" QUIT "+e);
         quit=true;
         if(null!=glAnimator) {
             glAnimator.stop();
         }
     }
-    public void windowDestroyed(WindowEvent e) {
+    @Override
+	public void windowDestroyed(WindowEvent e) {
         System.out.println("WINDOW-DESTROYED "+Thread.currentThread());
     }
-    public void windowGainedFocus(WindowEvent e) { }
-    public void windowLostFocus(WindowEvent e) { }
+    @Override
+	public void windowGainedFocus(WindowEvent e) { }
+    @Override
+	public void windowLostFocus(WindowEvent e) { }
 
-    public void keyPressed(KeyEvent e) { 
+    @Override
+	public void keyPressed(KeyEvent e) {
         System.out.println("KEY-PRESSED "+Thread.currentThread()+" UNHANDLED "+e);
     }
-    public void keyReleased(KeyEvent e) { 
+    @Override
+	public void keyReleased(KeyEvent e) {
         System.out.println("KEY-RELEASED "+Thread.currentThread()+" UNHANDLED "+e);
         if( !e.isPrintableKey() || e.isAutoRepeat() ) {
             return;
@@ -79,7 +108,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
     }
 
-    public void mouseClicked(MouseEvent e) {
+    @Override
+	public void mouseClicked(MouseEvent e) {
         System.out.println("MOUSE-CLICKED "+Thread.currentThread()+" UNHANDLED "+e);
         switch(e.getClickCount()) {
             case 1:
@@ -87,29 +117,37 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                     window.setFullscreen(!window.isFullscreen());
                 }
                 break;
-            default: 
+            default:
                 quit=true;
                 break;
         }
     }
-    public void mouseEntered(MouseEvent e) {
+    @Override
+	public void mouseEntered(MouseEvent e) {
     }
-    public void mouseExited(MouseEvent e) {
+    @Override
+	public void mouseExited(MouseEvent e) {
     }
-    public void mousePressed(MouseEvent e) {
+    @Override
+	public void mousePressed(MouseEvent e) {
     }
-    public void mouseReleased(MouseEvent e) {
+    @Override
+	public void mouseReleased(MouseEvent e) {
     }
-    public void mouseMoved(MouseEvent e) {
+    @Override
+	public void mouseMoved(MouseEvent e) {
     }
-    public void mouseDragged(MouseEvent e) {
+    @Override
+	public void mouseDragged(MouseEvent e) {
     }
-    public void mouseWheelMoved(MouseEvent e) {
+    @Override
+	public void mouseWheelMoved(MouseEvent e) {
     }
 
     public boolean shouldQuit() { return quit; }
 
-    public void run() {
+    @Override
+	public void run() {
         int width = 800;
         int height = 480;
         glp = GLProfile.get(glprofile);
@@ -197,7 +235,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     private FloatBuffer colors;
     private FloatBuffer vertices;
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
         GL _gl = drawable.getGL();
 
         if(glDebugEmu) {
@@ -209,7 +248,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                     // Trace ..
                     _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, _gl, new Object[] { System.err } ) );
                 }
-            } catch (Exception e) {e.printStackTrace();} 
+            } catch (Exception e) {e.printStackTrace();}
             glDebug = false;
             glTrace = false;
         }
@@ -223,7 +262,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             try {
                 // Debug ..
                 gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES1.class, gl, null) );
-            } catch (Exception e) {e.printStackTrace();} 
+            } catch (Exception e) {e.printStackTrace();}
         }
 
         if(glTrace) {
@@ -267,7 +306,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         gl.glEnable(GL.GL_DEPTH_TEST);
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
         // Set location in front of camera
         gl.glMatrixMode(gl.GL_PROJECTION);
@@ -277,7 +317,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         //glu.gluLookAt(0, 0, -20, 0, 0, 0, 0, 1, 0);
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -285,7 +326,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         gl.glMatrixMode(gl.GL_MODELVIEW);
         gl.glLoadIdentity();
         gl.glTranslatef(0, 0, -10);
-        float ang = ((float) window.getTotalFPSDuration() * 360.0f) / 4000.0f;
+        float ang = (window.getTotalFPSDuration() * 360.0f) / 4000.0f;
         gl.glRotatef(ang, 0, 0, 1);
         gl.glRotatef(ang, 0, 1, 0);
 
@@ -294,12 +335,12 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
         GL2ES1 gl = drawable.getGL().getGL2ES1();
         System.out.println(Thread.currentThread()+" RedSquare.dispose: "+gl.getContext());
         gl.glDisableClientState(gl.GL_VERTEX_ARRAY);
         gl.glDisableClientState(gl.GL_COLOR_ARRAY);
-        glu.destroy();
         glu = null;
         colors.clear();
         colors   = null;
@@ -337,11 +378,11 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             } else if(args[i].equals("-1thread")) {
                 oneThread=true;
             } else if(args[i].equals("-awt")) {
-                type |= USE_AWT; 
+                type |= USE_AWT;
             } else if(args[i].equals("-noedt")) {
-                useEDT = false; 
+                useEDT = false;
             } else if(args[i].equals("-animator")) {
-                useAnimator = true; 
+                useAnimator = true;
             } else if(args[i].startsWith("-GL")) {
                 threads.add(new RedSquare(args[i].substring(1), type));
             }

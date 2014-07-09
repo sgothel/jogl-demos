@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2003 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,23 +28,33 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
 
 package demos.multisample;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
-import java.awt.*;
-import java.awt.event.*;
 
 import javax.media.nativewindow.CapabilitiesImmutable;
-import javax.media.opengl.*;
+import javax.media.opengl.DefaultGLCapabilitiesChooser;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLCapabilitiesChooser;
+import javax.media.opengl.GLCapabilitiesImmutable;
+import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
 
 public class Multisample {
@@ -86,9 +96,9 @@ public class Multisample {
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(4);
-    canvas = new GLCanvas(caps, chooser, null, null);
+    canvas = new GLCanvas(caps, chooser, null);
     canvas.addGLEventListener(new Listener());
-    
+
     Frame frame = new Frame("Full-scene antialiasing");
     frame.setLayout(new BorderLayout());
     canvas.setSize(512, 512);
@@ -99,7 +109,8 @@ public class Multisample {
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           runExit();
         }
       });
@@ -108,7 +119,7 @@ public class Multisample {
     caps.setSampleBuffers(false);
     canvas = new GLCanvas(caps);
     canvas.addGLEventListener(new Listener());
-    
+
     frame = new Frame("No antialiasing");
     frame.setLayout(new BorderLayout());
     canvas.setSize(512, 512);
@@ -119,14 +130,16 @@ public class Multisample {
     canvas.requestFocus();
 
     frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
           runExit();
         }
       });
   }
 
   class Listener implements GLEventListener {
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       System.err.println("Info: "+drawable);
       GL2 gl = drawable.getGL().getGL2();
 
@@ -141,10 +154,12 @@ public class Multisample {
       gl.glOrtho(-1, 1, -1, 1, -1, 1);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 
       gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -166,7 +181,8 @@ public class Multisample {
     }
 
     // Unused routines
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
   }
 
@@ -177,7 +193,8 @@ public class Multisample {
     // routines cause a global AWT lock to be grabbed. Instead run
     // the exit routine in another thread.
     new Thread(new Runnable() {
-        public void run() {
+        @Override
+		public void run() {
           System.exit(0);
         }
       }).start();

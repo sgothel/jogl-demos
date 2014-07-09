@@ -33,28 +33,31 @@
 
 package demos.proceduralTexturePhysics;
 
-import com.jogamp.common.util.IOUtil;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
-import demos.util.Cubemap;
 import gleem.linalg.Mat4f;
 import gleem.linalg.Rotf;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.media.opengl.GLProfile;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.GLPbuffer;
+import javax.media.opengl.GLOffscreenAutoDrawable;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.glu.GLU;
+
+import com.jogamp.common.util.IOUtil;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
+
+import demos.util.Cubemap;
 
 
 
@@ -75,7 +78,7 @@ public class Water {
   // used to render the water geometry (with the parent drawable's GL
   // object).
 
-  private GLU glu = new GLU();
+  private final GLU glu = new GLU();
 
   // Rendering modes
   public static final int CA_FULLSCREEN_REFLECT   = 0;
@@ -85,7 +88,7 @@ public class Water {
   public static final int CA_TILED_THREE_WINDOWS  = 4;
   public static final int CA_DO_NOT_RENDER        = 5;
 
-  private int[] initialMapDimensions = new int[2];
+  private final int[] initialMapDimensions = new int[2];
   private TextureData initialMapData;
 
   private String tmpSpinFilename;
@@ -93,8 +96,8 @@ public class Water {
   private String tmpCubeMapFilenamePrefix;
   private String tmpCubeMapFilenameSuffix;
 
-  private GLPbuffer pbuffer;
-  private Rotf cameraOrientation = new Rotf();
+  private GLOffscreenAutoDrawable pbuffer;
+  private final Rotf cameraOrientation = new Rotf();
 
   // Dynamic texture names
   private static final int CA_TEXTURE_FORCE_INTERMEDIATE = 0;
@@ -105,7 +108,7 @@ public class Water {
   private static final int CA_TEXTURE_HEIGHT_TARGET      = 5;
   private static final int CA_TEXTURE_NORMAL_MAP         = 6;
   private static final int CA_NUM_DYNAMIC_TEXTURES       = 7;
-    
+
   // List names
   private static final int CA_FRAGMENT_PROGRAM_EQ_WEIGHT_COMBINE     = 0;
   private static final int CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_1 = 1;
@@ -123,8 +126,8 @@ public class Water {
   private Texture dropletTex;
   private Texture cubemap;
 
-  private Texture[] dynamicTextures = new Texture[CA_NUM_DYNAMIC_TEXTURES];
-    
+  private final Texture[] dynamicTextures = new Texture[CA_NUM_DYNAMIC_TEXTURES];
+
   private int       texHeightInput;                 // current input height texture ID.
   private int       texHeightOutput;                // current output height texture ID.
   private int       texVelocityInput;               // current input velocity texture ID.
@@ -132,13 +135,13 @@ public class Water {
   private int       texForceStepOne;                // intermediate force computation result texture ID.
   private int       texForceOutput;                 // current output force texture ID.
 
-  private int[]     displayListIDs = new int[CA_NUM_LISTS];
-    
+  private final int[]     displayListIDs = new int[CA_NUM_LISTS];
+
   private int       vertexProgramID;                // one vertex program is used to choose the texcoord offset
 
   private int       flipState;                      // used to flip target texture configurations.
 
-  private boolean   wrap;                           // CA can either wrap its borders, or clamp (clamp by default)  
+  private boolean   wrap;                           // CA can either wrap its borders, or clamp (clamp by default)
   private boolean   reset = true;                   // are we resetting this frame? (user hit reset).
   private boolean   singleStep;                     // animation step on keypress.
   private boolean   animate = true;                 // continuous animation.
@@ -146,7 +149,7 @@ public class Water {
   private boolean   wireframe;                      // render in wireframe mode
   private boolean   applyInteriorBoundaries = true; // enable / disable "boundary" image drawing.
   private boolean   spinLogo = true;                // draw spinning logo.
-  private boolean   createNormalMap = true;         // enable / disable normal map creation.
+  private final boolean   createNormalMap = true;         // enable / disable normal map creation.
 
   private float     perTexelWidth;                  // width of a texel (percentage of texture)
   private float     perTexelHeight;                 // height of a texel
@@ -154,20 +157,20 @@ public class Water {
   private float     blurDist = 0.5f;                // distance over which to blur.
   private boolean   mustUpdateBlurOffsets;          // flag indicating blurDist was set last tick
 
-  private float     normalSTScale = 0.8f;           // scale of normals in normal map.
+  private final float     normalSTScale = 0.8f;           // scale of normals in normal map.
   private float     bumpScale = 0.25f;              // scale of bumps in water.
 
   private float     dropletFrequency = 0.175f;      // frequency at which droplets are drawn in water...
 
-  private int       slowDelay = 1;                  // amount (milliseconds) to delay when running slow.
+  private final int       slowDelay = 1;                  // amount (milliseconds) to delay when running slow.
   private int       skipInterval;                   // frames to skip simulation.
   private int       skipCount;                      // frame count for skipping rendering
 
   private int       angle;                          // angle in degrees for spinning logo
 
-  private List/*<Droplet>*/ droplets = new ArrayList/*<Droplet>*/();             // array of droplets
+  private final List/*<Droplet>*/ droplets = new ArrayList/*<Droplet>*/();             // array of droplets
 
-  private int       renderMode; 
+  private int       renderMode;
 
   // Constant memory locations
   private static final int CV_UV_OFFSET_TO_USE =  0;
@@ -205,24 +208,22 @@ public class Water {
                          String cubeMapFilenameSuffix,
                          GLAutoDrawable parentWindow) {
     GLCapabilities caps = (GLCapabilities) parentWindow.getChosenGLCapabilities().cloneMutable();
+    caps.setPBuffer(true);
 
     loadInitialTexture(caps.getGLProfile(), initialMapFilename);
     tmpSpinFilename           = spinFilename;
     tmpDropletFilename        = dropletFilename;
     tmpCubeMapFilenamePrefix  = cubeMapFilenamePrefix;
     tmpCubeMapFilenameSuffix  = cubeMapFilenameSuffix;
-    
+
     // create the pbuffer.  Will use this as an offscreen rendering buffer.
     // it allows rendering a texture larger than our window.
     caps.setDoubleBuffered(false);
     if (!GLDrawableFactory.getFactory(caps.getGLProfile()).canCreateGLPbuffer(null, caps.getGLProfile())) {
       throw new GLException("Pbuffers not supported with this graphics card");
     }
-    pbuffer = GLDrawableFactory.getFactory(caps.getGLProfile()).createGLPbuffer(
-                                                             null, caps, null,
-                                                             initialMapDimensions[0],
-                                                             initialMapDimensions[1],
-                                                             parentWindow.getContext());
+    pbuffer = GLDrawableFactory.getFactory(GLProfile.getDefault()).createOffscreenAutoDrawable(null, caps, null, initialMapDimensions[0], initialMapDimensions[1]);
+    pbuffer.setSharedContext(parentWindow.getContext());
     pbuffer.addGLEventListener(new Listener());
   }
 
@@ -234,7 +235,7 @@ public class Water {
     reset = true;
   }
 
-  public void tick() { 
+  public void tick() {
     pbuffer.display();
   }
 
@@ -246,12 +247,12 @@ public class Water {
       // Display the results of the rendering to texture
       if (wireframe) {
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-           
+
         // chances are the texture will be all dark, so lets not use a texture
         gl.glDisable(GL2.GL_TEXTURE_2D);
       } else {
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-            			
+
         gl.glActiveTexture(GL2.GL_TEXTURE0);
         gl.glEnable(GL2.GL_TEXTURE_2D);
       }
@@ -280,36 +281,36 @@ public class Water {
 
           gl.glColor4f(1, 1, 1, 1);
           gl.glBegin(GL2.GL_QUADS);
-                
+
           gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 0,0);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2),  1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2),  1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f(-1,-1);
-                
+
           gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 1,0);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2), -1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2),  1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f( 1,-1);
-                
+
           gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 1,1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2), -1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2), -1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f( 1, 1);
-                
+
           gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 0,1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE1, matRot.get(0,0), matRot.get(0,1), matRot.get(0,2),  1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE2, matRot.get(1,0), matRot.get(1,1), matRot.get(1,2), -1);
           gl.glMultiTexCoord4f(GL2.GL_TEXTURE3, matRot.get(2,0), matRot.get(2,1), matRot.get(2,2),  1);
           gl.glVertex2f(-1, 1);
-                
+
           gl.glEnd();
-    
+
           cubemap.disable(gl);
           gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
-                
+
           break;
         }
 
@@ -317,7 +318,7 @@ public class Water {
           // Draw quad over full display
           gl.glActiveTexture(GL2.GL_TEXTURE0);
           dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind(gl);
-                
+
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
           break;
         }
@@ -326,7 +327,7 @@ public class Water {
           // Draw quad over full display
           gl.glActiveTexture(GL2.GL_TEXTURE0);
           gl.glBindTexture(GL2.GL_TEXTURE_2D, texHeightOutput);
-                
+
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
           break;
         }
@@ -335,7 +336,7 @@ public class Water {
           // Draw quad over full display
           gl.glActiveTexture(GL2.GL_TEXTURE0);
           dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind(gl);
-			                 
+
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
           break;
         }
@@ -347,7 +348,7 @@ public class Water {
           dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind(gl);
           gl.glMatrixMode(GL2.GL_MODELVIEW);
           gl.glPushMatrix();
-			                 
+
           gl.glTranslatef(-0.5f, -0.5f, 0);
           gl.glScalef(0.5f, 0.5f, 1);
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
@@ -356,7 +357,7 @@ public class Water {
           // lower right
           gl.glBindTexture(GL2.GL_TEXTURE_2D, texVelocityOutput);
           gl.glPushMatrix();
-			                 
+
           gl.glTranslatef(0.5f, -0.5f, 0);
           gl.glScalef(0.5f, 0.5f, 1);
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
@@ -366,7 +367,7 @@ public class Water {
           dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind(gl);
           gl.glMatrixMode(GL2.GL_MODELVIEW);
           gl.glPushMatrix();
-			                 
+
           gl.glTranslatef(-0.5f, 0.5f, 0);
           gl.glScalef(0.5f, 0.5f, 1);
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
@@ -376,12 +377,12 @@ public class Water {
           gl.glBindTexture(GL2.GL_TEXTURE_2D, texHeightOutput);
           gl.glMatrixMode(GL2.GL_MODELVIEW);
           gl.glPushMatrix();
-			                 
+
           gl.glTranslatef(0.5f, 0.5f, 0);
           gl.glScalef(0.5f, 0.5f, 1);
           gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
           gl.glPopMatrix();
-			    
+
           break;
         }
       }
@@ -396,10 +397,10 @@ public class Water {
   public void enableSlowAnimation(boolean enable)        { slow        = enable;               }
   public void reset()                                    { reset       = true;                 }
   public void setRenderMode(int mode)                    { renderMode  = mode;                 }
-    
+
   public void enableWireframe(boolean enable)            { wireframe   = enable;               }
   public void enableBorderWrapping(boolean enable)       { wrap        = enable;               }
-    
+
   public void enableBoundaryApplication(boolean enable)  { applyInteriorBoundaries = enable;   }
   public void enableSpinningLogo(boolean enable)         { spinLogo    = enable;               }
 
@@ -414,23 +415,23 @@ public class Water {
   public float getDropFrequency()                        { return dropletFrequency;            }
 
   public static class Droplet {
-    private float rX;
-    private float rY;
-    private float rScale;
+    private final float rX;
+    private final float rY;
+    private final float rScale;
 
     Droplet(float rX, float rY, float rScale) {
       this.rX     = rX;
       this.rY     = rY;
       this.rScale = rScale;
     }
-    
+
     float rX()     { return rX;     }
     float rY()     { return rY;     }
     float rScale() { return rScale; }
   }
 
   public synchronized void addDroplet(Droplet drop) {
-    droplets.add(drop);    
+    droplets.add(drop);
   }
 
   //----------------------------------------------------------------------
@@ -439,23 +440,26 @@ public class Water {
 
   class Listener implements GLEventListener {
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
       GL2 gl = drawable.getGL().getGL2();
 
       initOpenGL(gl);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
 
       GL2 gl = drawable.getGL().getGL2();
       if (mustUpdateBlurOffsets) {
         updateBlurVertOffset(gl);
         mustUpdateBlurOffsets = false;
       }
-      
+
       // Take a single step in the cellular automaton
 
       // Disable culling
@@ -473,7 +477,7 @@ public class Water {
         doSingleTimeStep(gl);
         singleStep = false;
       }
-	
+
       // Force rendering to pbuffer to complete
       gl.glFlush();
 
@@ -485,7 +489,8 @@ public class Water {
       }
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
 
     // Unused routines
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
@@ -522,11 +527,11 @@ public class Water {
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
     glu.gluOrtho2D(-1, 1, -1, 1);
-    
+
     gl.glClearColor(0, 0, 0, 0);
     gl.glDisable(GL2.GL_LIGHTING);
     gl.glDisable(GL2.GL_DEPTH_TEST);
-      
+
     createAndWriteUVOffsets(gl, initialMapDimensions[0], initialMapDimensions[1]);
 
     checkExtension(gl, "GL_ARB_vertex_program");
@@ -542,7 +547,7 @@ public class Water {
     vertexProgramID = tmpInt[0];
     gl.glBindProgramARB(GL2.GL_VERTEX_PROGRAM_ARB, vertexProgramID);
 
-    String programBuffer = 
+    String programBuffer =
 "!!ARBvp1.0\n" +
 "# Constant memory location declarations (must match those in Java sources)\n" +
 "# CV_UV_OFFSET_TO_USE = 0\n" +
@@ -711,8 +716,8 @@ public class Water {
       // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
       gl.glCopyTexSubImage2D(GL2.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
 
-      break;  
-        
+      break;
+
     case 1:
       temp              = texHeightInput;
       texHeightInput    = texHeightOutput;
@@ -734,10 +739,10 @@ public class Water {
       texVelocityOutput = temp;
       break;
     }
-	
+
     // even if wireframe mode, render to texture as solid
     gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-	
+
     /////////////////////////////////////////////////////////////
     //  Render first 3 components of force from three neighbors
     //  Offsets selected are 1 center texel for center height
@@ -776,18 +781,18 @@ public class Water {
 
     // Now we need to copy the resulting pixels into the intermediate force field texture
     gl.glActiveTexture(GL2.GL_TEXTURE2);
-    dynamicTextures[CA_TEXTURE_FORCE_INTERMEDIATE].bind(gl);    
+    dynamicTextures[CA_TEXTURE_FORCE_INTERMEDIATE].bind(gl);
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL2.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
 
     ////////////////////////////////////////////////////////////////
     // Now add in last component of force for the 4th neighbor
-    //  that we didn't have enough texture lookups to do in the 
+    //  that we didn't have enough texture lookups to do in the
     //  first pass
 
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_NEIGHBOR_FORCE_CALC_2]);
-    
+
     // Cannot use additive blending as the force contribution might
     //   be negative and would have to subtract from the dest.
     // We must instead use an additional texture as target and read
@@ -826,7 +831,7 @@ public class Water {
     /////////////////////////////////////////////////////////////////
     // Apply the force with a scale factor to reduce it's magnitude.
     // Add this to the current texture representing the water height.
-    
+
     gl.glCallList(displayListIDs[CA_FRAGMENT_PROGRAM_APPLY_FORCE]);
 
     // use offsets of zero
@@ -837,7 +842,7 @@ public class Water {
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     gl.glBindTexture(GL2.GL_TEXTURE_2D, texVelocityInput);
     gl.glActiveTexture(GL2.GL_TEXTURE1);
-    dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind(gl);    
+    dynamicTextures[CA_TEXTURE_FORCE_TARGET].bind(gl);
     gl.glActiveTexture(GL2.GL_TEXTURE2);
     gl.glDisable(GL2.GL_TEXTURE_2D);
     gl.glActiveTexture(GL2.GL_TEXTURE3);
@@ -896,7 +901,7 @@ public class Water {
     // Now we need to copy the resulting pixels into the input height texture
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     gl.glBindTexture(GL2.GL_TEXTURE_2D, texHeightInput);
-    
+
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL2.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
 
@@ -904,7 +909,7 @@ public class Water {
     //  blur positions to smooth noise & generaly dampen things
     //  degree of blur is controlled by magnitude of 4 neighbor texel
     //   offsets with bilinear on
-    
+
     for (int i = 1; i < 4; i++) {
       gl.glActiveTexture(GL2.GL_TEXTURE0 + i);
       gl.glBindTexture(GL2.GL_TEXTURE_2D, texHeightInput);
@@ -931,14 +936,14 @@ public class Water {
 
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL2.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
-      
+
     ///////////////////////////////////////////////////////////////////
     // If selected, create a normal map from the height
-      
+
     if (createNormalMap) {
       createNormalMap(gl);
     }
-      
+
     ///////////////////////////////////////////////////////////
     // Flip the state variable for the next round of rendering
     switch (flipState) {
@@ -978,7 +983,7 @@ public class Water {
     // set vp offsets to nearest neighbors
     gl.glProgramEnvParameter4fARB(GL2.GL_VERTEX_PROGRAM_ARB, CV_UV_OFFSET_TO_USE, 4, 0, 0, 0);
     gl.glEnable(GL2.GL_VERTEX_PROGRAM_ARB);
-    
+
     gl.glCallList(displayListIDs[CA_DRAW_SCREEN_QUAD]);
 
     gl.glDisable(GL2.GL_FRAGMENT_PROGRAM_ARB);
@@ -986,13 +991,13 @@ public class Water {
     // Now we need to copy the resulting pixels into the normal map
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     dynamicTextures[CA_TEXTURE_NORMAL_MAP].bind(gl);
-    
+
     // use CopyTexSubImage for speed (even though we copy all of it) since we pre-allocated the texture
     gl.glCopyTexSubImage2D(GL2.GL_TEXTURE_2D, 0, 0, 0, 0, 0, initialMapDimensions[0], initialMapDimensions[1]);
   }
 
   private void drawInteriorBoundaryObjects(GL2 gl) {
-    
+
     gl.glActiveTexture(GL2.GL_TEXTURE0);
     initialMapTex.bind(gl);
     initialMapTex.enable(gl);
@@ -1004,7 +1009,7 @@ public class Water {
       gl.glActiveTexture(GL2.GL_TEXTURE0 + i);
       gl.glDisable(GL2.GL_TEXTURE_2D);
     }
-    
+
     gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
     gl.glEnable(GL2.GL_BLEND);
 
@@ -1057,17 +1062,17 @@ public class Water {
 
     texHeightInput    = initialMapTex.getTextureObject(gl);                               // initial height map.
     texHeightOutput   = dynamicTextures[CA_TEXTURE_HEIGHT_TARGET].getTextureObject(gl);   // next height map.
-    
+
     texVelocityInput  = dynamicTextures[CA_TEXTURE_VELOCITY_SOURCE].getTextureObject(gl); // initial velocity.
     texVelocityOutput = dynamicTextures[CA_TEXTURE_VELOCITY_TARGET].getTextureObject(gl); // next velocity.
   }
 
   private void createAndWriteUVOffsets(GL2 gl, int width, int height) {
     // This sets vertex shader constants used to displace the
-    //  source texture over several additive samples.  This is 
+    //  source texture over several additive samples.  This is
     //  used to accumulate neighboring texel information that we
-    //  need to run the game - the 8 surrounding texels, and the 
-    //  single source texel which will either spawn or die in the 
+    //  need to run the game - the 8 surrounding texels, and the
+    //  single source texel which will either spawn or die in the
     //  next generation.
     // Label the texels as follows, for a source texel "e" that
     //  we want to compute for the next generation:
@@ -1078,9 +1083,9 @@ public class Water {
 
     // first the easy one: no offsets for sampling center
     //  occupied or unoccupied
-    // Use index offset value 0.0 to access these in the 
+    // Use index offset value 0.0 to access these in the
     //  vertex shader.
-    
+
     perTexelWidth  = 1.0f / width;
     perTexelHeight = 1.0f / height;
 
@@ -1096,7 +1101,7 @@ public class Water {
     float[] type1OffsetY = new float[] { 0.0f,  dist * perTexelHeight, dist * perTexelHeight, -dist * perTexelHeight };
 
     // Offset set 2:  for use with neighbor force pixel shader 2
-    //  samples center with 0, and -v texels 
+    //  samples center with 0, and -v texels
     //  ie the 'e' and 'b' texels
     // This completes a pattern of sampling center texel and it's
     //   4 nearest neighbors to run the height-based water simulation
@@ -1105,7 +1110,7 @@ public class Water {
 
     float[] type2OffsetX = new float[] { 0.0f, -dist * perTexelWidth,  0.0f, 0.0f   };
     float[] type2OffsetY = new float[] { 0.0f, -dist * perTexelHeight, 0.0f, 0.0f   };
-        
+
     // type 3 offsets
     updateBlurVertOffset(gl);
 
@@ -1130,15 +1135,15 @@ public class Water {
   }
 
   private void updateBlurVertOffset(GL2 gl) {
-    float[] type3OffsetX = new float[] { -perTexelWidth * 0.5f, 
-                                         perTexelWidth, 
-                                         perTexelWidth * 0.5f, 
-                                         -perTexelWidth 
+    float[] type3OffsetX = new float[] { -perTexelWidth * 0.5f,
+                                         perTexelWidth,
+                                         perTexelWidth * 0.5f,
+                                         -perTexelWidth
     };
     float[] type3OffsetY = new float[] { perTexelHeight,
                                          perTexelHeight * 0.5f,
                                          -perTexelHeight,
-                                         -perTexelHeight * 0.5f 
+                                         -perTexelHeight * 0.5f
     };
     float[] offsets = new float[] { 0, 0, 0, 0 };
 
@@ -1173,11 +1178,11 @@ public class Water {
       // The quad is textured with the initial droplet texture, and
       //   covers some small portion of the render target
       // Draw the droplet
-       
+
       gl.glTexCoord2f(0, 0); gl.glVertex2f(droplet.rX() - droplet.rScale(), droplet.rY() - droplet.rScale());
       gl.glTexCoord2f(1, 0); gl.glVertex2f(droplet.rX() + droplet.rScale(), droplet.rY() - droplet.rScale());
       gl.glTexCoord2f(1, 1); gl.glVertex2f(droplet.rX() + droplet.rScale(), droplet.rY() + droplet.rScale());
-      gl.glTexCoord2f(0, 1); gl.glVertex2f(droplet.rX() - droplet.rScale(), droplet.rY() + droplet.rScale());          
+      gl.glTexCoord2f(0, 1); gl.glVertex2f(droplet.rX() - droplet.rScale(), droplet.rY() + droplet.rScale());
     }
     gl.glEnd();
 
@@ -1268,7 +1273,7 @@ public class Water {
     //
     // This step takes the center point and three neighboring points, and computes
     // the texel difference as the "force" acting to pull the center texel.
-    // 
+    //
     // The amount to which the computed force is applied to the texel is controlled
     // in a separate shader.
 
@@ -1287,7 +1292,7 @@ public class Water {
     //   //s0 = t1 - t0;
     //   discard = -tex0;
     //   discard = tex1;
-    //   spare0 = sum();  
+    //   spare0 = sum();
     // }
     // Stage 1
     // rgb
@@ -1295,16 +1300,16 @@ public class Water {
     //   //s1 = t2 - t0;
     //   discard = -tex0;
     //   discard = tex2;
-    //   spare1 = sum();  
+    //   spare1 = sum();
     // }
     // Stage 2
     // // 'force' for 1st axis
-    // rgb 
+    // rgb
     // {
     //   //s0 = s0 + s1 = t1 - t0 + t2 - t0;
     //   discard = spare0;
     //   discard = spare1;
-    //   spare0 = sum();  
+    //   spare0 = sum();
     // }
     // Stage 3
     // // one more point for 2nd axis
@@ -1313,7 +1318,7 @@ public class Water {
     //   //s1 = t3 - t0;
     //   discard = -tex0;
     //   discard = tex3;
-    //   spare1 = sum();  
+    //   spare1 = sum();
     // }
     // Stage 4
     // rgb
@@ -1321,20 +1326,20 @@ public class Water {
     //   //s0 = s0 + s1 = t3 - t0 + t2 - t0 + t1 - t0;
     //   discard = spare0;
     //   discard = spare1;
-    //   spare0 = sum();  
+    //   spare0 = sum();
     // }
     // Stage 5
-    // // Now add in a force to gently pull the center texel's 
+    // // Now add in a force to gently pull the center texel's
     // //  value to 0.5.  The strength of this is controlled by
     // //  the PCN_EQ_REST_FAC  - restoration factor
     // // Without this, the simulation will fade to zero or fly
     // //  away to saturate at 1.0
-    // rgb 
+    // rgb
     // {
-    //   //s1 = 0.5 - t0;  
+    //   //s1 = 0.5 - t0;
     //   discard = -tex0;
     //   discard = const0;
-    //   spare1 = sum();  
+    //   spare1 = sum();
     // }
     // Stage 6
     // {
@@ -1410,10 +1415,10 @@ public class Water {
     // 2nd step of force calc for render-to-texture
     // water simulation.
     //
-    // Adds the 4th & final neighbor point to the 
+    // Adds the 4th & final neighbor point to the
     // force calc..
     //
-    // Bias and scale the values so 0 force is 0.5, 
+    // Bias and scale the values so 0 force is 0.5,
     // full negative force is 0.0, and full pos is
     // 1.0
     //
@@ -1475,14 +1480,14 @@ public class Water {
     //
     // This is used to apply a "force" texture value to a "velocity" state texture
     // for nearest-neighbor height-based water simulations.  The output pixel is
-    // the new "velocity" value to replace the t0 sample in rendering to a new 
+    // the new "velocity" value to replace the t0 sample in rendering to a new
     // texture which will replace the texture selected into t0.
     //
     // A nearly identical shader using a different scaling constant is used to
     // apply the "velocity" value to a "height" texture at each texel.
     //
     // t1 comes in the range [0,1] but needs to hold signed values, so a value of
-    // 0.5 in t1 represents zero force.  This is biased to a signed value in 
+    // 0.5 in t1 represents zero force.  This is biased to a signed value in
     // computing the new velocity.
     //
     // tex0 = previous velocity
@@ -1554,18 +1559,18 @@ public class Water {
     //
     // This is used to apply a "velocity" texture value to a "height" state texture
     // for nearest-neighbor height-based water simulations.  The output pixel is
-    // the new "height" value to replace the t0 sample in rendering to a new 
+    // the new "height" value to replace the t0 sample in rendering to a new
     // texture which will replace the texture selected into t0.
     //
     // A nearly identical shader using a different scaling constant is used to
     // apply the "force" value to the "velocity" texture at each texel.
     //
     // t1 comes in the range [0,1] but needs to hold signed values, so a value of
-    // 0.5 in t1 represents zero velocity.  This is biased to a signed value in 
-    // computing the new position.                       
+    // 0.5 in t1 represents zero velocity.  This is biased to a signed value in
+    // computing the new position.
     //
     // tex0 = height field
-    // tex1 = velocity          
+    // tex1 = velocity
     //
     // Bias the force/velocity to a signed value so we can subtract from
     //   the t0 position sample.
@@ -1700,7 +1705,7 @@ public class Water {
     // }
     // Stage 6
     // const0 = (0, 0, 1, 1);
-    // rgb 
+    // rgb
     // {
     //   discard = spare1 * const0;
     //   discard = spare0;
