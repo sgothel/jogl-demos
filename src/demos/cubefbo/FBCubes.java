@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,7 +28,7 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  */
 
 package demos.cubefbo;
@@ -36,6 +36,7 @@ package demos.cubefbo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -57,13 +58,14 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         fbo2 = new FBObject();
     }
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+	public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        fbo1.reset(gl, FBO_SIZE, FBO_SIZE);
+        fbo1.init(gl, FBO_SIZE, FBO_SIZE, 0);
         fbo1.attachTexture2D(gl, 0, true);
         fbo1.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo1.unbind(gl);
-        fbo2.reset(gl, FBO_SIZE, FBO_SIZE);
+        fbo2.init(gl, FBO_SIZE, FBO_SIZE, 0);
         fbo2.attachTexture2D(gl, 0, true);
         fbo2.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo2.unbind(gl);
@@ -73,7 +75,8 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
     float motionIncr;
     float xRot, yRot;
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -82,7 +85,8 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         motionIncr = 180.f / Math.max(width, height);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+	public void dispose(GLAutoDrawable drawable) {
         System.out.println("FBCubes.dispose: "+drawable);
         GL2 gl = drawable.getGL().getGL2();
         fbo1.destroy(gl);
@@ -96,7 +100,8 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
         cubeOuter=null;
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+	public void display(GLAutoDrawable drawable) {
         //        System.out.println("display");
         GL2 gl = drawable.getGL().getGL2();
 
@@ -141,19 +146,25 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
-    
+
     private boolean dragging;
     private int lastDragX;
     private int lastDragY;
 
-    public void mouseClicked(MouseEvent e)  {}
-    public void mousePressed(MouseEvent e)  {}
-    public void mouseReleased(MouseEvent e) {
+    @Override
+	public void mouseClicked(MouseEvent e)  {}
+    @Override
+	public void mousePressed(MouseEvent e)  {}
+    @Override
+	public void mouseReleased(MouseEvent e) {
         dragging = false;
     }
-    public void mouseEntered(MouseEvent e)  {}
-    public void mouseExited(MouseEvent e)   {}
-    public void mouseDragged(MouseEvent e)  {
+    @Override
+	public void mouseEntered(MouseEvent e)  {}
+    @Override
+	public void mouseExited(MouseEvent e)   {}
+    @Override
+	public void mouseDragged(MouseEvent e)  {
         if (!dragging) {
             dragging = true;
             lastDragX = e.getX();
@@ -165,7 +176,8 @@ class FBCubes implements GLEventListener, MouseListener, MouseMotionListener {
             lastDragY = e.getY();
         }
     }
-    public void mouseMoved(MouseEvent e)    {}
+    @Override
+	public void mouseMoved(MouseEvent e)    {}
 
     CubeObject cubeInner;
     CubeObject cubeMiddle;

@@ -64,7 +64,7 @@ public class FBCubes implements GLEventListener {
         GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL(), ShaderSelectionMode.AUTO, null);
         System.out.println(gl);
 
-        fbo1.reset(gl, FBO_SIZE, FBO_SIZE);
+        fbo1.init(gl, FBO_SIZE, FBO_SIZE, 0);
         fbo1.attachTexture2D(gl, 0, true);
         fbo1.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
         fbo1.unbind(gl);
