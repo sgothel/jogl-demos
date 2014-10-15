@@ -41,36 +41,27 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.jogamp.opengl.test.junit.jogl.demos.gl4.IView;
-import com.jogamp.opengl.test.junit.jogl.demos.gl4.TrianglesInstancedRendererHardcoded;
 import com.jogamp.opengl.util.FPSAnimator;
 
-public class ManyTriangleInstanced implements IView {
-
-	private final JFrame frame;
-	private final FPSAnimator animator;
-	private final GLCanvas panel;
-	private final Dimension dim = new Dimension(1024, 768);
-
+public class ManyTriangleInstancedWithShaderStateSwing implements IInstancedRenderingView {
 	protected float winScale = 0.1f;
 	private static final float WIN_SCALE_MIN = 1e-3f;
 	private static final float WIN_SCALE_MAX = 100f;
+	private final FPSAnimator animator;
 
-	private final TrianglesInstancedRendererHardcoded renderer;
-
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new ManyTriangleInstanced();
+				new ManyTriangleInstancedWithShaderStateSwing();
 			}
 		});
 	}
 
-	public ManyTriangleInstanced() {
-		renderer = new TrianglesInstancedRendererHardcoded(this);
+	public ManyTriangleInstancedWithShaderStateSwing() {
+		TriangleInstancedRendererWithShaderState renderer = new TriangleInstancedRendererWithShaderState(this);
 
-		frame = new JFrame(this.getClass().getSimpleName());
+		JFrame frame = new JFrame(this.getClass().getSimpleName());
 		frame.setLayout(new BorderLayout());
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -79,8 +70,8 @@ public class ManyTriangleInstanced implements IView {
 				System.exit(0);
 			}
 		});
-		panel = new GLCanvas(new GLCapabilities(GLProfile.get(GLProfile.GL4)));
-		panel.addGLEventListener(renderer);
+		GLCanvas canvas = new GLCanvas(new GLCapabilities(GLProfile.get(GLProfile.GL4)));
+		canvas.addGLEventListener(renderer);
 
 		frame.addMouseWheelListener(new MouseWheelListener() {
 
@@ -97,11 +88,11 @@ public class ManyTriangleInstanced implements IView {
 			}
 		});
 
-		panel.setPreferredSize(dim);
-		frame.add(panel, BorderLayout.CENTER);
+		canvas.setPreferredSize(new Dimension(1024, 768));
+		frame.add(canvas, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
-		animator = new FPSAnimator(panel, 60, true);
+		animator = new FPSAnimator(canvas, 60, true);
 		animator.start();
 	}
 
