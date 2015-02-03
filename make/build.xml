@@ -324,6 +324,7 @@
             <link href="${javadoc.link}" />
             <!-- FIXME: this doesn't work -->
             <link href="${javadoc.link.jogl}" />
+            <arg value="${javadoc.xarg1}"/>
         </javadoc>
     </target>    
 
