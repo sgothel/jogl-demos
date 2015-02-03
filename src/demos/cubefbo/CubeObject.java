@@ -36,9 +36,9 @@ package demos.cubefbo;
 import com.jogamp.common.nio.Buffers;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2;
 
 class CubeObject {
 

@@ -15,7 +15,7 @@ and the system dependent jogl-natives-*.jar
   has an internal copy.
 - All examples extends from glskeleton.java
 
-Note: Color Index examples are not support in javax.media.opengl (jogl), 
+Note: Color Index examples are not support in com.jogamp.opengl (jogl), 
 so they are not ported. NURBS are also not ported for the same reason.
 LIST:
 - antiindex.c

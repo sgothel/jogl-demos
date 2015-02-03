@@ -5,7 +5,7 @@ import com.jogamp.common.util.IOUtil;
 import java.nio.*;
 import java.io.*;
 import java.net.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.*;

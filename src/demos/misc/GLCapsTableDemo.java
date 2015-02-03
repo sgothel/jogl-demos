@@ -11,12 +11,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.nativewindow.CapabilitiesImmutable;
-import javax.media.opengl.DefaultGLCapabilitiesChooser;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLCapabilitiesChooser;
-import javax.media.opengl.GLCapabilitiesImmutable;
-import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.nativewindow.CapabilitiesImmutable;
+import com.jogamp.opengl.DefaultGLCapabilitiesChooser;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLCapabilitiesChooser;
+import com.jogamp.opengl.GLCapabilitiesImmutable;
+import com.jogamp.opengl.awt.GLCanvas;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -130,8 +130,8 @@ public class GLCapsTableDemo
   /**
    * (non-Javadoc)
    *
-   * @see javax.media.opengl.GLCapabilitiesChooser#chooseCapabilities(javax.media.nativewindow.Capabilities,
-   *      javax.media.nativewindow.Capabilities[], int)
+   * @see com.jogamp.opengl.GLCapabilitiesChooser#chooseCapabilities(com.jogamp.nativewindow.Capabilities,
+   *      com.jogamp.nativewindow.Capabilities[], int)
    */
   @Override
 public int chooseCapabilities(CapabilitiesImmutable desired,

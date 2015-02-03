@@ -39,7 +39,7 @@
 
 package demos.xtrans;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** Specifies the interface by which a transition is updated and drawn
  * by the XTDesktopPane.

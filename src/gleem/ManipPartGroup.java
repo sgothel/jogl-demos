@@ -42,7 +42,7 @@ package gleem;
 import java.util.*;
 
 import gleem.linalg.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** This class groups a set of ManipParts. Makes a set of ManipParts
     look like one. */

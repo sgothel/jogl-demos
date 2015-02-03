@@ -33,7 +33,7 @@
 
 package demos.readbuffer;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 
 public class ReadBufferBase implements GLEventListener {
@@ -55,13 +55,13 @@ public class ReadBufferBase implements GLEventListener {
 
         if(glDebug) {
             try {
-                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", null, _gl, null) );
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Debug", null, _gl, null) );
             } catch (Exception e) {e.printStackTrace();} 
         }
 
         if(glTrace) {
             try {
-                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", null, _gl, new Object[] { System.err } ) );
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", null, _gl, new Object[] { System.err } ) );
             } catch (Exception e) {e.printStackTrace();} 
         }
 

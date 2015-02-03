@@ -42,7 +42,7 @@ package gleem;
 import java.util.*;
 
 import gleem.linalg.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** Triangle-based manipulator part. This is the base class for most
     of the ManipParts that GLEEM uses internally. You can feel free to

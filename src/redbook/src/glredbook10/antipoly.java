@@ -5,9 +5,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * This program draws filled polygons with antialiased edges. The special

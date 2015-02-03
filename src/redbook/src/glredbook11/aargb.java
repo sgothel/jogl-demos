@@ -4,9 +4,9 @@ import glredbook10.GLSkeleton;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.media.opengl.*;
- import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.*;
+ import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 /**

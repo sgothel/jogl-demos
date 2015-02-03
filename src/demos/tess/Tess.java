@@ -45,13 +45,13 @@ package demos.tess;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.media.opengl.DebugGL2;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUtessellator;
+import com.jogamp.opengl.DebugGL2;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUtessellator;
 
 /**
  *  tess.java
@@ -200,7 +200,7 @@ public class Tess {
     }//end TessRenderer
 
 
-    public static class TessCallback extends javax.media.opengl.glu.GLUtessellatorCallbackAdapter {
+    public static class TessCallback extends com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter {
         GL2 gl;
         GLU glu;
 

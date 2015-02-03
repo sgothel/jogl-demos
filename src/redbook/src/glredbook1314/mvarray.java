@@ -8,13 +8,13 @@ import java.awt.event.KeyListener;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 import com.jogamp.common.nio.PointerBuffer;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.GLBuffers;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * This program demonstrates multiple vertex arrays, specifically the OpenGL
@@ -81,7 +81,7 @@ public class mvarray //
     /*
      * (non-Javadoc)
      * 
-     * @see javax.media.opengl.GLEventListener#display(javax.media.opengl.GLAutoDrawable)
+     * @see com.jogamp.opengl.GLEventListener#display(com.jogamp.opengl.GLAutoDrawable)
      */
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
@@ -104,7 +104,7 @@ public class mvarray //
     /*
      * (non-Javadoc)
      * 
-     * @see javax.media.opengl.GLEventListener#displayChanged(javax.media.opengl.GLAutoDrawable,
+     * @see com.jogamp.opengl.GLEventListener#displayChanged(com.jogamp.opengl.GLAutoDrawable,
      *      boolean, boolean)
      */
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
@@ -114,7 +114,7 @@ public class mvarray //
     /*
      * (non-Javadoc)
      * 
-     * @see javax.media.opengl.GLEventListener#init(javax.media.opengl.GLAutoDrawable)
+     * @see com.jogamp.opengl.GLEventListener#init(com.jogamp.opengl.GLAutoDrawable)
      */
     public void init(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
@@ -132,7 +132,7 @@ public class mvarray //
     /*
      * (non-Javadoc)
      * 
-     * @see javax.media.opengl.GLEventListener#reshape(javax.media.opengl.GLAutoDrawable,
+     * @see com.jogamp.opengl.GLEventListener#reshape(com.jogamp.opengl.GLAutoDrawable,
      *      int, int, int, int)
      */
     public void reshape(GLAutoDrawable drawable, int x, int y, //

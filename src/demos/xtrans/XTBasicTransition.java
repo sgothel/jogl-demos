@@ -40,9 +40,9 @@
 package demos.xtrans;
 
 import gleem.linalg.Vec3f;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2;
 
 
 /** A basic transition supporting animated translation, rotation about

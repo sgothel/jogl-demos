@@ -4,7 +4,7 @@ These are port of the examples programs which are featured
 in the OpenGL Programming Guide, 2nd Edition corresponding
 to OpenGL version 1.1.
 
-- All examples requires JDK 1.4.2 and javax.media.opengl (jogl)
+- All examples requires JDK 1.4.2 and com.jogamp.opengl (jogl)
   and a system dependent jogl-natives-*.jar to compile.
 - No ant build file is yet available.
     

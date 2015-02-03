@@ -31,7 +31,7 @@ import javax.swing.ToolTipManager;
 
 import demos.nurbs.icons.*;
 import demos.nurbs.knotslidercomponent.JKnotSlider;
-import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 
 /**
  * Main class for application demostrating capabilitues of JOGL library extend by NURBS surface functionalities

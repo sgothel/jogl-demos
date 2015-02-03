@@ -14,7 +14,7 @@ package demos.misc;
 public class VersionInfo {
     public VersionInfo() {
 	ClassLoader classLoader = getClass().getClassLoader();
-	pkgInfo(classLoader, "javax.media.opengl", "GL");
+	pkgInfo(classLoader, "com.jogamp.opengl", "GL");
     }
 
     static void pkgInfo(ClassLoader classLoader,

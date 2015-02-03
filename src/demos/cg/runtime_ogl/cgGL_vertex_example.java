@@ -34,9 +34,9 @@
 package demos.cg.runtime_ogl;
 
 import com.jogamp.opengl.cg.*;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
-import javax.media.opengl.glu.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.*;
+import com.jogamp.opengl.glu.*;
 
 import java.awt.*;
 import java.awt.event.*;

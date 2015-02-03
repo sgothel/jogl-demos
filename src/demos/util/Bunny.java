@@ -41,7 +41,7 @@ package demos.util;
 
 import java.io.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** Renders a bunny.
 

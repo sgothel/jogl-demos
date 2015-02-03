@@ -32,9 +32,9 @@
 package demos.es1.cube;
 
 import com.jogamp.common.nio.Buffers;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import javax.media.nativewindow.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
+import com.jogamp.nativewindow.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 import java.nio.*;

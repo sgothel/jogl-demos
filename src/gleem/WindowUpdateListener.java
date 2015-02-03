@@ -39,7 +39,7 @@
 
 package gleem;
 
-import javax.media.opengl.awt.AWTGLAutoDrawable;
+import com.jogamp.opengl.awt.AWTGLAutoDrawable;
 
 
 /** A WindowUpdateListener is used by the ManipManager to transmit

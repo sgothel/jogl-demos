@@ -7,8 +7,8 @@ import java.awt.event.*;
 import java.nio.*;
 
 import com.jogamp.common.nio.Buffers;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * This program uses evaluators to generate a curved surface and automatically

@@ -14,9 +14,9 @@ import com.jogamp.common.nio.Buffers;
 import java.awt.*;
 import java.awt.event.*;
 import java.nio.*;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.util.Animator;
 
 public class Picking

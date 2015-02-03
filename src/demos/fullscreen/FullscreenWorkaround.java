@@ -42,7 +42,7 @@ package demos.fullscreen;
 import java.awt.*;
 import javax.swing.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** Class which implements workaround for full-screen bugs on Windows
     when <code>-Dsun.java2d.noddraw=true</code> is specified as well

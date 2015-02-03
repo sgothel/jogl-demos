@@ -9,13 +9,13 @@ import java.awt.event.MouseWheelListener;
 import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 
-import javax.media.opengl.*;import javax.swing.JFrame; 
+import com.jogamp.opengl.*;import javax.swing.JFrame; 
 import javax.swing.SwingUtilities;
 
 import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * Determine the minimum and maximum values of a group of pixels. This

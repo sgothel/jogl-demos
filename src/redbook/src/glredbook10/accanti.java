@@ -4,8 +4,8 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import java.awt.event.*;
 import javax.swing.*;
 
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * Use the accumulation buffer to do full-scene antialiasing on a scene with

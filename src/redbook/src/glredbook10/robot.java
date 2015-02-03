@@ -5,10 +5,10 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * This program shows how to composite modeling transformations to draw

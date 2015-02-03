@@ -16,12 +16,12 @@ import java.awt.event.KeyListener;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.awt.GLJPanel;
 import javax.swing.JFrame;
 
 public class jfont //
@@ -85,7 +85,7 @@ public class jfont //
         gl.glTranslatef(-20, -20, 0);
         gl.glScalef(0.75f, 1, 0);
         gl.glColor3f(1, 0, 0);
-        drawString(gl, "javax.media.opengl", false);
+        drawString(gl, "com.jogamp.opengl", false);
 
         gl.glTranslatef(20, 40, 0);
         drawString(gl, "OpenGL Everywhere", false);

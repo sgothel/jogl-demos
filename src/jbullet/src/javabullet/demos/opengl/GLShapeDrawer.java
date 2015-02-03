@@ -39,8 +39,8 @@ import javabullet.linearmath.DebugDrawModes;
 import javabullet.linearmath.Transform;
 import javabullet.linearmath.VectorUtil;
 import javax.vecmath.Vector3f;
-import javax.media.opengl.*;
-import javax.media.opengl.util.ImmModeSink;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.ImmModeSink;
 
 /**
  *

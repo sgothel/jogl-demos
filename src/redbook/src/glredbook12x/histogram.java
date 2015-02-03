@@ -10,14 +10,14 @@ import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * Compute the histogram of the image. This program illustrates the use of the

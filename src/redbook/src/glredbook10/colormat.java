@@ -5,9 +5,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * After initialization, the program will be in ColorMaterial mode. Pressing the

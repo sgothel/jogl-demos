@@ -33,9 +33,9 @@ package demos.es1.cube;
 
 import com.jogamp.common.nio.Buffers;
 import java.nio.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import javax.media.nativewindow.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
+import com.jogamp.nativewindow.*;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.*;
 
@@ -85,13 +85,13 @@ public class Cube implements GLEventListener {
 
         if(glDebug) {
             try {
-                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", null, _gl, null) );
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Debug", null, _gl, null) );
             } catch (Exception e) {e.printStackTrace();} 
         }
 
         if(glTrace) {
             try {
-                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", null, _gl, new Object[] { System.err } ) );
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", null, _gl, new Object[] { System.err } ) );
             } catch (Exception e) {e.printStackTrace();} 
         }
 

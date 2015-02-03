@@ -3,7 +3,7 @@ package demos.hdr;
 import java.io.*;
 import java.util.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.cg.*;
 import demos.util.*;
 

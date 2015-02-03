@@ -3,13 +3,13 @@ package glredbook1314;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLU;
  
 
 /**

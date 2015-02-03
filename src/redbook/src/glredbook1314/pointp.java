@@ -3,12 +3,12 @@ package glredbook1314;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * This program demonstrates point parameters and their effect on point

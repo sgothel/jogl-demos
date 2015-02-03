@@ -6,13 +6,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.nio.ByteBuffer;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 
 import com.jogamp.common.nio.Buffers;
 
 import com.jogamp.opengl.util.gl2.GLUT;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * This program draws a texture mapped teapot with automatically generated

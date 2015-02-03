@@ -25,8 +25,8 @@
 package demos.es1.angeles;
 
 import com.jogamp.common.nio.Buffers;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
 
 import com.jogamp.opengl.math.FixedPoint;
 import com.jogamp.opengl.util.*;

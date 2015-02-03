@@ -7,7 +7,7 @@ import java.nio.*;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.gl2.GLUT;
-import javax.media.opengl.*; import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.*; import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * This program draws a texture mapped teapot with automatically generated

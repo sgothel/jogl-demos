@@ -52,17 +52,17 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
-import javax.media.opengl.GLOffscreenAutoDrawable;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.AWTGLAutoDrawable;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLDrawableFactory;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLOffscreenAutoDrawable;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.AWTGLAutoDrawable;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.GLU;
 import javax.swing.JOptionPane;
 
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -214,9 +214,9 @@ public void init(GLAutoDrawable drawable) {
     /**
     GL _gl = drawable.getGL();
     // Debug ..
-    _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2.class, _gl, null) );
+    _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Debug", GL2.class, _gl, null) );
     // Trace ..
-    _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2.class, _gl, new Object[] { System.err } ) );
+    _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", GL2.class, _gl, new Object[] { System.err } ) );
     */
 
     GL2 gl = drawable.getGL().getGL2();

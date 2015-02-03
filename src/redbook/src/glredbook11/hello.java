@@ -3,15 +3,15 @@ package glredbook11;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.media.opengl.*;import javax.swing.JFrame;
+import com.jogamp.opengl.*;import javax.swing.JFrame;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
  
 
 /**
  * This is a simple, introductory OpenGL program in Java using the
- * javax.media.opengl extension library.
+ * com.jogamp.opengl extension library.
  * 
  * @author Kiet Le (Java port) Ported to JOGL 2.x by Claudio Eduardo Goes
  */

@@ -6,11 +6,11 @@ import javax.swing.*;
 
 import java.nio.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 import com.jogamp.opengl.util.*;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * Picking is demonstrated in this program. In rendering mode, three overlapping

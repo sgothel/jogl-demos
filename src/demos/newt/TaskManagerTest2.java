@@ -1,6 +1,6 @@
 package demos.newt;
 
-import javax.media.nativewindow.*;
+import com.jogamp.nativewindow.*;
 import com.jogamp.newt.*;
 import com.jogamp.newt.event.*;
 import demos.newt.util.TaskToolWM;

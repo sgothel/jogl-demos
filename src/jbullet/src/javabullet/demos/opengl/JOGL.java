@@ -25,10 +25,10 @@ package javabullet.demos.opengl;
 
 import com.jogamp.newt.*;
 import com.jogamp.newt.event.*;
-import javax.media.nativewindow.*;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import javax.media.opengl.util.*;
+import com.jogamp.nativewindow.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
+import com.jogamp.opengl.util.*;
 import java.nio.*;
 
 /**

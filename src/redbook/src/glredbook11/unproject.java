@@ -5,12 +5,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
  
 
 /**

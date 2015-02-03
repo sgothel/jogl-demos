@@ -42,11 +42,11 @@ package demos.testContextSharing;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 
-import javax.media.opengl.DebugGL2;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.DebugGL2;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.awt.GLCanvas;
 
 
 /** A simple demonstration of sharing of display lists between drawables. */

@@ -54,8 +54,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.*;
 import com.jogamp.opengl.util.Animator;
 import javax.swing.JOptionPane;
 

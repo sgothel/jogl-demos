@@ -3,10 +3,10 @@ package glredbook11;
 import glredbook10.GLSkeleton;
 
 import javax.swing.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import java.awt.event.*;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * This program demonstrates the creation of a display list.

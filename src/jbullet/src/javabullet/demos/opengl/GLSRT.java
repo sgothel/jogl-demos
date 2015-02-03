@@ -30,10 +30,10 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 // import javabullet.demos.opengl.FontRender.GLFont;
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-import javax.media.opengl.util.ImmModeSink;
-import javax.media.opengl.util.BufferUtil;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
+import com.jogamp.opengl.util.ImmModeSink;
+import com.jogamp.opengl.util.BufferUtil;
 
 /**
  *

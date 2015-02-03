@@ -32,8 +32,8 @@ import java.io.*;
 import java.nio.*;
 import java.util.Hashtable;
 
-import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.*;
 import com.sun.opengl.util.*;
 
 /**

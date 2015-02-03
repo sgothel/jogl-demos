@@ -42,7 +42,7 @@ package gleem;
 import java.util.*;
 
 import gleem.linalg.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** A line segment from (-1, 0, 0) to (1, 0, 0). */
 

@@ -4,13 +4,13 @@ import demos.gears.Gears;
 import java.applet.Applet;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 import javax.swing.JPanel;
 import com.jogamp.openal.util.ALut;
 import demos.joal.SingleStaticSource;
-import javax.media.opengl.GLAnimatorControl;
+import com.jogamp.opengl.GLAnimatorControl;
 
 /** Shows how to deploy an applet using both JOGL and JOAL. This demo
     must be referenced from a web page via an &lt;applet&gt; tag. */

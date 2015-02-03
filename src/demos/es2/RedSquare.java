@@ -2,8 +2,8 @@ package demos.es2;
 
 import java.nio.*;
 import java.util.*;
-import javax.media.opengl.*;
-import javax.media.nativewindow.*;
+import com.jogamp.opengl.*;
+import com.jogamp.nativewindow.*;
 
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.*;
@@ -199,10 +199,10 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         if(debuggl) {
             try {
                 // Debug ..
-                gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES2.class, gl, null) );
+                gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Debug", GL2ES2.class, gl, null) );
 
                 // Trace ..
-                gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, gl, new Object[] { System.err } ) );
+                gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", GL2ES2.class, gl, new Object[] { System.err } ) );
             } catch (Exception e) {e.printStackTrace();}
         }
 

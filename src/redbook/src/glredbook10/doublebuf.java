@@ -5,8 +5,8 @@ import java.awt.event.*;
 
 import com.jogamp.opengl.util.*;
 
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * This is a simple double buffered program. Pressing the left mouse button

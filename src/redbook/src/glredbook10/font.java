@@ -5,9 +5,9 @@ import javax.swing.*;
 
 import java.nio.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.*;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.awt.GLJPanel;
 
 /**
  * Draws some text in a bitmapped font. Uses glBitmap() and other pixel

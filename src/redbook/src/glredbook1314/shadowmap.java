@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.nio.FloatBuffer;
 
-import javax.media.opengl.*; import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.*; import com.jogamp.opengl.awt.GLCanvas;
 
 import javax.swing.JFrame;
 
@@ -14,7 +14,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 import glredbook10.GLSkeleton;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLU;
  
 
 public class shadowmap //

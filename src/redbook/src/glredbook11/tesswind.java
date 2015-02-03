@@ -3,14 +3,14 @@ package glredbook11;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUtessellator;
-import javax.media.opengl.glu.GLUtessellatorCallback;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUtessellator;
+import com.jogamp.opengl.glu.GLUtessellatorCallback;
  
 /**
  * This program demonstrates the winding rule polygon tessellation property.

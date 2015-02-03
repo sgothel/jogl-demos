@@ -3,8 +3,8 @@ package glredbook10;
  * This program draws a white rectangle on a black background.
  * @author Kiet Le (Java port) Ported to JOGL 2.x by Claudio Eduardo Goes
  */
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLJPanel;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLJPanel;
 import javax.swing.*;
 
 

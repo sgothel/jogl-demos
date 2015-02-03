@@ -33,14 +33,14 @@
 
 package demos.readbuffer;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 import com.jogamp.opengl.util.texture.TextureIO;
 
 import java.io.File;
 import java.io.IOException;
 
-import javax.media.nativewindow.*;
+import com.jogamp.nativewindow.*;
 
 public class Surface2File implements SurfaceUpdatedListener {
 

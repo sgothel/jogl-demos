@@ -42,7 +42,7 @@ import javabullet.dynamics.constraintsolver.ConstraintSolver;
 import javabullet.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import javabullet.linearmath.Transform;
 import javax.vecmath.Vector3f;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /**
  *

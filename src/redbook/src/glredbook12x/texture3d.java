@@ -7,14 +7,14 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.nio.ByteBuffer;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.GLBuffers;
 
 import glredbook10.GLSkeleton;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
  
 /**
  * This program demonstrates using a three-dimensional texture. It creates a 3D

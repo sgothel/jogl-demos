@@ -39,7 +39,7 @@
 
 package demos.common;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public abstract class Demo implements GLEventListener {
   protected DemoListener demoListener;

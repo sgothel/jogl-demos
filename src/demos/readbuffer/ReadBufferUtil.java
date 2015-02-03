@@ -35,8 +35,8 @@ package demos.readbuffer;
 
 import java.nio.Buffer;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLDrawable;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLDrawable;
 
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.texture.Texture;

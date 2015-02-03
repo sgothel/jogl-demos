@@ -10,7 +10,7 @@ package demos.dualDepthPeeling;
 //
 // Copyright (c) NVIDIA Corporation. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 
 public class GLHelper
 {

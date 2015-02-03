@@ -34,14 +34,14 @@
 package demos.readbuffer;
 
 import java.nio.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import java.io.File;
 import java.io.IOException;
 
-import javax.media.nativewindow.*;
+import com.jogamp.nativewindow.*;
 
 public class ReadBuffer2File extends ReadBufferBase {
 

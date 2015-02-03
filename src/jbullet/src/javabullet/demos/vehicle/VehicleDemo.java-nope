@@ -52,7 +52,7 @@ import javabullet.dynamics.vehicle.VehicleTuning;
 import javabullet.dynamics.vehicle.WheelInfo;
 import javabullet.linearmath.Transform;
 import javax.vecmath.Vector3f;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import java.awt.event.*;
 
 /**

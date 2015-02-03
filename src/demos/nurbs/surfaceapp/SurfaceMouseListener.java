@@ -5,8 +5,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Vector;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * Třída zpracovávající události myši (implementuje rozhraní zpracovávající stisk tlačítek i pohyb a tažení myší)

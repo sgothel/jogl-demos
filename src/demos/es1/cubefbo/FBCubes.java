@@ -33,10 +33,10 @@
 
 package demos.es1.cubefbo;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 
 import com.jogamp.opengl.FBObject;
 import com.jogamp.opengl.FBObject.Attachment;
@@ -147,7 +147,7 @@ public class FBCubes implements GLEventListener {
         */
     }
 
-    public void displayChanged(javax.media.opengl.GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(com.jogamp.opengl.GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 
     float time = 0.0f;

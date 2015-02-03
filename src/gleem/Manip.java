@@ -42,7 +42,7 @@ package gleem;
 import java.util.*;
 
 import gleem.linalg.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** The base class for all manipulators. Fundamentally a manipulator
     must support a ray cast operation with itself and logic to

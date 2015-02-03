@@ -2,7 +2,7 @@ package demos.es2.perftst;
 
 import com.jogamp.common.nio.Buffers;
 import java.nio.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.ShaderState;
 

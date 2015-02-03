@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.media.nativewindow.NativeWindowFactory;
-import javax.media.opengl.FPSCounter;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2ES2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLPipelineFactory;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.nativewindow.NativeWindowFactory;
+import com.jogamp.opengl.FPSCounter;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLPipelineFactory;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.glu.GLU;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.newt.Display;
@@ -242,11 +242,11 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         if(glDebugEmu) {
             try {
                 // Debug ..
-                _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES2.class, _gl, null) );
+                _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Debug", GL2ES2.class, _gl, null) );
 
                 if(glTrace) {
                     // Trace ..
-                    _gl = _gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES2.class, _gl, new Object[] { System.err } ) );
+                    _gl = _gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", GL2ES2.class, _gl, new Object[] { System.err } ) );
                 }
             } catch (Exception e) {e.printStackTrace();}
             glDebug = false;
@@ -261,14 +261,14 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         if(glDebug) {
             try {
                 // Debug ..
-                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Debug", GL2ES1.class, gl, null) );
+                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Debug", GL2ES1.class, gl, null) );
             } catch (Exception e) {e.printStackTrace();}
         }
 
         if(glTrace) {
             try {
                 // Trace ..
-                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("javax.media.opengl.Trace", GL2ES1.class, gl, new Object[] { System.err } ) );
+                gl = (GL2ES1) gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", GL2ES1.class, gl, new Object[] { System.err } ) );
             } catch (Exception e) {e.printStackTrace();}
         }
 

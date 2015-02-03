@@ -3,7 +3,7 @@ package demos.hdr;
 import java.io.*;
 import java.nio.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class HDRTexture {
   private RGBE.Header header;

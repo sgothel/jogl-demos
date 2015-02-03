@@ -38,7 +38,7 @@ package demos.particles.engine;
 
 import com.jogamp.opengl.util.texture.*;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class Particle {
   private XYZ currentPos;

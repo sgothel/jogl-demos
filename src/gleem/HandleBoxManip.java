@@ -42,7 +42,7 @@ package gleem;
 import java.util.*;
 
 import gleem.linalg.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 /** Patterned after Inventor's HandleBoxManip (by Paul Isaacs and
     David Mott) and TransformerManip (by Paul Isaacs). Center box

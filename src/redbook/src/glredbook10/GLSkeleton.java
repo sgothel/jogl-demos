@@ -2,7 +2,7 @@ package glredbook10;
 
 
 import com.jogamp.opengl.util.FPSAnimator;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public abstract class GLSkeleton<D extends GLAutoDrawable> {
 

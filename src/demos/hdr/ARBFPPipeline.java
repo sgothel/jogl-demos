@@ -4,9 +4,9 @@ import demos.util.FileUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLException;
 
 
 public class ARBFPPipeline implements Pipeline {

@@ -1,13 +1,13 @@
 package demos.nurbs.surfaceapp;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.glu.*;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.glu.*;
 
 import com.jogamp.opengl.util.glut.gl2.GLUTgl2;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2;
 
 /**
  * Listener reacting to events occuring on OpenGL canvas
@@ -111,7 +111,7 @@ public class GLListener implements GLEventListener {
   }
 
   /* (non-Javadoc)
-   * @see javax.media.opengl.GLEventListener#init(javax.media.opengl.GLAutoDrawable)
+   * @see com.jogamp.opengl.GLEventListener#init(com.jogamp.opengl.GLAutoDrawable)
    */
   public void init(GLAutoDrawable drawable) {
     this.gl = drawable.getGL().getGL2();
@@ -136,7 +136,7 @@ public class GLListener implements GLEventListener {
   }
 
   /* (non-Javadoc)
-   * @see javax.media.opengl.GLEventListener#display(javax.media.opengl.GLAutoDrawable)
+   * @see com.jogamp.opengl.GLEventListener#display(com.jogamp.opengl.GLAutoDrawable)
    */
   public void display(GLAutoDrawable drawable) {
 
@@ -287,7 +287,7 @@ public class GLListener implements GLEventListener {
   }
 
   /* (non-Javadoc)
-   * @see javax.media.opengl.GLEventListener#reshape(javax.media.opengl.GLAutoDrawable, int, int, int, int)
+   * @see com.jogamp.opengl.GLEventListener#reshape(com.jogamp.opengl.GLAutoDrawable, int, int, int, int)
    */
   public void reshape(GLAutoDrawable drawable, int x, int y, int width,
                       int height) {
@@ -301,7 +301,7 @@ public class GLListener implements GLEventListener {
   }
 
   /* (non-Javadoc)
-   * @see javax.media.opengl.GLEventListener#displayChanged(javax.media.opengl.GLAutoDrawable, boolean, boolean)
+   * @see com.jogamp.opengl.GLEventListener#displayChanged(com.jogamp.opengl.GLAutoDrawable, boolean, boolean)
    */
   public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
   }

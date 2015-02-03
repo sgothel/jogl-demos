@@ -2,8 +2,8 @@ package demos;
 
 import java.lang.reflect.*;
 
-import javax.media.opengl.*;
-import javax.media.nativewindow.*;
+import com.jogamp.opengl.*;
+import com.jogamp.nativewindow.*;
 
 import com.jogamp.newt.*;
 import com.jogamp.newt.event.*;

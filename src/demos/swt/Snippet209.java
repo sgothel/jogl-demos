@@ -27,11 +27,11 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.opengl.GLCanvas;
 import org.eclipse.swt.opengl.GLData;
 
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLDrawableFactory;
+import com.jogamp.opengl.glu.GLU;
 
 public class Snippet209 {
   static void drawTorus(GL2 gl, float r, float R, int nsides, int rings) {
