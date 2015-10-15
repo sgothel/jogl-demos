@@ -1,14 +1,21 @@
 package demos.es2.perftst;
 
-import com.jogamp.common.util.IOUtil;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
+import java.nio.FloatBuffer;
 
-import java.nio.*;
-import java.io.*;
-import java.net.*;
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.*;
+import com.jogamp.common.util.IOUtil;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLUniformData;
+import com.jogamp.opengl.util.GLArrayDataServer;
 import com.jogamp.opengl.util.glsl.ShaderState;
-import com.jogamp.opengl.util.texture.*;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 public class PerfTextLoad extends PerfModule {
     static final int MAX_TEXTURE_ENGINES = 8;
@@ -16,7 +23,8 @@ public class PerfTextLoad extends PerfModule {
     public PerfTextLoad() {
     }
 
-    public ShaderState initShaderState(GL2ES2 gl) {
+    @Override
+	public ShaderState initShaderState(GL2ES2 gl) {
         return initShaderState(gl, "vbo-vert-text", "ftext");
     }
 
@@ -36,7 +44,7 @@ public class PerfTextLoad extends PerfModule {
         try {
             for(int i=0; i<numObjs; i++) {
                 textName = "data/"+textBaseName+"."+(i+1)+".tga";
-                URLConnection connText = IOUtil.getResource(Perftst.class, textName);
+                URLConnection connText = IOUtil.getResource(textName, Perftst.class.getClassLoader(), Perftst.class);
                 if(connText==null) {
                     throw new RuntimeException("couldn't fetch "+textName);
                 }
@@ -58,7 +66,7 @@ public class PerfTextLoad extends PerfModule {
             throw new RuntimeException(ioe);
         }
 
-        // 
+        //
         // Vertices Data setup
         //
 
@@ -97,8 +105,8 @@ public class PerfTextLoad extends PerfModule {
 
         GLUniformData activeTexture = new GLUniformData("mgl_ActiveTexture", 0);
         st.uniform(gl, activeTexture);
-    
-        // 
+
+        //
         // run loops
         //
 
@@ -168,7 +176,7 @@ public class PerfTextLoad extends PerfModule {
         System.out.println("Texture "+textBaseName+", loops "+loops+", textures "+numTextures+", objects "+numObjs+
                            ", total bytes "+textBytes+", total time: "+dt +
                            "ms, fps(-1): "+(((loops-1)*numObjs*1000)/dt)+
-                           ",\n text kB/s: " + ( ((double)(loops*textBytes)/1024.0) / ((double)dt/1000.0) ) );
+                           ",\n text kB/s: " + ( (loops*textBytes/1024.0) / (dt/1000.0) ) );
 
         for(int i=0; i<loops; i++) {
             dtC = 0;
@@ -213,7 +221,8 @@ public class PerfTextLoad extends PerfModule {
         System.gc();
     }
 
-    public void run(GLAutoDrawable drawable, int loops) {
+    @Override
+	public void run(GLAutoDrawable drawable, int loops) {
         runOneSet(drawable, "bob2.64x64", 33, 1, loops);
         runOneSet(drawable, "bob2.128x128", 33, 1, loops);
         runOneSet(drawable, "bob2.128x128",  4, 1, loops);

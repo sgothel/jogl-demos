@@ -70,7 +70,7 @@ public class Model {
 		Integer pIndex = 0;
 		Integer nIndex = 0;
 
-		boolean lessThan ( IdxSet rhs ) 
+		boolean lessThan ( IdxSet rhs )
 		{
 			if (pIndex < rhs.pIndex)
 				return true;
@@ -95,7 +95,7 @@ public class Model {
 	//
 	//////////////////////////////////////////////////////////////
 	public boolean loadModelFromFile( Class<?> context, String file ) {
-        URLConnection conn = IOUtil.getResource(context, file);        
+        URLConnection conn = IOUtil.getResource(file, context.getClassLoader(), context);
 		if ( conn != null )
 		{
 			BufferedReader input = null;
@@ -146,18 +146,18 @@ public class Model {
 					case 'f':
 						//face
 						line = line.substring( line.indexOf( " " ) + 2 );
-						
+
 						idx[0][0] = Integer.valueOf( line.substring( 0, line.indexOf("//") ) ).intValue();
 						line = line.substring( line.indexOf( "//" ) + 2 );
 						idx[0][1] = Integer.valueOf( line.substring( 0, line.indexOf(" ") ) ).intValue();
 
-						{ 
+						{
 							//This face has vertex and normal indices
 
 							// in .obj, f v1 .... the vertex index used start from 1, so -1 here
 							//remap them to the right spot
-							idx[0][0] = (idx[0][0] > 0) ? (idx[0][0] - 1) : ((int)positions_.size() - idx[0][0]);
-							idx[0][1] = (idx[0][1] > 0) ? (idx[0][1] - 1) : ((int)normals_.size() - idx[0][1]);
+							idx[0][0] = (idx[0][0] > 0) ? (idx[0][0] - 1) : (positions_.size() - idx[0][0]);
+							idx[0][1] = (idx[0][1] > 0) ? (idx[0][1] - 1) : (normals_.size() - idx[0][1]);
 
 							//grab the second vertex to prime
 							line = line.substring( line.indexOf( " " ) + 1 );
@@ -166,8 +166,8 @@ public class Model {
 							idx[1][1] = Integer.valueOf( line.substring( 0, line.indexOf(" ") ) );
 
 							//remap them to the right spot
-							idx[1][0] = (idx[1][0] > 0) ? (idx[1][0] - 1) : ((int)positions_.size() - idx[1][0]);
-							idx[1][1] = (idx[1][1] > 0) ? (idx[1][1] - 1) : ((int)normals_.size() - idx[1][1]);
+							idx[1][0] = (idx[1][0] > 0) ? (idx[1][0] - 1) : (positions_.size() - idx[1][0]);
+							idx[1][1] = (idx[1][1] > 0) ? (idx[1][1] - 1) : (normals_.size() - idx[1][1]);
 
 							//grab the third vertex to prime
 							line = line.substring( line.indexOf( " " ) + 1 );
@@ -176,8 +176,8 @@ public class Model {
 							idx[2][1] = Integer.valueOf( line );
 							{
 								//remap them to the right spot
-								idx[2][0] = (idx[2][0] > 0) ? (idx[2][0] - 1) : ((int)positions_.size() - idx[2][0]);
-								idx[2][1] = (idx[2][1] > 0) ? (idx[2][1] - 1) : ((int)normals_.size() - idx[2][1]);
+								idx[2][0] = (idx[2][0] > 0) ? (idx[2][0] - 1) : (positions_.size() - idx[2][0]);
+								idx[2][1] = (idx[2][1] > 0) ? (idx[2][1] - 1) : (normals_.size() - idx[2][1]);
 
 								//add the indices
 								for (int ii = 0; ii < 3; ii++) {
@@ -195,8 +195,8 @@ public class Model {
 
 					default:
 						break;
-					};								
-				}			
+					};
+				}
 				//post-process data
 				//free anything that ended up being unused
 				if (!hasNormals) {
@@ -206,7 +206,7 @@ public class Model {
 
 				posSize_ = 3;
 				return true;
-				
+
 			} catch (FileNotFoundException kFNF) {
 				System.err.println("Unable to find the shader file " + file);
 			} catch (IOException kIO) {
@@ -230,7 +230,7 @@ public class Model {
 	//  combination of position, normal, tex coords, etc that are
 	//  used in the model. The prim parameter, tells the model
 	//  what type of index list to compile. By default it compiles
-	//  a simple triangle mesh with no connectivity. 
+	//  a simple triangle mesh with no connectivity.
 	//
 	public void compileModel( )
 	{
@@ -254,7 +254,7 @@ public class Model {
 
 				pts.put( idx, pts.size() );
 
-				//position, 
+				//position,
 				vertices_.put( positions_.elementAt(idx.pIndex*posSize_));
 				vertices_.put( positions_.elementAt(idx.pIndex*posSize_ + 1));
 				vertices_.put( positions_.elementAt(idx.pIndex*posSize_ + 2));
@@ -267,7 +267,7 @@ public class Model {
 				}
 
 			}
-			else {                	
+			else {
 				if (needsTriangles)
 					indices_.put( pts.get(idx) );
 			}
@@ -300,7 +300,7 @@ public class Model {
 	{
 		if ( positions_.isEmpty())
 			return;
-		
+
 		for ( int i = 0; i < 3; i++ )
 		{
 			minVal[i] = 1e10f;
@@ -359,15 +359,15 @@ public class Model {
 	}
 
 	public int getPositionCount()  {
-		return (posSize_ > 0) ? (int)positions_.size() / posSize_ : 0;
+		return (posSize_ > 0) ? positions_.size() / posSize_ : 0;
 	}
 
 	public int getNormalCount()  {
-		return (int)normals_.size() / 3;
+		return normals_.size() / 3;
 	}
 
 	public int getIndexCount()  {
-		return (int)pIndex_.size();
+		return pIndex_.size();
 	}
 
 	public FloatBuffer getCompiledVertices()  {
@@ -414,7 +414,7 @@ public class Model {
 
 	//data structures optimized for rendering, compiled model
 	IntBuffer indices_ = null;
-	FloatBuffer vertices_ = null;  
+	FloatBuffer vertices_ = null;
 	int pOffset_;
 	int nOffset_;
 	int vtxSize_ = 0;
