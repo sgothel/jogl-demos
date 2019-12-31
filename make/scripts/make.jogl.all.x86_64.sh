@@ -12,14 +12,15 @@ fi
 #    -Djogl.cg=1 \
 #    -Djogl.redbook=true \
 
+export SOURCE_LEVEL=1.8
+export TARGET_LEVEL=1.8
+export TARGET_RT_JAR=/opt-share/jre1.8.0_212/lib/rt.jar
+
 #export JOGAMP_JAR_CODEBASE="Codebase: *.jogamp.org"
 export JOGAMP_JAR_CODEBASE="Codebase: *.goethel.localnet"
 
 # BUILD_ARCHIVE=true \
 ant \
-    -Dtarget.sourcelevel=1.6 \
-    -Dtarget.targetlevel=1.6 \
-    -Dtarget.rt.jar=/opt-share/jre1.6.0_30/lib/rt.jar \
     -Djogl.cg=1 \
     -Duser.swt.jar=$SWT_CLASSPATH \
     -Drootrel.build=build-x86_64 \
