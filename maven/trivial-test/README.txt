@@ -14,6 +14,7 @@ needs to be told to look at http://www.jogamp.org. Edit ~/.m2/settings.xml:
           <id>jogamp-remote</id>
           <name>jogamp test mirror</name>
           <url>http://www.jogamp.org/deployment/maven/</url>
+          <!-- layout value is default is by default-->
           <layout>default</layout>
         </repository>
       </repositories>
