@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Ben Chappell (bwchappell@gmail.com) All Rights Reserved.
+ * Copyright (c) 2006 Ben Chappell. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
