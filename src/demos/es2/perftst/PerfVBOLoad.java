@@ -11,14 +11,15 @@ public class PerfVBOLoad extends PerfModule {
     public PerfVBOLoad() {
     }
 
-    public ShaderState initShaderState(GL2ES2 gl) {
+    @Override
+    public ShaderState initShaderState(final GL2ES2 gl) {
         return initShaderState(gl, "vbo-vert-col", "fcolor");
     }
 
-    protected void runOneSet(GLAutoDrawable drawable, int dataType, int numObjs, int numVertices, int loops, boolean useVBO) {
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+    protected void runOneSet(final GLAutoDrawable drawable, final int dataType, final int numObjs, final int numVertices, final int loops, final boolean useVBO) {
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        // 
+        //
         // data setup
         //
 
@@ -32,7 +33,7 @@ public class PerfVBOLoad extends PerfModule {
             vertices[i] = GLArrayDataServer.createGLSL("mgl_Vertex", 3, dataType, true, numVertices, GL.GL_STATIC_DRAW);
             vertices[i].setVBOEnabled(useVBO);
             {
-                Buffer verticeb = vertices[i].getBuffer();
+                final Buffer verticeb = vertices[i].getBuffer();
                 for(int j=0; j<numVertices; j++) {
                     // Fill them up
                     put(verticeb, dataType, x);
@@ -47,7 +48,7 @@ public class PerfVBOLoad extends PerfModule {
             colors[i].setVBOEnabled(useVBO);
             {
                 // Fill them up
-                Buffer colorb = colors[i].getBuffer();
+                final Buffer colorb = colors[i].getBuffer();
                 for(int j =0; j<numVertices; j++) {
                     put(colorb, dataType, r);
                     put(colorb, dataType, g);
@@ -56,31 +57,33 @@ public class PerfVBOLoad extends PerfModule {
                     if(r<=1f) r+=0.01f;
                     else if(g<=1f) g+=0.01f;
                     else if(b<=1f) b+=0.01f;
-                    else { r=0f; g=0f; b=0f; } 
+                    else { r=0f; g=0f; b=0f; }
                 }
             }
         }
 
-        // 
+        //
         // run loops
         //
 
-        long dtC, dt, dt2, dt3, dtF, dtS, dtT;
-        long[] tC = new long[loops];
-        long[] t0 = new long[loops];
-        long[][] t1 = new long[loops][numObjs];
-        long[][] t2 = new long[loops][numObjs];
-        long[][] t3 = new long[loops][numObjs];
-        long[] tF = new long[loops];
-        long[] tS = new long[loops];
+        long dtC, dt;
+        final long dt2, dt3;
+        long dtF, dtS, dtT;
+        final long[] tC = new long[loops];
+        final long[] t0 = new long[loops];
+        final long[][] t1 = new long[loops][numObjs];
+        final long[][] t2 = new long[loops][numObjs];
+        final long[][] t3 = new long[loops][numObjs];
+        final long[] tF = new long[loops];
+        final long[] tS = new long[loops];
 
-        // Push the 1st uniform down the path 
+        // Push the 1st uniform down the path
         st.useProgram(gl, true);
 
         for(int i=0; i<loops; i++) {
             tC[i] = System.currentTimeMillis();
 
-            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+            gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
             t0[i] = System.currentTimeMillis();
 
@@ -89,7 +92,7 @@ public class PerfVBOLoad extends PerfModule {
                     vertices[j].seal(gl, true);
                 } else if(numObjs>1) {
                     // we need to re-enable the buffer,
-                    // incl. the vertex attribute refresh 
+                    // incl. the vertex attribute refresh
                     // in case we switch to another buffer
                     vertices[j].enableBuffer(gl, true);
                 }
@@ -104,7 +107,7 @@ public class PerfVBOLoad extends PerfModule {
 
                 t2[i][j] = System.currentTimeMillis();
 
-                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices[j].getElementCount());
+                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices[j].getElemCount());
 
                 if(numObjs>1) {
                     vertices[j].enableBuffer(gl, false);
@@ -128,10 +131,10 @@ public class PerfVBOLoad extends PerfModule {
             colors[0].enableBuffer(gl, false);
         }
 
-        int verticesElements = vertices[0].getElementCount() * numObjs;
-        int verticesBytes    = verticesElements * vertices[0].getComponentSizeInBytes()* vertices[0].getComponentCount();
-        int colorsElements   = colors[0].getElementCount()   * colors.length;
-        int colorsBytes      = colorsElements * colors[0].getComponentSizeInBytes()* colors[0].getComponentCount();
+        final int verticesElements = vertices[0].getElemCount() * numObjs;
+        final int verticesBytes    = verticesElements * vertices[0].getBytesPerComp()* vertices[0].getCompsPerElem();
+        final int colorsElements   = colors[0].getElemCount()   * colors.length;
+        final int colorsBytes      = colorsElements * colors[0].getBytesPerComp()* colors[0].getCompsPerElem();
 
         dt = 0;
         for(int i=1; i<loops; i++) {
@@ -140,12 +143,12 @@ public class PerfVBOLoad extends PerfModule {
 
         System.out.println("");
         System.out.println("Loops "+loops+", useVBO "+useVBO+", objects "+numObjs+", type "+getTypeName(dataType)+
-                           ", vertices p.o. "+vertices[0].getElementCount()+
-                           ", colors p.o. "+colors[0].getElementCount()+
+                           ", vertices p.o. "+vertices[0].getElemCount()+
+                           ", colors p.o. "+colors[0].getElemCount()+
                            ",\n total elements "+(verticesElements+colorsElements)+
                            ", total bytes "+(verticesBytes+colorsBytes)+", total time: "+dt +
                            "ms, fps(-1): "+(((loops-1)*1000)/dt)+
-                           ",\n col.vert./s: " + ((double)(loops*verticesElements)/((double)dt/1000.0)));
+                           ",\n col.vert./s: " + (loops*verticesElements/(dt/1000.0)));
 
         for(int i=0; i<loops; i++) {
             dtC= t0[i] - tC[i];
@@ -179,10 +182,10 @@ public class PerfVBOLoad extends PerfModule {
 
         try {
             Thread.sleep(100);
-        } catch (Exception e) {}
+        } catch (final Exception e) {}
     }
 
-    protected void runOneSet(GLAutoDrawable drawable, int numObjs, int numVertices, int loops) {
+    protected void runOneSet(final GLAutoDrawable drawable, final int numObjs, final int numVertices, final int loops) {
         runOneSet(drawable, GL.GL_UNSIGNED_BYTE, numObjs, numVertices, loops, true);
         runOneSet(drawable, GL.GL_UNSIGNED_BYTE, numObjs, numVertices, loops, false);
         runOneSet(drawable, GL.GL_BYTE, numObjs, numVertices, loops, true);
@@ -194,14 +197,15 @@ public class PerfVBOLoad extends PerfModule {
         runOneSet(drawable, GL.GL_FLOAT, numObjs, numVertices, loops, true);
         runOneSet(drawable, GL.GL_FLOAT, numObjs, numVertices, loops, false);
 
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
         if(gl.isGLES2()) {
             runOneSet(drawable, GL.GL_FIXED, numObjs, numVertices, loops, true);
             runOneSet(drawable, GL.GL_FIXED, numObjs, numVertices, loops, false);
         }
     }
 
-    public void run(GLAutoDrawable drawable, int loops) {
+    @Override
+    public void run(final GLAutoDrawable drawable, final int loops) {
         runOneSet(drawable, 1,    100, loops);
         runOneSet(drawable, 3,    100, loops);
 

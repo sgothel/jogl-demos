@@ -24,15 +24,15 @@ public class PerfTextLoad extends PerfModule {
     }
 
     @Override
-	public ShaderState initShaderState(GL2ES2 gl) {
+	public ShaderState initShaderState(final GL2ES2 gl) {
         return initShaderState(gl, "vbo-vert-text", "ftext");
     }
 
     Texture[] textures = null;
     TextureData[] textDatas = null;
 
-    protected void runOneSet(GLAutoDrawable drawable, String textBaseName, int numObjs, int numTextures, int loops) {
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+    protected void runOneSet(final GLAutoDrawable drawable, final String textBaseName, final int numObjs, final int numTextures, final int loops) {
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         if(numTextures>MAX_TEXTURE_ENGINES) {
             throw new GLException("numTextures must be within 1.."+MAX_TEXTURE_ENGINES);
@@ -44,7 +44,7 @@ public class PerfTextLoad extends PerfModule {
         try {
             for(int i=0; i<numObjs; i++) {
                 textName = "data/"+textBaseName+"."+(i+1)+".tga";
-                URLConnection connText = IOUtil.getResource(textName, Perftst.class.getClassLoader(), Perftst.class);
+                final URLConnection connText = IOUtil.getResource(textName, Perftst.class.getClassLoader(), Perftst.class);
                 if(connText==null) {
                     throw new RuntimeException("couldn't fetch "+textName);
                 }
@@ -61,7 +61,7 @@ public class PerfTextLoad extends PerfModule {
                 gl.glActiveTexture(i);
                 textures[i] = new Texture(GL.GL_TEXTURE_2D);
             }
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             System.err.println("couldn't fetch "+textName);
             throw new RuntimeException(ioe);
         }
@@ -72,9 +72,9 @@ public class PerfTextLoad extends PerfModule {
 
         st.useProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        final GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
-            FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
+            final FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
             vb.put(0f); vb.put(0f);
             vb.put(1f); vb.put(0f);
             vb.put(0f); vb.put(1f);
@@ -82,9 +82,9 @@ public class PerfTextLoad extends PerfModule {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer texCoords = GLArrayDataServer.createGLSL("mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        final GLArrayDataServer texCoords = GLArrayDataServer.createGLSL("mgl_MultiTexCoord0",  2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
-            FloatBuffer cb = (FloatBuffer)texCoords.getBuffer();
+            final FloatBuffer cb = (FloatBuffer)texCoords.getBuffer();
             cb.put(0f); cb.put(0f);
             cb.put(1f); cb.put(0f);
             cb.put(0f); cb.put(1f);
@@ -95,7 +95,7 @@ public class PerfTextLoad extends PerfModule {
         //
         // texture setup
         //
-        long[] tU = new long[numObjs+1];
+        final long[] tU = new long[numObjs+1];
         tU[0] = System.currentTimeMillis();
         for(int j=0; j<numTextures; j++) {
             gl.glActiveTexture(j);
@@ -103,27 +103,29 @@ public class PerfTextLoad extends PerfModule {
             tU[j+1] = System.currentTimeMillis();
         }
 
-        GLUniformData activeTexture = new GLUniformData("mgl_ActiveTexture", 0);
+        final GLUniformData activeTexture = new GLUniformData("mgl_ActiveTexture", 0);
         st.uniform(gl, activeTexture);
 
         //
         // run loops
         //
 
-        long dtC, dt, dt2, dt3, dtF, dtS, dtT;
-        long[][] tC = new long[loops][numObjs];
-        long[][] t0 = new long[loops][numObjs];
-        long[][][] t1 = new long[loops][numObjs][numTextures];
-        long[][][] t2 = new long[loops][numObjs][numTextures];
-        long[][][] t3 = new long[loops][numObjs][numTextures];
-        long[][] tF = new long[loops][numObjs];
-        long[][] tS = new long[loops][numObjs];
+        long dtC, dt;
+        final long dt2, dt3;
+        long dtF, dtS, dtT;
+        final long[][] tC = new long[loops][numObjs];
+        final long[][] t0 = new long[loops][numObjs];
+        final long[][][] t1 = new long[loops][numObjs][numTextures];
+        final long[][][] t2 = new long[loops][numObjs][numTextures];
+        final long[][][] t3 = new long[loops][numObjs][numTextures];
+        final long[][] tF = new long[loops][numObjs];
+        final long[][] tS = new long[loops][numObjs];
 
         for(int i=0; i<loops; i++) {
             for(int j=0; j<numObjs; j++) {
                 tC[i][j] = System.currentTimeMillis();
 
-                gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+                gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
                 t0[i][j] = System.currentTimeMillis();
 
@@ -140,7 +142,7 @@ public class PerfTextLoad extends PerfModule {
 
                     t2[i][j][k] = System.currentTimeMillis();
 
-                    gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, vertices.getElementCount());
+                    gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, vertices.getElemCount());
 
                     t3[i][j][k] = System.currentTimeMillis();
                 }
@@ -217,12 +219,12 @@ public class PerfTextLoad extends PerfModule {
         System.gc();
         try {
             Thread.sleep(100);
-        } catch (Exception e) {}
+        } catch (final Exception e) {}
         System.gc();
     }
 
     @Override
-	public void run(GLAutoDrawable drawable, int loops) {
+	public void run(final GLAutoDrawable drawable, final int loops) {
         runOneSet(drawable, "bob2.64x64", 33, 1, loops);
         runOneSet(drawable, "bob2.128x128", 33, 1, loops);
         runOneSet(drawable, "bob2.128x128",  4, 1, loops);

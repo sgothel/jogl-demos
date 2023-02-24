@@ -13,18 +13,19 @@ public class PerfUniLoad extends PerfModule {
 
     GLUniformData[] dummyA, dummyB, dummyC;
     final int dataType=GL.GL_FLOAT;
-    
+
     public PerfUniLoad() {
     }
 
-    public ShaderState initShaderState(GL2ES2 gl) {
+    @Override
+    public ShaderState initShaderState(final GL2ES2 gl) {
         return initShaderState(gl, "uni-vert-col", "fcolor");
     }
 
-    protected void runOneSet(GLAutoDrawable drawable, int numObjs, int numArrayElem, int loops) {
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+    protected void runOneSet(final GLAutoDrawable drawable, final int numObjs, final int numArrayElem, final int loops) {
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
-        // 
+        //
         // Vertices Data setup
         //
 
@@ -38,9 +39,9 @@ public class PerfUniLoad extends PerfModule {
 
         st.useProgram(gl, true);
 
-        GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        final GLArrayDataServer vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
-            FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
+            final FloatBuffer vb = (FloatBuffer)vertices.getBuffer();
             vb.put(0f); vb.put(0f); vb.put(0f);
             vb.put(1f); vb.put(0f); vb.put(0f);
             vb.put(0f); vb.put(1f); vb.put(0f);
@@ -48,9 +49,9 @@ public class PerfUniLoad extends PerfModule {
         }
         vertices.seal(gl, true);
 
-        GLArrayDataServer colors = GLArrayDataServer.createGLSL("mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
+        final GLArrayDataServer colors = GLArrayDataServer.createGLSL("mgl_Color",  4, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
         {
-            FloatBuffer cb = (FloatBuffer)colors.getBuffer();
+            final FloatBuffer cb = (FloatBuffer)colors.getBuffer();
             cb.put(0f); cb.put(0f); cb.put(0f); cb.put(1f);
             cb.put(1f); cb.put(0f); cb.put(0f); cb.put(1f);
             cb.put(0f); cb.put(1f); cb.put(0f); cb.put(1f);
@@ -62,12 +63,13 @@ public class PerfUniLoad extends PerfModule {
         // Uniform Data setup
         //
 
-        GLUniformData[] dummyUni = new GLUniformData[numObjs];
+        final GLUniformData[] dummyUni = new GLUniformData[numObjs];
 
-        float x=0f, y=0f, z=0f, w=0f;
+        float x=0f, y=0f, z=0f;
+        final float w=0f;
 
         for(int i=0; i<numObjs; i++) {
-            FloatBuffer fb = Buffers.newDirectFloatBuffer(4*numArrayElem);
+            final FloatBuffer fb = Buffers.newDirectFloatBuffer(4*numArrayElem);
 
             for(int j=0; j<numArrayElem; j++) {
                 // Fill them up
@@ -84,22 +86,24 @@ public class PerfUniLoad extends PerfModule {
             dummyUni[i] = new GLUniformData("mgl_Dummy"+i, 4, fb);
         }
 
-        // 
+        //
         // run loops
         //
 
-        long dtC, dt, dt2, dt3, dtF, dtS, dtT;
-        long[] tC = new long[loops];
-        long[] t0 = new long[loops];
-        long[][] t1 = new long[loops][numObjs];
-        long[][] t2 = new long[loops][numObjs];
-        long[] tF = new long[loops];
-        long[] tS = new long[loops];
+        long dtC, dt;
+        final long dt2, dt3;
+        long dtF, dtS, dtT;
+        final long[] tC = new long[loops];
+        final long[] t0 = new long[loops];
+        final long[][] t1 = new long[loops][numObjs];
+        final long[][] t2 = new long[loops][numObjs];
+        final long[] tF = new long[loops];
+        final long[] tS = new long[loops];
 
         for(int i=0; i<loops; i++) {
             tC[i] = System.currentTimeMillis();
 
-            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+            gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
             t0[i] = System.currentTimeMillis();
 
@@ -108,7 +112,7 @@ public class PerfUniLoad extends PerfModule {
 
                 t1[i][j] = System.currentTimeMillis();
 
-                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices.getElementCount());
+                gl.glDrawArrays(GL.GL_LINE_STRIP, 0, vertices.getElemCount());
 
                 t2[i][j] = System.currentTimeMillis();
             }
@@ -122,8 +126,8 @@ public class PerfUniLoad extends PerfModule {
             tS[i] = System.currentTimeMillis();
         }
 
-        int uniElements = numObjs * numArrayElem ;
-        int uniBytes    = uniElements * Buffers.SIZEOF_FLOAT;
+        final int uniElements = numObjs * numArrayElem ;
+        final int uniBytes    = uniElements * Buffers.SIZEOF_FLOAT;
 
         dt = 0;
         for(int i=1; i<loops; i++) {
@@ -136,7 +140,7 @@ public class PerfUniLoad extends PerfModule {
                            ",\n total elements "+uniElements+
                            ", total bytes "+uniBytes+", total time: "+dt +
                            "ms, fps(-1): "+(((loops-1)*1000)/dt)+
-                           ",\n uni elem/s: " + ((double)(loops*uniElements)/((double)dt/1000.0)));
+                           ",\n uni elem/s: " + (loops*uniElements/(dt/1000.0)));
 
         for(int i=0; i<loops; i++) {
             dtC= t0[i] - tC[i];
@@ -160,10 +164,11 @@ public class PerfUniLoad extends PerfModule {
 
         try {
             Thread.sleep(100);
-        } catch (Exception e) {}
+        } catch (final Exception e) {}
     }
 
-    public void run(GLAutoDrawable drawable, int loops) {
+    @Override
+    public void run(final GLAutoDrawable drawable, final int loops) {
         runOneSet(drawable, 1,    1, loops);
 
         runOneSet(drawable,  4,    1, loops);

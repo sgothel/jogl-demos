@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,7 +28,7 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  */
 
 package demos.readbuffer;
@@ -38,8 +38,6 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.*;
 
 import com.jogamp.opengl.util.*;
-
-import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.GLArrayDataClient;
 import com.jogamp.opengl.util.GLArrayDataServer;
@@ -51,18 +49,19 @@ public class ReadBuffer2Screen extends ReadBufferBase {
     boolean enableBufferAlways = false; // FIXME
     boolean enableBufferVBO    = true; // FIXME
 
-    public ReadBuffer2Screen (GLDrawable externalRead) {
+    public ReadBuffer2Screen (final GLDrawable externalRead) {
         super(externalRead);
     }
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+    public void init(final GLAutoDrawable drawable) {
         super.init(drawable);
 
-        GL gl = drawable.getGL();
+        final GL gl = drawable.getGL();
 
         pmvMatrix = new PMVMatrix();
 
-        float f_edge = 1f;
+        final float f_edge = 1f;
         if(null==readTextureVertices) {
             //readTextureVertices = GLArrayDataClient.createFixed(gl, GLPointerFunc.GL_VERTEX_ARRAY,
             //                                                    2, GL.GL_FLOAT, true, 4);
@@ -71,7 +70,7 @@ public class ReadBuffer2Screen extends ReadBufferBase {
             readTextureVertices.setEnableAlways(enableBufferAlways);
             readTextureVertices.setVBOEnabled(enableBufferVBO);
             {
-                FloatBuffer vb = (FloatBuffer)readTextureVertices.getBuffer();
+                final FloatBuffer vb = (FloatBuffer)readTextureVertices.getBuffer();
                 vb.put(-f_edge); vb.put(-f_edge);
                 vb.put( f_edge); vb.put(-f_edge);
                 vb.put(-f_edge); vb.put( f_edge);
@@ -85,10 +84,11 @@ public class ReadBuffer2Screen extends ReadBufferBase {
         gl.glClearColor(0.5f, 0.5f, 0.5f, 0.4f);
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+    public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
         super.reshape(drawable, x, y, width, height);
 
-        GL gl = drawable.getGL();
+        final GL gl = drawable.getGL();
 
         gl.glViewport(0, 0, width, height);
 
@@ -104,29 +104,30 @@ public class ReadBuffer2Screen extends ReadBufferBase {
         }
 
         // Identity ..
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -2.5f);
         if(null!=glM) {
-            glM.glMatrixMode(pmvMatrix.GL_MODELVIEW);
+            glM.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
             glM.glLoadMatrixf(pmvMatrix.glGetMvMatrixf());
         }
 
         // Set location in front of camera
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         if(null!=glM) {
-            glM.glMatrixMode(pmvMatrix.GL_PROJECTION);
+            glM.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
             glM.glLoadMatrixf(pmvMatrix.glGetPMatrixf());
         }
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+    public void dispose(final GLAutoDrawable drawable) {
         super.dispose(drawable);
     }
 
-    void renderOffscreenTexture(GL gl) {
+    void renderOffscreenTexture(final GL gl) {
       if(!readBufferUtil.isValid()) return;
 
       // Now draw one quad with the texture
@@ -144,7 +145,7 @@ public class ReadBuffer2Screen extends ReadBufferBase {
       if(null!=readTextureCoords) {
           readTextureCoords.enableBuffer(gl, true);
       }
-      gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, readTextureVertices.getElementCount());
+      gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, readTextureVertices.getElemCount());
       /**
       if(null!=readTextureCoords) {
           readTextureCoords.enableBuffer(gl, false);
@@ -154,15 +155,15 @@ public class ReadBuffer2Screen extends ReadBufferBase {
       readBufferUtil.getTexture().disable(gl);
     }
 
-    void updateTextureCoords(GL gl, boolean force) {
+    void updateTextureCoords(final GL gl, final boolean force) {
         if(force || null==readTextureCoords) {
             readTextureCoords = GLArrayDataServer.createFixed(GLPointerFunc.GL_TEXTURE_COORD_ARRAY,
                                                               2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
             readTextureCoords.setEnableAlways(enableBufferAlways);
             readTextureCoords.setVBOEnabled(enableBufferVBO);
             {
-                TextureCoords coords = readBufferUtil.getTexture().getImageTexCoords();
-                FloatBuffer cb = (FloatBuffer)readTextureCoords.getBuffer();
+                final TextureCoords coords = readBufferUtil.getTexture().getImageTexCoords();
+                final FloatBuffer cb = (FloatBuffer)readTextureCoords.getBuffer();
                 cb.put(coords.left());  cb.put(coords.bottom());
                 cb.put(coords.right()); cb.put(coords.bottom());
                 cb.put(coords.left());  cb.put(coords.top());
@@ -173,12 +174,13 @@ public class ReadBuffer2Screen extends ReadBufferBase {
         }
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+    public void display(final GLAutoDrawable drawable) {
         super.display(drawable);
 
-        GL gl = drawable.getGL();
+        final GL gl = drawable.getGL();
 
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         if(gl instanceof GLLightingFunc) {
             ((GLLightingFunc)gl).glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         }
