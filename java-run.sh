@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 CPOK=0
 echo $CLASSPATH | grep jogl && CPOK=1

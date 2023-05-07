@@ -31,31 +31,39 @@ public class Perftst implements MouseListener, GLEventListener {
     private PMVMatrix pmvMatrix;
 
 
-    public void mouseClicked(MouseEvent e) {
+    @Override
+    public void mouseClicked(final MouseEvent e) {
         quit=true;
     }
-    public void mouseEntered(MouseEvent e) {
+    @Override
+    public void mouseEntered(final MouseEvent e) {
     }
-    public void mouseExited(MouseEvent e) {
+    @Override
+    public void mouseExited(final MouseEvent e) {
     }
-    public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(final MouseEvent e) {
     }
-    public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(final MouseEvent e) {
     }
-    public void mouseMoved(MouseEvent e) {
+    @Override
+    public void mouseMoved(final MouseEvent e) {
     }
-    public void mouseDragged(MouseEvent e) {
+    @Override
+    public void mouseDragged(final MouseEvent e) {
     }
-    public void mouseWheelMoved(MouseEvent e) {
+    @Override
+    public void mouseWheelMoved(final MouseEvent e) {
     }
 
-    private void run(int type, PerfModule pm) {
-        int width = 800;
-        int height = 480;
+    private void run(final int type, final PerfModule pm) {
+        final int width = 800;
+        final int height = 480;
         pmod = pm;
         System.err.println("Perftst.run()");
         try {
-            GLCapabilities caps = new GLCapabilities(GLProfile.getGL2ES2());
+            final GLCapabilities caps = new GLCapabilities(GLProfile.getGL2ES2());
             // For emulation library, use 16 bpp
             caps.setRedBits(5);
             caps.setGreenBits(6);
@@ -64,8 +72,8 @@ public class Perftst implements MouseListener, GLEventListener {
 
             Window nWindow = null;
             if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
+                final Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
+                final Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
                 nWindow = NewtFactory.createWindow(nScreen, caps);
                 window = GLWindow.create(nWindow);
             } else {
@@ -87,15 +95,16 @@ public class Perftst implements MouseListener, GLEventListener {
             // Shut things down cooperatively
             window.destroy();
             System.out.println("Perftst shut down cleanly.");
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             t.printStackTrace();
         }
     }
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+    public void init(final GLAutoDrawable drawable) {
         drawable.setAutoSwapBufferMode(false);
 
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
         System.err.println("Entering initialization");
         System.err.println("GL_VERSION=" + gl.glGetString(GL.GL_VERSION));
         System.err.println("GL_EXTENSIONS:");
@@ -113,13 +122,13 @@ public class Perftst implements MouseListener, GLEventListener {
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
+        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMvMat()))) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
 
         // OpenGL Render Settings
         gl.glClearColor(0, 0, 0, 1);
-        gl.glEnable(GL2ES2.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_DEPTH_TEST);
 
         st.useProgram(gl, false);
 
@@ -127,8 +136,9 @@ public class Perftst implements MouseListener, GLEventListener {
         System.out.println(st);
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+    @Override
+    public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         st.useProgram(gl, true);
 
@@ -141,7 +151,7 @@ public class Perftst implements MouseListener, GLEventListener {
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
 
-        GLUniformData ud = st.getUniform("mgl_PMVMatrix");
+        final GLUniformData ud = st.getUniform("mgl_PMVMatrix");
         if(null!=ud) {
             // same data object
             st.uniform(gl, ud);
@@ -150,8 +160,9 @@ public class Perftst implements MouseListener, GLEventListener {
         st.useProgram(gl, false);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+    @Override
+    public void dispose(final GLAutoDrawable drawable) {
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         st.destroy(gl);
         st=null;
@@ -160,17 +171,18 @@ public class Perftst implements MouseListener, GLEventListener {
     }
 
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+    public void display(final GLAutoDrawable drawable) {
         pmod.run(drawable, 10);
     }
 
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(final GLAutoDrawable drawable, final boolean modeChanged, final boolean deviceChanged) {
     }
 
     public static int USE_NEWT      = 0;
     public static int USE_AWT       = 1 << 0;
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         int type = USE_NEWT ;
         String tstName = "demos.es2.perftst.PerfVBOLoad"; // default
 
@@ -184,10 +196,10 @@ public class Perftst implements MouseListener, GLEventListener {
         }
 
         try {
-            PerfModule pmod = (PerfModule) Class.forName(tstName).newInstance();
+            final PerfModule pmod = (PerfModule) Class.forName(tstName).newInstance();
             new Perftst().run(type, pmod);
             System.exit(0);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             System.exit(1);
         }

@@ -1,16 +1,39 @@
 package demos.es2;
 
-import java.nio.*;
-import java.util.*;
-import com.jogamp.opengl.*;
-import com.jogamp.nativewindow.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import com.jogamp.opengl.util.*;
-import com.jogamp.opengl.util.glsl.*;
-
-import com.jogamp.newt.*;
-import com.jogamp.newt.event.*;
-import com.jogamp.newt.opengl.*;
+import com.jogamp.nativewindow.NativeWindowFactory;
+import com.jogamp.newt.Display;
+import com.jogamp.newt.NewtFactory;
+import com.jogamp.newt.Screen;
+import com.jogamp.newt.Window;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.MouseListener;
+import com.jogamp.newt.event.WindowEvent;
+import com.jogamp.newt.event.WindowListener;
+import com.jogamp.newt.event.WindowUpdateEvent;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.FPSCounter;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLPipelineFactory;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.GLUniformData;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.util.GLArrayDataServer;
+import com.jogamp.opengl.util.PMVMatrix;
+import com.jogamp.opengl.util.glsl.ShaderCode;
+import com.jogamp.opengl.util.glsl.ShaderProgram;
+import com.jogamp.opengl.util.glsl.ShaderState;
+import com.jogamp.opengl.util.glsl.ShaderUtil;
 
 public class RedSquare extends Thread implements WindowListener, KeyListener, MouseListener, GLEventListener {
 
@@ -25,29 +48,38 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         this(null, USE_NEWT);
     }
 
-    public RedSquare(String glprofile, int type) {
+    public RedSquare(final String glprofile, final int type) {
         super();
         this.glprofile=glprofile;
         this.type=type;
     }
 
-    public void windowRepaint(WindowUpdateEvent e) { }
-    public void windowResized(WindowEvent e) { }
-    public void windowMoved(WindowEvent e) { }
-    public void windowGainedFocus(WindowEvent e) { }
-    public void windowLostFocus(WindowEvent e) { }
-    public void windowDestroyNotify(WindowEvent e) {
+    @Override
+    public void windowRepaint(final WindowUpdateEvent e) { }
+    @Override
+    public void windowResized(final WindowEvent e) { }
+    @Override
+    public void windowMoved(final WindowEvent e) { }
+    @Override
+    public void windowGainedFocus(final WindowEvent e) { }
+    @Override
+    public void windowLostFocus(final WindowEvent e) { }
+    @Override
+    public void windowDestroyNotify(final WindowEvent e) {
         System.out.println("WINDOW-DESTROY NOTIFY "+Thread.currentThread()+" QUIT "+e);
         quit = true;
     }
-    public void windowDestroyed(WindowEvent e) {
+    @Override
+    public void windowDestroyed(final WindowEvent e) {
         System.out.println("WINDOW-DESTROYED "+Thread.currentThread());
     }
 
-    public void keyPressed(KeyEvent e) {
+    @Override
+    public void keyPressed(final KeyEvent e) {
         System.out.println("KEY-PRESSED "+Thread.currentThread()+" UNHANDLED "+e);
     }
-    public void keyReleased(KeyEvent e) {
+    @Override
+    public void keyReleased(final KeyEvent e) {
         System.out.println("KEY-RELEASED "+Thread.currentThread()+" UNHANDLED "+e);
         if( !e.isPrintableKey() || e.isAutoRepeat() ) {
             return;
@@ -63,7 +95,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
     }
 
-    public void mouseClicked(MouseEvent e) {
+    @Override
+    public void mouseClicked(final MouseEvent e) {
         System.out.println("MOUSE-CLICKED "+Thread.currentThread()+" UNHANDLED "+e);
         switch(e.getClickCount()) {
             case 1:
@@ -76,34 +109,42 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 break;
         }
     }
-    public void mouseEntered(MouseEvent e) {
+    @Override
+    public void mouseEntered(final MouseEvent e) {
     }
-    public void mouseExited(MouseEvent e) {
+    @Override
+    public void mouseExited(final MouseEvent e) {
     }
-    public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(final MouseEvent e) {
     }
-    public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(final MouseEvent e) {
     }
-    public void mouseMoved(MouseEvent e) {
+    @Override
+    public void mouseMoved(final MouseEvent e) {
     }
-    public void mouseDragged(MouseEvent e) {
+    @Override
+    public void mouseDragged(final MouseEvent e) {
     }
-    public void mouseWheelMoved(MouseEvent e) {
+    @Override
+    public void mouseWheelMoved(final MouseEvent e) {
     }
 
     public boolean shouldQuit() { return quit; }
 
+    @Override
     public void run() {
-        int width = 800;
-        int height = 480;
+        final int width = 800;
+        final int height = 480;
         glp = GLProfile.get(glprofile);
         System.out.println("RUN "+Thread.currentThread()+" "+glp);
         try {
-            GLCapabilities caps = new GLCapabilities(glp);
+            final GLCapabilities caps = new GLCapabilities(glp);
 
             if(0!=(type&USE_AWT)) {
-                Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
-                Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
+                final Display nDisplay = NewtFactory.createDisplay(NativeWindowFactory.TYPE_AWT, null); // local display
+                final Screen nScreen  = NewtFactory.createScreen(nDisplay, 0); // screen 0
                 nWindow = NewtFactory.createWindow(nScreen, caps);
                 window = GLWindow.create(nWindow);
             } else {
@@ -129,7 +170,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 shutdown();
             }
 
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             t.printStackTrace();
         }
     }
@@ -137,7 +178,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public void display() {
         try {
             window.display();
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             t.printStackTrace();
         }
     }
@@ -152,7 +193,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
                 nWindow=null;
             }
             System.out.println("SHUTDOWN "+Thread.currentThread()+" cleanly");
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             t.printStackTrace();
         }
     }
@@ -160,16 +201,19 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
     ShaderState st;
     PMVMatrix pmvMatrix;
+    private GLUniformData pmvMatrixUniform;
+    private GLArrayDataServer vertices ;
+    private GLArrayDataServer colors ;
 
-    private void initShader(GL2ES2 gl) {
+    private void initShader(final GL2ES2 gl) {
         // Create & Compile the shader objects
-        ShaderCode rsVp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, RedSquare.class,
+        final ShaderCode rsVp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, RedSquare.class,
                                             "shader", "shader/bin", "redsquare", false);
-        ShaderCode rsFp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, RedSquare.class,
+        final ShaderCode rsFp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, RedSquare.class,
                                             "shader", "shader/bin", "redsquare", false);
 
         // Create & Link the shader program
-        ShaderProgram sp = new ShaderProgram();
+        final ShaderProgram sp = new ShaderProgram();
         sp.add(rsVp);
         sp.add(rsFp);
         if(!sp.link(gl, System.err)) {
@@ -181,7 +225,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         st.attachShaderProgram(gl, sp, false);
     }
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+    public void init(final GLAutoDrawable drawable) {
         GL2ES2 gl = drawable.getGL().getGL2ES2();
         if(swapInterval>=0) {
             gl.setSwapInterval(swapInterval);
@@ -190,9 +235,9 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.err.println(Thread.currentThread()+" Entering initialization");
         System.err.println(Thread.currentThread()+" GL Profile: "+gl.getGLProfile());
         System.err.println(Thread.currentThread()+" GL:" + gl);
-        System.err.println(Thread.currentThread()+" GL_VERSION=" + gl.glGetString(gl.GL_VERSION));
+        System.err.println(Thread.currentThread()+" GL_VERSION=" + gl.glGetString(GL.GL_VERSION));
         System.err.println(Thread.currentThread()+" GL_EXTENSIONS:");
-        System.err.println(Thread.currentThread()+"   " + gl.glGetString(gl.GL_EXTENSIONS));
+        System.err.println(Thread.currentThread()+"   " + gl.glGetString(GL.GL_EXTENSIONS));
         System.err.println(Thread.currentThread()+" swapInterval: " + swapInterval + " (GL: "+gl.getSwapInterval()+")");
         System.err.println(Thread.currentThread()+" isShaderCompilerAvailable: " + ShaderUtil.isShaderCompilerAvailable(gl));
 
@@ -203,7 +248,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
                 // Trace ..
                 gl = (GL2ES2) gl.getContext().setGL( GLPipelineFactory.create("com.jogamp.opengl.Trace", GL2ES2.class, gl, new Object[] { System.err } ) );
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (final Exception e) {e.printStackTrace();}
         }
 
         pmvMatrix = new PMVMatrix();
@@ -213,40 +258,40 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         // Push the 1st uniform down the path
         st.useProgram(gl, true);
 
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()))) {
+        pmvMatrixUniform = new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMvMat()); // P, Mv
+        st.ownUniform(pmvMatrixUniform);
+        if(!st.uniform(gl, pmvMatrixUniform)) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
-        // Allocate vertex arrays
-        GLArrayDataClient vertices = GLArrayDataClient.createGLSL("mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
-        {
-            // Fill them up
-            FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
-            verticeb.put(-2);  verticeb.put(  2);  verticeb.put( 0);
-            verticeb.put( 2);  verticeb.put(  2);  verticeb.put( 0);
-            verticeb.put(-2);  verticeb.put( -2);  verticeb.put( 0);
-            verticeb.put( 2);  verticeb.put( -2);  verticeb.put( 0);
-        }
-        vertices.seal(gl, true);
 
-        GLArrayDataClient colors = GLArrayDataClient.createGLSL("mgl_Color",  4, gl.GL_FLOAT, false, 4);
-        {
-            // Fill them up
-            FloatBuffer colorb = (FloatBuffer)colors.getBuffer();
-            colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
-            colorb.put( 0);    colorb.put( 0);     colorb.put( 1);    colorb.put( 1);
-            colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
-            colorb.put( 1);    colorb.put( 0);     colorb.put( 0);    colorb.put( 1);
-        }
+        // Allocate Vertex Array
+        vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, GL.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        vertices.putf(-2); vertices.putf( 2); vertices.putf( 0);
+        vertices.putf( 2); vertices.putf( 2); vertices.putf( 0);
+        vertices.putf(-2); vertices.putf(-2); vertices.putf( 0);
+        vertices.putf( 2); vertices.putf(-2); vertices.putf( 0);
+        vertices.seal(gl, true);
+        st.ownAttribute(vertices, true);
+        vertices.enableBuffer(gl, false);
+
+        // Allocate Color Array
+        colors= GLArrayDataServer.createGLSL("mgl_Color", 4, GL.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
+        colors.putf(1); colors.putf(0); colors.putf(0); colors.putf(1);
+        colors.putf(0); colors.putf(0); colors.putf(1); colors.putf(1);
+        colors.putf(1); colors.putf(0); colors.putf(0); colors.putf(1);
+        colors.putf(1); colors.putf(0); colors.putf(0); colors.putf(1);
         colors.seal(gl, true);
+        st.ownAttribute(colors, true);
+        colors.enableBuffer(gl, false);
 
         // OpenGL Render Settings
         gl.glClearColor(0, 0, 0, 1);
-        gl.glEnable(GL2ES2.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_DEPTH_TEST);
 
         st.useProgram(gl, false);
 
@@ -254,32 +299,30 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.out.println(Thread.currentThread()+" "+st);
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+    public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
         if(null==st) return;
 
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         st.useProgram(gl, true);
 
         // Set location in front of camera
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_PROJECTION);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         //pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
 
-        GLUniformData ud = st.getUniform("mgl_PMVMatrix");
-        if(null!=ud) {
-            // same data object
-            st.uniform(gl, ud);
-        }
+        st.uniform(gl, pmvMatrixUniform);
 
         st.useProgram(gl, false);
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+    public void dispose(final GLAutoDrawable drawable) {
         if(null==st) return;
 
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
         System.out.println(Thread.currentThread()+" RedSquare.dispose: "+gl.getContext());
 
         st.destroy(gl);
@@ -288,36 +331,35 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         System.out.println(Thread.currentThread()+" RedSquare.dispose: FIN");
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+    public void display(final GLAutoDrawable drawable) {
         if(null==st) return;
 
-        GL2ES2 gl = drawable.getGL().getGL2ES2();
+        final GL2ES2 gl = drawable.getGL().getGL2ES2();
 
         st.useProgram(gl, true);
 
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // One rotation every four seconds
-        pmvMatrix.glMatrixMode(pmvMatrix.GL_MODELVIEW);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
-        float ang = (window.getTotalFPSDuration() * 360.0f) / 4000.0f;
+        final float ang = (window.getTotalFPSDuration() * 360.0f) / 4000.0f;
         pmvMatrix.glRotatef(ang, 0, 0, 1);
         pmvMatrix.glRotatef(ang, 0, 1, 0);
-
-        GLUniformData ud = st.getUniform("mgl_PMVMatrix");
-        if(null!=ud) {
-            // same data object
-            st.uniform(gl, ud);
-        }
+        st.uniform(gl, pmvMatrixUniform);
 
         // Draw a square
-        gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
-
+        vertices.enableBuffer(gl, true);
+        colors.enableBuffer(gl, true);
+        gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+        vertices.enableBuffer(gl, false);
+        colors.enableBuffer(gl, false);
         st.useProgram(gl, false);
     }
 
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(final GLAutoDrawable drawable, final boolean modeChanged, final boolean deviceChanged) {
     }
 
     public static int USE_NEWT      = 0;
@@ -327,16 +369,16 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static int swapInterval = -1;
     public static boolean debuggl = false;
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         NewtFactory.setUseEDT(true); // should be the default
         int type = USE_NEWT ;
-        List threads = new ArrayList();
+        final List threads = new ArrayList();
         for(int i=0; i<args.length; i++) {
             if(args[i].equals("-swapi")) {
                 i++;
                 try {
                     swapInterval = Integer.parseInt(args[i]);
-                } catch (Exception ex) { ex.printStackTrace(); }
+                } catch (final Exception ex) { ex.printStackTrace(); }
             } else if(args[i].equals("-debug")) {
                 debuggl=true;
             } else if(args[i].equals("-1thread")) {
@@ -352,7 +394,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
 
         if(!oneThread) {
-            for(Iterator i = threads.iterator(); i.hasNext(); ) {
+            for(final Iterator i = threads.iterator(); i.hasNext(); ) {
                 ((Thread)i.next()).start();
             }
 
@@ -360,11 +402,11 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
 
             while(!done) {
                 int aliveCount = 0;
-                for(Iterator i = threads.iterator(); i.hasNext(); ) {
+                for(final Iterator i = threads.iterator(); i.hasNext(); ) {
                     if ( ((Thread)i.next()).isAlive() ) {
                         try {
                             Thread.sleep(100);
-                        } catch (InterruptedException ie) {}
+                        } catch (final InterruptedException ie) {}
                         aliveCount++;
                     }
                 }
@@ -372,12 +414,12 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             }
         } else {
             // init all ..
-            for(Iterator i = threads.iterator(); i.hasNext(); ) {
+            for(final Iterator i = threads.iterator(); i.hasNext(); ) {
                 ((Thread)i.next()).run();
             }
             while (threads.size()>0) {
-                for(Iterator i = threads.iterator(); i.hasNext(); ) {
-                    RedSquare app = (RedSquare) i.next();
+                for(final Iterator i = threads.iterator(); i.hasNext(); ) {
+                    final RedSquare app = (RedSquare) i.next();
                     if(app.shouldQuit()) {
                         app.shutdown();
                         i.remove();

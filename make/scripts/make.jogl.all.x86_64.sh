@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 SDIR=`dirname $0`
 
