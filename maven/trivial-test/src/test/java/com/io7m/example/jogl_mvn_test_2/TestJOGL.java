@@ -2,14 +2,18 @@ package com.io7m.example.jogl_mvn_test_2;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.JoglVersion;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
 import org.junit.Test;
 
+import com.jogamp.common.GlueGenVersion;
+import com.jogamp.common.util.VersionUtil;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -20,6 +24,10 @@ public class TestJOGL
   private static GLWindow makeWindow(
     final String name)
   {
+    System.err.println(VersionUtil.getPlatformInfo());
+    System.err.println(GlueGenVersion.getInstance());
+    System.err.println(JoglVersion.getInstance());
+
     final GLProfile pro = GLProfile.getDefault();
     final GLCapabilities caps = new GLCapabilities(pro);
     final GLWindow window = GLWindow.create(caps);
@@ -38,7 +46,8 @@ public class TestJOGL
       int quad_x = (int) (Math.random() * 640);
       int quad_y = (int) (Math.random() * 480);
 
-      public void display(
+      @Override
+    public void display(
         final GLAutoDrawable drawable)
       {
         System.out.println("thread "
@@ -59,7 +68,7 @@ public class TestJOGL
         g2.glLoadIdentity();
         g2.glTranslated(0, 0, -1);
 
-        g2.glBegin(GL2.GL_QUADS);
+        g2.glBegin(GL2ES3.GL_QUADS);
         {
           g2.glVertex2d(this.quad_x, this.quad_y + 10);
           g2.glVertex2d(this.quad_x, this.quad_y);
@@ -69,19 +78,22 @@ public class TestJOGL
         g2.glEnd();
       }
 
-      public void dispose(
+      @Override
+    public void dispose(
         final GLAutoDrawable arg0)
       {
         // TODO Auto-generated method stub
       }
 
-      public void init(
+      @Override
+    public void init(
         final GLAutoDrawable arg0)
       {
-        // TODO Auto-generated method stub
+          System.err.println(JoglVersion.getGLInfo(arg0.getGL(), null));
       }
 
-      public void reshape(
+      @Override
+    public void reshape(
         final GLAutoDrawable arg0,
         final int arg1,
         final int arg2,
