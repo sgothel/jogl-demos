@@ -4,7 +4,12 @@
 	<classpathentry kind="src" path="src/jbullet/src"/>
 	<classpathentry excluding="src/" kind="src" path="src/redbook"/>
 	<classpathentry kind="src" path="src/redbook/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="maven/trivial-test/src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Ant"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SWT"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jogamp"/>

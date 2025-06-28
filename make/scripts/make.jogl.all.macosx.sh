@@ -4,7 +4,7 @@ if [ -e /usr/local/etc/profile.ant ] ; then
     . /usr/local/etc/profile.ant
 fi
 
-JAVA_HOME=`/usr/libexec/java_home -version 11`
+JAVA_HOME=`/usr/libexec/java_home -version 21`
 #JAVA_HOME=`/usr/libexec/java_home -version 1.8`
 PATH=$JAVA_HOME/bin:$PATH
 export JAVA_HOME PATH
