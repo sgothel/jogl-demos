@@ -110,7 +110,7 @@ public class ReadBuffer2Screen extends ReadBufferBase {
         pmvMatrix.glTranslatef(0, 0, -2.5f);
         if(null!=glM) {
             glM.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-            glM.glLoadMatrixf(pmvMatrix.getMvMat().get(f16), 0);
+            glM.glLoadMatrixf(pmvMatrix.getMv().get(f16), 0);
         }
 
         // Set location in front of camera
@@ -119,7 +119,7 @@ public class ReadBuffer2Screen extends ReadBufferBase {
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         if(null!=glM) {
             glM.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-            glM.glLoadMatrixf(pmvMatrix.getPMat().get(f16), 0);
+            glM.glLoadMatrixf(pmvMatrix.getP().get(f16), 0);
         }
     }
 

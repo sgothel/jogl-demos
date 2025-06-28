@@ -36,15 +36,16 @@
 
 package demos.particles.engine;
 
+import com.jogamp.math.FloatUtil;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.awt.*;
 
-import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.util.FPSAnimator;
 
+@SuppressWarnings("serial")
 public class GLComponent extends GLCanvas implements GLEventListener {
 
     private final GLU glu;
@@ -72,10 +73,12 @@ public class GLComponent extends GLCanvas implements GLEventListener {
         return caps;
     }
 
+    @Override
     public void dispose(final GLAutoDrawable drawable) {
         this.engine=null;
     }
 
+    @Override
     public void display(final GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
         engine.draw(gl);
@@ -87,6 +90,7 @@ public class GLComponent extends GLCanvas implements GLEventListener {
 
     }
 
+    @Override
     public void init(final GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
 
@@ -113,6 +117,7 @@ public class GLComponent extends GLCanvas implements GLEventListener {
 
     }
 
+    @Override
     public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
         final GL2 gl = drawable.getGL().getGL2();
         // the size of openGL

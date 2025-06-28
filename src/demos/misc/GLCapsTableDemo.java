@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 
@@ -49,6 +51,7 @@ import demos.gears.Gears;
  * @author Kiet Le
  * @legal (c) 2006 Kiet Le. Released under BSD licence.
  ******************************************************************************/
+@SuppressWarnings("serial")
 public class GLCapsTableDemo
   extends JFrame
   implements
@@ -72,17 +75,17 @@ public class GLCapsTableDemo
     new DefaultGLCapabilitiesChooser()
     {
       @Override
-	public int chooseCapabilities(CapabilitiesImmutable _desired,
-                                    List/*<CapabilitiesImmutable>*/ available,
-                                    int windowSystemRecommendedChoice)
+	public int chooseCapabilities(final CapabilitiesImmutable _desired,
+                                    final List/*<CapabilitiesImmutable>*/ available,
+                                    final int windowSystemRecommendedChoice)
       {
-        GLCapabilitiesImmutable desired = (GLCapabilitiesImmutable) _desired;
+        final GLCapabilitiesImmutable desired = (GLCapabilitiesImmutable) _desired;
         if ( available != null && available.size()>0 )
           for (int i = 0; i < available.size(); i++) {
-            GLCapabilitiesImmutable c = (GLCapabilitiesImmutable) available.get(i);
+            final GLCapabilitiesImmutable c = (GLCapabilitiesImmutable) available.get(i);
             if (c != null) {
               GLCapsTableDemo.this.available.add((GLCapabilities) c.cloneMutable());
-              GLCapsTableDemo.this.indices.add(new Integer(i));
+              GLCapsTableDemo.this.indices.add(Integer.valueOf(i));
             }
           }
         desiredCapIndex = super.chooseCapabilities(desired, available,
@@ -90,9 +93,9 @@ public class GLCapsTableDemo
         System.out.println("valid" + desiredCapIndex);
         capsTable = GLCapsTableDemo.this
           .tabulateTable(GLCapsTableDemo.this.available, GLCapsTableDemo.this.indices);
-        JScrollPane scroller = //
-          new JScrollPane(capsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                          JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        final JScrollPane scroller = //
+          new JScrollPane(capsTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                          ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         GLCapsTableDemo.this.getContentPane().add(scroller);
         pane.setBorder(BorderFactory
                        .createTitledBorder(null, "" + desiredCapIndex, TitledBorder.TRAILING,
@@ -134,13 +137,13 @@ public class GLCapsTableDemo
    *      com.jogamp.nativewindow.Capabilities[], int)
    */
   @Override
-public int chooseCapabilities(CapabilitiesImmutable desired,
-                                List/*<CapabilitiesImmutable>*/ available,
-                                int windowSystemRecommendedChoice)
+public int chooseCapabilities(final CapabilitiesImmutable desired,
+                                final List/*<CapabilitiesImmutable>*/ available,
+                                final int windowSystemRecommendedChoice)
   {
-    int row = capsTable.getSelectedRow();
+    final int row = capsTable.getSelectedRow();
     if ( 0> row || row >= indices.size() ) return windowSystemRecommendedChoice;
-    int desiredCapIndex = indices.get(row).intValue();
+    final int desiredCapIndex = indices.get(row).intValue();
     if ( updateLR )
       {
         pane.setBorder(BorderFactory
@@ -159,8 +162,8 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
 
   public void run(final String[] args)
   {
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
     setSize(new Dimension((int) (d.width * 0.75), (int) (d.height * 0.75)));
     setLocationRelativeTo(null);
     setVisible(true);
@@ -171,9 +174,9 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
   /**
    * @param args
    */
-  public static void main(String[] args)
+  public static void main(final String[] args)
   {
-    GLCapsTableDemo demo = new GLCapsTableDemo();
+    final GLCapsTableDemo demo = new GLCapsTableDemo();
     demo.run(args);
   }
 
@@ -183,7 +186,7 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
     pane2 = new JPanel();
 
     // Hack: use multisampled capabilities to pick up more detailed information on Windows
-    GLCapabilities multisampledCaps = new GLCapabilities(null);
+    final GLCapabilities multisampledCaps = new GLCapabilities(null);
     multisampledCaps.setSampleBuffers(true);
     canvas = new GLCanvas(multisampledCaps, choiceExaminer, device);
 
@@ -211,16 +214,16 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
     getContentPane().add(buildControls(), BorderLayout.NORTH);
   }
 
-  private JTable tabulateTable(ArrayList/*<GLCapabilities>*/ capabilities,
-                               ArrayList/*<Integer>*/ indices)
+  private JTable tabulateTable(final ArrayList/*<GLCapabilities>*/ capabilities,
+                               final ArrayList/*<Integer>*/ indices)
   {
     capabilities.trimToSize();
     data = new Object[capabilities.size()][colNames.length];
-    String t = "T", f = "F";
+    final String t = "T", f = "F";
     for (int pfd = 0; pfd < capabilities.size(); pfd++)
       {
         data[ pfd ][ 0 ] = indices.get(pfd);
-        GLCapabilities cap = (GLCapabilities) capabilities.get(pfd);
+        final GLCapabilities cap = (GLCapabilities) capabilities.get(pfd);
         data[ pfd ][ 1 ] = "" + (cap.getHardwareAccelerated() ? f : f);
         data[ pfd ][ 2 ] = "" + (cap.getDoubleBuffered() ? t : f);
         data[ pfd ][ 3 ] = "" + (cap.getStereo() ? t : f);
@@ -229,19 +232,19 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
           b = cap.getBlueBits(), //
           a = cap.getAlphaBits();
         data[ pfd ][ 4 ] = "" + (r + g + b + a);
-        data[ pfd ][ 5 ] = new Integer(r);
-        data[ pfd ][ 6 ] = new Integer(g);
-        data[ pfd ][ 7 ] = new Integer(b);
-        data[ pfd ][ 8 ] = new Integer(a);
+        data[ pfd ][ 5 ] = Integer.valueOf(r);
+        data[ pfd ][ 6 ] = Integer.valueOf(g);
+        data[ pfd ][ 7 ] = Integer.valueOf(b);
+        data[ pfd ][ 8 ] = Integer.valueOf(a);
         r = cap.getAccumRedBits();
         g = cap.getAccumGreenBits();
         b = cap.getAccumBlueBits();
         a = cap.getAccumAlphaBits();
         data[ pfd ][ 9 ] = "" + (r + g + b + a);
-        data[ pfd ][ 10 ] = new Integer(r);
-        data[ pfd ][ 11 ] = new Integer(g);
-        data[ pfd ][ 12 ] = new Integer(b);
-        data[ pfd ][ 13 ] = new Integer(a);
+        data[ pfd ][ 10 ] = Integer.valueOf(r);
+        data[ pfd ][ 11 ] = Integer.valueOf(g);
+        data[ pfd ][ 12 ] = Integer.valueOf(b);
+        data[ pfd ][ 13 ] = Integer.valueOf(a);
         //
         data[ pfd ][ 14 ] = "" + cap.getDepthBits();
         data[ pfd ][ 15 ] = "" + cap.getStencilBits();
@@ -255,9 +258,10 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
         data[ pfd ][ 17 ] = pbuf; */
         data[ pfd ][ 17 ] = "FFf";
       }
-    JTable table = new JTable(data, colNames) {
+    @SuppressWarnings("serial")
+    final JTable table = new JTable(data, colNames) {
         @Override
-		public boolean isCellEditable(int rowIndex, int colIndex) {
+		public boolean isCellEditable(final int rowIndex, final int colIndex) {
           return false;
         }
       };
@@ -279,10 +283,10 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
 
   private JPanel buildControls()
   {
-    JPanel controls = new JPanel();
+    final JPanel controls = new JPanel();
     final JButton spawn = new JButton("Respawn Left");
     final JButton spawn2 = new JButton("Respawn Right");
-    ActionListener recap = new ActionListener()
+    final ActionListener recap = new ActionListener()
       {
         @Override
 		public void actionPerformed(final ActionEvent act)
@@ -326,7 +330,7 @@ public int chooseCapabilities(CapabilitiesImmutable desired,
     return controls;
   }
 
-  private GLCanvas newCanvas(boolean mycap, boolean top)
+  private GLCanvas newCanvas(final boolean mycap, final boolean top)
   {
     GLCanvas surface = null;
     if ( !mycap ) surface = new GLCanvas(null, choiceExaminer, device);

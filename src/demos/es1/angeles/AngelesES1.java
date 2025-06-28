@@ -25,10 +25,13 @@
 package demos.es1.angeles;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.math.FixedPoint;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.glu.*;
 
-import com.jogamp.opengl.math.FixedPoint;
 import com.jogamp.opengl.util.*;
 import java.nio.*;
 
@@ -38,7 +41,7 @@ public class AngelesES1 implements GLEventListener {
         this(true);
     }
 
-    public AngelesES1(boolean enableBlending) {
+    public AngelesES1(final boolean enableBlending) {
         blendingEnabled = enableBlending;
         quadVertices = Buffers.newDirectIntBuffer(12);
         quadVertices.put(new int[]{
@@ -83,23 +86,24 @@ public class AngelesES1 implements GLEventListener {
         y=0;
     }
 
-    public void init(GLAutoDrawable drawable) {
+    @Override
+    public void init(final GLAutoDrawable drawable) {
         // FIXME: gl.setSwapInterval(1);
 
         this.gl = drawable.getGL().getGLES1();
         this.glu = GLU.createGLU();
-        gl.glEnable(gl.GL_NORMALIZE);
-        gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glDisable(gl.GL_CULL_FACE);
-        gl.glShadeModel(gl.GL_FLAT);
+        gl.glEnable(GLLightingFunc.GL_NORMALIZE);
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glShadeModel(GLLightingFunc.GL_FLAT);
 
-        gl.glEnable(gl.GL_LIGHTING);
-        gl.glEnable(gl.GL_LIGHT0);
-        gl.glEnable(gl.GL_LIGHT1);
-        gl.glEnable(gl.GL_LIGHT2);
+        gl.glEnable(GLLightingFunc.GL_LIGHTING);
+        gl.glEnable(GLLightingFunc.GL_LIGHT0);
+        gl.glEnable(GLLightingFunc.GL_LIGHT1);
+        gl.glEnable(GLLightingFunc.GL_LIGHT2);
 
-        gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+        gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 
         for (int a = 0; a < SuperShape.COUNT; ++a)
         {
@@ -113,7 +117,8 @@ public class AngelesES1 implements GLEventListener {
         frames=0;
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    @Override
+    public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
         this.width = width;
         this.height=height;
         this.x = x;
@@ -121,7 +126,7 @@ public class AngelesES1 implements GLEventListener {
 
         this.gl = drawable.getGL().getGLES1();
 
-        gl.glMatrixMode(gl.GL_MODELVIEW);
+        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         gl.glLoadIdentity();
 
         gl.glClearColorx((int)(0.1f * 65536),
@@ -130,11 +135,11 @@ public class AngelesES1 implements GLEventListener {
 
         gl.glCullFace(GL.GL_FRONT);
 
-        gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
+        gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_FASTEST);
 
         //gl.glShadeModel(GL2ES1.GL_SMOOTH);
-        gl.glShadeModel(gl.GL_FLAT);
-        gl.glDisable(gl.GL_DITHER);
+        gl.glShadeModel(GLLightingFunc.GL_FLAT);
+        gl.glDisable(GL.GL_DITHER);
 
         //gl.glMatrixMode(gl.GL_PROJECTION);
         //gl.glLoadIdentity();
@@ -143,10 +148,12 @@ public class AngelesES1 implements GLEventListener {
         System.out.println("reshape ..");
     }
 
-    public void dispose(GLAutoDrawable drawable) {
+    @Override
+    public void dispose(final GLAutoDrawable drawable) {
     }
 
-    public void display(GLAutoDrawable drawable) {
+    @Override
+    public void display(final GLAutoDrawable drawable) {
         long tick = System.currentTimeMillis();
 
         if (gAppAlive==0)
@@ -164,9 +171,9 @@ public class AngelesES1 implements GLEventListener {
             return;
         }
 
-        gl.glClear(gl.GL_DEPTH_BUFFER_BIT | gl.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
-        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
         glu.gluPerspective(45.0f, (float)width / (float)height, 0.5f, 150.0f);
 
@@ -196,11 +203,11 @@ public class AngelesES1 implements GLEventListener {
 
         frames++;
         tick = System.currentTimeMillis();
-        long dT = tick - sStartTick;
+        final long dT = tick - sStartTick;
         //        System.out.println(frames+"f, "+dT+"ms "+ (frames*1000)/dT +"fps");
     }
 
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(final GLAutoDrawable drawable, final boolean modeChanged, final boolean deviceChanged) {
     }
 
  private boolean blendingEnabled = true;
@@ -208,12 +215,12 @@ public class AngelesES1 implements GLEventListener {
  private GLU glu;
 
  // Total run length is 20 * camera track base unit length (see cams.h).
- private int RUN_LENGTH  = (20 * CamTrack.CAMTRACK_LEN) ;
- private int RANDOM_UINT_MAX = 65535 ;
+ private final int RUN_LENGTH  = (20 * CamTrack.CAMTRACK_LEN) ;
+ private final int RANDOM_UINT_MAX = 65535 ;
 
  private long sRandomSeed = 0;
 
-void seedRandom(long seed)
+void seedRandom(final long seed)
 {
     sRandomSeed = seed;
 }
@@ -243,9 +250,9 @@ public class GLObject {
     int vertexComponents;
     int count;
     int vbo[];
-    
-    public GLObject(int vertices, int vertexComponents,
-                    boolean useNormalArray) {
+
+    public GLObject(final int vertices, final int vertexComponents,
+                    final boolean useNormalArray) {
         this.count = vertices;
         this.vertexComponents = vertexComponents;
         this.vertexArray = Buffers.newDirectIntBuffer( vertices * vertexComponents );
@@ -266,39 +273,39 @@ public class GLObject {
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexArray.capacity() * Buffers.SIZEOF_INT, vertexArray, GL.GL_STATIC_DRAW);
-        gl.glVertexPointer(vertexComponents, gl.GL_FIXED, 0, 0);
+        gl.glVertexPointer(vertexComponents, GL.GL_FIXED, 0, 0);
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, colorArray.capacity() * Buffers.SIZEOF_BYTE, colorArray, GL.GL_STATIC_DRAW);
-        gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, 0);
+        gl.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, 0);
 
         if (null!=normalArray)
         {
-            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
+            gl.glEnableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, normalArray.capacity() * Buffers.SIZEOF_INT, normalArray, GL.GL_STATIC_DRAW);
-            gl.glNormalPointer(gl.GL_FIXED, 0, 0);
+            gl.glNormalPointer(GL.GL_FIXED, 0, 0);
         } else {
-            gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
+            gl.glDisableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
         }
     }
 
     void draw()
     {
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
-        gl.glVertexPointer(vertexComponents, gl.GL_FIXED, 0, 0);
+        gl.glVertexPointer(vertexComponents, GL.GL_FIXED, 0, 0);
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[1]);
-        gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, 0);
+        gl.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, 0);
 
         if (null!=normalArray)
         {
-            gl.glEnableClientState(gl.GL_NORMAL_ARRAY);
+            gl.glEnableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[2]);
-            gl.glNormalPointer(gl.GL_FIXED, 0, 0);
+            gl.glNormalPointer(GL.GL_FIXED, 0, 0);
         }
         else
-            gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
-        gl.glDrawArrays(gl.GL_TRIANGLES, 0, count);
+            gl.glDisableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, count);
     }
 
     void rewind() {
@@ -334,7 +341,7 @@ public class VECTOR3 {
     public VECTOR3() {
         x=0f; y=0f; z=0f;
     }
-    public VECTOR3(float x, float y, float z) {
+    public VECTOR3(final float x, final float y, final float z) {
         this.x=x;
         this.y=y;
         this.z=z;
@@ -343,7 +350,7 @@ public class VECTOR3 {
 
 
 
-static void vector3Sub(VECTOR3 dest, VECTOR3 v1, VECTOR3 v2)
+static void vector3Sub(final VECTOR3 dest, final VECTOR3 v1, final VECTOR3 v2)
 {
     dest.x = v1.x - v2.x;
     dest.y = v1.y - v2.y;
@@ -351,7 +358,7 @@ static void vector3Sub(VECTOR3 dest, VECTOR3 v1, VECTOR3 v2)
 }
 
 
-static void superShapeMap(VECTOR3 point, float r1, float r2, float t, float p)
+static void superShapeMap(final VECTOR3 point, final float r1, final float r2, final float t, final float p)
 {
     // sphere-mapping of supershape parameters
     point.x = (float)(Math.cos(t) * Math.cos(p) / r1 / r2);
@@ -365,7 +372,7 @@ float ssFunc(final float t, final float p[])
     return ssFunc(t, p, 0);
 }
 
-float ssFunc(final float t, final float p[], int pOff)
+float ssFunc(final float t, final float p[], final int pOff)
 {
     return (float)(Math.pow(Math.pow(Math.abs(Math.cos(p[0+pOff] * t / 4)) / p[1+pOff], p[4+pOff]) +
                             Math.pow(Math.abs(Math.sin(p[0+pOff] * t / 4)) / p[2+pOff], p[5+pOff]), 1 / p[3+pOff]));
@@ -388,7 +395,7 @@ GLObject createSuperShape(final float params[])
     final int triangleCount = longitudeCount * latitudeCount * 2;
     final int vertices = triangleCount * 3;
     GLObject result;
-    float baseColor[] = new float[3];
+    final float baseColor[] = new float[3];
     int a, longitude, latitude;
     int currentVertex, currentQuad;
 
@@ -409,10 +416,10 @@ GLObject createSuperShape(final float params[])
         // latitude 0 to pi/2
         for (latitude = latitudeBegin; latitude < latitudeEnd; ++latitude)
         {
-            float t1 = (float) ( -Math.PI + longitude * 2 * Math.PI / resol1 );
-            float t2 = (float) ( -Math.PI + (longitude + 1) * 2 * Math.PI / resol1 );
-            float p1 = (float) ( -Math.PI / 2 + latitude * 2 * Math.PI / resol2 );
-            float p2 = (float) ( -Math.PI / 2 + (latitude + 1) * 2 * Math.PI / resol2 );
+            final float t1 = (float) ( -Math.PI + longitude * 2 * Math.PI / resol1 );
+            final float t2 = (float) ( -Math.PI + (longitude + 1) * 2 * Math.PI / resol1 );
+            final float p1 = (float) ( -Math.PI / 2 + latitude * 2 * Math.PI / resol2 );
+            final float p2 = (float) ( -Math.PI / 2 + (latitude + 1) * 2 * Math.PI / resol2 );
             float r0, r1, r2, r3;
 
             r0 = ssFunc(t1, params);
@@ -422,8 +429,8 @@ GLObject createSuperShape(final float params[])
 
             if (r0 != 0 && r1 != 0 && r2 != 0 && r3 != 0)
             {
-                VECTOR3 pa=new VECTOR3(), pb=new VECTOR3(), pc=new VECTOR3(), pd=new VECTOR3();
-                VECTOR3 v1=new VECTOR3(), v2=new VECTOR3(), n=new VECTOR3();
+                final VECTOR3 pa=new VECTOR3(), pb=new VECTOR3(), pc=new VECTOR3(), pd=new VECTOR3();
+                final VECTOR3 v1=new VECTOR3(), v2=new VECTOR3(), n=new VECTOR3();
                 float ca;
                 int i;
                 //float lenSq, invLenSq;
@@ -477,7 +484,8 @@ GLObject createSuperShape(final float params[])
                      i < (currentVertex + 6) * 4;
                      i += 4)
                 {
-                    int j, color[] = new int[3];
+                    int j;
+                    final int color[] = new int[3];
                     for (j = 0; j < 3; ++j)
                     {
                         color[j] = (int)(ca * baseColor[j] * 255);
@@ -579,20 +587,20 @@ GLObject createGroundPlane()
 
 void drawGroundPlane()
 {
-    gl.glDisable(gl.GL_LIGHTING);
-    gl.glDisable(gl.GL_DEPTH_TEST);
+    gl.glDisable(GLLightingFunc.GL_LIGHTING);
+    gl.glDisable(GL.GL_DEPTH_TEST);
     if(blendingEnabled) {
-        gl.glEnable(gl.GL_BLEND);
-        gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
     }
 
     sGroundPlane.draw();
 
     if(blendingEnabled) {
-        gl.glDisable(gl.GL_BLEND);
+        gl.glDisable(GL.GL_BLEND);
     }
-    gl.glEnable(gl.GL_DEPTH_TEST);
-    gl.glEnable(gl.GL_LIGHTING);
+    gl.glEnable(GL.GL_DEPTH_TEST);
+    gl.glEnable(GLLightingFunc.GL_LIGHTING);
 }
 
 void drawFadeQuad()
@@ -606,30 +614,30 @@ void drawFadeQuad()
         final int fadeColor = minFade << 7;
         gl.glColor4x(fadeColor, fadeColor, fadeColor, 0);
 
-        gl.glDisable(gl.GL_DEPTH_TEST);
-        gl.glEnable(gl.GL_BLEND);
-        gl.glBlendFunc(gl.GL_ZERO, gl.GL_SRC_COLOR);
-        gl.glDisable(gl.GL_LIGHTING);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
+        gl.glDisable(GLLightingFunc.GL_LIGHTING);
 
-        gl.glMatrixMode(gl.GL_MODELVIEW);
+        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        gl.glDisableClientState(gl.GL_COLOR_ARRAY);
-        gl.glDisableClientState(gl.GL_NORMAL_ARRAY);
-        gl.glVertexPointer(2, gl.GL_FIXED, 0, quadVertices);
-        gl.glDrawArrays(gl.GL_TRIANGLES, 0, 6);
+        gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
+        gl.glDisableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
+        gl.glVertexPointer(2, GL.GL_FIXED, 0, quadVertices);
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, 6);
 
-        gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+        gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 
-        gl.glMatrixMode(gl.GL_MODELVIEW);
+        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 
-        gl.glEnable(gl.GL_LIGHTING);
-        gl.glDisable(gl.GL_BLEND);
-        gl.glEnable(gl.GL_DEPTH_TEST);
+        gl.glEnable(GLLightingFunc.GL_LIGHTING);
+        gl.glDisable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_DEPTH_TEST);
     }
 }
 
@@ -644,20 +652,20 @@ IntBuffer materialSpecular;
 
 void configureLightAndMaterial()
 {
-    gl.glLightxv(gl.GL_LIGHT0, gl.GL_POSITION, light0Position);
-    gl.glLightxv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light0Diffuse);
-    gl.glLightxv(gl.GL_LIGHT1, gl.GL_POSITION, light1Position);
-    gl.glLightxv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light1Diffuse);
-    gl.glLightxv(gl.GL_LIGHT2, gl.GL_POSITION, light2Position);
-    gl.glLightxv(gl.GL_LIGHT2, gl.GL_DIFFUSE, light2Diffuse);
-    gl.glMaterialxv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, materialSpecular);
+    gl.glLightxv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, light0Position);
+    gl.glLightxv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, light0Diffuse);
+    gl.glLightxv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_POSITION, light1Position);
+    gl.glLightxv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE, light1Diffuse);
+    gl.glLightxv(GLLightingFunc.GL_LIGHT2, GLLightingFunc.GL_POSITION, light2Position);
+    gl.glLightxv(GLLightingFunc.GL_LIGHT2, GLLightingFunc.GL_DIFFUSE, light2Diffuse);
+    gl.glMaterialxv(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_SPECULAR, materialSpecular);
 
-    gl.glMaterialx(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, 60 << 16);
-    gl.glEnable(gl.GL_COLOR_MATERIAL);
+    gl.glMaterialx(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_SHININESS, 60 << 16);
+    gl.glEnable(GLLightingFunc.GL_COLOR_MATERIAL);
 }
 
 
-void drawModels(float zScale)
+void drawModels(final float zScale)
 {
     final int translationScale = 9;
     int x, y;
@@ -670,9 +678,9 @@ void drawModels(float zScale)
     {
         for (x = -5; x <= 5; ++x)
         {
-            int curShape = randomUInt() % SuperShape.COUNT;
-            float buildingScale = SuperShape.sParams[curShape][SuperShape.PARAMS - 1];
-            int fixedScale = FixedPoint.toFixed(buildingScale);
+            final int curShape = randomUInt() % SuperShape.COUNT;
+            final float buildingScale = SuperShape.sParams[curShape][SuperShape.PARAMS - 1];
+            final int fixedScale = FixedPoint.toFixed(buildingScale);
 
             gl.glPushMatrix();
             gl.glTranslatex(FixedPoint.toFixed(x * translationScale),
@@ -690,8 +698,8 @@ void drawModels(float zScale)
     {
         final int shipScale100 = translationScale * 500;
         final int offs100 = x * shipScale100 + (int)(sTick % shipScale100);
-        float offs = offs100 * 0.01f;
-        int fixedOffs = FixedPoint.toFixed(offs);
+        final float offs = offs100 * 0.01f;
+        final int fixedOffs = FixedPoint.toFixed(offs);
         gl.glPushMatrix();
         gl.glTranslatex(fixedOffs, -4 * 65536, 2 << 16);
         sSuperShapeObjects[SuperShape.COUNT - 1].draw();
@@ -707,7 +715,7 @@ void drawModels(float zScale)
 
 void camTrack()
 {
-    float lerp[]= new float[5];
+    final float lerp[]= new float[5];
     float eX, eY, eZ, cX, cY, cZ;
     float trackPos;
     CamTrack cam;
@@ -731,7 +739,7 @@ void camTrack()
 
     if (cam.dist>0)
     {
-        float dist = cam.dist * 0.1f;
+        final float dist = cam.dist * 0.1f;
         cX = lerp[0];
         cY = lerp[1];
         cZ = lerp[2];

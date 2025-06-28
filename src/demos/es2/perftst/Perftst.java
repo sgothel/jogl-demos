@@ -122,7 +122,7 @@ public class Perftst implements MouseListener, GLEventListener {
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMvMat()))) {
+        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMv()))) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
 

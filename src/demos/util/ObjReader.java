@@ -1,21 +1,21 @@
 /*
  * Copyright (c) 2003 Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * - Redistribution of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of Sun Microsystems, Inc. or the names of
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
@@ -28,11 +28,11 @@
  * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
  * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
  * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * You acknowledge that this software is not designed or intended for use
  * in the design, construction, operation or maintenance of any nuclear
  * facility.
- * 
+ *
  * Sun gratefully acknowledges that this software was originally authored
  * and developed by Kenneth Bradley Russell and Christopher John Kline.
  */
@@ -64,9 +64,9 @@ public class ObjReader {
   private int verticesPerFace = -1;
   private FloatBuffer vertices;
   private FloatBuffer normals;
-  private float[] aabbMin = new float[3];
-  private float[] aabbMax = new float[3];
-  private float[] center = new float[3];
+  private final float[] aabbMin = new float[3];
+  private final float[] aabbMax = new float[3];
+  private final float[] center = new float[3];
   private float radius;
   // If we wanted this to be really general we'd have an array of
   // FloatLists for the various kinds of vertices as well
@@ -75,28 +75,28 @@ public class ObjReader {
   private IntList   faceIndices;
   private IntList[] tmpFaceIndices;
 
-  public ObjReader(String filename) throws IOException {
+  public ObjReader(final String filename) throws IOException {
     this(new File(filename));
   }
 
-  public ObjReader(InputStream in) throws IOException {
+  public ObjReader(final InputStream in) throws IOException {
     this(new InputStreamReader(in));
   }
 
-  public ObjReader(File file) throws IOException {
+  public ObjReader(final File file) throws IOException {
     this (new FileReader(file));
   }
 
-  public ObjReader(Reader r) throws IOException {
-    BufferedReader reader = new BufferedReader(r);
+  public ObjReader(final Reader r) throws IOException {
+    final BufferedReader reader = new BufferedReader(r);
     String line = null;
     int lineNo = 0;
-    float[] floatTmp = new float[3];
+    final float[] floatTmp = new float[3];
 
     while ((line = reader.readLine()) != null) {
       ++lineNo;
       if (line.length() > 0) {
-        char c = line.charAt(0);
+        final char c = line.charAt(0);
         // FIXME: support continuation of lines with trailing '\'
         switch (c) {
           case '#':
@@ -111,7 +111,7 @@ public class ObjReader {
               throw new IOException("Unsupported vertex command on line " + lineNo);
             }
             break;
-            
+
           case 'f':
             parseIndices(line, lineNo);
 
@@ -129,7 +129,7 @@ public class ObjReader {
     computeBoundingBox();
   }
 
-  public void rescale(float amount) {
+  public void rescale(final float amount) {
     for (int i = 0; i < vertices.capacity(); i++) {
       vertices.put(i, vertices.get(i) * amount);
     }
@@ -146,7 +146,7 @@ public class ObjReader {
   public int[] getFaceIndices() {
     return faceIndices.getData();
   }
-  
+
   public int getVerticesPerFace() {
     return verticesPerFace;
   }
@@ -171,7 +171,7 @@ public class ObjReader {
   // Internals only below this point
   //
 
-  private void addVertex(float[] tmp) {
+  private void addVertex(final float[] tmp) {
     if (tmpVertices == null) {
       tmpVertices = new FloatList();
     }
@@ -180,7 +180,7 @@ public class ObjReader {
     }
   }
 
-  private void addVertexNormal(float[] tmp) {
+  private void addVertexNormal(final float[] tmp) {
     if (tmpVertexNormals == null) {
       tmpVertexNormals = new FloatList();
     }
@@ -189,8 +189,8 @@ public class ObjReader {
     }
   }
 
-  private float[] parseFloats(String line, int num, float[] tmp, int lineNo) throws IOException {
-    StringTokenizer tok = new StringTokenizer(line);
+  private float[] parseFloats(final String line, final int num, final float[] tmp, final int lineNo) throws IOException {
+    final StringTokenizer tok = new StringTokenizer(line);
     tok.nextToken(); // skip command
     int idx = 0;
     while (tok.hasMoreTokens()) {
@@ -202,10 +202,10 @@ public class ObjReader {
     return tmp;
   }
 
-  private void parseIndices(String line, int lineNo) throws IOException {
-    StringTokenizer tok = new StringTokenizer(line);
+  private void parseIndices(final String line, final int lineNo) throws IOException {
+    final StringTokenizer tok = new StringTokenizer(line);
     tok.nextToken(); // skip command
-    List tokens = new ArrayList();
+    final List tokens = new ArrayList();
     while (tok.hasMoreTokens()) {
       tokens.add(tok.nextToken());
     }
@@ -224,10 +224,10 @@ public class ObjReader {
       }
     }
     // Now read the individual indices out of each token
-    for (Iterator iter = tokens.iterator(); iter.hasNext(); ) {
-      String indices = (String) iter.next();
+    for (final Iterator iter = tokens.iterator(); iter.hasNext(); ) {
+      final String indices = (String) iter.next();
       if (tmpFaceIndices == null) {
-        StringTokenizer tmpTok = new StringTokenizer(indices, "/");
+        final StringTokenizer tmpTok = new StringTokenizer(indices, "/");
         int numIndicesPerVertex = 0;
         while (tmpTok.hasMoreTokens()) {
           tmpTok.nextToken();
@@ -239,15 +239,15 @@ public class ObjReader {
         }
       }
 
-      StringTokenizer tok2 = new StringTokenizer(indices, "/");
+      final StringTokenizer tok2 = new StringTokenizer(indices, "/");
       int which = 0;
       while (tok2.hasMoreTokens()) {
         if (which >= tmpFaceIndices.length) {
           throw new IOException("Expected all vertices to have " + tmpFaceIndices.length +
                                 " indices based on earlier input, but saw vertex with more on line " + lineNo);
         }
-        String token = tok2.nextToken();
-        int index = Integer.parseInt(token);
+        final String token = tok2.nextToken();
+        final int index = Integer.parseInt(token);
         tmpFaceIndices[which].add(index);
         ++which;
       }
@@ -257,16 +257,17 @@ public class ObjReader {
   // Don't know the hashing rules for arrays off the top of my head
   static class Indices {
     int[] data;
-    Indices(int[] data) {
+    Indices(final int[] data) {
       this.data = data;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
       if ((obj == null) || (!(obj instanceof Indices))) {
         return false;
       }
 
-      Indices other = (Indices) obj;
+      final Indices other = (Indices) obj;
 
       if (data.length != other.data.length) {
         return false;
@@ -277,10 +278,11 @@ public class ObjReader {
           return false;
         }
       }
-      
+
       return true;
     }
 
+    @Override
     public int hashCode() {
       int hash = 0;
       for (int i = 0; i < data.length; i++) {
@@ -291,21 +293,21 @@ public class ObjReader {
   }
 
   private void condenseIndices() {
-    FloatList newVertices = new FloatList();
-    FloatList newVertexNormals = new FloatList();
-    IntList   newIndices = new IntList();
+    final FloatList newVertices = new FloatList();
+    final FloatList newVertexNormals = new FloatList();
+    final IntList   newIndices = new IntList();
     int nextIndex = 0;
-    HashMap condensingMap = new HashMap();
+    final HashMap condensingMap = new HashMap();
     for (int i = 0; i < tmpFaceIndices[0].size(); i++) {
-      Indices indices = getIndices(i);
-      Integer newIndex = (Integer) condensingMap.get(indices);
+      final Indices indices = getIndices(i);
+      final Integer newIndex = (Integer) condensingMap.get(indices);
       if (newIndex == null) {
         // Fabricate new vertex and normal index for this one
         // FIXME: generalize this by putting vertices and vertex
         // normals in FloatList[] as well
-        condensingMap.put(indices, new Integer(nextIndex));
-        int vtxIdx    = 3 * (indices.data[0] - 1);
-        int vtxNrmIdx = 3 * (indices.data[1] - 1);
+        condensingMap.put(indices, Integer.valueOf(nextIndex));
+        final int vtxIdx    = 3 * (indices.data[0] - 1);
+        final int vtxNrmIdx = 3 * (indices.data[1] - 1);
         newVertices.add(tmpVertices.get(vtxIdx + 0));
         newVertices.add(tmpVertices.get(vtxIdx + 1));
         newVertices.add(tmpVertices.get(vtxIdx + 2));
@@ -358,8 +360,8 @@ public class ObjReader {
                                (aabbMax[2] - center[2]) * (aabbMax[2] - center[2]));
   }
 
-  private Indices getIndices(int index) {
-    int[] indices = new int[tmpFaceIndices.length];
+  private Indices getIndices(final int index) {
+    final int[] indices = new int[tmpFaceIndices.length];
     for (int i = 0; i < tmpFaceIndices.length; i++) {
       indices[i] = tmpFaceIndices[i].get(index);
     }
