@@ -19,5 +19,5 @@ export JOGAMP_JAR_CODEBASE="Codebase: *.goethel.localnet"
 ant \
     -Djogl.cg=1 \
     -Duser.swt.jar=$SWT_CLASSPATH \
-    -Drootrel.build=build-x86_64 \
-    $* 2>&1 | tee make.jogl.all.x86_64.log
+    -Drootrel.build=build-freebsd-x86_64 \
+    $* 2>&1 | tee make.jogl.all.freebsd-x86_64.log
