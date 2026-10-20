@@ -12,11 +12,10 @@ import java.nio.FloatBuffer;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.glu.GLU;
-
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLEventListener;
-
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.glsl.ShaderCode;
@@ -69,15 +68,15 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 	public String MODEL_FILENAME = "models/dragon.obj";
 
-	public static final String s_FrontBlenderTex = "FrontBlenderTex";	
+	public static final String s_FrontBlenderTex = "FrontBlenderTex";
 	public static final String s_BackBlenderTex  = "BackBlenderTex";
-	public static final String s_DepthBlenderTex = "DepthBlenderTex";	
-	public static final String s_ColorTex        = "ColorTex";	
-	public static final String s_ColorTex0       = "ColorTex0";	
-	public static final String s_ColorTex1       = "ColorTex1";	
+	public static final String s_DepthBlenderTex = "DepthBlenderTex";
+	public static final String s_ColorTex        = "ColorTex";
+	public static final String s_ColorTex0       = "ColorTex0";
+	public static final String s_ColorTex1       = "ColorTex1";
 	public static final String s_TempTex         = "TempTex";
 	public static final String s_BackgroundColor = "BackgroundColor";
-	
+
 	public GLUniformData g_FrontBlenderTexUnit;
 	public GLUniformData g_BackBlenderTexUnit;
 	public GLUniformData g_DepthBlenderTexUnit;
@@ -104,7 +103,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 	public ShaderProgram g_shaderWeightedSumInit;
 	public ShaderProgram g_shaderWeightedSumFinal;
-	
+
 	public float g_opacity = 0.6f;
 	public char g_mode = DUAL_PEELING_MODE;
 	public boolean g_showOsd = true;
@@ -149,16 +148,16 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			GL2.GL_COLOR_ATTACHMENT5,
 			GL2.GL_COLOR_ATTACHMENT6
 	};
-	
+
 	boolean reloadShaders = false;
 
 	public DualDepthPeeling()
 	{
-		InitGL();	
+		InitGL();
 	}
 
 
-	public void InitDualPeelingRenderTargets(GL2 gl)
+	public void InitDualPeelingRenderTargets(final GL2 gl)
 	{
 		gl.glGenTextures(2, g_dualDepthTexId, 0);
 		gl.glGenTextures(2, g_dualFrontBlenderTexId, 0);
@@ -167,71 +166,71 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		for (int i = 0; i < 2; i++)
 		{
 			gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualDepthTexId[i]);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-			
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+
 			//gl.glEnable( GL2.GL_PIXEL_UNPACK_BUFFER );
-			
+
 			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_FLOAT_RG32_NV, g_imageWidth, g_imageHeight,
-					0,  GL2.GL_RGB,  GL2.GL_FLOAT, null);
+					0,  GL.GL_RGB,  GL.GL_FLOAT, null);
 
 			gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualFrontBlenderTexId[i]);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_RGBA, g_imageWidth, g_imageHeight,
-					0,  GL2.GL_RGBA,  GL2.GL_FLOAT, null);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL.GL_RGBA, g_imageWidth, g_imageHeight,
+					0,  GL.GL_RGBA,  GL.GL_FLOAT, null);
 
 			gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualBackTempTexId[i]);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_RGBA, g_imageWidth, g_imageHeight,
-					0,  GL2.GL_RGBA,  GL2.GL_FLOAT, null);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL.GL_RGBA, g_imageWidth, g_imageHeight,
+					0,  GL.GL_RGBA,  GL.GL_FLOAT, null);
 		}
 
 		gl.glGenTextures(1, g_dualBackBlenderTexId, 0);
 		gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualBackBlenderTexId[0]);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0, GL2.GL_RGB, g_imageWidth, g_imageHeight,
-				0, GL2.GL_RGB, GL2.GL_FLOAT, null);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0, GL.GL_RGB, g_imageWidth, g_imageHeight,
+				0, GL.GL_RGB, GL.GL_FLOAT, null);
 
 		gl.glGenFramebuffers(1, g_dualBackBlenderFboId, 0);
-		gl.glBindFramebuffer( GL2.GL_FRAMEBUFFER, g_dualBackBlenderFboId[0]);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0,
+		gl.glBindFramebuffer( GL.GL_FRAMEBUFFER, g_dualBackBlenderFboId[0]);
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualBackBlenderTexId[0], 0);
 
-		gl.glBindFramebuffer( GL2.GL_FRAMEBUFFER, g_dualPeelingSingleFboId[0]);
+		gl.glBindFramebuffer( GL.GL_FRAMEBUFFER, g_dualPeelingSingleFboId[0]);
 
 		int j = 0;
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT0,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL.GL_COLOR_ATTACHMENT0,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualDepthTexId[j], 0);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT1,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT1,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualFrontBlenderTexId[j], 0);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT2,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT2,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualBackTempTexId[j], 0);
 
 		j = 1;
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT3,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT3,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualDepthTexId[j], 0);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT4,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT4,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualFrontBlenderTexId[j], 0);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT5,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT5,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualBackTempTexId[j], 0);
 
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT6,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT6,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_dualBackBlenderTexId[0], 0);
 	}
 
 	//--------------------------------------------------------------------------
-	void DeleteDualPeelingRenderTargets(GL2 gl)
+	void DeleteDualPeelingRenderTargets(final GL2 gl)
 	{
 		gl.glDeleteFramebuffers(1, g_dualBackBlenderFboId, 0);
 		gl.glDeleteFramebuffers(1, g_dualPeelingSingleFboId, 0);
@@ -242,7 +241,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void InitFrontPeelingRenderTargets(GL2 gl)
+	void InitFrontPeelingRenderTargets(final GL2 gl)
 	{
 		gl.glGenTextures(2, g_frontDepthTexId, 0);
 		gl.glGenTextures(2, g_frontColorTexId, 0);
@@ -251,47 +250,47 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		for (int i = 0; i < 2; i++)
 		{
 			gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontDepthTexId[i]);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_DEPTH_COMPONENT32F,
-					g_imageWidth, g_imageHeight, 0,  GL2.GL_DEPTH_COMPONENT,  GL2.GL_FLOAT, null);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2ES3.GL_DEPTH_COMPONENT32F,
+					g_imageWidth, g_imageHeight, 0,  GL2ES2.GL_DEPTH_COMPONENT,  GL.GL_FLOAT, null);
 
 			gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontColorTexId[i]);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_RGBA, g_imageWidth, g_imageHeight,
-					0,  GL2.GL_RGBA,  GL2.GL_FLOAT, null);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+			gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+			gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL.GL_RGBA, g_imageWidth, g_imageHeight,
+					0,  GL.GL_RGBA,  GL.GL_FLOAT, null);
 
-			gl.glBindFramebuffer( GL2.GL_FRAMEBUFFER, g_frontFboId[i]);
-			gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_DEPTH_ATTACHMENT,
+			gl.glBindFramebuffer( GL.GL_FRAMEBUFFER, g_frontFboId[i]);
+			gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL.GL_DEPTH_ATTACHMENT,
 					GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontDepthTexId[i], 0);
-			gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT0,
+			gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL.GL_COLOR_ATTACHMENT0,
 					GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontColorTexId[i], 0);
 		}
 
 		gl.glGenTextures(1, g_frontColorBlenderTexId, 0);
 		gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontColorBlenderTexId[0]);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0, GL2. GL_RGBA, g_imageWidth, g_imageHeight,
-				0,  GL2.GL_RGBA,  GL2.GL_FLOAT, null);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0, GL. GL_RGBA, g_imageWidth, g_imageHeight,
+				0,  GL.GL_RGBA,  GL.GL_FLOAT, null);
 
 		gl.glGenFramebuffers(1, g_frontColorBlenderFboId, 0);
-		gl.glBindFramebuffer( GL2.GL_FRAMEBUFFER, g_frontColorBlenderFboId[0]);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_DEPTH_ATTACHMENT,
+		gl.glBindFramebuffer( GL.GL_FRAMEBUFFER, g_frontColorBlenderFboId[0]);
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL.GL_DEPTH_ATTACHMENT,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontDepthTexId[0], 0);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT0,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL.GL_COLOR_ATTACHMENT0,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_frontColorBlenderTexId[0], 0);
 	}
 
 	//--------------------------------------------------------------------------
-	void DeleteFrontPeelingRenderTargets(GL2 gl)
+	void DeleteFrontPeelingRenderTargets(final GL2 gl)
 	{
 		gl.glDeleteFramebuffers(2, g_frontFboId, 0);
 		gl.glDeleteFramebuffers(1, g_frontColorBlenderFboId, 0);
@@ -301,57 +300,57 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void InitAccumulationRenderTargets(GL2 gl)
+	void InitAccumulationRenderTargets(final GL2 gl)
 	{
 		gl.glGenTextures(2, g_accumulationTexId, 0);
 
 		gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[0]);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
-		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_RGBA16F,
-				g_imageWidth, g_imageHeight, 0,  GL2.GL_RGBA,  GL2.GL_FLOAT, null);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
+		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL.GL_RGBA16F,
+				g_imageWidth, g_imageHeight, 0,  GL.GL_RGBA,  GL.GL_FLOAT, null);
 
 		gl.glBindTexture( GL2.GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[1]);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MIN_FILTER,  GL2.GL_NEAREST);
-		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL2.GL_TEXTURE_MAG_FILTER,  GL2.GL_NEAREST);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_S,  GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_WRAP_T,  GL2.GL_CLAMP);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MIN_FILTER,  GL.GL_NEAREST);
+		gl.glTexParameteri( GL2.GL_TEXTURE_RECTANGLE_ARB,  GL.GL_TEXTURE_MAG_FILTER,  GL.GL_NEAREST);
 		gl.glTexImage2D( GL2.GL_TEXTURE_RECTANGLE_ARB, 0,  GL2.GL_FLOAT_R32_NV,
-				g_imageWidth, g_imageHeight, 0,  GL2.GL_RGBA,  GL2.GL_FLOAT, null);
+				g_imageWidth, g_imageHeight, 0,  GL.GL_RGBA,  GL.GL_FLOAT, null);
 
 		gl.glGenFramebuffers(1, g_accumulationFboId, 0);
-		gl.glBindFramebuffer( GL2.GL_FRAMEBUFFER, g_accumulationFboId[0]);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT0,
+		gl.glBindFramebuffer( GL.GL_FRAMEBUFFER, g_accumulationFboId[0]);
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL.GL_COLOR_ATTACHMENT0,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[0], 0);
-		gl.glFramebufferTexture2D( GL2.GL_FRAMEBUFFER,  GL2.GL_COLOR_ATTACHMENT1,
+		gl.glFramebufferTexture2D( GL.GL_FRAMEBUFFER,  GL2ES2.GL_COLOR_ATTACHMENT1,
 				GL2.GL_TEXTURE_RECTANGLE_ARB, g_accumulationTexId[1], 0);
 
 	}
 
 	//--------------------------------------------------------------------------
-	void DeleteAccumulationRenderTargets(GL2 gl)
+	void DeleteAccumulationRenderTargets(final GL2 gl)
 	{
 		gl.glDeleteFramebuffers(1, g_accumulationFboId, 0);
 		gl.glDeleteTextures(2, g_accumulationTexId, 0);
 	}
 
 	//--------------------------------------------------------------------------
-	void MakeFullScreenQuad(GL2 gl)
+	void MakeFullScreenQuad(final GL2 gl)
 	{
-		GLU glu = GLU.createGLU(gl);
+		final GLU glu = GLU.createGLU(gl);
 
 		g_quadDisplayList = gl.glGenLists(1);
 		gl.glNewList(g_quadDisplayList, GL2.GL_COMPILE);
 
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 		glu.gluOrtho2D(0.0f, 1.0f, 0.0f, 1.0f);
-		gl.glBegin(GL2.GL_QUADS);
+		gl.glBegin(GL2ES3.GL_QUADS);
 		{
-			gl.glVertex2f(0.0f, 0.0f); 
+			gl.glVertex2f(0.0f, 0.0f);
 			gl.glVertex2f(1.0f, 0.0f);
 			gl.glVertex2f(1.0f, 1.0f);
 			gl.glVertex2f(0.0f, 1.0f);
@@ -363,7 +362,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void LoadModel( GL2 gl, String model_filename)
+	void LoadModel( final GL2 gl, final String model_filename)
 	{
 		g_model = new Model();
 		System.err.println("loading OBJ...\n");
@@ -375,142 +374,142 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 		System.err.println(g_model.getPositionCount() + " vertices");
 		System.err.println((g_model.getIndexCount()/3) + " triangles");
-		int totalVertexSize = g_model.getCompiledVertexCount() * Buffers.SIZEOF_FLOAT;
-		int totalIndexSize = g_model.getCompiledIndexCount() * Buffers.SIZEOF_INT;
+		final int totalVertexSize = g_model.getCompiledVertexCount() * Buffers.SIZEOF_FLOAT;
+		final int totalIndexSize = g_model.getCompiledIndexCount() * Buffers.SIZEOF_INT;
 
 		gl.glGenBuffers(1, g_vboId, 0);
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, g_vboId[0]);
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, totalVertexSize, g_model.getCompiledVertices(), GL2.GL_STATIC_DRAW);
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, g_vboId[0]);
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, totalVertexSize, g_model.getCompiledVertices(), GL.GL_STATIC_DRAW);
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
 		gl.glGenBuffers(1, g_eboId, 0);
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, g_eboId[0]);
-		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, totalIndexSize, g_model.getCompiledIndices(), GL2.GL_STATIC_DRAW);
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, g_eboId[0]);
+		gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, totalIndexSize, g_model.getCompiledIndices(), GL.GL_STATIC_DRAW);
+		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		float[] modelMin = new float[3];
-		float[] modelMax = new float[3];
+		final float[] modelMin = new float[3];
+		final float[] modelMax = new float[3];
 		g_model.computeBoundingBox(modelMin, modelMax);
 
-		float[] diag = new float[]{ modelMax[0] - modelMin[0],
+		final float[] diag = new float[]{ modelMax[0] - modelMin[0],
 				modelMax[1] - modelMin[1],
 				modelMax[2] - modelMin[2] };
 		g_bbScale = (float)(1.0 / Math.sqrt(diag[0]*diag[0] + diag[1]*diag[1] + diag[2]*diag[2]) * 1.5);
-		g_bbTrans = new float[]{ (float)( -g_bbScale * (modelMin[0] + 0.5 * diag[0])), 
-				(float)( -g_bbScale * (modelMin[1] + 0.5 * diag[1]) ), 
+		g_bbTrans = new float[]{ (float)( -g_bbScale * (modelMin[0] + 0.5 * diag[0])),
+				(float)( -g_bbScale * (modelMin[1] + 0.5 * diag[1]) ),
 				(float)( -g_bbScale * (modelMin[2] + 0.5 * diag[2]) ) };
 	}
 
 	//--------------------------------------------------------------------------
-	void DrawModel(GL2 gl)
+	void DrawModel(final GL2 gl)
 	{
-		gl.glBindBuffer( GL2.GL_ARRAY_BUFFER, g_vboId[0]);
-		gl.glBindBuffer( GL2.GL_ELEMENT_ARRAY_BUFFER, g_eboId[0]);
-		int stride = g_model.getCompiledVertexSize() * Buffers.SIZEOF_FLOAT;
-		int normalOffset = g_model.getCompiledNormalOffset() * Buffers.SIZEOF_FLOAT;
-		gl.glVertexPointer(g_model.getPositionSize(), GL2.GL_FLOAT, stride, 0);
-		gl.glNormalPointer(GL2.GL_FLOAT, stride, normalOffset);
-		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, g_vboId[0]);
+		gl.glBindBuffer( GL.GL_ELEMENT_ARRAY_BUFFER, g_eboId[0]);
+		final int stride = g_model.getCompiledVertexSize() * Buffers.SIZEOF_FLOAT;
+		final int normalOffset = g_model.getCompiledNormalOffset() * Buffers.SIZEOF_FLOAT;
+		gl.glVertexPointer(g_model.getPositionSize(), GL.GL_FLOAT, stride, 0);
+		gl.glNormalPointer(GL.GL_FLOAT, stride, normalOffset);
+		gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
 
-		gl.glDrawElements( GL2.GL_TRIANGLES, g_model.getCompiledIndexCount(), GL2.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements( GL.GL_TRIANGLES, g_model.getCompiledIndexCount(), GL.GL_UNSIGNED_INT, 0);
 
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, 0);
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
-		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GLPointerFunc.GL_NORMAL_ARRAY);
 
 		g_numGeoPasses++;
 	}
-	
+
     public GLCanvas GetCanvas()
     {
         return m_kCanvas;
     }
 
-    ShaderProgram build(GL2ES2 gl, String basename, boolean link) {
-    	ShaderProgram sp = new ShaderProgram();
-    	ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, DualDepthPeeling.class,
+    ShaderProgram build(final GL2ES2 gl, final String basename, final boolean link) {
+    	final ShaderProgram sp = new ShaderProgram();
+    	final ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, DualDepthPeeling.class,
                 "shader", null, basename, false);
-    	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, DualDepthPeeling.class,
+    	final ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, DualDepthPeeling.class,
 				  "shader", null, basename, false);
     	sp.add(vp);
     	sp.add(fp);
     	if(link && !sp.link(gl, System.err)) {
     		throw new GLException("Couldn't link program: "+sp);
-    	}    	
+    	}
     	return sp;
     }
-    ShaderProgram build(GL2ES2 gl, String[] basenames, boolean link) {
-    	ShaderProgram sp = new ShaderProgram();
-		ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, basenames.length, DualDepthPeeling.class,
+    ShaderProgram build(final GL2ES2 gl, final String[] basenames, final boolean link) {
+    	final ShaderProgram sp = new ShaderProgram();
+		final ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, basenames.length, DualDepthPeeling.class,
 				"shader", basenames, null, null, false);
     	sp.add(vp);
-    	ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, basenames.length, DualDepthPeeling.class,
+    	final ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, basenames.length, DualDepthPeeling.class,
 				  "shader", basenames, null, null, false);
     	sp.add(fp);
     	if(link && !sp.link(gl, System.err)) {
     		throw new GLException("Couldn't link program: "+sp);
-    	}    	
+    	}
     	return sp;
     }
-    
+
 	//--------------------------------------------------------------------------
-	void BuildShaders(GL2 gl)
+	void BuildShaders(final GL2 gl)
 	{
 		System.err.println("\nloading shaders...\n");
 
 		g_shaderState = new ShaderState();
 		// g_shaderState.setVerbose(true);
-		
+
 		g_shaderDualInit = build(gl, "dual_peeling_init", true);
 		g_shaderDualPeel = build(gl, new String[] { "shade", "dual_peeling_peel" }, true);
 		g_shaderDualBlend = build(gl, "dual_peeling_blend", true);
 		g_shaderDualFinal = build(gl, "dual_peeling_final", true);
-				
+
 		g_shaderFrontInit = build(gl, new String[] { "shade", "front_peeling_init" }, true);
 		g_shaderFrontPeel = build(gl, new String[] { "shade", "front_peeling_peel" }, true);
 		g_shaderFrontBlend = build(gl, "front_peeling_blend", true);
 		g_shaderFrontFinal = build(gl, "front_peeling_final", true);
-		
+
 		g_shaderAverageInit = build(gl, new String[] { "shade", "wavg_init" }, true);
 		g_shaderAverageFinal = build(gl, "wavg_final", true);
-		
-		g_shaderWeightedSumInit = build(gl, new String[] { "shade", "wsum_init" }, true);		
+
+		g_shaderWeightedSumInit = build(gl, new String[] { "shade", "wsum_init" }, true);
 		g_shaderWeightedSumFinal = build(gl, "wsum_final", true);
-		
+
 		g_DepthBlenderTexUnit = new GLUniformData(s_DepthBlenderTex, 0);
-		g_shaderState.ownUniform(g_DepthBlenderTexUnit);
-		
+		g_shaderState.manage(g_DepthBlenderTexUnit, true);
+
 		g_FrontBlenderTexUnit = new GLUniformData(s_FrontBlenderTex, 1);
-		g_shaderState.ownUniform(g_FrontBlenderTexUnit);
-		
+		g_shaderState.manage(g_FrontBlenderTexUnit, true);
+
 		g_BackBlenderTexUnit = new GLUniformData(s_BackBlenderTex, 2);
-		g_shaderState.ownUniform(g_BackBlenderTexUnit);
-		
+		g_shaderState.manage(g_BackBlenderTexUnit, true);
+
 		g_TempTexUnit = new GLUniformData(s_TempTex, 0);
-		g_shaderState.ownUniform(g_TempTexUnit); 
-		
+		g_shaderState.manage(g_TempTexUnit, true);
+
 		g_AlphaUni = new GLUniformData("Alpha", g_opacity);
-		g_shaderState.ownUniform(g_AlphaUni);
+		g_shaderState.manage(g_AlphaUni, true);
 
 		g_backgroundColorUni = new GLUniformData(s_BackgroundColor, 3, g_backgroundColor);
-		g_shaderState.ownUniform(g_backgroundColorUni);
-		
+		g_shaderState.manage(g_backgroundColorUni, true);
+
 		g_ColorTexUnit = new GLUniformData(s_ColorTex, 0);
-		g_shaderState.ownUniform(g_ColorTexUnit);
-		
+		g_shaderState.manage(g_ColorTexUnit, true);
+
 		g_ColorTex0Unit = new GLUniformData(s_ColorTex0, 0);
-		g_shaderState.ownUniform(g_ColorTex0Unit);
-		
+		g_shaderState.manage(g_ColorTex0Unit, true);
+
 		g_ColorTex1Unit = new GLUniformData(s_ColorTex1, 1);
-		g_shaderState.ownUniform(g_ColorTex1Unit);		
+		g_shaderState.manage(g_ColorTex1Unit, true);
 	}
 
 	//--------------------------------------------------------------------------
-	void DestroyShaders(GL2 gl)
+	void DestroyShaders(final GL2 gl)
 	{
-		g_shaderState.release(gl, false, false, false);		
+		g_shaderState.release(gl, false, false, false);
 		g_shaderDualInit.destroy(gl);
 		g_shaderDualPeel.destroy(gl);
 		g_shaderDualBlend.destroy(gl);
@@ -529,7 +528,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void ReloadShaders(GL2 gl)
+	void ReloadShaders(final GL2 gl)
 	{
 		DestroyShaders(gl);
 		BuildShaders(gl);
@@ -539,43 +538,43 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	private GLCanvas m_kCanvas;
 
 	void InitGL()
-	{ 
+	{
 
-	  	GLProfile kProfile = GLProfile.getMaxProgrammable(true);
-		GLCapabilities kGlCapabilities = new GLCapabilities(kProfile);
+	  	final GLProfile kProfile = GLProfile.getMaxProgrammable(true);
+		final GLCapabilities kGlCapabilities = new GLCapabilities(kProfile);
 		kGlCapabilities.setHardwareAccelerated(true);
 		m_kCanvas = new GLCanvas(kGlCapabilities);
 		m_kCanvas.setSize(g_imageWidth, g_imageHeight);
-		m_kCanvas.addGLEventListener( this );       
-		m_kCanvas.addKeyListener( this );       
-		m_kCanvas.addMouseListener( this );       
-		m_kCanvas.addMouseMotionListener( this );       
+		m_kCanvas.addGLEventListener( this );
+		m_kCanvas.addKeyListener( this );
+		m_kCanvas.addMouseListener( this );
+		m_kCanvas.addMouseMotionListener( this );
 	}
 
 	//--------------------------------------------------------------------------
-	void RenderDualPeeling(GL2 gl)
+	void RenderDualPeeling(final GL2 gl)
 	{
-		gl.glDisable(GL2.GL_DEPTH_TEST);
-		gl.glEnable(GL2.GL_BLEND);
+		gl.glDisable(GL.GL_DEPTH_TEST);
+		gl.glEnable(GL.GL_BLEND);
 
 		// ---------------------------------------------------------------------
 		// 1. Initialize Min-Max Depth Buffer
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, g_dualPeelingSingleFboId[0]);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, g_dualPeelingSingleFboId[0]);
 
 		// Render targets 1 and 2 store the front and back colors
 		// Clear to 0.0 and use MAX blending to filter written color
 		// At most one front color and one back color can be written every pass
 		gl.glDrawBuffers(2, g_drawBuffers, 1);
 		gl.glClearColor(0, 0, 0, 0);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Render target 0 stores (-minDepth, maxDepth, alphaMultiplier)
 		gl.glDrawBuffer(g_drawBuffers[0]);
 		gl.glClearColor(-MAX_DEPTH, -MAX_DEPTH, 0, 0);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-		gl.glBlendEquation(GL2.GL_MAX);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+		gl.glBlendEquation(GL2ES3.GL_MAX);
 
 		g_shaderState.attachShaderProgram(gl, g_shaderDualInit, true);
 		DrawModel(gl);
@@ -590,34 +589,34 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		//glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, g_dualBackBlenderFboId);
 		gl.glDrawBuffer(g_drawBuffers[6]);
 		gl.glClearColor(g_backgroundColor.get(0), g_backgroundColor.get(1), g_backgroundColor.get(2), 0);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		int currId = 0;
 
 		for (int pass = 1; g_useOQ || pass < g_numPasses; pass++) {
 			currId = pass % 2;
-			int prevId = 1 - currId;
-			int bufId = currId * 3;
+			final int prevId = 1 - currId;
+			final int bufId = currId * 3;
 
 			//glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, g_dualPeelingFboId[currId]);
 
 			gl.glDrawBuffers(2, g_drawBuffers, bufId+1);
 			gl.glClearColor(0, 0, 0, 0);
-			gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 			gl.glDrawBuffer(g_drawBuffers[bufId+0]);
 			gl.glClearColor(-MAX_DEPTH, -MAX_DEPTH, 0, 0);
-			gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 			// Render target 0: RG32F MAX blending
 			// Render target 1: RGBA MAX blending
 			// Render target 2: RGBA MAX blending
 			gl.glDrawBuffers(3, g_drawBuffers, bufId+0);
-			gl.glBlendEquation(GL2.GL_MAX);
+			gl.glBlendEquation(GL2ES3.GL_MAX);
 
 			// uses g_DepthBlenderTexUnit
 			// uses g_FrontBlenderTexUnit
-			// uses g_AlphaUni			
+			// uses g_AlphaUni
 			g_shaderState.attachShaderProgram(gl, g_shaderDualPeel, true);
 			GLHelper.bindTextureRECT(gl, g_dualDepthTexId[prevId], g_DepthBlenderTexUnit.intValue());
 			GLHelper.bindTextureRECT(gl, g_dualFrontBlenderTexId[prevId], g_FrontBlenderTexUnit.intValue());
@@ -627,11 +626,11 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			// Full screen pass to alpha-blend the back color
 			gl.glDrawBuffer(g_drawBuffers[6]);
 
-			gl.glBlendEquation(GL2.GL_FUNC_ADD);
-			gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+			gl.glBlendEquation(GL.GL_FUNC_ADD);
+			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 			if (g_useOQ) {
-				gl.glBeginQuery(GL2.GL_SAMPLES_PASSED, g_queryId[0]);
+				gl.glBeginQuery(GL2GL3.GL_SAMPLES_PASSED, g_queryId[0]);
 			}
 
 			g_TempTexUnit.setData(0);
@@ -641,26 +640,26 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			g_shaderState.useProgram(gl, false);
 
 			if (g_useOQ) {
-				gl.glEndQuery(GL2.GL_SAMPLES_PASSED);
-				int[] sample_count = new int[]{0};
-				gl.glGetQueryObjectuiv(g_queryId[0], GL2.GL_QUERY_RESULT, sample_count, 0);
+				gl.glEndQuery(GL2GL3.GL_SAMPLES_PASSED);
+				final int[] sample_count = new int[]{0};
+				gl.glGetQueryObjectuiv(g_queryId[0], GL2ES2.GL_QUERY_RESULT, sample_count, 0);
 				if (sample_count[0] == 0) {
 					break;
 				}
 			}
 		}
 
-		gl.glDisable(GL2.GL_BLEND);
+		gl.glDisable(GL.GL_BLEND);
 
 		// ---------------------------------------------------------------------
 		// 3. Final Pass
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-		gl.glDrawBuffer(GL2.GL_BACK);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glDrawBuffer(GL.GL_BACK);
 
 		// use g_FrontBlenderTexUnit
-		// use g_BackBlenderTexUnit		
+		// use g_BackBlenderTexUnit
 		g_shaderState.attachShaderProgram(gl, g_shaderDualFinal, true);
 		GLHelper.bindTextureRECT(gl, g_dualFrontBlenderTexId[currId], g_FrontBlenderTexUnit.intValue());
 		GLHelper.bindTextureRECT(gl, g_dualBackBlenderTexId[0], g_BackBlenderTexUnit.intValue());
@@ -669,21 +668,21 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void RenderFrontToBackPeeling(GL2 gl)
+	void RenderFrontToBackPeeling(final GL2 gl)
 	{
 		// ---------------------------------------------------------------------
 		// 1. Initialize Min Depth Buffer
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, g_frontColorBlenderFboId[0]);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, g_frontColorBlenderFboId[0]);
 		gl.glDrawBuffer(g_drawBuffers[0]);
 
 		gl.glClearColor(0, 0, 0, 1);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-		gl.glEnable(GL2.GL_DEPTH_TEST);
+		gl.glEnable(GL.GL_DEPTH_TEST);
 
-		// uses g_AlphaUni			
+		// uses g_AlphaUni
 		g_shaderState.attachShaderProgram(gl, g_shaderFrontInit, true);
 		DrawModel(gl);
 		g_shaderState.useProgram(gl, false);
@@ -692,46 +691,46 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		// 2. Depth Peeling + Blending
 		// ---------------------------------------------------------------------
 
-		int numLayers = (g_numPasses - 1) * 2;
+		final int numLayers = (g_numPasses - 1) * 2;
 		for (int layer = 1; g_useOQ || layer < numLayers; layer++) {
-			int currId = layer % 2;
-			int prevId = 1 - currId;
+			final int currId = layer % 2;
+			final int prevId = 1 - currId;
 
-			gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, g_frontFboId[currId]);
+			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, g_frontFboId[currId]);
 			gl.glDrawBuffer(g_drawBuffers[0]);
 
 			gl.glClearColor(0, 0, 0, 0);
-			gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-			gl.glDisable(GL2.GL_BLEND);
-			gl.glEnable(GL2.GL_DEPTH_TEST);
+			gl.glDisable(GL.GL_BLEND);
+			gl.glEnable(GL.GL_DEPTH_TEST);
 
 			if (g_useOQ) {
-				gl.glBeginQuery(GL2.GL_SAMPLES_PASSED, g_queryId[0]);
+				gl.glBeginQuery(GL2GL3.GL_SAMPLES_PASSED, g_queryId[0]);
 			}
 
 			// uses g_DepthBlenderTexUnit
 			// uses g_FrontBlenderTexUnit
-			// uses g_AlphaUni			
-			g_shaderState.attachShaderProgram(gl, g_shaderDualPeel, true);			
+			// uses g_AlphaUni
+			g_shaderState.attachShaderProgram(gl, g_shaderDualPeel, true);
 			GLHelper.bindTextureRECT(gl, g_frontDepthTexId[prevId], g_DepthBlenderTexUnit.intValue());
 			DrawModel(gl);
 			g_shaderState.useProgram(gl, false);
 
 			if (g_useOQ) {
-				gl.glEndQuery(GL2.GL_SAMPLES_PASSED);
+				gl.glEndQuery(GL2GL3.GL_SAMPLES_PASSED);
 			}
 
 
-			gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, g_frontColorBlenderFboId[0]);
+			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, g_frontColorBlenderFboId[0]);
 			gl.glDrawBuffer(g_drawBuffers[0]);
 
-			gl.glDisable(GL2.GL_DEPTH_TEST);
-			gl.glEnable(GL2.GL_BLEND);
+			gl.glDisable(GL.GL_DEPTH_TEST);
+			gl.glEnable(GL.GL_BLEND);
 
-			gl.glBlendEquation(GL2.GL_FUNC_ADD);
-			gl.glBlendFuncSeparate(GL2.GL_DST_ALPHA, GL2.GL_ONE,
-					GL2.GL_ZERO, GL2.GL_ONE_MINUS_SRC_ALPHA);
+			gl.glBlendEquation(GL.GL_FUNC_ADD);
+			gl.glBlendFuncSeparate(GL.GL_DST_ALPHA, GL.GL_ONE,
+					GL.GL_ZERO, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 			// uses g_TempTexUnit
 			g_shaderState.attachShaderProgram(gl, g_shaderDualBlend, true);
@@ -739,11 +738,11 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			gl.glCallList(g_quadDisplayList);
 			g_shaderState.useProgram(gl, false);
 
-			gl.glDisable(GL2.GL_BLEND);
+			gl.glDisable(GL.GL_BLEND);
 
 			if (g_useOQ) {
-				int[] sample_count = new int[]{0};
-				gl.glGetQueryObjectuiv(g_queryId[0], GL2.GL_QUERY_RESULT, sample_count, 0);
+				final int[] sample_count = new int[]{0};
+				gl.glGetQueryObjectuiv(g_queryId[0], GL2ES2.GL_QUERY_RESULT, sample_count, 0);
 				if (sample_count[0] == 0) {
 					break;
 				}
@@ -754,9 +753,9 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		// 3. Final Pass
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-		gl.glDrawBuffer(GL2.GL_BACK);
-		gl.glDisable(GL2.GL_DEPTH_TEST);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glDrawBuffer(GL.GL_BACK);
+		gl.glDisable(GL.GL_DEPTH_TEST);
 
 		// uses g_backgroundColorUni
 		g_shaderState.attachShaderProgram(gl, g_shaderFrontFinal, true);
@@ -766,38 +765,38 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void RenderAverageColors(GL2 gl)
+	void RenderAverageColors(final GL2 gl)
 	{
-		gl.glDisable(GL2.GL_DEPTH_TEST);
+		gl.glDisable(GL.GL_DEPTH_TEST);
 
 		// ---------------------------------------------------------------------
 		// 1. Accumulate Colors and Depth Complexity
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, g_accumulationFboId[0]);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, g_accumulationFboId[0]);
 		gl.glDrawBuffers(2, g_drawBuffers, 0);
 
 		gl.glClearColor(0, 0, 0, 0);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-		gl.glBlendEquation(GL2.GL_FUNC_ADD);
-		gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
-		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendEquation(GL.GL_FUNC_ADD);
+		gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+		gl.glEnable(GL.GL_BLEND);
 
-		// uses g_AlphaUni			
+		// uses g_AlphaUni
 		g_shaderState.attachShaderProgram(gl, g_shaderAverageInit, true);
 		DrawModel(gl);
 		g_shaderState.useProgram(gl, false);
 
-		gl.glDisable(GL2.GL_BLEND);
+		gl.glDisable(GL.GL_BLEND);
 
 
 		// ---------------------------------------------------------------------
 		// 2. Approximate Blending
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-		gl.glDrawBuffer(GL2.GL_BACK);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glDrawBuffer(GL.GL_BACK);
 
 		// uses g_backgroundColorUni
 		g_shaderState.attachShaderProgram(gl, g_shaderAverageFinal, true);
@@ -808,36 +807,36 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 	//--------------------------------------------------------------------------
-	void RenderWeightedSum(GL2 gl)
+	void RenderWeightedSum(final GL2 gl)
 	{
-		gl.glDisable(GL2.GL_DEPTH_TEST);
+		gl.glDisable(GL.GL_DEPTH_TEST);
 
 		// ---------------------------------------------------------------------
 		// 1. Accumulate (alpha * color) and (alpha)
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, g_accumulationFboId[0]);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, g_accumulationFboId[0]);
 		gl.glDrawBuffer(g_drawBuffers[0]);
 
 		gl.glClearColor(0, 0, 0, 0);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-		gl.glBlendEquation(GL2.GL_FUNC_ADD);
-		gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
-		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendEquation(GL.GL_FUNC_ADD);
+		gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+		gl.glEnable(GL.GL_BLEND);
 
 		g_shaderState.attachShaderProgram(gl, g_shaderWeightedSumInit, true);
 		DrawModel(gl);
 		g_shaderState.useProgram(gl, false);
 
-		gl.glDisable(GL2.GL_BLEND);
+		gl.glDisable(GL.GL_BLEND);
 
 		// ---------------------------------------------------------------------
 		// 2. Weighted Sum
 		// ---------------------------------------------------------------------
 
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-		gl.glDrawBuffer(GL2.GL_BACK);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glDrawBuffer(GL.GL_BACK);
 
 		g_shaderState.attachShaderProgram(gl, g_shaderWeightedSumFinal, true);
 		GLHelper.bindTextureRECT(gl, g_accumulationTexId[0], this.g_ColorTexUnit.intValue());
@@ -846,7 +845,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 	}
 
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		System.out.println("dual_depth_peeling - sample comparing multiple order independent transparency techniques\n");
 		System.out.println("  Commands:\n");
 		System.out.println("     A/D       - Change uniform opacity\n");
@@ -860,18 +859,20 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		System.out.println("     +/-       - Change number of geometry passes\n\n");
 
 
-		DualDepthPeeling kWorld = new DualDepthPeeling();
-		Frame frame = new Frame("Dual Depth Peeling");
+		final DualDepthPeeling kWorld = new DualDepthPeeling();
+		final Frame frame = new Frame("Dual Depth Peeling");
 		frame.add( kWorld.GetCanvas() );
 		frame.setSize(kWorld.GetCanvas().getWidth(), kWorld.GetCanvas().getHeight());
 		/* Animator serves the purpose of the idle function, calls display: */
 		final Animator animator = new Animator( kWorld.GetCanvas() );
 		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			@Override
+            public void windowClosing(final WindowEvent e) {
 				// Run this on another thread than the AWT event queue to
 				// avoid deadlocks on shutdown on some platforms
 				new Thread(new Runnable() {
-					public void run() {
+					@Override
+                    public void run() {
 						animator.stop();
 						System.exit(0);
 					}
@@ -884,21 +885,21 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 
 	@Override
-	public void keyTyped(KeyEvent e) {
+	public void keyTyped(final KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(final KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
 
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(final KeyEvent e) {
 		switch(e.getKeyChar())
 		{
 		case 8:
@@ -950,18 +951,18 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 
 	@Override
-	public void display(GLAutoDrawable arg0) {
-		GL2 gl = arg0.getGL().getGL2();
-		
+	public void display(final GLAutoDrawable arg0) {
+		final GL2 gl = arg0.getGL().getGL2();
+
 		if(reloadShaders) {
 			reloadShaders = false;
 			ReloadShaders(gl);
 		}
-		GLU glu = GLU.createGLU(gl);
-		
+		final GLU glu = GLU.createGLU(gl);
+
 		g_numGeoPasses = 0;
 
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		glu.gluLookAt(g_pos[0], g_pos[1], g_pos[2], g_pos[0], g_pos[1], 0, 0, 1, 0);
 		gl.glRotatef(g_rot[0], 1, 0, 0);
@@ -990,50 +991,50 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 
 	@Override
-	public void dispose(GLAutoDrawable arg0) {
+	public void dispose(final GLAutoDrawable arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
+	public void init(final GLAutoDrawable drawable) {
 		System.err.println( "init" );
-		GL2 gl = drawable.getGL().getGL2();
-		
+		final GL2 gl = drawable.getGL().getGL2();
+
 		m_kCanvas.setAutoSwapBufferMode( false );
 
 		// Allocate render targets first
 		try {
 			InitDualPeelingRenderTargets(gl);
-		} catch ( GLException e )
+		} catch ( final GLException e )
 		{
 			try {
 				InitDualPeelingRenderTargets(gl);
-			} catch ( GLException e1 )
+			} catch ( final GLException e1 )
 			{
 				System.err.println( e1.getStackTrace() );
 			}
 		}
 		InitFrontPeelingRenderTargets(gl);
 		InitAccumulationRenderTargets(gl);
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 
 		BuildShaders(gl);
 		LoadModel(gl, MODEL_FILENAME);
 		MakeFullScreenQuad(gl);
 
-		gl.glDisable(GL2.GL_CULL_FACE);
-		gl.glDisable(GL2.GL_LIGHTING);
-		gl.glDisable(GL2.GL_NORMALIZE);
+		gl.glDisable(GL.GL_CULL_FACE);
+		gl.glDisable(GLLightingFunc.GL_LIGHTING);
+		gl.glDisable(GLLightingFunc.GL_NORMALIZE);
 
 		gl.glGenQueries(1, g_queryId, 0);
 	}
 
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL2 gl = drawable.getGL().getGL2();
+	public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width, final int height) {
+        final GL2 gl = drawable.getGL().getGL2();
 
 		if (g_imageWidth != width || g_imageHeight != height)
 		{
@@ -1050,26 +1051,26 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 			InitAccumulationRenderTargets(gl);
 		}
 
-		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 		gl.glLoadIdentity();
 
-		GLU glu = GLU.createGLU(gl);
+		final GLU glu = GLU.createGLU(gl);
 		glu.gluPerspective(FOVY, (float)g_imageWidth/(float)g_imageHeight, ZNEAR, ZFAR);
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 
 		gl.glViewport(0, 0, g_imageWidth, g_imageHeight);
 	}
 
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(final MouseEvent e) {
 
 		g_oldX = g_newX; g_oldY = g_newY;
 		g_newX = e.getX();
 		g_newY = e.getY();
 
-		float rel_x = (g_newX - g_oldX) / (float)g_imageWidth;
-		float rel_y = (g_newY - g_oldY) / (float)g_imageHeight;
+		final float rel_x = (g_newX - g_oldX) / (float)g_imageWidth;
+		final float rel_y = (g_newY - g_oldY) / (float)g_imageHeight;
 		if (g_rotating)
 		{
 			g_rot[1] += (rel_x * 180);
@@ -1084,20 +1085,20 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		{
 			g_pos[2] -= rel_y * g_pos[2];
 		}
-	
+
 	}
 
 
 	@Override
-	public void mouseMoved(MouseEvent e) {}
+	public void mouseMoved(final MouseEvent e) {}
 
 
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(final MouseEvent e) {}
 
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(final MouseEvent e) {
 
 		g_newX = e.getX();
 		g_newY = e.getY();
@@ -1105,7 +1106,7 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 		g_scaling = false;
 		g_panning = false;
 		g_rotating = false;
-		
+
 		if (e.getButton() == MouseEvent.BUTTON1)
 		{
 			if (e.isShiftDown()) {
@@ -1120,13 +1121,13 @@ public class DualDepthPeeling implements GLEventListener, KeyListener, MouseList
 
 
 	@Override
-	public void mouseReleased(MouseEvent e) {}
+	public void mouseReleased(final MouseEvent e) {}
 
 
 	@Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(final MouseEvent e) {}
 
 
 	@Override
-	public void mouseExited(MouseEvent e) {}
+	public void mouseExited(final MouseEvent e) {}
 }

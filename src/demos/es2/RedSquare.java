@@ -264,8 +264,8 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         pmvMatrix.glLoadIdentity();
 
         pmvMatrixUniform = new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMv()); // P, Mv
-        st.ownUniform(pmvMatrixUniform);
-        if(!st.uniform(gl, pmvMatrixUniform)) {
+        st.manage(pmvMatrixUniform, true);
+        if(!st.send(gl, pmvMatrixUniform)) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
 
@@ -276,7 +276,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         vertices.putf(-2); vertices.putf(-2); vertices.putf( 0);
         vertices.putf( 2); vertices.putf(-2); vertices.putf( 0);
         vertices.seal(gl, true);
-        st.ownAttribute(vertices, true);
+        st.manage(vertices, true);
         vertices.enableBuffer(gl, false);
 
         // Allocate Color Array
@@ -286,7 +286,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         colors.putf(1); colors.putf(0); colors.putf(0); colors.putf(1);
         colors.putf(1); colors.putf(0); colors.putf(0); colors.putf(1);
         colors.seal(gl, true);
-        st.ownAttribute(colors, true);
+        st.manage(colors, true);
         colors.enableBuffer(gl, false);
 
         // OpenGL Render Settings
@@ -313,7 +313,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         pmvMatrix.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);
         //pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
 
-        st.uniform(gl, pmvMatrixUniform);
+        st.send(gl, pmvMatrixUniform);
 
         st.useProgram(gl, false);
     }
@@ -348,7 +348,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         final float ang = (window.getTotalFPSDuration() * 360.0f) / 4000.0f;
         pmvMatrix.glRotatef(ang, 0, 0, 1);
         pmvMatrix.glRotatef(ang, 0, 1, 0);
-        st.uniform(gl, pmvMatrixUniform);
+        st.send(gl, pmvMatrixUniform);
 
         // Draw a square
         vertices.enableBuffer(gl, true);
@@ -372,7 +372,7 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
     public static void main(final String[] args) {
         NewtFactory.setUseEDT(true); // should be the default
         int type = USE_NEWT ;
-        final List threads = new ArrayList();
+        final List<RedSquare> threads = new ArrayList<RedSquare>();
         for(int i=0; i<args.length; i++) {
             if(args[i].equals("-swapi")) {
                 i++;
@@ -394,16 +394,16 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
         }
 
         if(!oneThread) {
-            for(final Iterator i = threads.iterator(); i.hasNext(); ) {
-                ((Thread)i.next()).start();
+            for(final Iterator<RedSquare> i = threads.iterator(); i.hasNext(); ) {
+                i.next().start();
             }
 
             boolean done = false;
 
             while(!done) {
                 int aliveCount = 0;
-                for(final Iterator i = threads.iterator(); i.hasNext(); ) {
-                    if ( ((Thread)i.next()).isAlive() ) {
+                for(final Iterator<RedSquare> i = threads.iterator(); i.hasNext(); ) {
+                    if ( i.next().isAlive() ) {
                         try {
                             Thread.sleep(100);
                         } catch (final InterruptedException ie) {}
@@ -414,12 +414,12 @@ public class RedSquare extends Thread implements WindowListener, KeyListener, Mo
             }
         } else {
             // init all ..
-            for(final Iterator i = threads.iterator(); i.hasNext(); ) {
-                ((Thread)i.next()).run();
+            for(final Iterator<RedSquare> i = threads.iterator(); i.hasNext(); ) {
+                i.next().run();
             }
             while (threads.size()>0) {
-                for(final Iterator i = threads.iterator(); i.hasNext(); ) {
-                    final RedSquare app = (RedSquare) i.next();
+                for(final Iterator<RedSquare> i = threads.iterator(); i.hasNext(); ) {
+                    final RedSquare app = i.next();
                     if(app.shouldQuit()) {
                         app.shutdown();
                         i.remove();
