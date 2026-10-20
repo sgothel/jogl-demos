@@ -122,7 +122,7 @@ public class Perftst implements MouseListener, GLEventListener {
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
 
-        if(!st.uniform(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMv()))) {
+        if(!st.send(gl, new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.getSyncPMv()))) {
             throw new GLException("Error setting PMVMatrix in shader: "+st);
         }
 
@@ -151,10 +151,10 @@ public class Perftst implements MouseListener, GLEventListener {
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
 
-        final GLUniformData ud = st.getUniform("mgl_PMVMatrix");
+        final GLUniformData ud = st.getActiveUniform("mgl_PMVMatrix");
         if(null!=ud) {
             // same data object
-            st.uniform(gl, ud);
+            st.send(gl, ud);
         }
 
         st.useProgram(gl, false);
@@ -196,7 +196,7 @@ public class Perftst implements MouseListener, GLEventListener {
         }
 
         try {
-            final PerfModule pmod = (PerfModule) Class.forName(tstName).newInstance();
+            final PerfModule pmod = (PerfModule) Class.forName(tstName).getConstructor().newInstance();
             new Perftst().run(type, pmod);
             System.exit(0);
         } catch (final Exception e) {

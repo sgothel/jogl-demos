@@ -108,7 +108,7 @@ public class PerfUniLoad extends PerfModule {
             t0[i] = System.currentTimeMillis();
 
             for(int j=0; j<numObjs; j++) {
-                st.uniform(gl, dummyUni[j]);
+                st.send(gl, dummyUni[j]);
 
                 t1[i][j] = System.currentTimeMillis();
 

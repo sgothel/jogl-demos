@@ -104,7 +104,7 @@ public class PerfTextLoad extends PerfModule {
         }
 
         final GLUniformData activeTexture = new GLUniformData("mgl_ActiveTexture", 0);
-        st.uniform(gl, activeTexture);
+        st.send(gl, activeTexture);
 
         //
         // run loops
@@ -134,7 +134,7 @@ public class PerfTextLoad extends PerfModule {
                     textures[k].enable(gl);
                     textures[k].bind(gl);
                     activeTexture.setData(k);
-                    st.uniform(gl, activeTexture);
+                    st.send(gl, activeTexture);
 
                     t1[i][j][k] = System.currentTimeMillis();
 
